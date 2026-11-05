@@ -1,6 +1,25 @@
 """跑团数值测试：木桩基础规则。"""
 
 from dataclasses import dataclass
+import random
+import time
+
+
+def roll_d12() -> int:
+    """展示投掷过程，最后一次随机取值是本次唯一的伤害结果。"""
+    print("开始投掷十二面骰（1d12）……", flush=True)
+    for _ in range(6):
+        print(f"\r骰子滚动中：[ {random.randint(1, 12):2d} ]", end="", flush=True)
+        time.sleep(0.15)
+    result = random.randint(1, 12)
+    print(f"\r十二面骰结果：[ {result:2d} ]    ")
+    return result
+
+
+def attack(dummy: "TrainingDummy") -> int:
+    damage = roll_d12()
+    dummy.take_damage(damage)
+    return damage
 
 
 @dataclass
@@ -24,7 +43,7 @@ def main() -> None:
     dummy = TrainingDummy()
     round_number = 1
     print("木桩已就绪：1000/1000 血量，不会主动行动。")
-    print("输入非负整数进行攻击；输入 end 结束回合并恢复血量；输入 quit 退出。")
+    print("选择操作：1 / attack / 攻击；end 结束回合；quit 退出。")
     while True:
         try:
             command = input(f"第 {round_number} 回合 > ").strip().lower()
@@ -37,10 +56,10 @@ def main() -> None:
             dummy.end_round()
             round_number += 1
             continue
-        try:
-            dummy.take_damage(int(command))
-        except ValueError:
-            print("请输入非负整数、end 或 quit。")
+        if command in ("1", "attack", "攻击"):
+            attack(dummy)
+        else:
+            print("请选择 1 / attack / 攻击、end 或 quit。")
 
 
 if __name__ == "__main__":
