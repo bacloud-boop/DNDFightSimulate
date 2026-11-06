@@ -4,6 +4,7 @@ public sealed class PlayerAttributes
     public static readonly string[] Names = {"力量", "敏捷", "体质", "感知", "智力", "魅力"};
     readonly int[] values = {10,10,10,10,10,10};
     public int this[int index] => values[index];
+    public int StrengthModifier => (int)Math.Floor((values[0] - 10) / 2.0);
     public bool TryApply(string[] inputs)
     {
         if(inputs == null || inputs.Length != 6) return false;

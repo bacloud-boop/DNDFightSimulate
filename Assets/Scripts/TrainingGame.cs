@@ -48,13 +48,17 @@ public sealed class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon)); }
-    IEnumerator Roll(Weapon attackWeapon)
+    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon, attributes.StrengthModifier)); }
+    IEnumerator Roll(Weapon attackWeapon, int strengthModifier)
     {
         rolling=true;
         for(int i=0;i<9;i++) { dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" 滚动中 · "+attackWeapon.RollDamage(); PlayRoll(); yield return new WaitForSecondsRealtime(.10f+i*.012f); }
-        int result=attackWeapon.RollDamage(); combat.ApplyDamage(result); dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" → "+result;
-        history.Insert(0,attackWeapon.Name+" 投掷结果 "+result+"，本次伤害 "+result+"。");
+        int result=attackWeapon.RollDamage();
+        int damage=Mathf.Max(0,result+strengthModifier);
+        string modifierText=(strengthModifier>=0?"+":"")+strengthModifier;
+        combat.ApplyDamage(damage);
+        dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" → "+result+"，力量修正 "+modifierText+"，伤害 "+damage;
+        history.Insert(0,attackWeapon.Name+" 骰值 "+result+"，力量修正 "+modifierText+"，本次伤害 "+damage+"。");
         if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
         if(history.Count>3) history.RemoveRange(3,history.Count-3); rolling=false;
     }
