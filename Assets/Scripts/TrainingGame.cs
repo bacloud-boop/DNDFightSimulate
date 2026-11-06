@@ -6,7 +6,8 @@ public sealed class TrainingGame : MonoBehaviour
 {
     readonly CombatState combat = new CombatState();
     readonly List<string> history = new List<string>();
-    string page = "home", dice = "D12 · 待投掷";
+    string page = "home", dice = "D10 · 待投掷";
+    Weapon selectedWeapon = Weapon.Available[0];
     bool rolling;
     float musicVolume, sfxVolume;
     AudioSource music, sfx;
@@ -40,14 +41,14 @@ public sealed class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling) StartCoroutine(Roll()); }
-    IEnumerator Roll()
+    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon)); }
+    IEnumerator Roll(Weapon attackWeapon)
     {
         rolling=true;
-        for(int i=0;i<9;i++) { dice="滚动中 · "+Random.Range(1,13); PlayRoll(); yield return new WaitForSecondsRealtime(.10f+i*.012f); }
-        int result=Random.Range(1,13); combat.ApplyDamage(result); dice="D12 → "+result;
-        history.Insert(0,"投掷结果 "+result+"，本次伤害 "+result+"。");
-        if(history.Count>5) history.RemoveAt(5); rolling=false;
+        for(int i=0;i<9;i++) { dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" 滚动中 · "+attackWeapon.RollDamage(); PlayRoll(); yield return new WaitForSecondsRealtime(.10f+i*.012f); }
+        int result=attackWeapon.RollDamage(); combat.ApplyDamage(result); dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" → "+result;
+        history.Insert(0,attackWeapon.Name+" 投掷结果 "+result+"，本次伤害 "+result+"。");
+        if(history.Count>3) history.RemoveAt(3); rolling=false;
     }
     void OnGUI()
     {
@@ -81,12 +82,26 @@ public sealed class TrainingGame : MonoBehaviour
             Rect bar=GUILayoutUtility.GetRect(900,20); GUI.Box(bar,GUIContent.none);
             GUI.Box(new Rect(bar.x,bar.y,bar.width*combat.Hp/CombatState.MaxHp,bar.height),GUIContent.none);
             GUILayout.Label(dice,heading); GUI.enabled=!rolling;
-            if(GUILayout.Button("攻击 · 投掷 D12",button)) Attack();
-            if(GUILayout.Button("结束回合",button)) {combat.EndRound();dice="D12 · 待投掷";history.Clear();history.Add("回合结束，木桩恢复至 1000。");}
+            if(GUILayout.Button("攻击 · "+selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,button)) Attack();
+            if(GUILayout.Button("结束回合",button)) {combat.EndRound();dice="D"+selectedWeapon.DiceSides+" · 待投掷";history.Clear();history.Add("回合结束，木桩恢复至 1000。");}
             if(GUILayout.Button("← 返回主界面",button)) page="home";
             GUI.enabled=true; foreach(string line in history) GUILayout.Label(line,label);
         }
         GUILayout.EndArea();
+        if(page=="battle") {
+            GUILayout.BeginArea(new Rect(100, 590, 900, 155));
+            GUILayout.Label("武器选择 · 当前："+selectedWeapon.Name+"（1d"+selectedWeapon.DiceSides+"）",label);
+            GUILayout.BeginHorizontal();
+            foreach(var weapon in Weapon.Available) {
+                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides,button)) {
+                    selectedWeapon=weapon;
+                    if(!rolling) dice="D"+weapon.DiceSides+" · 待投掷";
+                }
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Label(rolling?"本次按攻击开始时的武器结算；切换从下次攻击生效。":"点击武器即可切换。",label);
+            GUILayout.EndArea();
+        }
     }
     public void QuitGame()
     {
