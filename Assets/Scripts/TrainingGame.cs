@@ -13,6 +13,9 @@ public sealed class TrainingGame : MonoBehaviour
     readonly MonsterDamage monster = new MonsterDamage();
     readonly string[] damageInputs = {"0","0","0","0","0","0"};
     string inputError="";
+    readonly PlayerAttributes attributes = new PlayerAttributes();
+    readonly string[] attributeInputs = {"10","10","10","10","10","10"};
+    string attributeError="";
     float musicVolume, sfxVolume;
     AudioSource music, sfx;
     AudioClip rollClip;
@@ -75,9 +78,9 @@ public sealed class TrainingGame : MonoBehaviour
         } else if(page=="settings") {
             GUILayout.Label("声音设置",title); GUILayout.Space(24);
             GUILayout.Label("音乐音量  "+Mathf.RoundToInt(musicVolume*100)+"%",label);
-            float m=GUILayout.HorizontalSlider(musicVolume,0,1); GUILayout.Space(24);
+            float m=Mathf.Round(GUILayout.HorizontalSlider(musicVolume,0,1)*100)/100f; GUILayout.Space(24);
             GUILayout.Label("音效音量  "+Mathf.RoundToInt(sfxVolume*100)+"%",label);
-            float s=GUILayout.HorizontalSlider(sfxVolume,0,1); GUILayout.Space(24);
+            float s=Mathf.Round(GUILayout.HorizontalSlider(sfxVolume,0,1)*100)/100f; GUILayout.Space(24);
             if(m!=musicVolume || s!=sfxVolume) {musicVolume=m;sfxVolume=s;SaveVolume();}
             if(GUILayout.Button("试听投骰音效",button)) PlayRoll();
             if(GUILayout.Button("← 返回主界面",button)) page="home";
@@ -95,8 +98,11 @@ public sealed class TrainingGame : MonoBehaviour
         }
         GUILayout.EndArea();
         if(page=="battle") {
+            GUI.enabled=panel=="";
+            if(GUI.Button(new Rect(100,600,250,54),"玩家属性",button)) panel="attributes";
             if(GUI.Button(new Rect(100,660,250,54),"玩家武器",button)) panel="weapons";
             if(GUI.Button(new Rect(780,160,280,54),"怪物伤害更改",button)) panel="monster";
+            GUI.enabled=true;
             if(panel!="") DrawPanel();
         }
     }
@@ -124,12 +130,25 @@ public sealed class TrainingGame : MonoBehaviour
                 }
             }
             GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
+        } else if(panel=="attributes") {
+            GUILayout.Label("玩家属性",heading);
+            for(int i=0;i<6;i++) {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(PlayerAttributes.Names[i]+"（当前 "+attributes[i]+"）",label,GUILayout.Width(260));
+                attributeInputs[i]=IntegerField(attributeInputs[i],false);
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.Label("每项为 3～20 的整数；默认 10。",label);
+            if(GUILayout.Button("应用",button)) {
+                attributeError=attributes.TryApply(attributeInputs)?"属性已应用。":"每项必须为 3～20 的整数，未保存本次修改。";
+            }
+            GUILayout.Label(attributeError,label);
         } else {
             GUILayout.Label("怪物伤害更改",heading);
             for(int i=0;i<6;i++) {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(i<5?"D"+MonsterDamage.Sides[i]+" 数量":"固定加值",label,GUILayout.Width(200));
-                damageInputs[i]=GUILayout.TextField(damageInputs[i],11,GUILayout.Height(32));
+                damageInputs[i]=IntegerField(damageInputs[i],i==5);
                 GUILayout.EndHorizontal();
             }
             GUILayout.Label("骰子数量为非负整数；固定加值可为负；总伤害最低为 0。",label);
@@ -137,6 +156,13 @@ public sealed class TrainingGame : MonoBehaviour
             GUILayout.Label(inputError,label);
         }
         GUILayout.EndArea();
+    }
+    string IntegerField(string current, bool allowNegative)
+    {
+        string proposed=GUILayout.TextField(current,11,GUILayout.Height(32));
+        for(int i=0;i<proposed.Length;i++)
+            if(!(proposed[i]>='0' && proposed[i]<='9') && !(allowNegative && i==0 && proposed[i]=='-')) return current;
+        return proposed;
     }
     void ApplyMonsterSettings()
     {
@@ -149,7 +175,8 @@ public sealed class TrainingGame : MonoBehaviour
         if(count>10000) {inputError="单次反击骰子总数不能超过 10000。";return;}
         for(int i=0;i<5;i++) monster.Counts[i]=values[i];
         monster.Bonus=values[5]; inputError="已应用，下次回合结束时生效。";
-    }    public void QuitGame()
+    }
+    public void QuitGame()
     {
         SaveVolume();
 #if UNITY_EDITOR
