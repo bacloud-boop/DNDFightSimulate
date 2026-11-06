@@ -1,33 +1,26 @@
-# 跑团数值测试
+# DNDFightSimulate
 
-运行基础命令行版本（需要 Python 3）：
+项目已迁移至 Unity，后续统一使用 Unity / C# 开发。
 
-```sh
-python combat.py
-```
+## 打开与运行
 
-## 当前规则
+使用 **Unity 2022.3.62f3c1** 打开仓库根目录，打开 `Assets/Scenes/Main.unity`，点击 Play。
+通过 File > Build Settings 选择 Windows 平台并 Build And Run 可运行独立程序。
 
-- 木桩初始血量和最大血量均为 1000。
-- 木桩不会主动行动。目前被动防御表示仅承受伤害，没有护甲、减伤或反击。
-- 输入 `1`、`attack` 或 `攻击` 选择攻击，投掷一面十二面骰（1d12）。
-- 展示骰子滚动过程及最终点数（1～12），最终点数等于本次伤害，每次攻击仅结算一次。
-- 每次攻击显示伤害及剩余血量。
-- 血量最低为 0；显示的攻击伤害保留原值，包括溢出伤害。
-- 一个回合内可以攻击多次，输入 `end` 明确结束整个回合，木桩恢复至 1000 血量。
-- 输入 `quit` 退出。
+## 功能
 
-后续可在此基础上添加攻击者、命中判定、防御数值和回合顺序。
+- 主菜单：进入战斗、设置、退出游戏。
+- 木桩 1000 血量，仅被动承伤。点击攻击展示 D12 滚动过程，最终点数为本次伤害。
+- 投掷期间禁用攻击、结束回合和返回，避免重复结算。
+- 结束回合恢复 1000 血量；返回菜单保留当前战斗。
+- 合成背景音乐和投骰音效，独立音量滑块、音效试听，PlayerPrefs 保存音量。
+- 退出游戏关闭独立程序；编辑器内停止 Play。
 
-## 桌面图形界面
+## 结构与验证
 
-安装依赖后启动：
+- `Assets/Scripts/CombatState.cs`：血量和回合规则。
+- `Assets/Scripts/TrainingGame.cs`：界面、投骰动画、声音与设置。
+- `Assets/Editor/ProjectSetup.cs`：创建主场景，并验证伤害、血量下限、回合重置和骰值范围。
 
-```sh
-python -m pip install -r requirements.txt
-python app.py
-```
-
-使用 pywebview 包装网页（Windows 需要 Edge WebView2 Runtime）。主菜单提供进入战斗、设置、退出游戏；退出会关闭窗口并结束程序。战斗中点击攻击投掷 D12，结束回合恢复木桩血量。返回主界面会保留当前战斗。
-
-背景音乐和投骰音效通过 Web Audio 实时合成，无需外部素材。首次点击后开始播放；音乐与音效音量独立调整并保存在本机。原命令行入口 `python combat.py` 仍可使用。
+批处理验证入口：`-batchmode -nographics -quit -projectPath <项目路径> -executeMethod ProjectSetup.CreateAndVerify -logFile <日志路径>`。
+该命令会重新生成主场景，仅适用于初始场景搭建。旧 Python 和网页版本保留在 Git 历史中。
