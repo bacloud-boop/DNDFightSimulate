@@ -16,7 +16,7 @@ public static class WeaponVerification
         if(attackWeapon.DiceSides!=10||selected.DiceSides!=6) throw new Exception("Weapon snapshot failed");
         var combat=new CombatState(); combat.ApplyDamage(attackWeapon.DiceSides); combat.ApplyDamage(selected.DiceSides);
         if(combat.Hp!=984) throw new Exception("Weapon damage failed");
-        combat.EndRound();if(combat.Hp!=1000) throw new Exception("Round reset failed");
+        combat.EndRound();if(combat.Hp!=984) throw new Exception("Round reset failed");
         Debug.Log("WEAPON_CHECKS_PASSED");
     }
 }

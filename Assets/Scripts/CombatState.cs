@@ -1,9 +1,12 @@
 using System;
 public sealed class CombatState
 {
-    public const int MaxHp = 1000;
+    public const int MaxHp = 1000, PlayerMaxHp = 100;
     public int Hp { get; private set; } = MaxHp;
+    public int PlayerHp { get; private set; } = PlayerMaxHp;
     public int Round { get; private set; } = 1;
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
-    public void EndRound() { Hp = MaxHp; Round++; }
+    public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }
+    public void EndRound() { Round++; }
+    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; Hp=MaxHp; PlayerHp=PlayerMaxHp; Round=1; return true; }
 }

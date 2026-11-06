@@ -9,7 +9,7 @@ public static class ProjectSetup
         var state = new CombatState(); state.ApplyDamage(12);
         if(state.Hp!=988) throw new Exception("Damage failed");
         state.ApplyDamage(2000); if(state.Hp!=0) throw new Exception("HP floor failed");
-        state.EndRound(); if(state.Hp!=1000 || state.Round!=2) throw new Exception("Round failed");
+        state.ResetIfDead(); state.EndRound(); if(state.Hp!=1000 || state.Round!=2) throw new Exception("Round failed");
         for(int i=0;i<10000;i++) { int d=UnityEngine.Random.Range(1,13); if(d<1||d>12) throw new Exception("Dice failed"); }
         var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
         new GameObject("Training Game").AddComponent<TrainingGame>();

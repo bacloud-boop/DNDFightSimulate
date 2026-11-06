@@ -9,6 +9,10 @@ public sealed class TrainingGame : MonoBehaviour
     string page = "home", dice = "D10 · 待投掷";
     Weapon selectedWeapon = Weapon.Available[0];
     bool rolling;
+    string panel="";
+    readonly MonsterDamage monster = new MonsterDamage();
+    readonly string[] damageInputs = {"0","0","0","0","0","0"};
+    string inputError="";
     float musicVolume, sfxVolume;
     AudioSource music, sfx;
     AudioClip rollClip;
@@ -48,7 +52,8 @@ public sealed class TrainingGame : MonoBehaviour
         for(int i=0;i<9;i++) { dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" 滚动中 · "+attackWeapon.RollDamage(); PlayRoll(); yield return new WaitForSecondsRealtime(.10f+i*.012f); }
         int result=attackWeapon.RollDamage(); combat.ApplyDamage(result); dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" → "+result;
         history.Insert(0,attackWeapon.Name+" 投掷结果 "+result+"，本次伤害 "+result+"。");
-        if(history.Count>3) history.RemoveAt(3); rolling=false;
+        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
+        if(history.Count>3) history.RemoveRange(3,history.Count-3); rolling=false;
     }
     void OnGUI()
     {
@@ -77,33 +82,74 @@ public sealed class TrainingGame : MonoBehaviour
             if(GUILayout.Button("试听投骰音效",button)) PlayRoll();
             if(GUILayout.Button("← 返回主界面",button)) page="home";
         } else {
-            GUILayout.Label("训练战斗",title); GUILayout.Label("训练木桩 · 仅被动承伤",heading);
+            GUILayout.Label("训练战斗",title); GUILayout.Label("训练木桩 · 回合结束反击",heading);
             GUILayout.Label(combat.Hp+" / "+CombatState.MaxHp+"     第 "+combat.Round+" 回合",label);
             Rect bar=GUILayoutUtility.GetRect(900,20); GUI.Box(bar,GUIContent.none);
             GUI.Box(new Rect(bar.x,bar.y,bar.width*combat.Hp/CombatState.MaxHp,bar.height),GUIContent.none);
-            GUILayout.Label(dice,heading); GUI.enabled=!rolling;
+            GUILayout.Label("玩家血量："+combat.PlayerHp+" / "+CombatState.PlayerMaxHp,label);
+            GUILayout.Label(dice,heading); GUI.enabled=!rolling && panel=="";
             if(GUILayout.Button("攻击 · "+selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,button)) Attack();
-            if(GUILayout.Button("结束回合",button)) {combat.EndRound();dice="D"+selectedWeapon.DiceSides+" · 待投掷";history.Clear();history.Add("回合结束，木桩恢复至 1000。");}
+            if(GUILayout.Button("结束回合",button)) {EndCombatRound();}
             if(GUILayout.Button("← 返回主界面",button)) page="home";
             GUI.enabled=true; foreach(string line in history) GUILayout.Label(line,label);
         }
         GUILayout.EndArea();
         if(page=="battle") {
-            GUILayout.BeginArea(new Rect(100, 590, 900, 155));
-            GUILayout.Label("武器选择 · 当前："+selectedWeapon.Name+"（1d"+selectedWeapon.DiceSides+"）",label);
-            GUILayout.BeginHorizontal();
+            if(GUI.Button(new Rect(100,660,250,54),"玩家武器",button)) panel="weapons";
+            if(GUI.Button(new Rect(780,160,280,54),"怪物伤害更改",button)) panel="monster";
+            if(panel!="") DrawPanel();
+        }
+    }
+    void EndCombatRound()
+    {
+        string details; int damage=monster.Roll(out details);
+        combat.ApplyPlayerDamage(damage);
+        history.Insert(0,"木桩反击："+details);
+        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
+        else combat.EndRound();
+        if(history.Count>3) history.RemoveRange(3,history.Count-3);
+        dice="D"+selectedWeapon.DiceSides+" · 待投掷";
+    }
+    void DrawPanel()
+    {
+        GUI.Box(new Rect(160,110,780,530),GUIContent.none);
+        if(GUI.Button(new Rect(840,120,80,45),"关闭",button)) {panel=""; return;}
+        GUILayout.BeginArea(new Rect(190,175,720,450));
+        if(panel=="weapons") {
+            GUILayout.Label("玩家武器",heading);
             foreach(var weapon in Weapon.Available) {
                 if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides,button)) {
                     selectedWeapon=weapon;
                     if(!rolling) dice="D"+weapon.DiceSides+" · 待投掷";
                 }
             }
-            GUILayout.EndHorizontal();
-            GUILayout.Label(rolling?"本次按攻击开始时的武器结算；切换从下次攻击生效。":"点击武器即可切换。",label);
-            GUILayout.EndArea();
+            GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
+        } else {
+            GUILayout.Label("怪物伤害更改",heading);
+            for(int i=0;i<6;i++) {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(i<5?"D"+MonsterDamage.Sides[i]+" 数量":"固定加值",label,GUILayout.Width(200));
+                damageInputs[i]=GUILayout.TextField(damageInputs[i],11,GUILayout.Height(32));
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.Label("骰子数量为非负整数；固定加值可为负；总伤害最低为 0。",label);
+            if(GUILayout.Button("应用",button)) ApplyMonsterSettings();
+            GUILayout.Label(inputError,label);
         }
+        GUILayout.EndArea();
     }
-    public void QuitGame()
+    void ApplyMonsterSettings()
+    {
+        int[] values=new int[6];
+        for(int i=0;i<6;i++) {
+            if(!int.TryParse(damageInputs[i],out values[i]) || (i<5 && values[i]<0)) { inputError="请输入有效整数，骰子数量不能为负。";return; }
+        }
+        // Keep a mistyped huge input from freezing the main thread during dice rolls.
+        long count=0;for(int i=0;i<5;i++) count+=values[i];
+        if(count>10000) {inputError="单次反击骰子总数不能超过 10000。";return;}
+        for(int i=0;i<5;i++) monster.Counts[i]=values[i];
+        monster.Bonus=values[5]; inputError="已应用，下次回合结束时生效。";
+    }    public void QuitGame()
     {
         SaveVolume();
 #if UNITY_EDITOR
