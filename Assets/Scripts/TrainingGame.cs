@@ -20,7 +20,7 @@ public sealed class TrainingGame : MonoBehaviour
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterHpInput="1000", monsterArmorInput="10", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
-    readonly string[] classInputs = {"1","0","0"};
+    readonly string[] classInputs = {"1","0","0","0"};
     int selectedClass;
     string classError="";
     float musicVolume, sfxVolume;
