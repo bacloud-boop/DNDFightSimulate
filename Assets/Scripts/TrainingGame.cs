@@ -56,15 +56,15 @@ public sealed class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon, attributes.StrengthModifier, classes.ProficiencyBonus)); }
-    IEnumerator Roll(Weapon attackWeapon, int strengthModifier, int proficiencyBonus)
+    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon, selectedWeapon.AttackModifier(attributes), classes.ProficiencyBonus, selectedWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正")); }
+    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel)
     {
         rolling=true;
         int targetArmor=combat.MonsterArmorClass;
         for(int i=0;i<6;i++) { dice="命中判定 D20 · 滚动中 · "+Random.Range(1,21); PlayRoll(); yield return new WaitForSecondsRealtime(.12f); }
         int hitRoll=Random.Range(1,21);
-        int hitTotal=hitRoll+proficiencyBonus+strengthModifier;
-        string hitDetails="D20="+hitRoll+"，熟练 "+proficiencyBonus+"，力量修正 "+strengthModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
+        int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
+        string hitDetails="D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";
@@ -80,11 +80,11 @@ public sealed class TrainingGame : MonoBehaviour
         int secondRoll=critical?attackWeapon.RollDamage():0;
         int result=firstRoll+secondRoll;
         string damageDice=critical?"2d"+attackWeapon.DiceSides+"="+firstRoll+"+"+secondRoll:"1d"+attackWeapon.DiceSides+"="+firstRoll;
-        int damage=Mathf.Max(0,result+strengthModifier);
-        string modifierText=(strengthModifier>=0?"+":"")+strengthModifier;
+        int damage=Mathf.Max(0,result+abilityModifier);
+        string modifierText=(abilityModifier>=0?"+":"")+abilityModifier;
         combat.ApplyDamage(damage);
-        dice=hitLabel+" · "+damageDice+"，力量修正 "+modifierText+"，伤害 "+damage;
-        history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，力量修正 "+modifierText+"，本次伤害 "+damage+"。");
+        dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
+        history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
         if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
         if(history.Count>3) history.RemoveRange(3,history.Count-3); rolling=false;
     }
@@ -162,7 +162,7 @@ public sealed class TrainingGame : MonoBehaviour
         if(panel=="weapons") {
             GUILayout.Label("玩家武器",heading);
             foreach(var weapon in Weapon.Available) {
-                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides,button)) {
+                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides+(weapon.HasFinesse?" · 灵巧":" · 无灵巧"),button)) {
                     selectedWeapon=weapon;
                     if(!rolling) dice="D"+weapon.DiceSides+" · 待投掷";
                 }

@@ -5,6 +5,7 @@ public sealed class PlayerAttributes
     readonly int[] values = {10,10,10,10,10,10};
     public int this[int index] => values[index];
     public int StrengthModifier => (int)Math.Floor((values[0] - 10) / 2.0);
+    public int DexterityModifier => (int)Math.Floor((values[1] - 10) / 2.0);
     public bool TryApply(string[] inputs)
     {
         if(inputs == null || inputs.Length != 6) return false;
