@@ -1,7 +1,7 @@
 public sealed class PlayerClasses
 {
-    public static readonly string[] Names = {"战士", "法师", "游侠", "术士"};
-    readonly int[] levels = {1,0,0,0};
+    public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士"};
+    readonly int[] levels = {1,0,0,0,0,0,0,0,0,0};
     public int InitialClass { get; private set; }
     public int this[int index] => levels[index];
     public int TotalLevel => System.Linq.Enumerable.Sum(levels);
@@ -17,12 +17,13 @@ public sealed class PlayerClasses
     public int CalculateMaxHp(int constitution)
     {
         int modifier=(int)System.Math.Floor((constitution-10)/2.0);
-        int hp=(UsesMageHealth(InitialClass)?6:10)+modifier;
+        int hp=FirstLevelHp(InitialClass)+modifier;
         for(int i=0;i<Names.Length;i++) {
             int additionalLevels=levels[i]-(i==InitialClass?1:0);
-            hp+=additionalLevels*((UsesMageHealth(i)?4:6)+modifier);
+            hp+=additionalLevels*(LaterLevelHp(i)+modifier);
         }
         return hp;
     }
-    static bool UsesMageHealth(int index) => index==1 || index==3;
+    static int FirstLevelHp(int index) => index>=4?8:(index==1 || index==3?6:10);
+    static int LaterLevelHp(int index) => index>=4?5:(index==1 || index==3?4:6);
 }

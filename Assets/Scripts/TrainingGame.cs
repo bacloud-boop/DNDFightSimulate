@@ -20,7 +20,8 @@ public sealed class TrainingGame : MonoBehaviour
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterHpInput="1000", monsterArmorInput="10", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
-    readonly string[] classInputs = {"1","0","0","0"};
+    readonly string[] classInputs = {"1","0","0","0","0","0","0","0","0","0"};
+    Vector2 classScroll;
     int selectedClass;
     string classError="";
     float musicVolume, sfxVolume;
@@ -167,6 +168,7 @@ public sealed class TrainingGame : MonoBehaviour
             GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
         } else if(panel=="classes") {
             GUILayout.Label("玩家职业 · 选择初始职业",heading);
+            classScroll=GUILayout.BeginScrollView(classScroll,GUILayout.Height(230));
             for(int i=0;i<PlayerClasses.Names.Length;i++) {
                 GUILayout.BeginHorizontal();
                 if(GUILayout.Button((selectedClass==i?"✓ ":"")+PlayerClasses.Names[i],button,GUILayout.Width(230))) selectedClass=i;
@@ -174,6 +176,7 @@ public sealed class TrainingGame : MonoBehaviour
                 classInputs[i]=IntegerField(classInputs[i],false);
                 GUILayout.EndHorizontal();
             }
+            GUILayout.EndScrollView();
             GUILayout.Label("总等级 1～20，各职业 0～20，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
                 if(classes.TryApply(classInputs,selectedClass)) { combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
