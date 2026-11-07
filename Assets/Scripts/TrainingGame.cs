@@ -18,7 +18,7 @@ public sealed class TrainingGame : MonoBehaviour
     string attributeError="";
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
-    string monsterHpInput="1000", monsterAttributeError="";
+    string monsterHpInput="1000", monsterArmorInput="10", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = {"1","0"};
     int selectedClass;
@@ -186,11 +186,16 @@ public sealed class TrainingGame : MonoBehaviour
             GUILayout.Label("最大 HP（当前 "+combat.MaxHp+"）",label,GUILayout.Width(260));
             monsterHpInput=IntegerField(monsterHpInput,false);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("护甲等级（当前 "+combat.MonsterArmorClass+"）",label,GUILayout.Width(260));
+            monsterArmorInput=IntegerField(monsterArmorInput,false);
+            GUILayout.EndHorizontal();
             if(GUILayout.Button("应用",button)) {
-                int maxHp;
+                int maxHp, armorClass;
                 if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
+                else if(!int.TryParse(monsterArmorInput,out armorClass) || armorClass<5 || armorClass>30) monsterAttributeError="护甲等级必须为 5～30 的整数。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {combat.UpdateMonsterMaxHp(maxHp); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
