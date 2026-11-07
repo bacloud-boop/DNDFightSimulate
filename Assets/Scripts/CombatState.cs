@@ -1,6 +1,8 @@
 using System;
 public sealed class CombatState
 {
+    public int PlayerArmorClass { get; } = 10;
+    public int MonsterArmorClass { get; } = 10;
     public int MaxHp { get; private set; } = 1000;
     public int PlayerMaxHp { get; private set; } = 10;
     public int Hp { get; private set; } = 1000;

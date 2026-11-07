@@ -59,13 +59,25 @@ public sealed class TrainingGame : MonoBehaviour
     IEnumerator Roll(Weapon attackWeapon, int strengthModifier)
     {
         rolling=true;
+        int targetArmor=combat.MonsterArmorClass;
+        for(int i=0;i<6;i++) { dice="命中判定 D20 · 滚动中 · "+Random.Range(1,21); PlayRoll(); yield return new WaitForSecondsRealtime(.12f); }
+        int hitRoll=Random.Range(1,21);
+        string hitDetails="D20="+hitRoll+" / 目标护甲 "+targetArmor;
+        if(hitRoll<targetArmor) {
+            dice=hitDetails+"，未命中，伤害 0";
+            history.Insert(0,attackWeapon.Name+" "+dice);
+            if(history.Count>3) history.RemoveRange(3,history.Count-3);
+            rolling=false; yield break;
+        }
+        dice=hitDetails+"，命中";
+        yield return new WaitForSecondsRealtime(.5f);
         for(int i=0;i<9;i++) { dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" 滚动中 · "+attackWeapon.RollDamage(); PlayRoll(); yield return new WaitForSecondsRealtime(.10f+i*.012f); }
         int result=attackWeapon.RollDamage();
         int damage=Mathf.Max(0,result+strengthModifier);
         string modifierText=(strengthModifier>=0?"+":"")+strengthModifier;
         combat.ApplyDamage(damage);
         dice=attackWeapon.Name+" · D"+attackWeapon.DiceSides+" → "+result+"，力量修正 "+modifierText+"，伤害 "+damage;
-        history.Insert(0,attackWeapon.Name+" 骰值 "+result+"，力量修正 "+modifierText+"，本次伤害 "+damage+"。");
+        history.Insert(0,hitDetails+" 命中；"+attackWeapon.Name+" 骰值 "+result+"，力量修正 "+modifierText+"，本次伤害 "+damage+"。");
         if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
         if(history.Count>3) history.RemoveRange(3,history.Count-3); rolling=false;
     }
@@ -100,7 +112,7 @@ public sealed class TrainingGame : MonoBehaviour
             GUILayout.Label(combat.Hp+" / "+combat.MaxHp+"     第 "+combat.Round+" 回合",label);
             Rect bar=GUILayoutUtility.GetRect(900,20); GUI.Box(bar,GUIContent.none);
             GUI.Box(new Rect(bar.x,bar.y,bar.width*combat.Hp/combat.MaxHp,bar.height),GUIContent.none);
-            GUILayout.Label("玩家血量："+combat.PlayerHp+" / "+combat.PlayerMaxHp,label);
+            GUILayout.Label("玩家血量："+combat.PlayerHp+" / "+combat.PlayerMaxHp+"   玩家护甲："+combat.PlayerArmorClass+"   木桩护甲："+combat.MonsterArmorClass,label);
             GUILayout.Label(dice,heading); GUI.enabled=!rolling && panel=="";
             if(GUILayout.Button("攻击 · "+selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,button)) Attack();
             if(GUILayout.Button("结束回合",button)) {EndCombatRound();}
@@ -121,9 +133,13 @@ public sealed class TrainingGame : MonoBehaviour
     }
     void EndCombatRound()
     {
-        string details; int damage=monster.Roll(out details);
-        combat.ApplyPlayerDamage(damage);
-        history.Insert(0,"木桩反击："+details);
+        int hitRoll=Random.Range(1,21);
+        string hitDetails="木桩反击 D20="+hitRoll+" / 玩家护甲 "+combat.PlayerArmorClass;
+        if(hitRoll>=combat.PlayerArmorClass) {
+            string details; int damage=monster.Roll(out details);
+            combat.ApplyPlayerDamage(damage);
+            history.Insert(0,hitDetails+"，命中；"+details);
+        } else history.Insert(0,hitDetails+"，未命中，伤害 0。");
         if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
         else combat.EndRound();
         if(history.Count>3) history.RemoveRange(3,history.Count-3);
