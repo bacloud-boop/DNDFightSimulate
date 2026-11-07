@@ -14,9 +14,9 @@ public sealed class CombatState
     public int Round { get; private set; } = 1;
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
     public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }
-    public void UpdatePlayerMaxHp(int constitution, int totalLevel) {
-        int constitutionModifier = (int)Math.Floor((constitution-10)/2.0);
-        int newMaxHp = (6 + constitutionModifier) * (totalLevel-1) + 10 + constitutionModifier;
+    public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
+
+        int newMaxHp = classes.CalculateMaxHp(constitution);
         if(newMaxHp != PlayerMaxHp) { PlayerMaxHp = newMaxHp; PlayerHp = newMaxHp; }
 
     }

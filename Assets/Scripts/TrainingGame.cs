@@ -20,7 +20,7 @@ public sealed class TrainingGame : MonoBehaviour
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterHpInput="1000", monsterArmorInput="10", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
-    readonly string[] classInputs = {"1","0"};
+    readonly string[] classInputs = {"1","0","0"};
     int selectedClass;
     string classError="";
     float musicVolume, sfxVolume;
@@ -166,18 +166,18 @@ public sealed class TrainingGame : MonoBehaviour
             }
             GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
         } else if(panel=="classes") {
-            GUILayout.Label("玩家职业",heading);
-            for(int i=0;i<2;i++) {
+            GUILayout.Label("玩家职业 · 选择初始职业",heading);
+            for(int i=0;i<PlayerClasses.Names.Length;i++) {
                 GUILayout.BeginHorizontal();
                 if(GUILayout.Button((selectedClass==i?"✓ ":"")+PlayerClasses.Names[i],button,GUILayout.Width(230))) selectedClass=i;
                 GUILayout.Label("等级（当前 "+classes[i]+"）",label,GUILayout.Width(220));
                 classInputs[i]=IntegerField(classInputs[i],false);
                 GUILayout.EndHorizontal();
             }
-            GUILayout.Label("各职业 0～20 级，总等级至少 1。当前总等级："+classes.TotalLevel,label);
+            GUILayout.Label("各职业 0～20 级，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
-                if(classes.TryApply(classInputs)) { combat.UpdatePlayerMaxHp(attributes[2],classes.TotalLevel); classError="职业等级已应用。"; }
-                else classError="等级必须为 0～20 的整数，且总等级至少为 1。";
+                if(classes.TryApply(classInputs,selectedClass)) { combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
+                else classError="等级须为 0～20 整数，且初始职业至少 1 级。";
             }
             GUILayout.Label(classError,label);
         } else if(panel=="monsterAttributes") {
@@ -214,7 +214,7 @@ public sealed class TrainingGame : MonoBehaviour
             }
             GUILayout.Label("每项为 3～20 的整数；默认 10。",label);
             if(GUILayout.Button("应用",button)) {
-                if(attributes.TryApply(attributeInputs)) { combat.UpdatePlayerMaxHp(attributes[2],classes.TotalLevel); attributeError="属性已应用。"; }
+                if(attributes.TryApply(attributeInputs)) { combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
                 else attributeError="每项必须为 3～20 的整数，未保存本次修改。";
             }
             GUILayout.Label(attributeError,label);
