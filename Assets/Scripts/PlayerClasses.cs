@@ -1,7 +1,7 @@
 public sealed class PlayerClasses
 {
-    public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士"};
-    readonly int[] levels = {1,0,0,0,0,0,0,0,0,0};
+    public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士", "野蛮人"};
+    readonly int[] levels = {1,0,0,0,0,0,0,0,0,0,0};
     public int InitialClass { get; private set; }
     public int this[int index] => levels[index];
     public int TotalLevel => System.Linq.Enumerable.Sum(levels);
@@ -24,6 +24,6 @@ public sealed class PlayerClasses
         }
         return hp;
     }
-    static int FirstLevelHp(int index) => index>=4?8:(index==1 || index==3?6:10);
-    static int LaterLevelHp(int index) => index>=4?5:(index==1 || index==3?4:6);
+    static int FirstLevelHp(int index) => index==10?12:(index>=4?8:(index==1 || index==3?6:10));
+    static int LaterLevelHp(int index) => index==10?7:(index>=4?5:(index==1 || index==3?4:6));
 }
