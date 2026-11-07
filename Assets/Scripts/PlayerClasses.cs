@@ -5,6 +5,7 @@ public sealed class PlayerClasses
     public int InitialClass { get; private set; }
     public int this[int index] => levels[index];
     public int TotalLevel => System.Linq.Enumerable.Sum(levels);
+    public int ProficiencyBonus => 2 + (TotalLevel - 1) / 4;
     public bool TryApply(string[] inputs, int initialClass)
     {
         if(inputs==null || inputs.Length!=Names.Length || initialClass<0 || initialClass>=Names.Length) return false;

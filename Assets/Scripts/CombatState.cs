@@ -2,6 +2,7 @@ using System;
 public sealed class CombatState
 {
     public int PlayerArmorClass { get; } = 10;
+    public int MonsterProficiencyBonus { get; set; } = 0;
     public int MonsterArmorClass { get; private set; } = 10;
     public void UpdateMonsterArmorClass(int armorClass) {
         if(armorClass < 5 || armorClass > 30) throw new ArgumentOutOfRangeException(nameof(armorClass));

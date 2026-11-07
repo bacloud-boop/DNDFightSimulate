@@ -18,7 +18,7 @@ public sealed class TrainingGame : MonoBehaviour
     string attributeError="";
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
-    string monsterHpInput="1000", monsterArmorInput="10", monsterAttributeError="";
+    string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = {"1","0","0","0","0","0","0","0","0","0","0"};
     Vector2 classScroll;
@@ -56,16 +56,17 @@ public sealed class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon, attributes.StrengthModifier)); }
-    IEnumerator Roll(Weapon attackWeapon, int strengthModifier)
+    public void Attack() { if(!rolling) StartCoroutine(Roll(selectedWeapon, attributes.StrengthModifier, classes.ProficiencyBonus)); }
+    IEnumerator Roll(Weapon attackWeapon, int strengthModifier, int proficiencyBonus)
     {
         rolling=true;
         int targetArmor=combat.MonsterArmorClass;
         for(int i=0;i<6;i++) { dice="命中判定 D20 · 滚动中 · "+Random.Range(1,21); PlayRoll(); yield return new WaitForSecondsRealtime(.12f); }
         int hitRoll=Random.Range(1,21);
-        string hitDetails="D20="+hitRoll+" / 目标护甲 "+targetArmor;
+        int hitTotal=hitRoll+proficiencyBonus+strengthModifier;
+        string hitDetails="D20="+hitRoll+"，熟练 "+proficiencyBonus+"，力量修正 "+strengthModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
-        if(hitRoll==1 || (!critical && hitRoll<targetArmor)) {
+        if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";
             history.Insert(0,attackWeapon.Name+" "+dice);
             if(history.Count>3) history.RemoveRange(3,history.Count-3);
@@ -140,9 +141,10 @@ public sealed class TrainingGame : MonoBehaviour
     void EndCombatRound()
     {
         int hitRoll=Random.Range(1,21);
-        string hitDetails="木桩反击 D20="+hitRoll+" / 玩家护甲 "+combat.PlayerArmorClass;
+        long hitTotal=(long)hitRoll+combat.MonsterProficiencyBonus;
+        string hitDetails="木桩反击 D20="+hitRoll+"，熟练 "+combat.MonsterProficiencyBonus+"，命中总值 "+hitTotal+" / 玩家护甲 "+combat.PlayerArmorClass;
         bool critical=hitRoll==20;
-        if(hitRoll!=1 && (critical || hitRoll>=combat.PlayerArmorClass)) {
+        if(hitRoll!=1 && (critical || hitTotal>=combat.PlayerArmorClass)) {
             string details; int damage=monster.Roll(out details,critical);
             combat.ApplyPlayerDamage(damage);
             history.Insert(0,hitDetails+(critical?"，暴击（伤害骰数量翻倍）；":"，命中；")+details);
@@ -199,12 +201,17 @@ public sealed class TrainingGame : MonoBehaviour
             GUILayout.Label("护甲等级（当前 "+combat.MonsterArmorClass+"）",label,GUILayout.Width(260));
             monsterArmorInput=IntegerField(monsterArmorInput,false);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("熟练加值（当前 "+combat.MonsterProficiencyBonus+"）",label,GUILayout.Width(260));
+            monsterProficiencyInput=IntegerField(monsterProficiencyInput,true);
+            GUILayout.EndHorizontal();
             if(GUILayout.Button("应用",button)) {
-                int maxHp, armorClass;
+                int maxHp, armorClass, proficiency;
                 if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
                 else if(!int.TryParse(monsterArmorInput,out armorClass) || armorClass<5 || armorClass>30) monsterAttributeError="护甲等级必须为 5～30 的整数。";
+                else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
