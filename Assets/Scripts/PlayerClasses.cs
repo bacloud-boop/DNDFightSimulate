@@ -10,7 +10,8 @@ public sealed class PlayerClasses
         if(inputs==null || inputs.Length!=Names.Length || initialClass<0 || initialClass>=Names.Length) return false;
         var parsed=new int[Names.Length];
         for(int i=0;i<Names.Length;i++) if(!int.TryParse(inputs[i],out parsed[i]) || parsed[i]<0 || parsed[i]>20) return false;
-        if(System.Linq.Enumerable.Sum(parsed)<1 || parsed[initialClass]<1) return false;
+        int totalLevel=System.Linq.Enumerable.Sum(parsed);
+        if(totalLevel<1 || totalLevel>20 || parsed[initialClass]<1) return false;
         System.Array.Copy(parsed,levels,Names.Length); InitialClass=initialClass; return true;
     }
     public int CalculateMaxHp(int constitution)

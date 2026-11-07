@@ -174,10 +174,10 @@ public sealed class TrainingGame : MonoBehaviour
                 classInputs[i]=IntegerField(classInputs[i],false);
                 GUILayout.EndHorizontal();
             }
-            GUILayout.Label("各职业 0～20 级，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
+            GUILayout.Label("总等级 1～20，各职业 0～20，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
                 if(classes.TryApply(classInputs,selectedClass)) { combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
-                else classError="等级须为 0～20 整数，且初始职业至少 1 级。";
+                else classError="各职业须为 0～20 整数，总等级须为 1～20，初始职业至少 1 级。";
             }
             GUILayout.Label(classError,label);
         } else if(panel=="monsterAttributes") {
