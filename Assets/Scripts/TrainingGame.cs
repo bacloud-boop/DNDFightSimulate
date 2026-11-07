@@ -16,6 +16,9 @@ public sealed class TrainingGame : MonoBehaviour
     readonly PlayerAttributes attributes = new PlayerAttributes();
     readonly string[] attributeInputs = {"10","10","10","10","10","10"};
     string attributeError="";
+    readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
+    readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
+    string monsterHpInput="1000", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = {"1","0"};
     int selectedClass;
@@ -94,9 +97,9 @@ public sealed class TrainingGame : MonoBehaviour
             if(GUILayout.Button("← 返回主界面",button)) page="home";
         } else {
             GUILayout.Label("训练战斗",title); GUILayout.Label("训练木桩 · 回合结束反击",heading);
-            GUILayout.Label(combat.Hp+" / "+CombatState.MaxHp+"     第 "+combat.Round+" 回合",label);
+            GUILayout.Label(combat.Hp+" / "+combat.MaxHp+"     第 "+combat.Round+" 回合",label);
             Rect bar=GUILayoutUtility.GetRect(900,20); GUI.Box(bar,GUIContent.none);
-            GUI.Box(new Rect(bar.x,bar.y,bar.width*combat.Hp/CombatState.MaxHp,bar.height),GUIContent.none);
+            GUI.Box(new Rect(bar.x,bar.y,bar.width*combat.Hp/combat.MaxHp,bar.height),GUIContent.none);
             GUILayout.Label("玩家血量："+combat.PlayerHp+" / "+combat.PlayerMaxHp,label);
             GUILayout.Label(dice,heading); GUI.enabled=!rolling && panel=="";
             if(GUILayout.Button("攻击 · "+selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,button)) Attack();
@@ -107,10 +110,11 @@ public sealed class TrainingGame : MonoBehaviour
         GUILayout.EndArea();
         if(page=="battle") {
             GUI.enabled=panel=="";
-            if(GUI.Button(new Rect(780,230,280,54),"玩家职业",button)) panel="classes";
+            if(GUI.Button(new Rect(780,300,280,54),"玩家职业",button)) panel="classes";
             if(GUI.Button(new Rect(100,600,250,54),"玩家属性",button)) panel="attributes";
             if(GUI.Button(new Rect(100,660,250,54),"玩家武器",button)) panel="weapons";
             if(GUI.Button(new Rect(780,160,280,54),"怪物伤害更改",button)) panel="monster";
+            if(GUI.Button(new Rect(780,230,280,54),"怪物属性",button)) panel="monsterAttributes";
             GUI.enabled=true;
             if(panel!="") DrawPanel();
         }
@@ -154,6 +158,25 @@ public sealed class TrainingGame : MonoBehaviour
                 else classError="等级必须为 0～20 的整数，且总等级至少为 1。";
             }
             GUILayout.Label(classError,label);
+        } else if(panel=="monsterAttributes") {
+            GUILayout.Label("怪物属性",heading);
+            for(int i=0;i<6;i++) {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(PlayerAttributes.Names[i]+"（当前 "+monsterAttributes[i]+"）",label,GUILayout.Width(260));
+                monsterAttributeInputs[i]=IntegerField(monsterAttributeInputs[i],false);
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("最大 HP（当前 "+combat.MaxHp+"）",label,GUILayout.Width(260));
+            monsterHpInput=IntegerField(monsterHpInput,false);
+            GUILayout.EndHorizontal();
+            if(GUILayout.Button("应用",button)) {
+                int maxHp;
+                if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
+                else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
+                else {combat.UpdateMonsterMaxHp(maxHp); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+            }
+            GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
             GUILayout.Label("玩家属性",heading);
             for(int i=0;i<6;i++) {
