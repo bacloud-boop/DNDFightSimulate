@@ -22,6 +22,7 @@ public sealed class TrainingGame : MonoBehaviour
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = {"1","0","0","0","0","0","0","0","0","0","0"};
     Vector2 classScroll;
+    Vector2 weaponScroll;
     int selectedClass;
     string classError="";
     float musicVolume, sfxVolume;
@@ -161,12 +162,14 @@ public sealed class TrainingGame : MonoBehaviour
         GUILayout.BeginArea(new Rect(190,175,720,450));
         if(panel=="weapons") {
             GUILayout.Label("玩家武器",heading);
+            weaponScroll=GUILayout.BeginScrollView(weaponScroll,GUILayout.Height(310));
             foreach(var weapon in Weapon.Available) {
                 if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides+(weapon.HasFinesse?" · 灵巧":" · 无灵巧"),button)) {
                     selectedWeapon=weapon;
                     if(!rolling) dice="D"+weapon.DiceSides+" · 待投掷";
                 }
             }
+            GUILayout.EndScrollView();
             GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
         } else if(panel=="classes") {
             GUILayout.Label("玩家职业 · 选择初始职业",heading);
