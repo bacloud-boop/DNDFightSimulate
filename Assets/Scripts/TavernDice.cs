@@ -73,7 +73,7 @@ public sealed class TavernDice : MonoBehaviour
                 var number=new GameObject("Face "+(f+1));number.layer=30;number.transform.SetParent(die.transform,false);
                 number.transform.localPosition=center+faceNormals[f]*.016f;
                 number.transform.localRotation=Quaternion.LookRotation(-faceNormals[f]);
-                var text=number.AddComponent<TextMesh>();text.text=(f+1).ToString();text.font=font;text.fontSize=64;text.characterSize=sides>=12?.10f:.15f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.color=new Color(1,.86f,.49f);
+                var text=number.AddComponent<TextMesh>();text.text=(f+1).ToString();text.font=font;text.fontSize=64;text.characterSize=(sides>=12?.10f:.15f)*.25f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.color=new Color(1,.86f,.49f);
                 number.GetComponent<MeshRenderer>().sharedMaterial=font.material;
             }
             var mesh=new Mesh();mesh.SetVertices(meshVertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();owned.Add(mesh);
