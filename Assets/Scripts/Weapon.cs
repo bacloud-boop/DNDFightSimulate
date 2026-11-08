@@ -14,6 +14,15 @@ public sealed class Weapon
         new Weapon("匕首", 4, true),
         new Weapon("刺剑", 8, true),
         new Weapon("弯刀", 6, true),
-        new Weapon("鞭", 4, true)
+        new Weapon("鞭", 4, true),
+        new Weapon("短棒", 4),
+        new Weapon("巨棒", 8),
+        new Weapon("手斧", 6),
+        new Weapon("标枪", 6),
+        new Weapon("轻锤", 4),
+        new Weapon("硬头锤", 6),
+        new Weapon("长棍", 6),
+        new Weapon("镰刀", 4),
+        new Weapon("矛", 6)
     };
 }
