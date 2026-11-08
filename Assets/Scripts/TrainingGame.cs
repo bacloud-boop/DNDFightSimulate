@@ -62,7 +62,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
     public void Attack()
     {
-        if(rolling || panel!="" || page!="battle")return;
+        if(rolling || panel!="" || page!="battle" || draggingToken>=0)return;
         if(fighter.AttacksRemaining==0) {
             if(!combat.TryUseAction())return;
             actionWeapon=selectedWeapon;fighter.BeginAttackAction(classes[0]);
@@ -73,7 +73,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     public void BonusAttack()
     {
-        if(rolling || panel!="" || page!="battle" || !selectedWeapon.HasLight || !combat.TryUseBonusAction())return;
+        if(rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight || !combat.TryUseBonusAction())return;
         Weapon weapon=selectedWeapon;
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
         StartCoroutine(Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"轻型附赠攻击"));
@@ -114,7 +114,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void EndCombatRound()
     {
-        if(!rolling && panel=="" && page=="battle") {
+        if(!rolling && panel=="" && page=="battle" && draggingToken<0) {
             combat.MarkBattleStarted();
             history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
             StartCoroutine(Counterattack());
@@ -146,7 +146,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
         if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
-        else {combat.EndRound();fighter.EndRound();}
+        else {combat.EndRound();fighter.EndRound();map.RefreshMovement();movementMessage="拖动玩家棋子移动。";}
         rolling=false;logScroll=Vector2.zero;
     }
     void DrawPanel()

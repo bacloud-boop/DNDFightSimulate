@@ -142,22 +142,23 @@ public sealed partial class TrainingGame
             if(Btn(new Rect(x+25,744,250,48),"怪物属性",panel==""))OpenPanel("monsterAttributes");
         }
     }
-    void OpenPanel(string value){panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
+    void OpenPanel(string value){if(draggingToken>=0)return;panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
     void DrawBattle()
     {
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
-        if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!rolling&&panel==""))page="home";
-        if(Btn(new Rect(1310,25,250,48),"重置战斗",!rolling&&panel==""))ResetCombat();
+        if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!rolling&&panel==""&&draggingToken<0))page="home";
+        if(Btn(new Rect(1310,25,250,48),"重置战斗",!rolling&&panel==""&&draggingToken<0))ResetCombat();
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,420),new Color(.10f,.045f,.02f,.65f));
-        DrawMap(new Rect(640,115,320,320),false);
+        DrawMap(new Rect(640,115,320,320),!rolling&&panel=="");
+        GUI.Label(new Rect(985,125,235,250),"移动 "+map.MovementRemaining+" / 30 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,240,90),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
         if(rolling) {
             Fill(new Rect(365,105,870,330),new Color(.1f,.045f,.02f,.8f));
             GUI.DrawTexture(new Rect(480,130,640,290),diceStage.Texture,ScaleMode.ScaleToFit);
         }
         GUI.Label(new Rect(385,435,830,38),dice,new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
-        bool canAct=!rolling&&panel=="";
+        bool canAct=!rolling&&panel==""&&draggingToken<0;
         if(Btn(new Rect(395,475,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / 2":"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
         if(Btn(new Rect(670,475,260,48),classes[0]>=2?"动作如潮 · 剩余 "+fighter.SurgeRemaining(classes[0])+(fighter.SurgedThisRound?"（本回合已用）":""):"动作如潮 · 战士 2 级解锁",canAct&&fighter.CanSurge(classes[0])))ActionSurge();
         if(Btn(new Rect(945,475,260,48),selectedWeapon.HasLight?"轻型攻击（附赠动作）":"轻型攻击 · 需轻型武器",canAct&&selectedWeapon.HasLight&&combat.BonusActionAvailable))BonusAttack();
