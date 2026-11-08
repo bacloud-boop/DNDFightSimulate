@@ -10,7 +10,10 @@ public sealed class Weapon
     public static readonly Weapon[] Available = {
         new Weapon("长剑（双手）", 10),
         new Weapon("长剑（单手）", 8),
-        new Weapon("短剑", 6),
-        new Weapon("匕首", 4, true)
+        new Weapon("短剑", 6, true),
+        new Weapon("匕首", 4, true),
+        new Weapon("刺剑", 8, true),
+        new Weapon("弯刀", 6, true),
+        new Weapon("鞭", 4, true)
     };
 }
