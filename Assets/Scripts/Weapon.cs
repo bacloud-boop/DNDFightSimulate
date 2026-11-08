@@ -5,7 +5,9 @@ public sealed class Weapon
     public int DiceCount { get; }
     public string DamageDice => DiceCount+"d"+DiceSides;
     public bool HasFinesse { get; }
-    public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; }
+    public bool HasLight { get; }
+    public string Traits => (HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
+    public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1, bool hasLight = false) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; HasLight = hasLight; }
     public bool UsesDexterity(PlayerAttributes attributes) => HasFinesse && attributes.DexterityModifier > attributes.StrengthModifier;
     public int AttackModifier(PlayerAttributes attributes) => UsesDexterity(attributes) ? attributes.DexterityModifier : attributes.StrengthModifier;
     public int[] RollDamageDice(bool critical = false) {
@@ -17,19 +19,19 @@ public sealed class Weapon
     public static readonly Weapon[] Available = {
         new Weapon("长剑（双手）", 10),
         new Weapon("长剑（单手）", 8),
-        new Weapon("短剑", 6, true),
-        new Weapon("匕首", 4, true),
+        new Weapon("短剑", 6, true, hasLight: true),
+        new Weapon("匕首", 4, true, hasLight: true),
         new Weapon("刺剑", 8, true),
-        new Weapon("弯刀", 6, true),
+        new Weapon("弯刀", 6, true, hasLight: true),
         new Weapon("鞭", 4, true),
-        new Weapon("短棒", 4),
+        new Weapon("短棒", 4, hasLight: true),
         new Weapon("巨棒", 8),
-        new Weapon("手斧", 6),
+        new Weapon("手斧", 6, hasLight: true),
         new Weapon("标枪", 6),
-        new Weapon("轻锤", 4),
+        new Weapon("轻锤", 4, hasLight: true),
         new Weapon("硬头锤", 6),
         new Weapon("长棍", 6),
-        new Weapon("镰刀", 4),
+        new Weapon("镰刀", 4, hasLight: true),
         new Weapon("矛", 6),
         new Weapon("战斧", 8),
         new Weapon("链枷", 8),

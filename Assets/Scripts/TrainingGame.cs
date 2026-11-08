@@ -71,7 +71,14 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
         StartCoroutine(Roll(actionWeapon,actionWeapon.AttackModifier(attributes),classes.ProficiencyBonus,actionWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage));
     }
-    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage)
+    public void BonusAttack()
+    {
+        if(rolling || panel!="" || page!="battle" || !selectedWeapon.HasLight || !combat.TryUseBonusAction())return;
+        Weapon weapon=selectedWeapon;
+        bool advantage=fighter.ConsumeAdvantage(classes[0]);
+        StartCoroutine(Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"轻型附赠攻击"));
+    }
+    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击")
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
@@ -80,7 +87,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice=advantage?"究明攻击 · 优势命中判定 2d20 取高":"玩家命中判定 · D20";
         yield return diceStage.Roll(20,advantage?new[]{firstHit,secondHit}:new[]{firstHit},RollDuration,PlayRoll);
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
-        string hitDetails=(advantage?"优势 ["+firstHit+", "+secondHit+"] 取高 ":"")+"D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
+        string hitDetails=attackKind+" · "+(advantage?"优势 ["+firstHit+", "+secondHit+"] 取高 ":"")+"D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";
@@ -158,7 +165,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label("玩家武器",heading);
             weaponScroll=GUILayout.BeginScrollView(weaponScroll,GUILayout.Height(310));
             foreach(var weapon in Weapon.Available) {
-                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · "+weapon.DamageDice+(weapon.HasFinesse?" · 灵巧":" · 无灵巧"),button)) {
+                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · "+weapon.DamageDice+" · "+weapon.Traits,button)) {
                     selectedWeapon=weapon;
                     if(!rolling) dice=weapon.DamageDice+" · 待投掷";
                 }
