@@ -132,9 +132,10 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(x+20,585,260,30),"护甲  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),centered);
         if(player){
             GUI.Label(new Rect(x+20,623,260,35),selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,centered);
-            if(Btn(new Rect(x+25,674,250,46),"玩家属性",panel==""))OpenPanel("attributes");
+            if(Btn(new Rect(x+25,674,250,46),combat.BattleStarted?"玩家属性（只读）":"玩家属性",panel==""))OpenPanel("attributes");
             if(Btn(new Rect(x+25,728,120,46),"玩家武器",panel==""))OpenPanel("weapons");
             if(Btn(new Rect(x+155,728,120,46),"玩家职业",panel==""))OpenPanel("classes");
+            GUI.Label(new Rect(x+20,788,260,55),"每动作攻击 "+fighter.AttacksPerAction(classes[0])+" 次"+(classes[0]>=13?"\n究明攻击：失手后下次优势":""),centered);
         } else {
             GUI.Label(new Rect(x+20,625,260,30),"熟练加值  "+combat.MonsterProficiencyBonus,centered);
             if(Btn(new Rect(x+25,684,250,48),"怪物伤害更改",panel==""))OpenPanel("monster");
@@ -146,15 +147,19 @@ public sealed partial class TrainingGame
     {
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
         if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!rolling&&panel==""))page="home";
+        if(Btn(new Rect(1310,25,250,48),"重置战斗",!rolling&&panel==""))ResetCombat();
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,420),new Color(.10f,.045f,.02f,.65f));
         GUI.Label(new Rect(535,115,530,40),rolling?"命运之骰 · 投掷中":"命运之骰",lightTitle);
-        GUI.DrawTexture(new Rect(390,160,820,275),diceStage.Texture);
-        GUI.Label(new Rect(405,435,790,75),dice,new GUIStyle(centered){normal={textColor=new Color(.98f,.86f,.63f)}});
+        GUI.DrawTexture(new Rect(390,155,820,240),diceStage.Texture);
+        GUI.Label(new Rect(405,397,790,66),dice,new GUIStyle(centered){normal={textColor=new Color(.98f,.86f,.63f)}});
         bool canAct=!rolling&&panel=="";
-        if(Btn(new Rect(430,535,360,57),combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用",canAct&&combat.ActionAvailable))Attack();
+        if(Btn(new Rect(430,475,360,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / 2":"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
+        if(Btn(new Rect(810,475,360,48),classes[0]>=2?"动作如潮 · 剩余 "+fighter.SurgeRemaining(classes[0])+(fighter.SurgedThisRound?"（本回合已用）":""):"动作如潮 · 战士 2 级解锁",canAct&&fighter.CanSurge(classes[0])))ActionSurge();
+        string attackLabel=fighter.AttacksRemaining>0?"继续攻击 · 剩余 "+fighter.AttacksRemaining+" 次":combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用";
+        if(Btn(new Rect(430,535,360,57),attackLabel,canAct&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
         if(Btn(new Rect(810,535,360,57),"结束回合 / 跳过剩余操作",canAct))EndCombatRound();
-        GUI.Label(new Rect(415,594,790,25),"剩余动作 "+(combat.ActionAvailable?1:0)+" / 1     附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1（暂无可用操作）",new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
+        GUI.Label(new Rect(415,594,790,25),"动作 "+combat.ActionsRemaining+" / "+combat.ActionsThisRound+" · 附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1"+(fighter.NextAttackAdvantage?" · 下次攻击具有优势":"")+(combat.BattleStarted?" · 配置已锁定":" · 可配置"),new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         Surface(new Rect(365,620,870,235),paperTexture);
         GUI.Label(new Rect(390,630,810,35),"战斗卷轴",heading);
         GUILayout.BeginArea(new Rect(390,675,815,160));

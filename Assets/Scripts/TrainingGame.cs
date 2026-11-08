@@ -9,6 +9,8 @@ public sealed partial class TrainingGame : MonoBehaviour
     string page = "home", dice = "D10 · 待投掷";
     Weapon selectedWeapon = Weapon.Available[0];
     bool rolling;
+    readonly FighterFeatures fighter = new FighterFeatures();
+    Weapon actionWeapon;
     string panel="";
     readonly MonsterDamage monster = new MonsterDamage();
     readonly string[] damageInputs = {"0","0","0","0","0","0"};
@@ -58,20 +60,32 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling && panel=="" && page=="battle" && combat.TryUseAction()) StartCoroutine(Roll(selectedWeapon, selectedWeapon.AttackModifier(attributes), classes.ProficiencyBonus, selectedWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正")); }
-    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel)
+    public void Attack()
+    {
+        if(rolling || panel!="" || page!="battle")return;
+        if(fighter.AttacksRemaining==0) {
+            if(!combat.TryUseAction())return;
+            actionWeapon=selectedWeapon;fighter.BeginAttackAction(classes[0]);
+        }
+        fighter.ConsumeAttack();
+        bool advantage=fighter.ConsumeAdvantage(classes[0]);
+        StartCoroutine(Roll(actionWeapon,actionWeapon.AttackModifier(attributes),classes.ProficiencyBonus,actionWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage));
+    }
+    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage)
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
-        int hitRoll=Random.Range(1,21);
-        dice="玩家命中判定 · D20";
-        yield return diceStage.Roll(20,new[]{hitRoll},RollDuration,PlayRoll);
+        int firstHit=Random.Range(1,21),secondHit=advantage?Random.Range(1,21):0;
+        int hitRoll=advantage?Mathf.Max(firstHit,secondHit):firstHit;
+        dice=advantage?"究明攻击 · 优势命中判定 2d20 取高":"玩家命中判定 · D20";
+        yield return diceStage.Roll(20,advantage?new[]{firstHit,secondHit}:new[]{firstHit},RollDuration,PlayRoll);
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
-        string hitDetails="D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
+        string hitDetails=(advantage?"优势 ["+firstHit+", "+secondHit+"] 取高 ":"")+"D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";
             history.Insert(0,attackWeapon.Name+" "+dice);
+            fighter.RecordMiss(classes[0]);
 
             rolling=false; yield break;
         }
@@ -89,13 +103,14 @@ public sealed partial class TrainingGame : MonoBehaviour
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
-        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
+        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead())fighter.ResetBattle(); }
         rolling=false;
     }
     void EndCombatRound()
     {
         if(!rolling && panel=="" && page=="battle") {
-            history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+(combat.ActionAvailable?1:0)+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
+            combat.MarkBattleStarted();
+            history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
             StartCoroutine(Counterattack());
         }
     }
@@ -124,8 +139,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
-        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); combat.ResetIfDead(); }
-        else combat.EndRound();
+        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead())fighter.ResetBattle(); }
+        else {combat.EndRound();fighter.EndRound();}
         rolling=false;logScroll=Vector2.zero;
     }
     void DrawPanel()
@@ -136,6 +151,9 @@ public sealed partial class TrainingGame : MonoBehaviour
         Surface(new Rect(x,110,480,745),paperTexture);
         if(Btn(new Rect(x+370,125,90,46),"关闭")) {panel=""; return;}
         GUILayout.BeginArea(new Rect(x+20,185,440,640));
+        if(combat.BattleStarted && panel!="weapons")GUILayout.Label("战斗已开始，重置战斗后才能修改配置。",label);
+        if(panel=="weapons" && (rolling||fighter.AttacksRemaining>0))GUILayout.Label("本次攻击动作尚未完成，暂时不能切换武器。",label);
+        GUI.enabled=panel=="weapons"?(!rolling&&fighter.AttacksRemaining==0):!combat.BattleStarted;
         panelScroll=GUILayout.BeginScrollView(panelScroll);
         if(panel=="weapons") {
             GUILayout.Label("玩家武器",heading);
@@ -221,7 +239,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label(inputError,label);
         }
         GUILayout.EndScrollView();
-        GUILayout.EndArea();
+        GUILayout.EndArea();GUI.enabled=true;
     }
     string IntegerField(string current, bool allowNegative)
     {
@@ -232,6 +250,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void ApplyMonsterSettings()
     {
+        if(combat.BattleStarted)return;
         int[] values=new int[6];
         for(int i=0;i<6;i++) {
             if(!int.TryParse(damageInputs[i],out values[i]) || (i<5 && values[i]<0)) { inputError="请输入有效整数，骰子数量不能为负。";return; }

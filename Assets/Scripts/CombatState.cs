@@ -13,17 +13,24 @@ public sealed class CombatState
     public int Hp { get; private set; } = 1000;
     public int PlayerHp { get; private set; } = 10;
     public int Round { get; private set; } = 1;
-    public bool ActionAvailable { get; private set; } = true;
+    public bool BattleStarted { get; private set; }
+    public void MarkBattleStarted() { BattleStarted=true; }
+    public int ActionsRemaining { get; private set; } = 1;
+    public int ActionsThisRound { get; private set; } = 1;
+    public bool ActionAvailable => ActionsRemaining>0;
     public bool BonusActionAvailable { get; private set; } = true;
     public bool TryUseAction() {
         if(!ActionAvailable) return false;
-        ActionAvailable=false; return true;
+        BattleStarted=true;ActionsRemaining--;return true;
     }
     public bool TryUseBonusAction() {
         if(!BonusActionAvailable) return false;
-        BonusActionAvailable=false; return true;
+        BattleStarted=true;BonusActionAvailable=false;return true;
     }
-    void RefreshActions() { ActionAvailable=true; BonusActionAvailable=true; }
+    public void AddSurgeAction() { BattleStarted=true;ActionsRemaining++;ActionsThisRound++; }
+    public int HealPlayer(int amount) {int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));return PlayerHp-before;}
+    void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;BonusActionAvailable=true;}
+    public void ResetBattle() {Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;RefreshActions();}
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
     public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
@@ -36,6 +43,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != MaxHp) { MaxHp = newMaxHp; Hp = newMaxHp; }
     }
-    public void EndRound() { Round++; RefreshActions(); }
-    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; Hp=MaxHp; PlayerHp=PlayerMaxHp; Round=1; RefreshActions(); return true; }
+    public void EndRound() { BattleStarted=true;Round++; RefreshActions(); }
+    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; ResetBattle(); return true; }
 }
