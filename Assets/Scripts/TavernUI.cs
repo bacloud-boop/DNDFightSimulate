@@ -131,7 +131,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(x+20,547,260,30),"生命  "+hp+" / "+max,centered);
         GUI.Label(new Rect(x+20,585,260,30),"护甲  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),centered);
         if(player){
-            GUI.Label(new Rect(x+20,623,260,35),selectedWeapon.Name+" · D"+selectedWeapon.DiceSides,centered);
+            GUI.Label(new Rect(x+20,623,260,35),selectedWeapon.Name+" · "+selectedWeapon.DamageDice,centered);
             if(Btn(new Rect(x+25,674,250,46),combat.BattleStarted?"玩家属性（只读）":"玩家属性",panel==""))OpenPanel("attributes");
             if(Btn(new Rect(x+25,728,120,46),"玩家武器",panel==""))OpenPanel("weapons");
             if(Btn(new Rect(x+155,728,120,46),"玩家职业",panel==""))OpenPanel("classes");

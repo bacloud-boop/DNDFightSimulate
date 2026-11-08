@@ -92,12 +92,11 @@ public sealed partial class TrainingGame : MonoBehaviour
         string hitLabel=critical?"暴击（伤害骰数量翻倍）":"命中";
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
-        int firstRoll=attackWeapon.RollDamage();
-        int secondRoll=critical?attackWeapon.RollDamage():0;
-        dice=hitLabel+" · 投掷 "+(critical?"2":"1")+"d"+attackWeapon.DiceSides;
-        yield return diceStage.Roll(attackWeapon.DiceSides,critical?new[]{firstRoll,secondRoll}:new[]{firstRoll},RollDuration,PlayRoll);
-        int result=firstRoll+secondRoll;
-        string damageDice=critical?"2d"+attackWeapon.DiceSides+"="+firstRoll+"+"+secondRoll:"1d"+attackWeapon.DiceSides+"="+firstRoll;
+        int[] damageRolls=attackWeapon.RollDamageDice(critical);
+        dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
+        yield return diceStage.Roll(attackWeapon.DiceSides,damageRolls,RollDuration,PlayRoll);
+        int result=System.Linq.Enumerable.Sum(damageRolls);
+        string damageDice=damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls);
         int damage=Mathf.Max(0,result+abilityModifier);
         string modifierText=(abilityModifier>=0?"+":"")+abilityModifier;
         combat.ApplyDamage(damage);
@@ -159,9 +158,9 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label("玩家武器",heading);
             weaponScroll=GUILayout.BeginScrollView(weaponScroll,GUILayout.Height(310));
             foreach(var weapon in Weapon.Available) {
-                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · D"+weapon.DiceSides+(weapon.HasFinesse?" · 灵巧":" · 无灵巧"),button)) {
+                if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · "+weapon.DamageDice+(weapon.HasFinesse?" · 灵巧":" · 无灵巧"),button)) {
                     selectedWeapon=weapon;
-                    if(!rolling) dice="D"+weapon.DiceSides+" · 待投掷";
+                    if(!rolling) dice=weapon.DamageDice+" · 待投掷";
                 }
             }
             GUILayout.EndScrollView();
