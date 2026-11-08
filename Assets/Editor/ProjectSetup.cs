@@ -18,7 +18,7 @@ public static class ProjectSetup
         EditorSceneManager.SaveScene(scene,"Assets/Scenes/Main.unity");
         EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene("Assets/Scenes/Main.unity",true)};
         PlayerSettings.companyName="Bacloud"; PlayerSettings.productName="DNDFightSimulate";
-        PlayerSettings.defaultScreenWidth=1100; PlayerSettings.defaultScreenHeight=760;
+        PlayerSettings.defaultScreenWidth=1600; PlayerSettings.defaultScreenHeight=900;
         PlayerSettings.fullScreenMode=FullScreenMode.Windowed;
         AssetDatabase.SaveAssets(); Debug.Log("MIGRATION_CHECKS_PASSED");
     }
