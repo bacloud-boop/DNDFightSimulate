@@ -152,8 +152,9 @@ public sealed partial class TrainingGame
         GUI.DrawTexture(new Rect(390,160,820,275),diceStage.Texture);
         GUI.Label(new Rect(405,435,790,75),dice,new GUIStyle(centered){normal={textColor=new Color(.98f,.86f,.63f)}});
         bool canAct=!rolling&&panel=="";
-        if(Btn(new Rect(430,535,360,57),"攻击 · "+selectedWeapon.Name,canAct))Attack();
-        if(Btn(new Rect(810,535,360,57),"结束回合 · 木桩反击",canAct))EndCombatRound();
+        if(Btn(new Rect(430,535,360,57),combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用",canAct&&combat.ActionAvailable))Attack();
+        if(Btn(new Rect(810,535,360,57),"结束回合 / 跳过剩余操作",canAct))EndCombatRound();
+        GUI.Label(new Rect(415,594,790,25),"剩余动作 "+(combat.ActionAvailable?1:0)+" / 1     附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1（暂无可用操作）",new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         Surface(new Rect(365,620,870,235),paperTexture);
         GUI.Label(new Rect(390,630,810,35),"战斗卷轴",heading);
         GUILayout.BeginArea(new Rect(390,675,815,160));

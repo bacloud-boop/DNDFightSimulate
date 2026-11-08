@@ -58,7 +58,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void SaveVolume() { music.volume=musicVolume; sfx.volume=sfxVolume; PlayerPrefs.SetFloat("MusicVolume",musicVolume); PlayerPrefs.SetFloat("SfxVolume",sfxVolume); PlayerPrefs.Save(); }
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
-    public void Attack() { if(!rolling && panel=="" && page=="battle") StartCoroutine(Roll(selectedWeapon, selectedWeapon.AttackModifier(attributes), classes.ProficiencyBonus, selectedWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正")); }
+    public void Attack() { if(!rolling && panel=="" && page=="battle" && combat.TryUseAction()) StartCoroutine(Roll(selectedWeapon, selectedWeapon.AttackModifier(attributes), classes.ProficiencyBonus, selectedWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正")); }
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel)
     {
         rolling=true;logScroll=Vector2.zero;
@@ -94,7 +94,10 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void EndCombatRound()
     {
-        if(!rolling && panel=="") StartCoroutine(Counterattack());
+        if(!rolling && panel=="" && page=="battle") {
+            history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+(combat.ActionAvailable?1:0)+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
+            StartCoroutine(Counterattack());
+        }
     }
     IEnumerator Counterattack()
     {

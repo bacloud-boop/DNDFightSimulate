@@ -13,6 +13,17 @@ public sealed class CombatState
     public int Hp { get; private set; } = 1000;
     public int PlayerHp { get; private set; } = 10;
     public int Round { get; private set; } = 1;
+    public bool ActionAvailable { get; private set; } = true;
+    public bool BonusActionAvailable { get; private set; } = true;
+    public bool TryUseAction() {
+        if(!ActionAvailable) return false;
+        ActionAvailable=false; return true;
+    }
+    public bool TryUseBonusAction() {
+        if(!BonusActionAvailable) return false;
+        BonusActionAvailable=false; return true;
+    }
+    void RefreshActions() { ActionAvailable=true; BonusActionAvailable=true; }
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
     public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
@@ -25,6 +36,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != MaxHp) { MaxHp = newMaxHp; Hp = newMaxHp; }
     }
-    public void EndRound() { Round++; }
-    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; Hp=MaxHp; PlayerHp=PlayerMaxHp; Round=1; return true; }
+    public void EndRound() { Round++; RefreshActions(); }
+    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; Hp=MaxHp; PlayerHp=PlayerMaxHp; Round=1; RefreshActions(); return true; }
 }
