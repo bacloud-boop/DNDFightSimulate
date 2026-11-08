@@ -74,7 +74,7 @@ public sealed partial class TrainingGame
         GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-CanvasWidth*scale)/2,(Screen.height-CanvasHeight*scale)/2,0),Quaternion.identity,Vector3.one*scale);
         GUI.DrawTextureWithTexCoords(new Rect(0,0,1600,900),woodTexture,new Rect(0,0,5,3));
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
-        if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else DrawBattle();
+        if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
     }
     void DrawHome()
     {
@@ -90,7 +90,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(500,130,600,35),"D N D  ·  T A V E R N  T A B L E",centered);
         GUI.Label(new Rect(505,195,590,80),"木桩训练场",new GUIStyle(title){alignment=TextAnchor.MiddleCenter});
         GUI.DrawTexture(new Rect(590,270,420,190),diceStage.Texture);
-        if(Btn(new Rect(600,475,400,62),"进入战斗  →"))page="battle";
+        if(Btn(new Rect(600,475,400,62),"进入战斗  →"))page=map.Locked?"battle":"deployment";
         if(Btn(new Rect(600,555,400,55),"设置"))page="settings";
         if(Btn(new Rect(600,630,400,55),"退出游戏"))QuitGame();
         GUI.Label(new Rect(560,715,480,40),"一张桌面，一场属于你的冒险。",centered);
@@ -150,9 +150,13 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!rolling&&panel==""))ResetCombat();
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,420),new Color(.10f,.045f,.02f,.65f));
-        GUI.Label(new Rect(535,115,530,40),rolling?"命运之骰 · 投掷中":"命运之骰",lightTitle);
-        GUI.DrawTexture(new Rect(390,155,820,240),diceStage.Texture);
-        GUI.Label(new Rect(405,397,790,66),dice,new GUIStyle(centered){normal={textColor=new Color(.98f,.86f,.63f)}});
+        DrawMap(new Rect(640,115,320,320),false);
+        GUI.Label(new Rect(380,120,240,90),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
+        if(rolling) {
+            Fill(new Rect(365,105,870,330),new Color(.1f,.045f,.02f,.8f));
+            GUI.DrawTexture(new Rect(480,130,640,290),diceStage.Texture,ScaleMode.ScaleToFit);
+        }
+        GUI.Label(new Rect(385,435,830,38),dice,new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         bool canAct=!rolling&&panel=="";
         if(Btn(new Rect(395,475,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / 2":"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
         if(Btn(new Rect(670,475,260,48),classes[0]>=2?"动作如潮 · 剩余 "+fighter.SurgeRemaining(classes[0])+(fighter.SurgedThisRound?"（本回合已用）":""):"动作如潮 · 战士 2 级解锁",canAct&&fighter.CanSurge(classes[0])))ActionSurge();

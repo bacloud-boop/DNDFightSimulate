@@ -30,7 +30,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="")return;
-        combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;
+        combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();
         dice="战斗已重置 · 可修改配置";
         history.Insert(0,"—— 重置战斗：双方回满、回合归 1、特性次数与行动额度恢复 ——");
         logScroll=Vector2.zero;

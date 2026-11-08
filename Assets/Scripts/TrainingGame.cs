@@ -109,7 +109,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
-        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead())fighter.ResetBattle(); }
+        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
         rolling=false;
     }
     void EndCombatRound()
@@ -145,7 +145,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
-        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead())fighter.ResetBattle(); }
+        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
         else {combat.EndRound();fighter.EndRound();}
         rolling=false;logScroll=Vector2.zero;
     }
