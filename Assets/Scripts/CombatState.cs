@@ -3,6 +3,11 @@ public sealed class CombatState
 {
     public int PlayerArmorClass { get; } = 10;
     public int MonsterProficiencyBonus { get; set; } = 0;
+    public int MonsterAttackRange { get; private set; } = 5;
+    public void UpdateMonsterAttackRange(int rangeFeet) {
+        if(rangeFeet<0)throw new ArgumentOutOfRangeException(nameof(rangeFeet));
+        MonsterAttackRange=rangeFeet;
+    }
     public int MonsterArmorClass { get; private set; } = 10;
     public void UpdateMonsterArmorClass(int armorClass) {
         if(armorClass < 5 || armorClass > 30) throw new ArgumentOutOfRangeException(nameof(armorClass));

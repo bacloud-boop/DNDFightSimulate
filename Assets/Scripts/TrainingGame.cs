@@ -20,7 +20,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     string attributeError="";
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
-    string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterAttributeError="";
+    string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterRangeInput="5", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = {"1","0","0","0","0","0","0","0","0","0","0"};
     Vector2 classScroll;
@@ -140,6 +140,13 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;
         if(endTurn)combat.StartMonsterTurn();
+        if(endTurn && map.DistanceFeet>combat.MonsterAttackRange) {
+            dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+combat.MonsterAttackRange+" 尺。";
+            history.Insert(0,dice);
+            combat.EndRound();fighter.EndRound();map.RefreshMovement();tacticalMovement=false;
+            movementMessage="拖动玩家棋子移动。";
+            rolling=false;logScroll=Vector2.zero;yield break;
+        }
         int hitRoll=Random.Range(1,21);
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
@@ -227,13 +234,18 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label("熟练加值（当前 "+combat.MonsterProficiencyBonus+"）",label,GUILayout.Width(230));
             monsterProficiencyInput=IntegerField(monsterProficiencyInput,true);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("攻击距离（尺，当前 "+combat.MonsterAttackRange+"）",label,GUILayout.Width(230));
+            monsterRangeInput=IntegerField(monsterRangeInput,false);
+            GUILayout.EndHorizontal();
             if(GUILayout.Button("应用",button)) {
-                int maxHp, armorClass, proficiency;
+                int maxHp, armorClass, proficiency, attackRange;
                 if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
                 else if(!int.TryParse(monsterArmorInput,out armorClass) || armorClass<5 || armorClass>30) monsterAttributeError="护甲等级必须为 5～30 的整数。";
                 else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
+                else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; combat.UpdateMonsterAttackRange(attackRange); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
