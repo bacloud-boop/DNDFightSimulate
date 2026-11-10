@@ -84,19 +84,24 @@ public sealed partial class TrainingGame : MonoBehaviour
     bool CheckWeaponRange(Weapon weapon)
     {
         if(weapon.CanReach(map.DistanceFeet))return true;
-        dice="无法进行攻击：目标距离 "+map.DistanceFeet+" 尺，"+weapon.Name+"的近战范围为 "+weapon.ReachFeet+" 尺。";
+        dice="无法进行攻击：目标距离 "+map.DistanceFeet+" 尺，"+weapon.Name+"射程 "+weapon.RangeText+"。";
         return false;
     }
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击")
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
-        int firstHit=Random.Range(1,21),secondHit=advantage?Random.Range(1,21):0;
-        int hitRoll=advantage?Mathf.Max(firstHit,secondHit):firstHit;
-        dice=advantage?"究明攻击 · 优势命中判定 2d20 取高":"玩家命中判定 · D20";
-        yield return diceStage.Roll(20,advantage?new[]{firstHit,secondHit}:new[]{firstHit},RollDuration,PlayRoll);
+        bool disadvantage=attackWeapon.HasRangeDisadvantage(map.DistanceFeet);
+        // Presence, not source count, determines advantage/disadvantage. Both cancel.
+        bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        bool twoDice=rollHigh||rollLow;
+        int firstHit=Random.Range(1,21),secondHit=twoDice?Random.Range(1,21):0;
+        int hitRoll=rollHigh?Mathf.Max(firstHit,secondHit):rollLow?Mathf.Min(firstHit,secondHit):firstHit;
+        string rollMode=rollHigh?"优势 2d20 取高":rollLow?"长距离劣势 2d20 取低":advantage&&disadvantage?"优势劣势抵消 · 单骰":"单骰";
+        dice="玩家命中判定 · "+rollMode;
+        yield return diceStage.Roll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},RollDuration,PlayRoll);
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
-        string hitDetails=attackKind+" · "+(advantage?"优势 ["+firstHit+", "+secondHit+"] 取高 ":"")+"D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
+        string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";

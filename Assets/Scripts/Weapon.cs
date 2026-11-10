@@ -6,11 +6,14 @@ public sealed class Weapon
     public string DamageDice => DiceCount+"d"+DiceSides;
     public bool HasFinesse { get; }
     public bool HasLight { get; }
-    public bool IsMelee { get; } = true;
-    public int ReachFeet => 5;
-    public bool CanReach(int distanceFeet) => !IsMelee || distanceFeet<=ReachFeet;
-    public string Traits => "近战武器 · "+ReachFeet+"尺 · "+(HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
-    public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1, bool hasLight = false) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; HasLight = hasLight; }
+    public bool IsMelee { get; }
+    public int ReachFeet { get; }
+    public int MaxRangeFeet { get; }
+    public string RangeText => IsMelee?ReachFeet+"尺":ReachFeet+"/"+MaxRangeFeet+"尺";
+    public bool CanReach(int distanceFeet) => distanceFeet<=MaxRangeFeet;
+    public bool HasRangeDisadvantage(int distanceFeet) => !IsMelee && distanceFeet>ReachFeet && CanReach(distanceFeet);
+    public string Traits => (IsMelee?"近战武器":"远程武器")+" · "+RangeText+" · "+(HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
+    public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1, bool hasLight = false, bool isMelee = true, int rangeFeet = 5, int maxRangeFeet = 5) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; HasLight = hasLight; IsMelee = isMelee; ReachFeet = rangeFeet; MaxRangeFeet = maxRangeFeet; }
     public bool UsesDexterity(PlayerAttributes attributes) => HasFinesse && attributes.DexterityModifier > attributes.StrengthModifier;
     public int AttackModifier(PlayerAttributes attributes) => UsesDexterity(attributes) ? attributes.DexterityModifier : attributes.StrengthModifier;
     public int[] RollDamageDice(bool critical = false) {
@@ -48,6 +51,7 @@ public sealed class Weapon
         new Weapon("长矛", 10),
         new Weapon("三叉戟", 8),
         new Weapon("战镐", 8),
-        new Weapon("战锤", 8)
+        new Weapon("战锤", 8),
+        new Weapon("长弓", 8, isMelee: false, rangeFeet: 150, maxRangeFeet: 600)
     };
 }

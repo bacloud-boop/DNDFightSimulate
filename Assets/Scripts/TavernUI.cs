@@ -163,9 +163,9 @@ public sealed partial class TrainingGame
         bool bonusInRange=selectedWeapon.CanReach(map.DistanceFeet);
         if(Btn(new Rect(395,555,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / 2":"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
         if(Btn(new Rect(670,555,260,48),classes[0]>=2?"动作如潮 · 剩余 "+fighter.SurgeRemaining(classes[0])+(fighter.SurgedThisRound?"（本回合已用）":""):"动作如潮 · 战士 2 级解锁",canAct&&fighter.CanSurge(classes[0])))ActionSurge();
-        if(Btn(new Rect(945,555,260,48),selectedWeapon.HasLight?(bonusInRange?"轻型攻击（附赠动作）":"无法进行攻击 · 超出5尺"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&selectedWeapon.HasLight&&combat.BonusActionAvailable))BonusAttack();
+        if(Btn(new Rect(945,555,260,48),selectedWeapon.HasLight?(bonusInRange?"轻型攻击（附赠动作）":"无法进行攻击 · 超出射程"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&selectedWeapon.HasLight&&combat.BonusActionAvailable))BonusAttack();
         string attackLabel=fighter.AttacksRemaining>0?"继续攻击 · 剩余 "+fighter.AttacksRemaining+" 次":combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用";
-        if(Btn(new Rect(430,615,360,57),attackInRange?attackLabel:"无法进行攻击 · 超出5尺",canAct&&attackInRange&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
+        if(Btn(new Rect(430,615,360,57),attackInRange?attackLabel:"无法进行攻击 · 超出射程",canAct&&attackInRange&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
         if(Btn(new Rect(810,615,360,57),"结束回合 / 跳过剩余操作",canAct))EndCombatRound();
         GUI.Label(new Rect(415,674,790,25),"动作 "+combat.ActionsRemaining+" / "+combat.ActionsThisRound+" · 附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1"+(fighter.NextAttackAdvantage?" · 下次攻击具有优势":"")+(combat.BattleStarted?" · 配置已锁定":" · 可配置"),new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         Surface(new Rect(365,705,870,150),paperTexture);
