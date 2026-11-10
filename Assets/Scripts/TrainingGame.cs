@@ -114,10 +114,12 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
         int[] damageRolls=attackWeapon.RollDamageDice(critical);
-        dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
-        yield return diceStage.Roll(attackWeapon.DiceSides,damageRolls,RollDuration,PlayRoll);
-        int result=System.Linq.Enumerable.Sum(damageRolls);
-        string damageDice=damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls);
+        if(damageRolls.Length>0) {
+            dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
+            yield return diceStage.Roll(attackWeapon.DiceSides,damageRolls,RollDuration,PlayRoll);
+        }
+        int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage;
+        string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
         int damage=Mathf.Max(0,result+abilityModifier);
         string modifierText=(abilityModifier>=0?"+":"")+abilityModifier;
         combat.ApplyDamage(damage);
