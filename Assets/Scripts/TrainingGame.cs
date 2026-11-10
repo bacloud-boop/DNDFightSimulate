@@ -63,6 +63,8 @@ public sealed partial class TrainingGame : MonoBehaviour
     public void Attack()
     {
         if(rolling || panel!="" || page!="battle" || draggingToken>=0)return;
+        Weapon weapon=fighter.AttacksRemaining>0?actionWeapon:selectedWeapon;
+        if(!CheckWeaponRange(weapon))return;
         if(fighter.AttacksRemaining==0) {
             if(!combat.TryUseAction())return;
             actionWeapon=selectedWeapon;fighter.BeginAttackAction(classes[0]);
@@ -73,10 +75,17 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     public void BonusAttack()
     {
-        if(rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight || !combat.TryUseBonusAction())return;
+        if(rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight)return;
+        if(!CheckWeaponRange(selectedWeapon) || !combat.TryUseBonusAction())return;
         Weapon weapon=selectedWeapon;
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
         StartCoroutine(Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"轻型附赠攻击"));
+    }
+    bool CheckWeaponRange(Weapon weapon)
+    {
+        if(weapon.CanReach(map.DistanceFeet))return true;
+        dice="无法进行攻击：目标距离 "+map.DistanceFeet+" 尺，"+weapon.Name+"的近战范围为 "+weapon.ReachFeet+" 尺。";
+        return false;
     }
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击")
     {

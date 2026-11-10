@@ -6,7 +6,10 @@ public sealed class Weapon
     public string DamageDice => DiceCount+"d"+DiceSides;
     public bool HasFinesse { get; }
     public bool HasLight { get; }
-    public string Traits => (HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
+    public bool IsMelee { get; } = true;
+    public int ReachFeet => 5;
+    public bool CanReach(int distanceFeet) => !IsMelee || distanceFeet<=ReachFeet;
+    public string Traits => "近战武器 · "+ReachFeet+"尺 · "+(HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
     public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1, bool hasLight = false) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; HasLight = hasLight; }
     public bool UsesDexterity(PlayerAttributes attributes) => HasFinesse && attributes.DexterityModifier > attributes.StrengthModifier;
     public int AttackModifier(PlayerAttributes attributes) => UsesDexterity(attributes) ? attributes.DexterityModifier : attributes.StrengthModifier;
