@@ -32,6 +32,7 @@ public sealed partial class TrainingGame
         redTexture=Grain(new Color(.43f,.09f,.065f),false);
         hoverTexture=Grain(new Color(.58f,.19f,.09f),false);
         InitializeHeraldry();
+        simpleDice=PlayerPrefs.GetInt("SimpleDice",0)==1;
         fastAnimation=PlayerPrefs.GetInt("FastDice",0)==1;
         miniatures=gameObject.AddComponent<TavernMiniatures>();miniatures.Initialize();
         diceStage=gameObject.AddComponent<TavernDice>();diceStage.Initialize(font);
@@ -94,7 +95,8 @@ public sealed partial class TrainingGame
         Surface(new Rect(450,100,700,685),paperTexture);
         GUI.Label(new Rect(500,130,600,35),"D N D  ·  T A V E R N  T A B L E",centered);
         GUI.Label(new Rect(505,195,590,80),"木桩训练场",new GUIStyle(title){alignment=TextAnchor.MiddleCenter});
-        GUI.DrawTexture(new Rect(590,270,420,190),diceStage.Texture);
+        if(!simpleDice)GUI.DrawTexture(new Rect(590,270,420,190),diceStage.Texture);
+        else GUI.Label(new Rect(590,270,420,190),"D20 · 简洁投骰",cardTitle);
         if(Btn(new Rect(600,475,400,62),"进入战斗  →"))page=map.Locked?"battle":"deployment";
         if(Btn(new Rect(600,555,400,55),"设置"))page="settings";
         if(Btn(new Rect(600,630,400,55),"退出游戏"))QuitGame();
@@ -104,16 +106,20 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(390,100,820,680),paperTexture);
         GUILayout.BeginArea(new Rect(450,145,700,580));
-        GUILayout.Label("酒馆设置",title);GUILayout.Space(25);
+        GUILayout.Label("酒馆设置",title);GUILayout.Space(15);
         GUILayout.Label("音乐音量  "+Mathf.RoundToInt(musicVolume*100)+"%",label);
         float m=Mathf.Round(GUILayout.HorizontalSlider(musicVolume,0,1)*100)/100f;GUILayout.Space(25);
         GUILayout.Label("音效音量  "+Mathf.RoundToInt(sfxVolume*100)+"%",label);
-        float s=Mathf.Round(GUILayout.HorizontalSlider(sfxVolume,0,1)*100)/100f;GUILayout.Space(30);
+        float s=Mathf.Round(GUILayout.HorizontalSlider(sfxVolume,0,1)*100)/100f;GUILayout.Space(15);
         if(m!=musicVolume||s!=sfxVolume){musicVolume=m;sfxVolume=s;SaveVolume();}
         GUILayout.Label("投骰动画",heading);GUILayout.BeginHorizontal();
         if(GUILayout.Button((!fastAnimation?"✓ ":"")+"标准 · 约 1.4 秒 / 次",button))SetFast(false);
         if(GUILayout.Button((fastAnimation?"✓ ":"")+"快速 · 约 0.45 秒 / 次",button))SetFast(true);
-        GUILayout.EndHorizontal();GUILayout.Space(30);
+        GUILayout.EndHorizontal();GUILayout.Space(15);
+        GUILayout.Label("投骰表现 · 结果停留 2 秒",heading);GUILayout.BeginHorizontal();
+        if(GUILayout.Button((!simpleDice?"✓ ":"")+"立体版本",button))SetSimpleDice(false);
+        if(GUILayout.Button((simpleDice?"✓ ":"")+"简洁版本",button))SetSimpleDice(true);
+        GUILayout.EndHorizontal();GUILayout.Space(15);
         if(GUILayout.Button("试听投骰音效",button))PlayRoll();GUILayout.Space(18);
         if(GUILayout.Button("返回酒馆桌面",button))page="home";
         GUILayout.EndArea();
@@ -138,7 +144,10 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(380,120,205,130),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
         if(rolling && !reactionPending) {
             Fill(new Rect(365,105,870,405),new Color(.1f,.045f,.02f,.8f));
-            GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);
+            if(!simpleDice)GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);
+            else GUI.Label(new Rect(490,170,620,170),rollResultText,new GUIStyle(lightTitle){fontSize=36});
+            if(rollResultReady && rollCalculation!="")GUI.Label(new Rect(485,350,630,105),rollCalculation,new GUIStyle(lightTitle){fontSize=20});
+            if(rollResultReady)GUI.Label(new Rect(490,470,620,36),simpleDice?"结果展示 · 2 秒":"骰值 ["+rollResultText.Replace("\n"," · ")+"] · 停留 2 秒",new GUIStyle(lightTitle){fontSize=18});
         }
         GUI.Label(new Rect(385,512,830,38),dice,new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         if(Btn(new Rect(1015,375,205,48),"普通移动 · "+map.MovementRemaining+"尺",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))tacticalMovement=false;

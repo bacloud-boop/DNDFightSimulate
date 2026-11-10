@@ -99,7 +99,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int hitRoll=rollHigh?Mathf.Max(firstHit,secondHit):rollLow?Mathf.Min(firstHit,secondHit):firstHit;
         string rollMode=rollHigh?"优势 2d20 取高":rollLow?"长距离劣势 2d20 取低":advantage&&disadvantage?"优势劣势抵消 · 单骰":"单骰";
         dice="玩家命中判定 · "+rollMode;
-        yield return diceStage.Roll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},RollDuration,PlayRoll);
+        yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
         string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
@@ -116,7 +116,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int[] damageRolls=attackWeapon.RollDamageDice(critical);
         if(damageRolls.Length>0) {
             dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
-            yield return diceStage.Roll(attackWeapon.DiceSides,damageRolls,RollDuration,PlayRoll);
+            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+abilityModifier+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+abilityModifier));
         }
         int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage;
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
@@ -145,7 +145,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int targetArmor=combat.PlayerArmorClass;
         long hitTotal=(long)hitRoll+proficiency;
         dice="木桩反击 · 命中判定 D20";
-        yield return diceStage.Roll(20,new[]{hitRoll},RollDuration,PlayRoll);
+        yield return PresentRoll(20,new[]{hitRoll},"骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
@@ -156,7 +156,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
             for(int i=0;i<sides.Count;i++) {
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
-                yield return diceStage.Roll(sides[i],results[i],RollDuration,PlayRoll);
+                yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
             combat.ApplyPlayerDamage(damage);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;

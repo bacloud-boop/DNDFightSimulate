@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         int value=Random.Range(1,11);
         dice="回气 · 1d10 + 战士等级 "+fighterLevel;
-        yield return diceStage.Roll(10,new[]{value},RollDuration,PlayRoll);
+        yield return PresentRoll(10,new[]{value},"回气："+value+" + 战士等级 "+fighterLevel+" = "+(value+fighterLevel)+"，治疗不超过生命上限");
         int healing=value+fighterLevel,actual=combat.HealPlayer(healing);
         dice="回气 D10="+value+" + "+fighterLevel+"，实际恢复 "+actual;
         history.Insert(0,dice+"，生命 "+combat.PlayerHp+" / "+combat.PlayerMaxHp+"。");

@@ -64,12 +64,12 @@ public sealed partial class TrainingGame
         if(!hits){dice="酸液飞溅 · 范围内无目标";history.Insert(0,caster+"施放酸液飞溅，范围内无目标，消耗 1 动作。");rolling=false;yield break;}
         int save=Random.Range(1,21),modifier=AcidSplash.Modifier(monsterAttributes[1]);
         dice="酸液飞溅 · 木桩敏捷豁免 D20";
-        yield return diceStage.Roll(20,new[]{save},RollDuration,PlayRoll);
+        yield return PresentRoll(20,new[]{save},"豁免："+save+" + 敏捷 "+modifier+" = "+(save+modifier)+" / DC "+dc+(save+modifier>=dc?"，成功":"，失败"));
         string details=caster+"酸液飞溅：木桩敏捷豁免 "+save+" + "+modifier+" = "+(save+modifier)+" / DC "+dc;
         if(save+modifier>=dc){dice="敏捷豁免成功 · 强酸伤害 0";history.Insert(0,details+"，成功，不受伤害。");rolling=false;yield break;}
         int[] values=new int[count];for(int i=0;i<count;i++)values[i]=Random.Range(1,7);
         dice="敏捷豁免失败 · 酸液飞溅 "+count+"d6 强酸";
-        yield return diceStage.Roll(6,values,RollDuration,PlayRoll);
+        yield return PresentRoll(6,values,"强酸伤害："+System.Linq.Enumerable.Sum(values));
         int damage=System.Linq.Enumerable.Sum(values);combat.ApplyDamage(damage);
         dice="酸液飞溅 · 强酸伤害 "+damage;
         history.Insert(0,details+"，失败；"+count+"d6="+string.Join("+",values)+"，强酸伤害 "+damage+"。");
