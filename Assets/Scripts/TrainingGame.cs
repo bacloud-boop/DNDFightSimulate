@@ -87,11 +87,11 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice="无法进行攻击：目标距离 "+map.DistanceFeet+" 尺，"+weapon.Name+"射程 "+weapon.RangeText+"。";
         return false;
     }
-    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击")
+    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false)
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
-        bool disadvantage=attackWeapon.HasRangeDisadvantage(map.DistanceFeet);
+        bool disadvantage=!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet);
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -136,16 +136,17 @@ public sealed partial class TrainingGame : MonoBehaviour
             StartCoroutine(Counterattack());
         }
     }
-    IEnumerator Counterattack()
+    IEnumerator Counterattack(bool endTurn=true)
     {
         rolling=true;
+        if(endTurn)combat.StartMonsterTurn();
         int hitRoll=Random.Range(1,21);
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
         long hitTotal=(long)hitRoll+proficiency;
         dice="木桩反击 · 命中判定 D20";
         yield return diceStage.Roll(20,new[]{hitRoll},RollDuration,PlayRoll);
-        string hitDetails="木桩反击 D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
+        string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
             string details;
@@ -162,8 +163,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
         if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
-        else {combat.EndRound();fighter.EndRound();map.RefreshMovement();movementMessage="拖动玩家棋子移动。";}
-        rolling=false;logScroll=Vector2.zero;
+        else if(endTurn) {combat.EndRound();fighter.EndRound();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";}
+        if(endTurn)rolling=false;logScroll=Vector2.zero;
     }
     void DrawPanel()
     {

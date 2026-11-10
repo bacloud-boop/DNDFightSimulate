@@ -77,6 +77,7 @@ public sealed partial class TrainingGame
         GUI.DrawTextureWithTexCoords(new Rect(0,0,1600,900),woodTexture,new Rect(0,0,5,3));
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
+        DrawReactionPrompt();
     }
     void DrawHome()
     {
@@ -122,7 +123,7 @@ public sealed partial class TrainingGame
         return PlayerClasses.Names[classes.InitialClass]+" · 总等级 "+classes.TotalLevel+(count>1?" · 多职业":"");
     }
     void DrawCard(bool player) { DrawHeraldryCard(player); }
-    void OpenPanel(string value){if(draggingToken>=0)return;panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
+    void OpenPanel(string value){if(draggingToken>=0 || reactionPending)return;panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
     void DrawBattle()
     {
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
@@ -131,13 +132,16 @@ public sealed partial class TrainingGame
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
         DrawMap(new Rect(600,110,400,400),!rolling&&panel=="");
-        GUI.Label(new Rect(1015,125,205,320),"移动 "+map.MovementRemaining+" / 30 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
+        GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / 30 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,205,130),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
-        if(rolling) {
+        if(rolling && !reactionPending) {
             Fill(new Rect(365,105,870,405),new Color(.1f,.045f,.02f,.8f));
             GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);
         }
         GUI.Label(new Rect(385,512,830,38),dice,new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
+        if(Btn(new Rect(1015,375,205,48),"普通移动 · "+map.MovementRemaining+"尺",!rolling&&panel==""&&draggingToken<0))tacticalMovement=false;
+        if(Btn(new Rect(1015,430,205,48),"战术转进 · "+map.TacticalMovementRemaining+"尺",!rolling&&panel==""&&draggingToken<0&&classes[0]>=5))tacticalMovement=true;
+        GUI.Label(new Rect(1015,485,205,36),tacticalMovement?"当前：战术转进（免借机）":"当前：普通移动",new GUIStyle(lightTitle){fontSize=15});
         bool canAct=!rolling&&panel==""&&draggingToken<0;
         bool attackInRange=(fighter.AttacksRemaining>0?actionWeapon:selectedWeapon).CanReach(map.DistanceFeet);
         bool bonusInRange=selectedWeapon.CanReach(map.DistanceFeet);

@@ -69,13 +69,15 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(x+28,479,214,32),"护甲等级  ·  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),PlaqueText(player,21,TextAnchor.MiddleCenter));
         if(player){
             EngravedRow(x,530,"当前武器",selectedWeapon.Name,player);
-            EngravedRow(x,558,"伤害 / 射程",selectedWeapon.DamageDice+" / "+selectedWeapon.RangeText,player);
-            EngravedRow(x,586,"剩余动作",combat.ActionsRemaining+" / "+combat.ActionsThisRound,player);
-            EngravedRow(x,614,"附赠动作",(combat.BonusActionAvailable?1:0)+" / 1",player);
-            EngravedRow(x,642,"移动力",map.MovementRemaining+" / 30尺",player);
-            EngravedRow(x,670,"本动作剩余攻击",fighter.AttacksRemaining.ToString(),player);
-            EngravedRow(x,698,"回气",classes[0]>=1?fighter.WindRemaining(classes[0])+" / 2":"未解锁",player);
-            EngravedRow(x,726,"动作如潮",classes[0]>=2?fighter.SurgeRemaining(classes[0])+" / "+(classes[0]>=17?2:1):"未解锁",player);
+            EngravedRow(x,554,"伤害 / 射程",selectedWeapon.DamageDice+" / "+selectedWeapon.RangeText,player);
+            EngravedRow(x,578,"剩余动作",combat.ActionsRemaining+" / "+combat.ActionsThisRound,player);
+            EngravedRow(x,602,"附赠动作",(combat.BonusActionAvailable?1:0)+" / 1",player);
+            EngravedRow(x,626,"移动力",map.MovementRemaining+" / 30尺",player);
+            EngravedRow(x,650,"战术转进移动",map.TacticalMovementRemaining+" 尺",player);
+            EngravedRow(x,674,"反应",combat.PlayerReactionAvailable?"1 / 1":"0 / 1",player);
+            EngravedRow(x,698,"本动作剩余攻击",fighter.AttacksRemaining.ToString(),player);
+            EngravedRow(x,722,"回气",classes[0]>=1?fighter.WindRemaining(classes[0])+" / 2":"未解锁",player);
+            EngravedRow(x,746,"动作如潮",classes[0]>=2?fighter.SurgeRemaining(classes[0])+" / "+(classes[0]>=17?2:1):"未解锁",player);
             GUI.Label(new Rect(x+20,769,230,55),fighter.NextAttackAdvantage?"究明攻击 · 下次优势":fighter.SurgedThisRound?"动作如潮 · 本回合已用":"本场状态 · "+(combat.BattleStarted?"配置锁定":"可调整配置"),PlaqueText(player,16,TextAnchor.MiddleCenter));
             CardTab(new Rect(x+270,206,60,62),"属\n性","attributes",true);
             CardTab(new Rect(x+270,282,60,62),"武\n器","weapons",true);
@@ -86,7 +88,8 @@ public sealed partial class TrainingGame
             EngravedRow(x,610,"当前回合",combat.Round.ToString(),false);
             EngravedRow(x,645,"与玩家距离",map.DistanceFeet+" 尺",false);
             EngravedRow(x,680,"移动","固定木桩",false);
-            GUI.Label(new Rect(x+20,735,230,72),rolling?"战斗结算中":"等候玩家行动\n配置 · "+(combat.BattleStarted?"已锁定":"可编辑"),PlaqueText(false,17,TextAnchor.MiddleCenter));
+            EngravedRow(x,715,"反应",combat.MonsterReactionAvailable?"1 / 1":"0 / 1",false);
+            GUI.Label(new Rect(x+20,755,230,64),rolling?"战斗结算中":"等候玩家行动\n配置 · "+(combat.BattleStarted?"已锁定":"可编辑"),PlaqueText(false,17,TextAnchor.MiddleCenter));
             CardTab(new Rect(x-60,206,60,62),"伤\n害","monster",false);
             CardTab(new Rect(x-60,282,60,62),"属\n性","monsterAttributes",false);
         }

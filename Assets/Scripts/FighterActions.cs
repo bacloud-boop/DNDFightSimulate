@@ -18,6 +18,7 @@ public sealed partial class TrainingGame
         int healing=value+fighterLevel,actual=combat.HealPlayer(healing);
         dice="回气 D10="+value+" + "+fighterLevel+"，实际恢复 "+actual;
         history.Insert(0,dice+"，生命 "+combat.PlayerHp+" / "+combat.PlayerMaxHp+"。");
+        if(fighterLevel>=5){map.GrantTacticalMovement();history.Insert(0,"战术转进：获得独立 15 尺移动，本回合使用，不引发借机攻击。");}
         rolling=false;
     }
     void ActionSurge()
