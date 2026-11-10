@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed partial class TrainingGame
 {
-    bool CanUseFeature => !rolling && panel=="" && page=="battle" && draggingToken<0;
+    bool CanUseFeature => !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0;
     void SecondWind()
     {
         if(!CanUseFeature || fighter.WindRemaining(classes[0])<=0 || !combat.TryUseBonusAction())return;

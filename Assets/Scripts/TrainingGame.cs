@@ -62,7 +62,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     void PlayRoll() { sfx.pitch=Random.Range(.7f,1.5f); sfx.PlayOneShot(rollClip); }
     public void Attack()
     {
-        if(rolling || panel!="" || page!="battle" || draggingToken>=0)return;
+        if(spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0)return;
         Weapon weapon=fighter.AttacksRemaining>0?actionWeapon:selectedWeapon;
         if(!CheckWeaponRange(weapon))return;
         if(fighter.AttacksRemaining==0) {
@@ -75,7 +75,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     public void BonusAttack()
     {
-        if(rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight)return;
+        if(spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight)return;
         if(!CheckWeaponRange(selectedWeapon) || !combat.TryUseBonusAction())return;
         Weapon weapon=selectedWeapon;
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
@@ -130,7 +130,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void EndCombatRound()
     {
-        if(!rolling && panel=="" && page=="battle" && draggingToken<0) {
+        if(!spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0) {
             combat.MarkBattleStarted();
             history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
             StartCoroutine(Counterattack());
@@ -168,6 +168,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="spells"){DrawSpellPanel();return;}
         bool left=panel=="weapons" || panel=="attributes" || panel=="classes";
         float targetX=left?350:770;
         float x=Mathf.Lerp(left?35:1120,targetX,Mathf.SmoothStep(0,1,drawerProgress));

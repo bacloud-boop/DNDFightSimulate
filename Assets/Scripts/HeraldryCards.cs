@@ -82,6 +82,7 @@ public sealed partial class TrainingGame
             CardTab(new Rect(x+270,206,60,62),"属\n性","attributes",true);
             CardTab(new Rect(x+270,282,60,62),"武\n器","weapons",true);
             CardTab(new Rect(x+270,358,60,62),"职\n业","classes",true);
+            CardTab(new Rect(x+270,434,60,62),"法\n术","spells",true);
         }else{
             EngravedRow(x,540,"熟练加值",combat.MonsterProficiencyBonus.ToString(),false);
             EngravedRow(x,575,"反击时机","回合结束",false);
