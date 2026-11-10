@@ -31,6 +31,7 @@ public sealed partial class TrainingGame
         paperTexture=Grain(new Color(.92f,.81f,.59f),false);
         redTexture=Grain(new Color(.43f,.09f,.065f),false);
         hoverTexture=Grain(new Color(.58f,.19f,.09f),false);
+        InitializeHeraldry();
         fastAnimation=PlayerPrefs.GetInt("FastDice",0)==1;
         miniatures=gameObject.AddComponent<TavernMiniatures>();miniatures.Initialize();
         diceStage=gameObject.AddComponent<TavernDice>();diceStage.Initialize(font);
@@ -65,6 +66,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
+        ObserveVitalChanges();
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
     void OnGUI()
@@ -80,11 +82,11 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(65,130,310,610),paperTexture);
         GUI.Label(new Rect(90,165,260,45),"冒险者档案",cardTitle);
-        GUI.DrawTexture(new Rect(90,225,260,260),miniatures.Player);
+        GUI.DrawTexture(new Rect(90,225,260,260),emblems[classes.InitialClass]);
         GUI.Label(new Rect(95,520,250,120),"拿起武器，掷出命运。\n在酒馆桌面上演练每一次交锋。",centered);
         Surface(new Rect(1225,180,310,530),paperTexture);
         GUI.Label(new Rect(1250,215,260,45),"训练木桩",cardTitle);
-        GUI.DrawTexture(new Rect(1250,275,260,260),miniatures.Monster);
+        GUI.DrawTexture(new Rect(1250,275,260,260),emblems[11]);
         GUI.Label(new Rect(1250,555,260,75),"属性 · 装备 · 多职业\n命中 · 伤害 · 暴击",centered);
         Surface(new Rect(450,100,700,685),paperTexture);
         GUI.Label(new Rect(500,130,600,35),"D N D  ·  T A V E R N  T A B L E",centered);
@@ -119,29 +121,7 @@ public sealed partial class TrainingGame
         int count=0;for(int i=0;i<PlayerClasses.Names.Length;i++)if(classes[i]>0)count++;
         return PlayerClasses.Names[classes.InitialClass]+" · 总等级 "+classes.TotalLevel+(count>1?" · 多职业":"");
     }
-    void DrawCard(bool player)
-    {
-        float x=player?35:1265;Surface(new Rect(x,110,300,745),paperTexture);
-        GUI.Label(new Rect(x+15,137,270,45),player?"冒险者":"训练木桩",cardTitle);
-        GUI.DrawTexture(new Rect(x+25,190,250,250),player?miniatures.Player:miniatures.Monster);
-        GUI.Label(new Rect(x+20,445,260,60),player?ClassSummary():"木制靶偶 · 回合结束反击",centered);
-        int hp=player?combat.PlayerHp:combat.Hp,max=player?combat.PlayerMaxHp:combat.MaxHp;
-        Fill(new Rect(x+23,520,254,20),new Color(.23f,.12f,.07f));
-        Fill(new Rect(x+25,522,250*(hp/(float)max),16),new Color(.53f,.11f,.07f));
-        GUI.Label(new Rect(x+20,547,260,30),"生命  "+hp+" / "+max,centered);
-        GUI.Label(new Rect(x+20,585,260,30),"护甲  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),centered);
-        if(player){
-            GUI.Label(new Rect(x+20,623,260,35),selectedWeapon.Name+" · "+selectedWeapon.DamageDice,centered);
-            if(Btn(new Rect(x+25,674,250,46),combat.BattleStarted?"玩家属性（只读）":"玩家属性",panel==""))OpenPanel("attributes");
-            if(Btn(new Rect(x+25,728,120,46),"玩家武器",panel==""))OpenPanel("weapons");
-            if(Btn(new Rect(x+155,728,120,46),"玩家职业",panel==""))OpenPanel("classes");
-            GUI.Label(new Rect(x+20,788,260,55),"每动作攻击 "+fighter.AttacksPerAction(classes[0])+" 次"+(classes[0]>=13?"\n究明攻击：失手后下次优势":""),centered);
-        } else {
-            GUI.Label(new Rect(x+20,625,260,30),"熟练加值  "+combat.MonsterProficiencyBonus,centered);
-            if(Btn(new Rect(x+25,684,250,48),"怪物伤害更改",panel==""))OpenPanel("monster");
-            if(Btn(new Rect(x+25,744,250,48),"怪物属性",panel==""))OpenPanel("monsterAttributes");
-        }
-    }
+    void DrawCard(bool player) { DrawHeraldryCard(player); }
     void OpenPanel(string value){if(draggingToken>=0)return;panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
     void DrawBattle()
     {
@@ -179,6 +159,7 @@ public sealed partial class TrainingGame
     }
     void DisposePresentation()
     {
+        DisposeHeraldry();
         if(woodTexture)Destroy(woodTexture);if(paperTexture)Destroy(paperTexture);if(redTexture)Destroy(redTexture);if(hoverTexture)Destroy(hoverTexture);
         if(diceStage)Destroy(diceStage);if(miniatures)Destroy(miniatures);
     }
