@@ -11,6 +11,8 @@ public sealed class BattleMap
     public bool Locked {get;private set;}
     public const int MovementPerRound=30;
     public int MovementRemaining {get;private set;} = MovementPerRound;
+    public int MonsterMovementRemaining {get;private set;} = 30;
+    public void StartMonsterMovementTurn() {MonsterMovementRemaining=30;}
     public int TacticalMovementRemaining {get;private set;}
     public void GrantTacticalMovement() {TacticalMovementRemaining+=MovementPerRound/2;}
     public int MovementBudget(bool tactical) => tactical?TacticalMovementRemaining:MovementRemaining;
@@ -22,8 +24,8 @@ public sealed class BattleMap
         if(tactical)TacticalMovementRemaining-=FeetBetween(Player,cell);else MovementRemaining-=FeetBetween(Player,cell);
         Player=cell;return true;
     }
-    public bool CanMoveMonsterTo(Vector2Int cell) => Locked && cell.x>=0 && cell.y>=0 && cell.x<Size && cell.y<Size && cell!=Player;
-    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;Monster=cell;return true;}
+    public bool CanMoveMonsterTo(Vector2Int cell) => Locked && cell.x>=0 && cell.y>=0 && cell.x<Size && cell.y<Size && cell!=Player && FeetBetween(Monster,cell)<=MonsterMovementRemaining;
+    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=FeetBetween(Monster,cell);Monster=cell;return true;}
     public void RefreshMovement() {MovementRemaining=MovementPerRound;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => Mathf.RoundToInt(Vector2Int.Distance(Player,Monster)*5);
     public void Select(int index) {if(Locked || index<0 || index>=Sizes.Length)return;Selected=index;Player=Vector2Int.zero;Monster=new Vector2Int(Size-1,Size-1);}
@@ -31,6 +33,6 @@ public sealed class BattleMap
         if(Locked || cell.x<0 || cell.y<0 || cell.x>=Size || cell.y>=Size || cell==(player?Monster:Player))return false;
         if(player)Player=cell;else Monster=cell;return true;
     }
-    public bool Lock() {if(Player==Monster)return false;Locked=true;RefreshMovement();return true;}
-    public void Unlock(){Locked=false;TacticalMovementRemaining=0;}
+    public bool Lock() {if(Player==Monster)return false;Locked=true;RefreshMovement();StartMonsterMovementTurn();return true;}
+    public void Unlock(){Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
 }

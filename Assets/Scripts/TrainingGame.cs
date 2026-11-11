@@ -139,7 +139,12 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Counterattack(bool endTurn=true)
     {
         rolling=true;
-        if(endTurn)combat.StartMonsterTurn();
+        if(endTurn) {
+            combat.StartMonsterTurn();map.StartMonsterMovementTurn();
+            yield return ChasePlayer();
+            if(page!="battle" || !map.Locked){rolling=false;yield break;}
+            rolling=true;
+        }
         if(endTurn && map.DistanceFeet>combat.MonsterAttackRange) {
             dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+combat.MonsterAttackRange+" 尺。";
             history.Insert(0,dice);

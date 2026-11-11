@@ -142,7 +142,7 @@ public sealed partial class TrainingGame
         DrawMap(new Rect(600,110,400,400),!spellTargeting&&!rolling&&panel=="");
         GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / 30 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,205,130),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
-        if(rolling && !reactionPending) {
+        if(rolling && !reactionPending && !monsterMoving) {
             Fill(new Rect(365,105,870,405),new Color(.1f,.045f,.02f,.8f));
             if(!simpleDice)GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);
             else GUI.Label(new Rect(490,170,620,170),rollResultText,new GUIStyle(lightTitle){fontSize=36});

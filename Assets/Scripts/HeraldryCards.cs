@@ -86,7 +86,7 @@ public sealed partial class TrainingGame
         }else{
             EngravedRow(x,540,"熟练加值",combat.MonsterProficiencyBonus.ToString(),false);
             EngravedRow(x,575,"反击时机","回合结束",false);
-            EngravedRow(x,610,"当前回合",combat.Round.ToString(),false);
+            EngravedRow(x,610,"移动力",map.MonsterMovementRemaining+" / 30尺",false);
             EngravedRow(x,645,"与玩家距离",map.DistanceFeet+" 尺",false);
             EngravedRow(x,680,"攻击距离",combat.MonsterAttackRange+" 尺",false);
             EngravedRow(x,715,"反应",combat.MonsterReactionAvailable?"1 / 1":"0 / 1",false);

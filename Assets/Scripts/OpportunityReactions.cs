@@ -26,7 +26,7 @@ public sealed partial class TrainingGame
         if(rolling || panel!="" || page!="battle" || !map.CanMoveMonsterTo(target))return;
         StartCoroutine(ResolveMovement(false,target,false));
     }
-    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical)
+    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false)
     {
         Vector2Int from=movingPlayer?map.Player:map.Monster;
         if(from==target)yield break;
@@ -49,13 +49,14 @@ public sealed partial class TrainingGame
             rolling=true;
             if(page!="battle" || !map.Locked){rolling=false;yield break;}
         }
+        if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
         bool moved=movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
         if(moved) {
             string mode=tactical?"战术转进（不引发借机攻击）":"普通移动";
             movementMessage=mode+"完成"+(movingPlayer?"，剩余 "+map.MovementBudget(tactical)+" 尺。":"。");
             history.Insert(0,(movingPlayer?"玩家":"木桩")+mode+" "+BattleMap.FeetBetween(from,target)+" 尺至("+(target.x+1)+","+(target.y+1)+")。");
         }
-        rolling=false;logScroll=Vector2.zero;
+        if(!preserveBusy)rolling=false;logScroll=Vector2.zero;
     }
     void DrawReactionPrompt()
     {
