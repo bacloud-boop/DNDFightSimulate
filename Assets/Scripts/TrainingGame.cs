@@ -11,6 +11,8 @@ public sealed partial class TrainingGame : MonoBehaviour
     bool rolling;
     readonly FighterFeatures fighter = new FighterFeatures();
     Weapon actionWeapon;
+    readonly HashSet<Weapon> lightAttacksThisTurn=new HashSet<Weapon>();
+    bool CanLightBonusAttack => selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
     string panel="";
     readonly MonsterDamage monster = new MonsterDamage();
     readonly string[] damageInputs = {"0","0","0","0","0","0"};
@@ -70,12 +72,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             actionWeapon=selectedWeapon;fighter.BeginAttackAction(classes[0]);
         }
         fighter.ConsumeAttack();
+        if(actionWeapon.HasLight)lightAttacksThisTurn.Add(actionWeapon);
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
         StartCoroutine(Roll(actionWeapon,actionWeapon.AttackModifier(attributes),classes.ProficiencyBonus,actionWeapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage));
     }
     public void BonusAttack()
     {
-        if(spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0 || !selectedWeapon.HasLight)return;
+        if(spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0 || !CanLightBonusAttack)return;
         if(!CheckWeaponRange(selectedWeapon) || !combat.TryUseBonusAction())return;
         Weapon weapon=selectedWeapon;
         bool advantage=fighter.ConsumeAdvantage(classes[0]);
@@ -113,15 +116,16 @@ public sealed partial class TrainingGame : MonoBehaviour
         string hitLabel=critical?"暴击（伤害骰数量翻倍）":"命中";
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
+        int damageModifier=attackWeapon.DiceCount==0?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
         int[] damageRolls=attackWeapon.RollDamageDice(critical);
         if(damageRolls.Length>0) {
             dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
-            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+abilityModifier+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+abilityModifier));
+            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+damageModifier+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+damageModifier));
         }
         int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage;
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
-        int damage=Mathf.Max(0,result+abilityModifier);
-        string modifierText=(abilityModifier>=0?"+":"")+abilityModifier;
+        int damage=Mathf.Max(0,result+damageModifier);
+        string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
@@ -140,7 +144,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;
         if(endTurn) {
-            combat.StartMonsterTurn();map.StartMonsterMovementTurn();
+            worldRounds++;shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn();
             yield return ChasePlayer();
             if(page!="battle" || !map.Locked){rolling=false;yield break;}
             rolling=true;
@@ -148,7 +152,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(endTurn && map.DistanceFeet>combat.MonsterAttackRange) {
             dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+combat.MonsterAttackRange+" 尺。";
             history.Insert(0,dice);
-            combat.EndRound();fighter.EndRound();map.RefreshMovement();tacticalMovement=false;
+            combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
             movementMessage="拖动玩家棋子移动。";
             rolling=false;logScroll=Vector2.zero;yield break;
         }
@@ -175,12 +179,14 @@ public sealed partial class TrainingGame : MonoBehaviour
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
         if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
-        else if(endTurn) {combat.EndRound();fighter.EndRound();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";}
+        else if(endTurn) {combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";}
         if(endTurn)rolling=false;logScroll=Vector2.zero;
     }
     void DrawPanel()
     {
         if(panel=="spells"){DrawSpellPanel();return;}
+        if(panel=="rest"){DrawRestPanel();return;}
+        if(panel=="features"){DrawFeatureCatalog();return;}
         bool left=panel=="weapons" || panel=="attributes" || panel=="classes";
         float targetX=left?350:770;
         float x=Mathf.Lerp(left?35:1120,targetX,Mathf.SmoothStep(0,1,drawerProgress));
@@ -211,14 +217,16 @@ public sealed partial class TrainingGame : MonoBehaviour
                 GUILayout.Label("等级（当前 "+classes[i]+"）",label,GUILayout.Width(150));
                 classInputs[i]=IntegerField(classInputs[i],false);
                 GUILayout.EndHorizontal();
+                DrawSubclassChoice(i);
             }
             GUILayout.EndScrollView();
             GUILayout.Label("总等级 1～20，各职业 0～20，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
-                if(classes.TryApply(classInputs,selectedClass)) { combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
-                else classError="各职业须为 0～20 整数，总等级须为 1～20，初始职业至少 1 级。";
+                if(ValidateSubclassDraft() && classes.TryApply(classInputs,selectedClass) && classes.TryApplySubclasses(subclassChoices)) { ResetRestResources(); combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
+                else classError="等级须合法，初始职业至少1级；每个达到3级的职业须选择子职业。";
             }
             GUILayout.Label(classError,label);
+            GUI.enabled=true;if(GUILayout.Button("查看职业特性目录 / 接入状态",button)){catalogClassIndex=selectedClass;panel="features";}
         } else if(panel=="monsterAttributes") {
             GUILayout.Label("怪物属性",heading);
             for(int i=0;i<6;i++) {

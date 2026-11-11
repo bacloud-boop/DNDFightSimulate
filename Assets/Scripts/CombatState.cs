@@ -30,19 +30,22 @@ public sealed class CombatState
     public void MarkBattleStarted() { BattleStarted=true; }
     public int ActionsRemaining { get; private set; } = 1;
     public int ActionsThisRound { get; private set; } = 1;
+    public int RestrictedActionsRemaining {get;private set;}
+    public bool MagicActionAvailable => ActionsRemaining>RestrictedActionsRemaining;
+    public bool TryUseMagicAction(){if(!MagicActionAvailable)return false;BattleStarted=true;ActionsRemaining--;return true;}
     public bool ActionAvailable => ActionsRemaining>0;
     public bool BonusActionAvailable { get; private set; } = true;
     public bool TryUseAction() {
         if(!ActionAvailable) return false;
-        BattleStarted=true;ActionsRemaining--;return true;
+        BattleStarted=true;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;return true;
     }
     public bool TryUseBonusAction() {
         if(!BonusActionAvailable) return false;
         BattleStarted=true;BonusActionAvailable=false;return true;
     }
-    public void AddSurgeAction() { BattleStarted=true;ActionsRemaining++;ActionsThisRound++; }
+    public void AddSurgeAction() { BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
     public int HealPlayer(int amount) {int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));return PlayerHp-before;}
-    void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;BonusActionAvailable=true;}
+    void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
     public void ResetBattle() {Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
     public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }

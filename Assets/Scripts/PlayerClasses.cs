@@ -2,6 +2,14 @@ public sealed class PlayerClasses
 {
     public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士", "野蛮人"};
     readonly int[] levels = {1,0,0,0,0,0,0,0,0,0,0};
+    readonly int[] subclasses = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+    public int Subclass(int index) => levels[index]>=3?subclasses[index]:-1;
+    public bool TryApplySubclasses(int[] choices) {
+        if(choices==null || choices.Length!=levels.Length)return false;
+        for(int i=0;i<levels.Length;i++)if(levels[i]>=3 && (choices[i]<0 || choices[i]>=Subclasses2024.Names[i].Length))return false;
+        for(int i=0;i<levels.Length;i++)subclasses[i]=levels[i]>=3?choices[i]:-1;return true;
+    }
+    public int HitDie(int index) => FirstLevelHp(index);
     public int InitialClass { get; private set; }
     public int this[int index] => levels[index];
     public int TotalLevel => System.Linq.Enumerable.Sum(levels);
@@ -25,6 +33,6 @@ public sealed class PlayerClasses
         }
         return hp;
     }
-    static int FirstLevelHp(int index) => index==10?12:(index>=4?8:(index==1 || index==3?6:10));
-    static int LaterLevelHp(int index) => index==10?7:(index>=4?5:(index==1 || index==3?4:6));
+    static int FirstLevelHp(int index) => index==10?12:(index==1||index==3)?6:(index==0||index==2||index==9)?10:8;
+    static int LaterLevelHp(int index) => FirstLevelHp(index)/2+1;
 }

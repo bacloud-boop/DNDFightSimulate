@@ -13,13 +13,19 @@ public sealed partial class TrainingGame
         Surface(new Rect(x,110,480,745),paperTexture);
         if(Btn(new Rect(x+370,125,90,46),"关闭")){panel="";return;}
         GUI.Label(new Rect(x+20,180,440,40),"法术 · 戏法",heading);
+        if(classes[1]>=1||classes[2]>=1) {
+            GUI.Label(new Rect(x+20,565,440,40),"一环功能性法术 · 法术位暂不扣除",label);
+            bool enabled=GUI.enabled;GUI.enabled=enabled&&!combat.BattleStarted;
+            if(GUI.Button(new Rect(x+20,615,440,55),new GUIContent(alarmLearned?"警报术 · 已学习（不可战斗施放）":"学习警报术（游侠 / 法师）",AlarmSpell.Summary),button))alarmLearned=true;
+            GUI.enabled=enabled;
+        }
         if(!CanCastAcid){GUI.Label(new Rect(x+20,235,440,90),"法师或术士至少 1 级可使用酸液飞溅。",label);return;}
         if(classes[castingClass]<1)castingClass=classes[1]>=1?1:3;
         if(Btn(new Rect(x+20,235,205,48),(castingClass==1?"✓ ":"")+"法师 · 智力",classes[1]>=1))castingClass=1;
         if(Btn(new Rect(x+235,235,205,48),(castingClass==3?"✓ ":"")+"术士 · 魅力",classes[3]>=1))castingClass=3;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
         GUI.Label(new Rect(x+20,305,440,70),"敏捷豁免 DC "+dc+" · "+AcidSplash.DiceCount(classes.TotalLevel)+"d6 强酸\n射程 60 尺 · 5 尺半径球状",label);
-        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.ActionAvailable;
+        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable;
         if(GUI.Button(new Rect(x+20,400,440,65),new GUIContent("酸液飞溅 · 选择施法位置",AcidSplash.Summary),button)){
             panel="";spellTargeting=true;spellCenterChosen=false;
         }
@@ -45,12 +51,12 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(1025,125,195,42),"酸液飞溅",heading);
         string target=spellCenterChosen?(hits?"木桩":"无目标"):"请点击地图选择中心";
         GUI.Label(new Rect(1025,180,195,160),"射程 60 尺\n半径 5 尺\n选定目标："+target+(hover?"\n悬停范围内："+(BattleMap.FeetBetween(preview,map.Monster)<=5?"木桩":"无目标"):"")+"\n玩家自身不受影响",label);
-        if(Btn(new Rect(1025,355,195,48),"确认施法",spellCenterChosen&&combat.ActionAvailable&&!rolling))CastAcidSplash();
+        if(Btn(new Rect(1025,355,195,48),"确认施法",spellCenterChosen&&combat.MagicActionAvailable&&!rolling))CastAcidSplash();
         if(Btn(new Rect(1025,420,195,48),"取消施法")){spellTargeting=false;spellCenterChosen=false;}
     }
     void CastAcidSplash()
     {
-        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || BattleMap.FeetBetween(map.Player,spellCenter)>60 || !combat.TryUseAction())return;
+        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || BattleMap.FeetBetween(map.Player,spellCenter)>60 || !combat.TryUseMagicAction())return;
         bool hits=BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
         int count=AcidSplash.DiceCount(classes.TotalLevel);
@@ -79,7 +85,9 @@ public sealed partial class TrainingGame
     void DrawSpellTooltip()
     {
         if(string.IsNullOrEmpty(GUI.tooltip))return;
-        Surface(new Rect(845,180,400,450),paperTexture);
-        GUI.Label(new Rect(865,200,360,410),GUI.tooltip,new GUIStyle(label){fontSize=18});
+        var tooltipStyle=new GUIStyle(label){fontSize=18};
+        float height=Mathf.Min(740,tooltipStyle.CalcHeight(new GUIContent(GUI.tooltip),460)+40);
+        Surface(new Rect(845,80,500,height),paperTexture);
+        GUI.Label(new Rect(865,100,460,height-40),GUI.tooltip,tooltipStyle);
     }
 }

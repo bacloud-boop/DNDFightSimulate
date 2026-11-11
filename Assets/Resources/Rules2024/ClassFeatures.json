@@ -1,0 +1,1840 @@
+{
+  "edition": "2024",
+  "description": "Progression names and levels only; pending entries do not apply game effects.",
+  "entries": [
+    {
+      "classIndex": 0,
+      "level": 1,
+      "name": "Fighting Style",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1FighterFightingStyle",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 1,
+      "name": "Second Wind",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1SecondWind",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 1,
+      "name": "Weapon Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1FighterWeaponMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 2,
+      "name": "Action Surge",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2ActionSurge",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 2,
+      "name": "Tactical Mind",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2TacticalMind",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 3,
+      "name": "Fighter Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3FighterSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 5,
+      "name": "Extra Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5FighterExtraAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 5,
+      "name": "Tactical Shift",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5TacticalShift",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 6,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 7,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 9,
+      "name": "Indomitable",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9Indomitable",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 9,
+      "name": "Tactical Master",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9TacticalMaster",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 10,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 11,
+      "name": "Two Extra Attacks",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11TwoExtraAttacks",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 13,
+      "name": "Indomitable",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9Indomitable",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 13,
+      "name": "Studied Attacks",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level13StudiedAttacks",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 14,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 15,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4FighterAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 17,
+      "name": "Action Surge",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2ActionSurge",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 17,
+      "name": "Indomitable",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9Indomitable",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 18,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19FighterEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 0,
+      "level": 20,
+      "name": "Three Extra Attacks",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20ThreeExtraAttacks",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1WizardSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 1,
+      "name": "Ritual Adept",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1RitualAdept",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 1,
+      "name": "Arcane Recovery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1ArcaneRecovery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 2,
+      "name": "Scholar",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Scholar",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 3,
+      "name": "Wizard Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3WizardSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WizardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 5,
+      "name": "Memorize Spell",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5MemorizeSpell",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 7,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WizardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 9,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 10,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 11,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WizardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 15,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WizardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 17,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 18,
+      "name": "Spell Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18SpellMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19WizardEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 1,
+      "level": 20,
+      "name": "Signature Spells",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20SignatureSpells",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1RangerSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 1,
+      "name": "Favored Enemy",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1FavoredEnemy",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 1,
+      "name": "Weapon Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1RangerWeaponMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 2,
+      "name": "Deft Explorer",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2DeftExplorer",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 2,
+      "name": "Fighting Style",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2RangerFightingStyle",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 3,
+      "name": "Ranger Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3RangerSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RangerAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 5,
+      "name": "Extra Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5RangerExtraAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 6,
+      "name": "Roving",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level6Roving",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 7,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RangerAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 9,
+      "name": "Expertise",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9RangerExpertise",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 10,
+      "name": "Tireless",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10Tireless",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 11,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RangerAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 13,
+      "name": "Relentless Hunter",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level13RelentlessHunter",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 14,
+      "name": "Nature’s Veil",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level14NaturesVeil",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 15,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RangerAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 17,
+      "name": "Precise Hunter",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level17PreciseHunter",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 18,
+      "name": "Feral Senses",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18FeralSenses",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19RangerEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 2,
+      "level": 20,
+      "name": "Foe Slayer",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20FoeSlayer",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1SorcererSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 1,
+      "name": "Innate Sorcery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1InnateSorcery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 2,
+      "name": "Font of Magic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2FontofMagic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 2,
+      "name": "Metamagic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Metamagic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 3,
+      "name": "Sorcerer Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3SorcererSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4SorcererAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 5,
+      "name": "Sorcerous Restoration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5SorcerousRestoration",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 7,
+      "name": "Sorcery Incarnate",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7SorceryIncarnate",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4SorcererAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 9,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 10,
+      "name": "Metamagic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Metamagic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 11,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4SorcererAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 15,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4SorcererAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 17,
+      "name": "Metamagic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Metamagic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 18,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19SorcererEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 3,
+      "level": 20,
+      "name": "Arcane Apotheosis",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20ArcaneApotheosis",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 1,
+      "name": "Eldritch Invocations",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1EldritchInvocations",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 1,
+      "name": "Pact Magic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1PactMagic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 2,
+      "name": "Magical Cunning",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2MagicalCunning",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 3,
+      "name": "Warlock Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3WarlockSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WarlockAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 5,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 7,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WarlockAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 9,
+      "name": "Contact Patron",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9ContactPatron",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 10,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 11,
+      "name": "Mystic Arcanum",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11MysticArcanum",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WarlockAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 13,
+      "name": "Mystic Arcanum",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11MysticArcanum",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 15,
+      "name": "Mystic Arcanum",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11MysticArcanum",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4WarlockAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 17,
+      "name": "Mystic Arcanum",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11MysticArcanum",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 18,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19WarlockEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 4,
+      "level": 20,
+      "name": "Eldritch Master",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20EldritchMaster",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 1,
+      "name": "Bardic Inspiration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1BardicInspiration",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1BardSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 2,
+      "name": "Expertise",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Expertise",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 2,
+      "name": "Jack of All Trades",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2JackofAllTrades",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 3,
+      "name": "Bard Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3BardSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 5,
+      "name": "Font of Inspiration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5FontofInspiration",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 7,
+      "name": "Countercharm",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7Countercharm",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 9,
+      "name": "Expertise",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2Expertise",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 10,
+      "name": "Magical Secrets",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10MagicalSecrets",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 11,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 15,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BardAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 17,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 18,
+      "name": "Superior Inspiration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18SuperiorInspiration",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19BardEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 5,
+      "level": 20,
+      "name": "Words of Creation",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20WordsofCreation",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1ClericSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 1,
+      "name": "Divine Order",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1DivineOrder",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 2,
+      "name": "Channel Divinity",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2ClericChannelDivinity",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 3,
+      "name": "Cleric Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3ClericSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4ClericAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 5,
+      "name": "Sear Undead",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5SearUndead",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 7,
+      "name": "Blessed Strikes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7BlessedStrikes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4ClericAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 9,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 10,
+      "name": "Divine Intervention",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10DivineIntervention",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 11,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4ClericAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 14,
+      "name": "Improved Blessed Strikes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level14ImprovedBlessedStrikes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 15,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4ClericAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 17,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 18,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19ClericEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 6,
+      "level": 20,
+      "name": "Greater Divine Intervention",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20GreaterDivineIntervention",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 1,
+      "name": "Expertise",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#LevelRogue1Expertise",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 1,
+      "name": "Sneak Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1SneakAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 1,
+      "name": "Thieves’ Cant",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1ThievesCant",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 1,
+      "name": "Weapon Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1RogueWeaponMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 2,
+      "name": "Cunning Action",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2CunningAction",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 3,
+      "name": "Rogue Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3RogueSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 3,
+      "name": "Steady Aim",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3SteadyAim",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RogueAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 5,
+      "name": "Cunning Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5CunningStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 5,
+      "name": "Uncanny Dodge",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5UncannyDodge",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 6,
+      "name": "Expertise",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#LevelRogue1Expertise",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 7,
+      "name": "Evasion",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7RogueEvasion",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 7,
+      "name": "Reliable Talent",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7ReliableTalent",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RogueAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 9,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 10,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RogueAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 11,
+      "name": "Improved Cunning Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11ImprovedCunningStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RogueAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 13,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 14,
+      "name": "Devious Strikes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level14DeviousStrikes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 15,
+      "name": "Slippery Mind",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level15SlipperyMind",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4RogueAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 17,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 18,
+      "name": "Elusive",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18Elusive",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19RogueEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 7,
+      "level": 20,
+      "name": "Stroke of Luck",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20StrokeofLuck",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 1,
+      "name": "Martial Arts",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1MartialArts",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 1,
+      "name": "Unarmored Defense",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1MonkUnarmoredDefense",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 2,
+      "name": "Monk’s Focus",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2MonksFocus",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 2,
+      "name": "Unarmored Movement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2MonkUnarmoredMovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 2,
+      "name": "Uncanny Metabolism",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2UncannyMetabolism",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 3,
+      "name": "Deflect Attacks",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3DeflectAttacks",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 3,
+      "name": "Monk Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3MonkSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4MonkAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 4,
+      "name": "Slow Fall",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4SlowFall",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 5,
+      "name": "Extra Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5MonkExtraAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 5,
+      "name": "Stunning Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5StunningStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 6,
+      "name": "Empowered Strikes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level6EmpoweredStrikes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 7,
+      "name": "Evasion",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7MonkEvasion",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4MonkAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 9,
+      "name": "Acrobatic Movement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9AcrobaticMovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 10,
+      "name": "Heightened Focus",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10HeightenedFocus",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 10,
+      "name": "Self-Restoration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10SelfRestoration",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 11,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4MonkAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 13,
+      "name": "Deflect Energy",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level13DeflectEnergy",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 14,
+      "name": "Disciplined Survivor",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level14DisciplinedSurvivor",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 15,
+      "name": "Perfect Focus",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level15PerfectFocus",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4MonkAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 17,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 18,
+      "name": "Superior Defense",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18SuperiorDefense",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19MonkEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 8,
+      "level": 20,
+      "name": "Body and Mind",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20BodyandMind",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 1,
+      "name": "Lay On Hands",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1LayOnHands",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1PaladinSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 1,
+      "name": "Weapon Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1PaladinWeaponMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 2,
+      "name": "Fighting Style",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2PaladinFightingStyle",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 2,
+      "name": "Paladin’s Smite",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2PaladinsSmite",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 3,
+      "name": "Channel Divinity",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3ChannelDivinity",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 3,
+      "name": "Paladin Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3PaladinSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4PaladinAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 5,
+      "name": "Extra Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5PaladinExtraAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 5,
+      "name": "Faithful Steed",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5FaithfulSteed",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 6,
+      "name": "Aura of Protection",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level6AuraofProtection",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 7,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4PaladinAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 9,
+      "name": "Abjure Foes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9AbjureFoes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 10,
+      "name": "Aura of Courage",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level10AuraofCourage",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 11,
+      "name": "Radiant Strikes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11RadiantStrikes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4PaladinAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 14,
+      "name": "Restoring Touch",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level14RestoringTouch",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 15,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4PaladinAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 17,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 18,
+      "name": "Aura Expansion",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18AuraExpansion",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19PaladinEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 9,
+      "level": 20,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 1,
+      "name": "Rage",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1Rage",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 1,
+      "name": "Unarmored Defense",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1BarbarianUnarmoredDefense",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 1,
+      "name": "Weapon Mastery",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1BarbarianWeaponMastery",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 2,
+      "name": "Danger Sense",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2DangerSense",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 2,
+      "name": "Reckless Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2RecklessAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 3,
+      "name": "Barbarian Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3BarbarianSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 3,
+      "name": "Primal Knowledge",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3PrimalKnowledge",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BarbarianAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 5,
+      "name": "Extra Attack",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5ExtraAttack",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 5,
+      "name": "Fast Movement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5FastMovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 7,
+      "name": "Feral Instinct",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7FeralInstinct",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 7,
+      "name": "Instinctive Pounce",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7InstinctivePounce",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BarbarianAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 9,
+      "name": "Brutal Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level9BrutalStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 10,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 11,
+      "name": "Relentless Rage",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level11RelentlessRage",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BarbarianAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 13,
+      "name": "Improved Brutal Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level13ImprovedBrutalStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 15,
+      "name": "Persistent Rage",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level15PersistentRage",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4BarbarianAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 17,
+      "name": "Improved Brutal Strike",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level17ImprovedBrutalStrike",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 18,
+      "name": "Indomitable Might",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18IndomitableMight",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19BarbarianEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 10,
+      "level": 20,
+      "name": "Primal Champion",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20PrimalChampion",
+      "status": "pending"
+    }
+  ]
+}

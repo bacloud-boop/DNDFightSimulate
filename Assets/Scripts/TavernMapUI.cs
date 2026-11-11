@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     readonly BattleMap map=new BattleMap();
     int draggingToken=-1,dragControl;
     string deploymentMessage="拖动蓝色玩家与红色木桩，选择不同格子。";
-    void BeginDeployment() {map.Unlock();spellTargeting=false;spellCenterChosen=false;tacticalMovement=false;reactionPending=false;page="deployment";panel="";draggingToken=-1;}
+    void BeginDeployment() {ResetRestResources();lightAttacksThisTurn.Clear();map.Unlock();spellTargeting=false;spellCenterChosen=false;tacticalMovement=false;reactionPending=false;page="deployment";panel="";draggingToken=-1;}
     Vector2 BoardPointer() {return GUI.matrix.inverse.MultiplyPoint3x4(new Vector3(Input.mousePosition.x,Screen.height-Input.mousePosition.y,0));}
     Rect CellRect(Rect board,Vector2Int cell) {float size=board.width/map.Size;return new Rect(board.x+cell.x*size,board.y+cell.y*size,size,size);}
     void Token(Rect rect,bool player,bool preview=false)

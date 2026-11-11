@@ -97,10 +97,12 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(505,195,590,80),"木桩训练场",new GUIStyle(title){alignment=TextAnchor.MiddleCenter});
         if(!simpleDice)GUI.DrawTexture(new Rect(590,270,420,190),diceStage.Texture);
         else GUI.Label(new Rect(590,270,420,190),"D20 · 简洁投骰",cardTitle);
-        if(Btn(new Rect(600,475,400,62),"进入战斗  →"))page=map.Locked?"battle":"deployment";
-        if(Btn(new Rect(600,555,400,55),"设置"))page="settings";
-        if(Btn(new Rect(600,630,400,55),"退出游戏"))QuitGame();
-        GUI.Label(new Rect(560,715,480,40),"一张桌面，一场属于你的冒险。",centered);
+        if(Btn(new Rect(600,475,400,62),"进入战斗  →",panel==""))page=map.Locked?"battle":"deployment";
+        if(Btn(new Rect(600,555,400,55),"设置",panel==""))page="settings";
+        if(Btn(new Rect(600,630,400,55),"退出游戏",panel==""))QuitGame();
+        if(Btn(new Rect(600,700,400,48),"休息（短休 / 长休）",OutsideCombat&&panel==""))panel="rest";
+        if(panel=="rest")DrawRestPanel();
+        GUI.Label(new Rect(560,750,480,30),"一张桌面，一场属于你的冒险。",centered);
     }
     void DrawSettings()
     {
@@ -156,9 +158,9 @@ public sealed partial class TrainingGame
         bool canAct=!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
         bool attackInRange=(fighter.AttacksRemaining>0?actionWeapon:selectedWeapon).CanReach(map.DistanceFeet);
         bool bonusInRange=selectedWeapon.CanReach(map.DistanceFeet);
-        if(Btn(new Rect(395,555,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / 2":"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
+        if(Btn(new Rect(395,555,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / "+fighter.WindMaximum(classes[0]):"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
         if(Btn(new Rect(670,555,260,48),classes[0]>=2?"动作如潮 · 剩余 "+fighter.SurgeRemaining(classes[0])+(fighter.SurgedThisRound?"（本回合已用）":""):"动作如潮 · 战士 2 级解锁",canAct&&fighter.CanSurge(classes[0])))ActionSurge();
-        if(Btn(new Rect(945,555,260,48),selectedWeapon.HasLight?(bonusInRange?"轻型攻击（附赠动作）":"无法进行攻击 · 超出射程"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&selectedWeapon.HasLight&&combat.BonusActionAvailable))BonusAttack();
+        if(Btn(new Rect(945,555,260,48),selectedWeapon.HasLight?(bonusInRange?(CanLightBonusAttack?"轻型攻击（附赠动作）":"需先用另一轻型武器攻击"):"无法进行攻击 · 超出射程"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&CanLightBonusAttack&&combat.BonusActionAvailable))BonusAttack();
         string attackLabel=fighter.AttacksRemaining>0?"继续攻击 · 剩余 "+fighter.AttacksRemaining+" 次":combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用";
         if(Btn(new Rect(430,615,360,57),attackInRange?attackLabel:"无法进行攻击 · 超出射程",canAct&&attackInRange&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
         if(Btn(new Rect(810,615,360,57),"结束回合 / 跳过剩余操作",canAct))EndCombatRound();

@@ -76,7 +76,7 @@ public sealed partial class TrainingGame
             EngravedRow(x,650,"战术转进移动",map.TacticalMovementRemaining+" 尺",player);
             EngravedRow(x,674,"反应",combat.PlayerReactionAvailable?"1 / 1":"0 / 1",player);
             EngravedRow(x,698,"本动作剩余攻击",fighter.AttacksRemaining.ToString(),player);
-            EngravedRow(x,722,"回气",classes[0]>=1?fighter.WindRemaining(classes[0])+" / 2":"未解锁",player);
+            EngravedRow(x,722,"回气",classes[0]>=1?fighter.WindRemaining(classes[0])+" / "+fighter.WindMaximum(classes[0]):"未解锁",player);
             EngravedRow(x,746,"动作如潮",classes[0]>=2?fighter.SurgeRemaining(classes[0])+" / "+(classes[0]>=17?2:1):"未解锁",player);
             GUI.Label(new Rect(x+20,769,230,55),fighter.NextAttackAdvantage?"究明攻击 · 下次优势":fighter.SurgedThisRound?"动作如潮 · 本回合已用":"本场状态 · "+(combat.BattleStarted?"配置锁定":"可调整配置"),PlaqueText(player,16,TextAnchor.MiddleCenter));
             CardTab(new Rect(x+270,206,60,62),"属\n性","attributes",true);
