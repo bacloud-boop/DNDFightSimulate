@@ -4,10 +4,12 @@ public sealed partial class TrainingGame
 {
     readonly BattleMap map=new BattleMap();
     int draggingToken=-1,dragControl;
+    Vector2 dragOffset;
     string deploymentMessage="拖动蓝色玩家与红色木桩，选择不同格子。";
     void BeginDeployment() {ResetRestResources();lightAttacksThisTurn.Clear();map.Unlock();spellTargeting=false;spellCenterChosen=false;tacticalMovement=false;reactionPending=false;page="deployment";panel="";draggingToken=-1;}
     Vector2 BoardPointer() {return GUI.matrix.inverse.MultiplyPoint3x4(new Vector3(Input.mousePosition.x,Screen.height-Input.mousePosition.y,0));}
     Rect CellRect(Rect board,Vector2Int cell) {float size=board.width/map.Size;return new Rect(board.x+cell.x*size,board.y+cell.y*size,size,size);}
+    Rect BodyRect(Rect board,Vector2Int anchor,int spaces){var rect=CellRect(board,anchor);rect.width*=spaces;rect.height*=spaces;return rect;}
     void Token(Rect rect,bool player,bool preview=false)
     {
         Fill(new Rect(rect.x+2,rect.y+2,rect.width-4,rect.height-4),player?new Color(.12f,.34f,.46f,.95f):new Color(.55f,.13f,.07f,.95f));
@@ -29,8 +31,8 @@ public sealed partial class TrainingGame
             Fill(new Rect(board.x+i*size,board.y,1,board.height),new Color(.32f,.21f,.09f,.45f));
             Fill(new Rect(board.x,board.y+i*size,board.width,1),new Color(.32f,.21f,.09f,.45f));
         }
-        var playerRect=CellRect(board,map.Player);var monsterRect=CellRect(board,map.Monster);
-        if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size,size);
+        var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
+        if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
         if(draggingToken!=0)Token(playerRect,true);
         if(draggingToken!=1)Token(monsterRect,false);
         if(!allowDrag || (map.Locked&&!moving))return;
@@ -38,17 +40,18 @@ public sealed partial class TrainingGame
         var e=Event.current;Vector2 point=BoardPointer();
         bool playerCanDrag=playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
         if(e.type==EventType.MouseDown && e.button==0 && (playerCanDrag||(!moving&&monsterRect.Contains(point)))) {
-            draggingToken=playerCanDrag?0:1;dragControl=id;GUIUtility.hotControl=id;e.Use();
+            draggingToken=playerCanDrag?0:1;var grabbed=playerCanDrag?playerRect:monsterRect;dragOffset=new Vector2((point.x-grabbed.x)/size,(point.y-grabbed.y)/size);dragControl=id;GUIUtility.hotControl=id;e.Use();
         }
         if(draggingToken>=0) {
-            var cell=new Vector2Int(Mathf.FloorToInt((point.x-board.x)/size),Mathf.FloorToInt((point.y-board.y)/size));
+            var cell=new Vector2Int(Mathf.RoundToInt((point.x-board.x)/size-dragOffset.x),Mathf.RoundToInt((point.y-board.y)/size-dragOffset.y));
+            int spaces=draggingToken==0?map.PlayerSpaces:map.MonsterSpaces;
             bool inside=board.Contains(point);
-            bool legal=moving?inside&&map.CanMoveTo(cell,tacticalMovement):inside&&cell!=(draggingToken==0?map.Monster:map.Player);
-            if(inside)Fill(CellRect(board,cell),legal?new Color(.1f,.55f,.2f,.4f):new Color(.8f,.05f,.02f,.4f));
-            Token(new Rect(point.x-size/2,point.y-size/2,size,size),draggingToken==0,true);
+            bool legal=moving?inside&&map.CanMoveTo(cell,tacticalMovement):inside&&map.CanPlace(draggingToken==0,cell);
+            if(inside)Fill(BodyRect(board,cell,spaces),legal?new Color(.1f,.55f,.2f,.4f):new Color(.8f,.05f,.02f,.4f));
+            Token(new Rect(point.x-dragOffset.x*size,point.y-dragOffset.y*size,size*spaces,size*spaces),draggingToken==0,true);
             if(moving) {
                 int cost=BattleMap.FeetBetween(map.Player,cell);
-                movementMessage="本次 "+cost+" 尺\n距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,cell)+" 尺\n移动后剩余 "+(map.MovementBudget(tacticalMovement)-cost)+" 尺\n"+(legal?"松手落在格心":"不可移动到此位置");
+                movementMessage="本次 "+cost+" 尺\n距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,cell)+" 尺\n移动后剩余 "+(map.MovementBudget(tacticalMovement)-cost)+" 尺\n"+(legal?"松手对齐占地网格":"不可移动到此位置");
             }
             if(e.type==EventType.MouseDrag)e.Use();
             if(e.type==EventType.KeyDown && e.keyCode==KeyCode.Escape) {draggingToken=-1;GUIUtility.hotControl=0;movementMessage="已取消本次移动。";e.Use();return;}
@@ -57,7 +60,7 @@ public sealed partial class TrainingGame
                 if(moving) {
                     movementMessage=valid?"确认移动……":"移动取消：超出当前额度、越界或目标格被占据。";
                     if(valid)RequestPlayerMove(cell,tacticalMovement);
-                }else deploymentMessage=valid?"位置已更新，可以继续拖动或开始战斗。":"该位置不可用：必须在地图内，且双方不能占同一格。";
+                }else deploymentMessage=valid?"位置已更新，可以继续拖动或开始战斗。":"该位置不可用：必须在地图内，且双方占地不能重叠。";
                 draggingToken=-1;if(GUIUtility.hotControl==dragControl)GUIUtility.hotControl=0;e.Use();
             }
         }
@@ -69,11 +72,11 @@ public sealed partial class TrainingGame
         DrawCard(true);DrawCard(false);
         Surface(new Rect(365,105,870,750),paperTexture);
         for(int i=0;i<3;i++)if(Btn(new Rect(390+i*275,125,255,46),(map.Selected==i?"✓ ":"")+BattleMap.Names[i]+" · "+BattleMap.Sizes[i]+"×"+BattleMap.Sizes[i],!rolling&&panel==""&&draggingToken<0))map.Select(i);
-        GUI.Label(new Rect(390,180,820,40),"每格 5 尺 · 距离 "+map.DistanceFeet+" 尺 · 蓝色为玩家，红色为木桩",centered);
+        GUI.Label(new Rect(390,180,820,40),"每格 5 尺 · 距离 "+map.DistanceFeet+" 尺 · 玩家占地 "+map.PlayerSpaces+"×"+map.PlayerSpaces+"，木桩 "+map.MonsterSpaces+"×"+map.MonsterSpaces+"格",centered);
         DrawMap(new Rect(550,225,500,500),!rolling&&panel=="");
         GUI.Label(new Rect(390,735,820,35),deploymentMessage,centered);
         if(Btn(new Rect(590,787,420,48),"开始战斗 · 锁定位置",!rolling&&panel==""&&draggingToken<0)) {
-            if(map.Lock()){page="battle";history.Insert(0,"部署完成："+BattleMap.Names[map.Selected]+"，玩家("+(map.Player.x+1)+","+(map.Player.y+1)+")，木桩("+(map.Monster.x+1)+","+(map.Monster.y+1)+")，距离 "+map.DistanceFeet+" 尺。");}
+            if(map.Lock()){page="battle";history.Insert(0,"部署完成："+BattleMap.Names[map.Selected]+"，玩家占地左上格("+(map.Player.x+1)+","+(map.Player.y+1)+")，木桩占地左上格("+(map.Monster.x+1)+","+(map.Monster.y+1)+")，距离 "+map.DistanceFeet+" 尺。");}
         }
         if(panel!="")DrawPanel();
     }

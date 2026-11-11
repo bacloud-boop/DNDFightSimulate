@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
             if(!map.CanMoveMonsterTo(cell))continue;
             int cost=BattleMap.FeetBetween(from,cell);
             if(cost>map.MonsterMovementRemaining)continue;
-            int distance=BattleMap.FeetBetween(cell,map.Player);
+            int distance=BattleMap.BodyDistance(cell,map.MonsterSpaces,map.Player,map.PlayerSpaces);
             bool inRange=distance<=combat.MonsterAttackRange;
             if(inRange && (!foundInRange || cost<bestCost || (cost==bestCost && distance<bestDistance)) ||
                 !inRange && !foundInRange && (distance<bestDistance || (distance==bestDistance && cost<bestCost))) {

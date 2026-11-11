@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
         Vector2 pointer=BoardPointer();var e=Event.current;
         bool hover=board.Contains(pointer);
         var cell=hover?new Vector2Int(Mathf.FloorToInt((pointer.x-board.x)/(board.width/map.Size)),Mathf.FloorToInt((pointer.y-board.y)/(board.width/map.Size))):spellCenter;
-        bool inRange=BattleMap.FeetBetween(map.Player,cell)<=60;
+        bool inRange=map.DistanceToCell(true,cell)<=60;
         if(hover && e.type==EventType.MouseDown && e.button==0){if(inRange){spellCenter=cell;spellCenterChosen=true;}e.Use();}
         Vector2Int preview=hover?cell:spellCenter;
         if(hover || spellCenterChosen){
@@ -46,7 +46,7 @@ public sealed partial class TrainingGame
                 Fill(CellRect(board,new Vector2Int(x,y)),new Color(.28f,.8f,.12f,.35f));
             Fill(CellRect(board,preview),inRange?new Color(.1f,.8f,.2f,.35f):new Color(.9f,.1f,.05f,.4f));
         }
-        bool hits=spellCenterChosen&&combat.Hp>0&&BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
+        bool hits=spellCenterChosen&&combat.Hp>0&&map.DistanceToCell(false,spellCenter)<=5;
         Surface(new Rect(1010,110,225,410),paperTexture);
         GUI.Label(new Rect(1025,125,195,42),"酸液飞溅",heading);
         string target=spellCenterChosen?AcidTargets(spellCenter):"请点击地图选择中心";
@@ -56,9 +56,9 @@ public sealed partial class TrainingGame
     }
     void CastAcidSplash()
     {
-        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || BattleMap.FeetBetween(map.Player,spellCenter)>60 || !combat.TryUseMagicAction())return;
-        bool hits=combat.Hp>0&&BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
-        bool hitsPlayer=!combat.PlayerDead&&BattleMap.FeetBetween(spellCenter,map.Player)<=5;
+        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || map.DistanceToCell(true,spellCenter)>60 || !combat.TryUseMagicAction())return;
+        bool hits=combat.Hp>0&&map.DistanceToCell(false,spellCenter)<=5;
+        bool hitsPlayer=!combat.PlayerDead&&map.DistanceToCell(true,spellCenter)<=5;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
         int count=AcidSplash.DiceCount(classes.TotalLevel);
         spellTargeting=false;spellCenterChosen=false;
@@ -66,8 +66,8 @@ public sealed partial class TrainingGame
     }
     string AcidTargets(Vector2Int center)
     {
-        bool monster=combat.Hp>0&&BattleMap.FeetBetween(center,map.Monster)<=5;
-        bool player=!combat.PlayerDead&&BattleMap.FeetBetween(center,map.Player)<=5;
+        bool monster=combat.Hp>0&&map.DistanceToCell(false,center)<=5;
+        bool player=!combat.PlayerDead&&map.DistanceToCell(true,center)<=5;
         return monster&&player?"木桩、玩家":monster?"木桩":player?"玩家":"无目标";
     }
     bool DexteritySaveProficient => classes.SavingThrowProficient(1);

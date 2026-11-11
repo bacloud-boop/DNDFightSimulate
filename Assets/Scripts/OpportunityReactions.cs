@@ -6,15 +6,6 @@ public sealed partial class TrainingGame
     bool tacticalMovement,reactionPending,reactionForPlayer;
     int reactionDecision;
     int reactionRange=5;
-    // A straight move can leave reach after starting inside it or passing through it.
-    static bool LeavesReach(Vector2Int from,Vector2Int to,Vector2Int defender,int rangeFeet)
-    {
-        Vector2 a=from-defender,b=to-defender,d=b-a;
-        float radius=rangeFeet/5f;float radiusSquared=radius*radius;
-        if(b.sqrMagnitude<=radiusSquared || d.sqrMagnitude==0)return false;
-        float t=Mathf.Clamp01(-Vector2.Dot(a,d)/d.sqrMagnitude);
-        return a.sqrMagnitude<=radiusSquared || (a+t*d).sqrMagnitude<radiusSquared;
-    }
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
         if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
@@ -34,7 +25,7 @@ public sealed partial class TrainingGame
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=defenderPlayer?combat.PlayerReactionAvailable&&combat.PlayerCanAct:combat.MonsterReactionAvailable&&combat.MonsterCanAct;
         int reach=defenderPlayer?5:combat.MonsterAttackRange;
-        if(!tactical && reactionAvailable && LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach)) {
+        if(!tactical && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
             reactionForPlayer=defenderPlayer;reactionRange=reach;reactionDecision=0;reactionPending=true;
             dice="移动将离开 "+reach+" 尺范围，等待借机攻击选择。";
             while(reactionDecision==0)yield return null;
