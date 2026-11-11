@@ -1,0 +1,6270 @@
+{
+  "count": 339,
+  "spells": [
+    {
+      "name": "Acid Splash",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AcidSplash",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Aid",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Aid",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Alarm",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Ranger",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Alarm",
+      "implementation": "learning_only"
+    },
+    {
+      "name": "Alter Self",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AlterSelf",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Animal Friendship",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AnimalFriendship",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Animal Messenger",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AnimalMessenger",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Animal Shapes",
+      "level": 8,
+      "school": "Transmutation",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AnimalShapes",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Animate Dead",
+      "level": 3,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AnimateDead",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Animate Objects",
+      "level": 5,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AnimateObjects",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Antilife Shell",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AntilifeShell",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Antimagic Field",
+      "level": 8,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AntimagicField",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Antipathy/Sympathy",
+      "level": 8,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AntipathySympathy",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Arcane Eye",
+      "level": 4,
+      "school": "Divination",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ArcaneEye",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Arcane Lock",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ArcaneLock",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Astral Projection",
+      "level": 9,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AstralProjection",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Augury",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Augury",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Aura of Life",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AuraofLife",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Awaken",
+      "level": 5,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid"
+      ],
+      "castingTime": "8 hours",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Awaken",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Bane",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Warlock"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Bane",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Banishment",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Banishment",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Barkskin",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Barkskin",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Beacon of Hope",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BeaconofHope",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Befuddlement",
+      "level": 8,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Befuddlement",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Bestow Curse",
+      "level": 3,
+      "school": "Necromancy",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BestowCurse",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Bigby’s Hand",
+      "level": 5,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BigbysHand",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Blade Barrier",
+      "level": 6,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BladeBarrier",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Bless",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Bless",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Blight",
+      "level": 4,
+      "school": "Necromancy",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Blight",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Blindness/Deafness",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BlindnessDeafness",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Blink",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Blink",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Blur",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Blur",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Burning Hands",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#BurningHands",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Call Lightning",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CallLightning",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Calm Emotions",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CalmEmotions",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Chain Lightning",
+      "level": 6,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ChainLightning",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Charm Monster",
+      "level": 4,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CharmMonster",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Charm Person",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CharmPerson",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Chill Touch",
+      "level": 0,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ChillTouch",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Chromatic Orb",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ChromaticOrb",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Circle of Death",
+      "level": 6,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CircleofDeath",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Clairvoyance",
+      "level": 3,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "1 mile",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Clairvoyance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Clone",
+      "level": 8,
+      "school": "Necromancy",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Clone",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Cloudkill",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Cloudkill",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Color Spray",
+      "level": 1,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ColorSpray",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Command",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Command",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Commune",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Commune",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Commune with Nature",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CommunewithNature",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Comprehend Languages",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ComprehendLanguages",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Compulsion",
+      "level": 4,
+      "school": "Enchantment",
+      "classes": [
+        "Bard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Compulsion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Cone of Cold",
+      "level": 5,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConeofCold",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Confusion",
+      "level": 4,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Confusion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Animals",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureAnimals",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Celestial",
+      "level": 7,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureCelestial",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Elemental",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureElemental",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Fey",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureFey",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Minor Elementals",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureMinorElementals",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Conjure Woodland Beings",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ConjureWoodlandBeings",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Contact Other Plane",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ContactOtherPlane",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Contagion",
+      "level": 5,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "7 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Contagion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Contingency",
+      "level": 6,
+      "school": "Abjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Contingency",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Continual Flame",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ContinualFlame",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Control Water",
+      "level": 4,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "300 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ControlWater",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Control Weather",
+      "level": 8,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ControlWeather",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Counterspell",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Reaction, which you take when you see a creature within 60 feet of yourself casting a spell with Verbal, Somatic, or Material components",
+      "range": "60 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Counterspell",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Create Food and Water",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CreateFoodandWater",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Create or Destroy Water",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CreateorDestroyWater",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Create Undead",
+      "level": 6,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CreateUndead",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Creation",
+      "level": 5,
+      "school": "Illusion",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Special",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Creation",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Cure Wounds",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CureWounds",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Dancing Lights",
+      "level": 0,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DancingLights",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Darkness",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Darkness",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Darkvision",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Darkvision",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Daylight",
+      "level": 3,
+      "school": "Evocation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Daylight",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Death Ward",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DeathWard",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Delayed Blast Fireball",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DelayedBlastFireball",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Demiplane",
+      "level": 8,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Demiplane",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Detect Evil and Good",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DetectEvilandGood",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Detect Magic",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DetectMagic",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Detect Poison and Disease",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DetectPoisonandDisease",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Detect Thoughts",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DetectThoughts",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dimension Door",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "500 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DimensionDoor",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Disguise Self",
+      "level": 1,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DisguiseSelf",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Disintegrate",
+      "level": 6,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Disintegrate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dispel Evil and Good",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DispelEvilandGood",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dissonant Whispers",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DissonantWhispers",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dispel Magic",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DispelMagic",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Divination",
+      "level": 4,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Divination",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Divine Favor",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Paladin"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DivineFavor",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Divine Smite",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Paladin"
+      ],
+      "castingTime": "Bonus Action, which you take immediately after hitting a target with a Melee weapon or an Unarmed Strike",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DivineSmite",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Divine Word",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DivineWord",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dominate Beast",
+      "level": 4,
+      "school": "Enchantment",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DominateBeast",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dominate Monster",
+      "level": 8,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DominateMonster",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dominate Person",
+      "level": 5,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DominatePerson",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dragon’s Breath",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DragonsBreath",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Drawmij’s Instant Summons",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until Dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#DrawmijsInstantSummons",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Dream",
+      "level": 5,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Special",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Dream",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Druidcraft",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Druidcraft",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Earthquake",
+      "level": 8,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "500 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Earthquake",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Eldritch Blast",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Warlock"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#EldritchBlast",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Elementalism",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet (5 ft. Square)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Elementalism",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Enhance Ability",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#EnhanceAbility",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Enlarge/Reduce",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#EnlargeReduce",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ensnaring Strike",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Ranger"
+      ],
+      "castingTime": "Bonus Action, which you take immediately after hitting a creature with a weapon",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#EnsnaringStrike",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Entangle",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Entangle",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Enthrall",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Warlock"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Enthrall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Etherealness",
+      "level": 7,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Up to 8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Etherealness",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Evard’s Black Tentacles",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet (20 ft. Square)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#EvardsBlackTentacles",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Expeditious Retreat",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ExpeditiousRetreat",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Eyebite",
+      "level": 6,
+      "school": "Necromancy",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Eyebite",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fabricate",
+      "level": 4,
+      "school": "Transmutation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Fabricate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Faerie Fire",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FaerieFire",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "False Life",
+      "level": 1,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FalseLife",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fear",
+      "level": 3,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Fear",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Feather Fall",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Reaction, which you take when you or a creature you can see within 60 feet of you falls",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FeatherFall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Find Familiar",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FindFamiliar",
+      "implementation": "learning_only"
+    },
+    {
+      "name": "Find Steed",
+      "level": 2,
+      "school": "Conjuration",
+      "classes": [
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FindSteed",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Find the Path",
+      "level": 6,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 day",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FindthePath",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Find Traps",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FindTraps",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Finger of Death",
+      "level": 7,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FingerofDeath",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fireball",
+      "level": 3,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Fireball",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fire Bolt",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FireBolt",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Fire Shield",
+      "level": 4,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FireShield",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fire Storm",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FireStorm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Flame Blade",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FlameBlade",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Flame Strike",
+      "level": 5,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FlameStrike",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Flaming Sphere",
+      "level": 2,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FlamingSphere",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Flesh to Stone",
+      "level": 6,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FleshtoStone",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fly",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Fly",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Fog Cloud",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FogCloud",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Forbiddance",
+      "level": 6,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 day",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Forbiddance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Forcecage",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "100 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Forcecage",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Foresight",
+      "level": 9,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Foresight",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Freedom of Movement",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FreedomofMovement",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Gaseous Form",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GaseousForm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Gate",
+      "level": 9,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Gate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Geas",
+      "level": 5,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "30 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Geas",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Gentle Repose",
+      "level": 2,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Paladin",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GentleRepose",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Giant Insect",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GiantInsect",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Glibness",
+      "level": 8,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Warlock"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Glibness",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Globe of Invulnerability",
+      "level": 6,
+      "school": "Abjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GlobeofInvulnerability",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Glyph of Warding",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled or triggered",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GlyphofWarding",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Goodberry",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Goodberry",
+      "implementation": "learning_only"
+    },
+    {
+      "name": "Grease",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Grease",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Greater Invisibility",
+      "level": 4,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GreaterInvisibility",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Greater Restoration",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GreaterRestoration",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Guardian of Faith",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GuardianofFaith",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Guards and Wards",
+      "level": 6,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GuardsandWards",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Guidance",
+      "level": 0,
+      "school": "Divination",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Guidance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Guiding Bolt",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 round",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GuidingBolt",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Gust of Wind",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GustofWind",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hallow",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "24 hours",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Hallow",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hallucinatory Terrain",
+      "level": 4,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "300 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HallucinatoryTerrain",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Harm",
+      "level": 6,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Harm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Haste",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Haste",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Heal",
+      "level": 6,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Heal",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Healing Word",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HealingWord",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Heat Metal",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HeatMetal",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hellish Rebuke",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Warlock"
+      ],
+      "castingTime": "Reaction, which you take in response to taking damage from a creature that you can see within 60 feet of yourself",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HellishRebuke",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Heroes’ Feast",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HeroesFeast",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hex",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Warlock"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Hex",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Heroism",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Heroism",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hold Monster",
+      "level": 5,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HoldMonster",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hold Person",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HoldPerson",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Holy Aura",
+      "level": 8,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HolyAura",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hunter’s Mark",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Ranger"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "90 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HuntersMark",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Hypnotic Pattern",
+      "level": 3,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HypnoticPattern",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ice Knife",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#IceKnife",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ice Storm",
+      "level": 4,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "300 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#IceStorm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Identify",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Identify",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Illusory Script",
+      "level": 1,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "姿势"
+      ],
+      "duration": "10 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#IllusoryScript",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Imprisonment",
+      "level": 9,
+      "school": "Abjuration",
+      "classes": [
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Imprisonment",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Incendiary Cloud",
+      "level": 8,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#IncendiaryCloud",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Inflict Wounds",
+      "level": 1,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#InflictWounds",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Insect Plague",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "300 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#InsectPlague",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Invisibility",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Invisibility",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Jump",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Jump",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Knock",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Knock",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Legend Lore",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LegendLore",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Leomund’s Secret Chest",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until Dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LeomundsSecretChest",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Leomund’s Tiny Hut",
+      "level": 3,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "1 Minute",
+      "range": "Self (10 ft. Sphere)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 Hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LeomundsTinyHut",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Lesser Restoration",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LesserRestoration",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Levitate",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Levitate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Light",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Light",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Lightning Bolt",
+      "level": 3,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LightningBolt",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Locate Animals or Plants",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LocateAnimalsorPlants",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Locate Creature",
+      "level": 4,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LocateCreature",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Locate Object",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#LocateObject",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Longstrider",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Longstrider",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mage Armor",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MageArmor",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mage Hand",
+      "level": 0,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MageHand",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Magic Circle",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MagicCircle",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Magic Jar",
+      "level": 6,
+      "school": "Necromancy",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MagicJar",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Magic Missile",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MagicMissile",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Magic Mouth",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MagicMouth",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Magic Weapon",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Paladin",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MagicWeapon",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Major Image",
+      "level": 3,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MajorImage",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mass Cure Wounds",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MassCureWounds",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mass Heal",
+      "level": 9,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MassHeal",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mass Healing Word",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MassHealingWord",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mass Suggestion",
+      "level": 6,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MassSuggestion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Maze",
+      "level": 8,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Maze",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Meld into Stone",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MeldintoStone",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Melf’s Acid Arrow",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MelfsAcidArrow",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mending",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Mending",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Message",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "1 round",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Message",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Meteor Swarm",
+      "level": 9,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "1 mile",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MeteorSwarm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mind Blank",
+      "level": 8,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MindBlank",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mind Spike",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "1 Hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MindSpike",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Minor Illusion",
+      "level": 0,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MinorIllusion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mirage Arcane",
+      "level": 7,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Sight",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 days",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MirageArcane",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mirror Image",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MirrorImage",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mislead",
+      "level": 5,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Mislead",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Misty Step",
+      "level": 2,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MistyStep",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Modify Memory",
+      "level": 5,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ModifyMemory",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Moonbeam",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Moonbeam",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Move Earth",
+      "level": 6,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 2 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MoveEarth",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mordenkainen’s Faithful Hound",
+      "level": 4,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 Hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MordenkainensFaithfulHound",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mordenkainen’s Magnificent Mansion",
+      "level": 7,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "1 Minute",
+      "range": "300 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 Hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MordenkainensMagnificentMansion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mordenkainen’s Private Sanctum",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "10 Minutes",
+      "range": "120 feet (Square)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 Hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MordenkainensPrivateSanctum",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Mordenkainen’s Sword",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MordenkainensSword",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Nondetection",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Ranger",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Nondetection",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Nystul’s Magic Aura",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 Hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#NystulsMagicAura",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Otiluke’s Freezing Sphere",
+      "level": 6,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "300 feet (60 ft. Sphere)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#OtilukesFreezingSphere",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Otiluke’s Resilient Sphere",
+      "level": 4,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#OtilukesResilientSphere",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Otto’s Irresistible Dance",
+      "level": 6,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#OttosIrresistibleDance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Passwall",
+      "level": 5,
+      "school": "Transmutation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Passwall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Pass without Trace",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PasswithoutTrace",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Phantasmal Force",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet (10 ft. Square)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PhantasmalForce",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Phantasmal Killer",
+      "level": 4,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PhantasmalKiller",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Phantom Steed",
+      "level": 3,
+      "school": "Illusion",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PhantomSteed",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Planar Ally",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "10 minutes",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PlanarAlly",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Planar Binding",
+      "level": 5,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 hour",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PlanarBinding",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Plane Shift",
+      "level": 7,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PlaneShift",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Plant Growth",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action (Overgrowth) or 8 hours (Enrichment)",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PlantGrowth",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Poison Spray",
+      "level": 0,
+      "school": "Necromancy",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PoisonSpray",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Polymorph",
+      "level": 4,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Polymorph",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Power Word Heal",
+      "level": 9,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PowerWordHeal",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Power Word Kill",
+      "level": 9,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PowerWordKill",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Power Word Stun",
+      "level": 8,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PowerWordStun",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Prayer of Healing",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "10 minutes",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PrayerofHealing",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Prestidigitation",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Prestidigitation",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Prismatic Spray",
+      "level": 7,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PrismaticSpray",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Prismatic Wall",
+      "level": 9,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PrismaticWall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Produce Flame",
+      "level": 0,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProduceFlame",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Programmed Illusion",
+      "level": 6,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProgrammedIllusion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Project Image",
+      "level": 7,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "500 miles",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 day",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProjectImage",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Protection from Energy",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProtectionfromEnergy",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Protection from Evil and Good",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProtectionfromEvilandGood",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Protection from Poison",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ProtectionfromPoison",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Purify Food and Drink",
+      "level": 1,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PurifyFoodandDrink",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Raise Dead",
+      "level": 5,
+      "school": "Necromancy",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RaiseDead",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Rary’s Telepathic Bond",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Paladin",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RarysTelepathicBond",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ray of Enfeeblement",
+      "level": 2,
+      "school": "Necromancy",
+      "classes": [
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RayofEnfeeblement",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ray of Frost",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RayofFrost",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Ray of Sickness",
+      "level": 1,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RayofSickness",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Regenerate",
+      "level": 7,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Regenerate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Reincarnate",
+      "level": 5,
+      "school": "Necromancy",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Reincarnate",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Remove Curse",
+      "level": 3,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RemoveCurse",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Resistance",
+      "level": 0,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Resistance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Resurrection",
+      "level": 7,
+      "school": "Necromancy",
+      "classes": [
+        "Bard",
+        "Cleric"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Resurrection",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Reverse Gravity",
+      "level": 7,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "100 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ReverseGravity",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Revivify",
+      "level": 3,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Paladin",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Revivify",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Rope Trick",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RopeTrick",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sacred Flame",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SacredFlame",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Sanctuary",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sanctuary",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Scorching Ray",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ScorchingRay",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Scrying",
+      "level": 5,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "10 minutes",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Scrying",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Searing Smite",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Paladin"
+      ],
+      "castingTime": "Bonus Action, which you take immediately after hitting a target with a Melee weapon or an Unarmed Strike",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SearingSmite",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "See Invisibility",
+      "level": 2,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SeeInvisibility",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Seeming",
+      "level": 5,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Seeming",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sending",
+      "level": 3,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Unlimited",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sending",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sequester",
+      "level": 7,
+      "school": "Transmutation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sequester",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shapechange",
+      "level": 9,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Shapechange",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shatter",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Shatter",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shield",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile spell",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 round",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Shield",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shield of Faith",
+      "level": 1,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ShieldofFaith",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shillelagh",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Shillelagh",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shining Smite",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Paladin"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ShiningSmite",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Shocking Grasp",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ShockingGrasp",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Silence",
+      "level": 2,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Silence",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Silent Image",
+      "level": 1,
+      "school": "Illusion",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SilentImage",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Simulacrum",
+      "level": 7,
+      "school": "Illusion",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "12 hours",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Simulacrum",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sleep",
+      "level": 1,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sleep",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sleet Storm",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SleetStorm",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Slow",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Slow",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sorcerous Burst",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SorcerousBurst",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Spare the Dying",
+      "level": 0,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "15 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SparetheDying",
+      "implementation": "combat_implemented"
+    },
+    {
+      "name": "Speak with Animals",
+      "level": 1,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger",
+        "Warlock"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpeakwithAnimals",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Speak with Dead",
+      "level": 3,
+      "school": "Necromancy",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpeakwithDead",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Speak with Plants",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpeakwithPlants",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Spider Climb",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpiderClimb",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Spike Growth",
+      "level": 2,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpikeGrowth",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Spirit Guardians",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpiritGuardians",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Spiritual Weapon",
+      "level": 2,
+      "school": "Evocation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Bonus Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SpiritualWeapon",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Starry Wisp",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#StarryWisp",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Stinking Cloud",
+      "level": 3,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "90 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#StinkingCloud",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Stone Shape",
+      "level": 4,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#StoneShape",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Stoneskin",
+      "level": 4,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Stoneskin",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Storm of Vengeance",
+      "level": 9,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "1 mile",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#StormofVengeance",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Suggestion",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Concentration, up to 8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Suggestion",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Summon Dragon",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SummonDragon",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sunbeam",
+      "level": 6,
+      "school": "Evocation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sunbeam",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Sunburst",
+      "level": 8,
+      "school": "Evocation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Sunburst",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Symbol",
+      "level": 7,
+      "school": "Abjuration",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Until dispelled or triggered",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Symbol",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Tasha’s Hideous Laughter",
+      "level": 0,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Paladin",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TashasHideousLaughter",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Telekinesis",
+      "level": 5,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Telekinesis",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Teleport",
+      "level": 7,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "10 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Teleport",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Teleportation Circle",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "1 minute",
+      "range": "10 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 round",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TeleportationCircle",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Tenser’s Floating Disk",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 Hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TensersFloatingDisk",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Thaumaturgy",
+      "level": 0,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Thaumaturgy",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Thunderwave",
+      "level": 1,
+      "school": "Evocation",
+      "classes": [
+        "Bard",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Thunderwave",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Time Stop",
+      "level": 9,
+      "school": "Transmutation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TimeStop",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Tongues",
+      "level": 3,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Tongues",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Transport via Plants",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "10 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TransportviaPlants",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Tree Stride",
+      "level": 5,
+      "school": "Conjuration",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TreeStride",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "True Polymorph",
+      "level": 9,
+      "school": "Transmutation",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TruePolymorph",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "True Resurrection",
+      "level": 9,
+      "school": "Necromancy",
+      "classes": [
+        "Cleric",
+        "Druid"
+      ],
+      "castingTime": "1 hour",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TrueResurrection",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "True Seeing",
+      "level": 6,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TrueSeeing",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "True Strike",
+      "level": 0,
+      "school": "Divination",
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TrueStrike",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Tsunami",
+      "level": 8,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "1 Minute",
+      "range": "1 Mile",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "6 Rounds",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Tsunami",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Unseen Servant",
+      "level": 1,
+      "school": "Conjuration",
+      "classes": [
+        "Bard",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#UnseenServant",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Vampiric Touch",
+      "level": 3,
+      "school": "Necromancy",
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#VampiricTouch",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Vicious Mockery",
+      "level": 0,
+      "school": "Enchantment",
+      "classes": [
+        "Bard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ViciousMockery",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Vitriolic Sphere",
+      "level": 4,
+      "school": "Evocation",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "150 feet (20 ft. Sphere)",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#VitriolicSphere",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wall of Fire",
+      "level": 4,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WallofFire",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wall of Force",
+      "level": 5,
+      "school": "Evocation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WallofForce",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wall of Ice",
+      "level": 6,
+      "school": "Evocation",
+      "classes": [
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WallofIce",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wall of Stone",
+      "level": 5,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WallofStone",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wall of Thorns",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WallofThorns",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Warding Bond",
+      "level": 2,
+      "school": "Abjuration",
+      "classes": [
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "Touch",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WardingBond",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Water Breathing",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Druid",
+        "Ranger",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "24 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WaterBreathing",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Water Walk",
+      "level": 3,
+      "school": "Transmutation",
+      "classes": [
+        "Cleric",
+        "Druid",
+        "Ranger",
+        "Sorcerer"
+      ],
+      "castingTime": "Action",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WaterWalk",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Web",
+      "level": 2,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 hour",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Web",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Weird",
+      "level": 9,
+      "school": "Illusion",
+      "classes": [
+        "Warlock",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Weird",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wind Walk",
+      "level": 6,
+      "school": "Transmutation",
+      "classes": [
+        "Druid"
+      ],
+      "castingTime": "1 minute",
+      "range": "30 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "8 hours",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WindWalk",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wind Wall",
+      "level": 3,
+      "school": "Evocation",
+      "classes": [
+        "Druid",
+        "Ranger"
+      ],
+      "castingTime": "Action",
+      "range": "120 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "Concentration, up to 1 minute",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WindWall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Wish",
+      "level": 9,
+      "school": "Conjuration",
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "castingTime": "Action",
+      "range": "Self",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Wish",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Word of Recall",
+      "level": 6,
+      "school": "Conjuration",
+      "classes": [
+        "Cleric"
+      ],
+      "castingTime": "Action",
+      "range": "5 feet",
+      "components": [
+        "声音"
+      ],
+      "duration": "Instantaneous",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#WordofRecall",
+      "implementation": "not_implemented"
+    },
+    {
+      "name": "Zone of Truth",
+      "level": 2,
+      "school": "Enchantment",
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Paladin"
+      ],
+      "castingTime": "Action",
+      "range": "60 feet",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "duration": "10 minutes",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#ZoneofTruth",
+      "implementation": "not_implemented"
+    }
+  ]
+}

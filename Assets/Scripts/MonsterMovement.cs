@@ -7,7 +7,7 @@ public sealed partial class TrainingGame
     Vector2 monsterVisualCell;
     IEnumerator ChasePlayer()
     {
-        if(map.DistanceFeet<=combat.MonsterAttackRange)yield break;
+        if(!combat.MonsterCanAct||map.DistanceFeet<=combat.MonsterAttackRange)yield break;
         Vector2Int from=map.Monster,best=from;
         int bestDistance=map.DistanceFeet,bestCost=0;
         bool foundInRange=false;

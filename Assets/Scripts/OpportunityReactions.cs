@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
         if(from==target)yield break;
         combat.MarkBattleStarted();rolling=true;
         bool defenderPlayer=!movingPlayer;
-        bool reactionAvailable=defenderPlayer?combat.PlayerReactionAvailable:combat.MonsterReactionAvailable;
+        bool reactionAvailable=defenderPlayer?combat.PlayerReactionAvailable&&combat.PlayerCanAct:combat.MonsterReactionAvailable&&combat.MonsterCanAct;
         int reach=defenderPlayer?5:combat.MonsterAttackRange;
         if(!tactical && reactionAvailable && LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach)) {
             reactionForPlayer=defenderPlayer;reactionRange=reach;reactionDecision=0;reactionPending=true;

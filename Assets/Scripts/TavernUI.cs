@@ -67,7 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        ObserveVitalChanges();
+        ObserveVitalChanges();RefreshConcentration();
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
     void OnGUI()

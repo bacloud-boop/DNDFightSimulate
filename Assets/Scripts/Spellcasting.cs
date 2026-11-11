@@ -7,11 +7,11 @@ public sealed partial class TrainingGame
     int castingClass=1;
     Vector2Int spellCenter;
     bool CanCastAcid => classes[1]>=1 || classes[3]>=1;
-    void DrawSpellPanel()
+    void DrawAcidSpellPanel()
     {
         const float x=350;
         Surface(new Rect(x,110,480,745),paperTexture);
-        if(Btn(new Rect(x+370,125,90,46),"关闭")){panel="";return;}
+        if(Btn(new Rect(x+370,125,90,46),"返回")){selectedSpellName="";return;}
         GUI.Label(new Rect(x+20,180,440,40),"法术 · 戏法",heading);
         if(classes[1]>=1||classes[2]>=1) {
             GUI.Label(new Rect(x+20,565,440,40),"一环功能性法术 · 法术位暂不扣除",label);
@@ -70,7 +70,7 @@ public sealed partial class TrainingGame
         bool player=!combat.PlayerDead&&BattleMap.FeetBetween(center,map.Player)<=5;
         return monster&&player?"木桩、玩家":monster?"木桩":player?"玩家":"无目标";
     }
-    bool DexteritySaveProficient => classes.InitialClass==2||classes.InitialClass==5||classes.InitialClass==7||classes.InitialClass==8;
+    bool DexteritySaveProficient => classes.SavingThrowProficient(1);
     IEnumerator ResolveAcidSplash(bool hitsMonster,bool hitsPlayer,int dc,int count)
     {
         rolling=true;logScroll=Vector2.zero;
@@ -80,7 +80,7 @@ public sealed partial class TrainingGame
             string target=i==0?"木桩":"玩家";
             int value=Random.Range(1,21),modifier=AcidSplash.Modifier(i==0?monsterAttributes[1]:attributes[1]);
             if(i==1&&DexteritySaveProficient)modifier+=classes.ProficiencyBonus;
-            bool automaticFailure=i==1&&combat.PlayerHp==0;
+            bool automaticFailure=i==0?combat.MonsterParalyzed:combat.PlayerHp==0||combat.PlayerParalyzed;
             if(!automaticFailure){
                 dice="酸液飞溅 · "+target+"敏捷豁免";
                 yield return PresentRoll(20,new[]{value},"豁免："+value+" + "+modifier+" / DC "+dc);
@@ -93,7 +93,7 @@ public sealed partial class TrainingGame
             int damage=System.Linq.Enumerable.Sum(values);dice="酸液飞溅 · 强酸伤害";
             yield return PresentRoll(6,values,"强酸伤害："+damage+"；豁免失败者使用同一伤害骰结果");
             if(failed[0])combat.ApplyDamage(damage);
-            if(failed[1])combat.ApplyPlayerDamage(damage);
+            if(failed[1]){combat.ApplyPlayerDamage(damage);yield return MaintainConcentration(damage);}
             dice="酸液飞溅："+damage+" 点强酸伤害";
             history.Insert(0,count+"d6="+string.Join("+",values)+"，木桩伤害 "+(failed[0]?damage:0)+"，玩家伤害 "+(failed[1]?damage:0)+"。");
         }else dice="酸液飞溅：目标全部豁免成功，伤害0。";

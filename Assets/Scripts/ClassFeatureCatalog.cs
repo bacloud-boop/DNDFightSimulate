@@ -17,6 +17,7 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(375,185,430,635));GUILayout.Label("2024 职业特性目录",heading);
         GUILayout.Label("列出等级与来源。待接入条目不提供自动结算效果。",label);
         catalogClassIndex=GUILayout.SelectionGrid(catalogClassIndex,PlayerClasses.Names,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
+        if(GUILayout.Button("查看官方免费野兽资料（效果待接入）",button)){panel="beasts";}
         featureScroll=GUILayout.BeginScrollView(featureScroll);
         foreach(var feature in featureRecords.entries)if(feature.classIndex==catalogClassIndex){
             string status=FeatureStatus(feature);

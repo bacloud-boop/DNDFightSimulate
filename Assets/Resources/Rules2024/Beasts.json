@@ -1,0 +1,2141 @@
+{
+  "description": "Mechanical stat facts for free 2024 individual Beasts with CR at most 1. Creature traits and action effects are not yet implemented. Flight is deferred.",
+  "entries": [
+    {
+      "name": "Ape",
+      "size": "Medium",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 12,
+      "hp": 19,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        16,
+        14,
+        14,
+        12,
+        6,
+        7
+      ],
+      "saves": [
+        3,
+        2,
+        2,
+        1,
+        -2,
+        -2
+      ],
+      "actionNames": [
+        "Multiattack",
+        "Fist",
+        "Rock (Recharge 6)"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#40b66d92-69fd-4888-9a99-66fa7a027347"
+    },
+    {
+      "name": "Baboon",
+      "size": "Small",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 3,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        8,
+        14,
+        11,
+        12,
+        4,
+        6
+      ],
+      "saves": [
+        -1,
+        2,
+        0,
+        1,
+        -3,
+        -2
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#843c8452-1d69-4b30-bce6-00181e491f66"
+    },
+    {
+      "name": "Badger",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 5,
+      "walk": 20,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 5,
+      "abilities": [
+        10,
+        11,
+        16,
+        12,
+        2,
+        5
+      ],
+      "saves": [
+        0,
+        0,
+        3,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#c154f10f-81f2-416c-a3fa-1f86ef3c0192"
+    },
+    {
+      "name": "Bat",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 1,
+      "walk": 5,
+      "climb": 0,
+      "swim": 0,
+      "fly": 30,
+      "burrow": 0,
+      "abilities": [
+        2,
+        15,
+        8,
+        12,
+        2,
+        4
+      ],
+      "saves": [
+        -4,
+        2,
+        -1,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#59555f68-a779-424c-8306-1e70342b24fb"
+    },
+    {
+      "name": "Black Bear",
+      "size": "Medium",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 11,
+      "hp": 19,
+      "walk": 30,
+      "climb": 30,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        12,
+        14,
+        12,
+        2,
+        7
+      ],
+      "saves": [
+        2,
+        1,
+        2,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Multiattack",
+        "Rend"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#bb4dfc17-446b-4b36-abf1-c16cf5ae48a1"
+    },
+    {
+      "name": "Blood Hawk",
+      "size": "Small",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 12,
+      "hp": 7,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 60,
+      "burrow": 0,
+      "abilities": [
+        6,
+        14,
+        10,
+        14,
+        3,
+        5
+      ],
+      "saves": [
+        -2,
+        2,
+        0,
+        2,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Beak"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#ed5068bb-86b9-4c48-8c0d-c9136374494c"
+    },
+    {
+      "name": "Boar",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 11,
+      "hp": 13,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        13,
+        11,
+        14,
+        9,
+        2,
+        5
+      ],
+      "saves": [
+        1,
+        0,
+        2,
+        -1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Bloodied Fury",
+        "Gore"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#7761834a-da6b-4ff8-83a0-d7d3cd6fd202"
+    },
+    {
+      "name": "Brown Bear",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 11,
+      "hp": 22,
+      "walk": 40,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        12,
+        15,
+        13,
+        2,
+        7
+      ],
+      "saves": [
+        3,
+        1,
+        2,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Multiattack"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#a376b169-d14e-4f69-876c-e91faa791b3a"
+    },
+    {
+      "name": "Camel",
+      "size": "Large",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 10,
+      "hp": 17,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        8,
+        17,
+        11,
+        2,
+        5
+      ],
+      "saves": [
+        2,
+        -1,
+        5,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#50c18b2a-b239-4a85-b2a8-819b12c70ff4"
+    },
+    {
+      "name": "Cat",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 2,
+      "walk": 40,
+      "climb": 40,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        3,
+        15,
+        10,
+        12,
+        3,
+        7
+      ],
+      "saves": [
+        -4,
+        4,
+        0,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Jumper",
+        "Scratch"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#42279ca5-b8b7-4ba3-a574-6d8bd9cc7e6c"
+    },
+    {
+      "name": "Constrictor Snake",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 13,
+      "hp": 13,
+      "walk": 30,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        14,
+        12,
+        10,
+        1,
+        3
+      ],
+      "saves": [
+        2,
+        2,
+        1,
+        0,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Bite",
+        "Constrict"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#56905c00-7371-45b7-8c7c-f40dc57ee385"
+    },
+    {
+      "name": "Crab",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 3,
+      "walk": 20,
+      "climb": 0,
+      "swim": 20,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        6,
+        11,
+        12,
+        8,
+        1,
+        2
+      ],
+      "saves": [
+        -2,
+        0,
+        1,
+        -1,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Amphibious",
+        "Claw"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#e5ee482c-d2e2-4b49-aed5-65a6f7c29e2d"
+    },
+    {
+      "name": "Crocodile",
+      "size": "Large",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 12,
+      "hp": 13,
+      "walk": 20,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        10,
+        13,
+        10,
+        2,
+        5
+      ],
+      "saves": [
+        2,
+        0,
+        3,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Hold Breath",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#82f04332-6726-4fa1-8851-23e2c8c83c57"
+    },
+    {
+      "name": "Deer",
+      "size": "Medium",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 13,
+      "hp": 4,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        11,
+        16,
+        11,
+        14,
+        2,
+        5
+      ],
+      "saves": [
+        0,
+        3,
+        0,
+        2,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Agile",
+        "Ram"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#04ce7bdf-dc35-4163-96a3-eaeb7735535c"
+    },
+    {
+      "name": "Dire Wolf",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 14,
+      "hp": 22,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        15,
+        15,
+        12,
+        3,
+        7
+      ],
+      "saves": [
+        3,
+        2,
+        2,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#049b0abf-4cfa-47fe-948d-a99aa0d5ce92"
+    },
+    {
+      "name": "Draft Horse",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 10,
+      "hp": 15,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        18,
+        10,
+        15,
+        11,
+        2,
+        7
+      ],
+      "saves": [
+        4,
+        0,
+        2,
+        0,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Hooves"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#4b6af122-7898-441e-b917-dec863aa0825"
+    },
+    {
+      "name": "Eagle",
+      "size": "Small",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 4,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 60,
+      "burrow": 0,
+      "abilities": [
+        6,
+        15,
+        12,
+        14,
+        2,
+        7
+      ],
+      "saves": [
+        -2,
+        2,
+        1,
+        2,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Talons"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#9a2cd3b1-79bc-4531-9141-b2eee16cc645"
+    },
+    {
+      "name": "Elk",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 10,
+      "hp": 11,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        16,
+        10,
+        11,
+        10,
+        2,
+        6
+      ],
+      "saves": [
+        3,
+        0,
+        0,
+        0,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Ram"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#bc6f996e-7b81-4799-a14e-c0fc8f2a8d17"
+    },
+    {
+      "name": "Frog",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 1,
+      "walk": 20,
+      "climb": 0,
+      "swim": 20,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        1,
+        13,
+        8,
+        8,
+        1,
+        3
+      ],
+      "saves": [
+        -5,
+        1,
+        -1,
+        -1,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Amphibious",
+        "Standing Leap",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#eebc6562-8680-4ae7-9513-aa8888c6d020"
+    },
+    {
+      "name": "Giant Badger",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 13,
+      "hp": 15,
+      "walk": 30,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 10,
+      "abilities": [
+        13,
+        10,
+        17,
+        12,
+        2,
+        5
+      ],
+      "saves": [
+        1,
+        0,
+        3,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#225cefe0-191c-4452-a7d6-e4e3a9da0ec5"
+    },
+    {
+      "name": "Giant Bat",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 13,
+      "hp": 22,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 60,
+      "burrow": 0,
+      "abilities": [
+        15,
+        16,
+        11,
+        12,
+        2,
+        6
+      ],
+      "saves": [
+        2,
+        3,
+        0,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#5d7d22f0-eb42-4f7c-a03b-7863479810d3"
+    },
+    {
+      "name": "Giant Centipede",
+      "size": "Small",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 14,
+      "hp": 9,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        5,
+        14,
+        12,
+        7,
+        1,
+        3
+      ],
+      "saves": [
+        -3,
+        2,
+        1,
+        -2,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#b01ddde3-9b7f-49b5-8b2d-ad1dc7bca8d1"
+    },
+    {
+      "name": "Giant Crab",
+      "size": "Medium",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 15,
+      "hp": 13,
+      "walk": 30,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        13,
+        13,
+        11,
+        9,
+        1,
+        3
+      ],
+      "saves": [
+        1,
+        1,
+        0,
+        -1,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Amphibious",
+        "Claw"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#30b772bf-198c-4a22-9e5e-4ec0313d66c7"
+    },
+    {
+      "name": "Giant Fire Beetle",
+      "size": "Small",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 13,
+      "hp": 4,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        8,
+        10,
+        12,
+        7,
+        1,
+        3
+      ],
+      "saves": [
+        -1,
+        0,
+        1,
+        -2,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Illumination",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#7104d02d-1158-49dc-9e2c-cfb23b54ac26"
+    },
+    {
+      "name": "Giant Frog",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 11,
+      "hp": 18,
+      "walk": 30,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        12,
+        13,
+        11,
+        10,
+        2,
+        3
+      ],
+      "saves": [
+        1,
+        1,
+        0,
+        0,
+        -4,
+        -4
+      ],
+      "actionNames": [
+        "Amphibious",
+        "Standing Leap",
+        "Bite",
+        "Swallow"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#99b80b6b-6427-428f-90f4-6bae4bd0d0bb"
+    },
+    {
+      "name": "Giant Goat",
+      "size": "Large",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 11,
+      "hp": 19,
+      "walk": 40,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        13,
+        12,
+        12,
+        3,
+        6
+      ],
+      "saves": [
+        5,
+        1,
+        1,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Ram"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#e8b3b15b-6a3d-46a0-92dc-5c16506ed558"
+    },
+    {
+      "name": "Giant Hyena",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 12,
+      "hp": 45,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        16,
+        14,
+        14,
+        12,
+        2,
+        7
+      ],
+      "saves": [
+        3,
+        2,
+        2,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Bite",
+        "Rampage (1/Day)"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#d540d73a-830b-4396-8b1a-8bbb66365dbd"
+    },
+    {
+      "name": "Giant Lizard",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 12,
+      "hp": 19,
+      "walk": 40,
+      "climb": 40,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        12,
+        13,
+        10,
+        2,
+        5
+      ],
+      "saves": [
+        2,
+        3,
+        1,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Spider Climb",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#a2ca79af-2c31-4c97-94e8-f5d06684d879"
+    },
+    {
+      "name": "Giant Octopus",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 11,
+      "hp": 45,
+      "walk": 10,
+      "climb": 0,
+      "swim": 60,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        13,
+        13,
+        10,
+        5,
+        4
+      ],
+      "saves": [
+        3,
+        1,
+        1,
+        0,
+        -3,
+        -3
+      ],
+      "actionNames": [
+        "Water Breathing",
+        "Tentacles",
+        "Ink Cloud (1/Day)"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#d4668549-9a8f-4fa5-a5cf-806cd60ac844"
+    },
+    {
+      "name": "Giant Rat",
+      "size": "Small",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 13,
+      "hp": 7,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        7,
+        16,
+        11,
+        10,
+        2,
+        4
+      ],
+      "saves": [
+        -2,
+        5,
+        0,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#509c82ac-62c9-4484-9566-3c0e68b6f6ab"
+    },
+    {
+      "name": "Giant Seahorse",
+      "size": "Large",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 14,
+      "hp": 16,
+      "walk": 5,
+      "climb": 0,
+      "swim": 40,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        12,
+        11,
+        12,
+        2,
+        5
+      ],
+      "saves": [
+        2,
+        1,
+        0,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Water Breathing",
+        "Ram",
+        "Bubble Dash"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#18dd5468-e938-44ca-9401-5d4b33a91b2b"
+    },
+    {
+      "name": "Giant Spider",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 14,
+      "hp": 26,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        14,
+        16,
+        12,
+        11,
+        2,
+        4
+      ],
+      "saves": [
+        2,
+        3,
+        1,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Spider Climb",
+        "Web Walker",
+        "Bite",
+        "Web (Recharge 5–6)"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#d27ce561-7909-4100-a359-38999b6ade4c"
+    },
+    {
+      "name": "Giant Toad",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 11,
+      "hp": 39,
+      "walk": 30,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        13,
+        13,
+        10,
+        2,
+        3
+      ],
+      "saves": [
+        2,
+        1,
+        1,
+        0,
+        -4,
+        -4
+      ],
+      "actionNames": [
+        "Amphibious",
+        "Standing Leap",
+        "Bite",
+        "Swallow"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#204bc377-ae7e-4e52-980d-da51649fad02"
+    },
+    {
+      "name": "Giant Venomous Snake",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 14,
+      "hp": 11,
+      "walk": 40,
+      "climb": 0,
+      "swim": 40,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        10,
+        18,
+        13,
+        10,
+        2,
+        3
+      ],
+      "saves": [
+        0,
+        4,
+        1,
+        0,
+        -4,
+        -4
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#03063927-5263-40af-b2f3-82e780e37f18"
+    },
+    {
+      "name": "Giant Wasp",
+      "size": "Medium",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 13,
+      "hp": 22,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 50,
+      "burrow": 0,
+      "abilities": [
+        10,
+        14,
+        10,
+        10,
+        1,
+        3
+      ],
+      "saves": [
+        0,
+        2,
+        0,
+        0,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Flyby",
+        "Sting"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#a394242f-52b3-4f0e-bec8-40182a7e3ed6"
+    },
+    {
+      "name": "Giant Weasel",
+      "size": "Medium",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 13,
+      "hp": 9,
+      "walk": 40,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        11,
+        17,
+        10,
+        12,
+        4,
+        5
+      ],
+      "saves": [
+        0,
+        3,
+        0,
+        1,
+        -3,
+        -3
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#dbf80d60-0428-45a9-9820-c70ea3d8dd8b"
+    },
+    {
+      "name": "Giant Wolf Spider",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 13,
+      "hp": 11,
+      "walk": 40,
+      "climb": 40,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        12,
+        16,
+        13,
+        12,
+        3,
+        4
+      ],
+      "saves": [
+        1,
+        3,
+        1,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Spider Climb",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#1f0a46b3-9d16-428c-abbc-96796cd508c0"
+    },
+    {
+      "name": "Goat",
+      "size": "Medium",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 10,
+      "hp": 4,
+      "walk": 40,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        11,
+        10,
+        11,
+        10,
+        2,
+        5
+      ],
+      "saves": [
+        2,
+        0,
+        0,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Ram"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#e12bc1bb-3a80-4fb5-b021-4a51a39d472f"
+    },
+    {
+      "name": "Hawk",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 13,
+      "hp": 1,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 60,
+      "burrow": 0,
+      "abilities": [
+        5,
+        16,
+        8,
+        14,
+        2,
+        6
+      ],
+      "saves": [
+        -3,
+        3,
+        -1,
+        2,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Talons"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#9db454eb-a2d1-4fc5-9f29-74465ce90965"
+    },
+    {
+      "name": "Hyena",
+      "size": "Medium",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 5,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        11,
+        13,
+        12,
+        12,
+        2,
+        5
+      ],
+      "saves": [
+        0,
+        1,
+        1,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#8a5a36f9-b334-4f42-9842-d6c0668a725d"
+    },
+    {
+      "name": "Jackal",
+      "size": "Small",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 3,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        8,
+        15,
+        11,
+        12,
+        3,
+        6
+      ],
+      "saves": [
+        -1,
+        2,
+        0,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#ad5f2a21-bad4-4810-99eb-35c812ff2f11"
+    },
+    {
+      "name": "Lion",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 12,
+      "hp": 22,
+      "walk": 50,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        15,
+        11,
+        12,
+        3,
+        8
+      ],
+      "saves": [
+        3,
+        2,
+        0,
+        1,
+        -4,
+        -1
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Running Leap",
+        "Multiattack",
+        "Rend",
+        "Roar"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#9439f911-514e-4324-abc9-7d41a4e773aa"
+    },
+    {
+      "name": "Lizard",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 10,
+      "hp": 2,
+      "walk": 20,
+      "climb": 20,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        11,
+        10,
+        8,
+        1,
+        3
+      ],
+      "saves": [
+        -4,
+        0,
+        0,
+        -1,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Spider Climb",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#f5caaac2-7b92-478e-b9ad-d3a52a8d0702"
+    },
+    {
+      "name": "Mastiff",
+      "size": "Medium",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 12,
+      "hp": 5,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        13,
+        14,
+        12,
+        12,
+        3,
+        7
+      ],
+      "saves": [
+        1,
+        2,
+        1,
+        3,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#c566bf89-3c4f-47b2-826e-227c330d1135"
+    },
+    {
+      "name": "Mule",
+      "size": "Medium",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 10,
+      "hp": 11,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        14,
+        10,
+        13,
+        10,
+        2,
+        5
+      ],
+      "saves": [
+        4,
+        0,
+        1,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Beast of Burden",
+        "Hooves"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#db28bd92-f8a7-415d-8eb3-bab5a914c20f"
+    },
+    {
+      "name": "Octopus",
+      "size": "Small",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 3,
+      "walk": 5,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        4,
+        15,
+        11,
+        10,
+        3,
+        4
+      ],
+      "saves": [
+        -3,
+        2,
+        0,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Compression",
+        "Water Breathing",
+        "Tentacles",
+        "Ink Cloud (1/Day)"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#73da4eb4-d7d1-43ae-a1de-3277b70fd39f"
+    },
+    {
+      "name": "Owl",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 1,
+      "walk": 5,
+      "climb": 0,
+      "swim": 0,
+      "fly": 60,
+      "burrow": 0,
+      "abilities": [
+        3,
+        13,
+        8,
+        12,
+        2,
+        7
+      ],
+      "saves": [
+        -4,
+        1,
+        -1,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Flyby",
+        "Talons"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#b5f4c5e7-e32f-4106-8143-3bacbbceb60b"
+    },
+    {
+      "name": "Panther",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 13,
+      "hp": 13,
+      "walk": 50,
+      "climb": 40,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        14,
+        16,
+        10,
+        14,
+        3,
+        7
+      ],
+      "saves": [
+        2,
+        3,
+        0,
+        2,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Rend",
+        "Nimble Escape"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#ac02bd17-3025-4080-a82c-08950b4ab6a1"
+    },
+    {
+      "name": "Piranha",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 13,
+      "hp": 1,
+      "walk": 5,
+      "climb": 0,
+      "swim": 40,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        16,
+        9,
+        7,
+        1,
+        2
+      ],
+      "saves": [
+        -4,
+        3,
+        -1,
+        -2,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Water Breathing",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#3e7c7ec9-daa2-45ec-9072-dea516dfd8b9"
+    },
+    {
+      "name": "Pony",
+      "size": "Medium",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 10,
+      "hp": 11,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        15,
+        10,
+        13,
+        11,
+        2,
+        7
+      ],
+      "saves": [
+        4,
+        0,
+        1,
+        0,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Hooves"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#69ca69aa-ea82-4379-8f3c-709e9bf927fa"
+    },
+    {
+      "name": "Rat",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 10,
+      "hp": 1,
+      "walk": 20,
+      "climb": 20,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        11,
+        9,
+        10,
+        2,
+        4
+      ],
+      "saves": [
+        -4,
+        0,
+        -1,
+        0,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Agile",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#4886a616-e9e7-42cc-bc03-32dc957b8a17"
+    },
+    {
+      "name": "Raven",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 2,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 50,
+      "burrow": 0,
+      "abilities": [
+        2,
+        14,
+        10,
+        13,
+        5,
+        6
+      ],
+      "saves": [
+        -4,
+        2,
+        0,
+        1,
+        -3,
+        -2
+      ],
+      "actionNames": [
+        "Mimicry",
+        "Beak"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#90c61245-189c-47ed-be69-f91b18a99b4c"
+    },
+    {
+      "name": "Reef Shark",
+      "size": "Medium",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 12,
+      "hp": 22,
+      "walk": 5,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        14,
+        15,
+        13,
+        10,
+        1,
+        4
+      ],
+      "saves": [
+        2,
+        2,
+        1,
+        0,
+        -5,
+        -3
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Water Breathing",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#61a20665-5fa6-4f99-b13c-3696b79f6c04"
+    },
+    {
+      "name": "Riding Horse",
+      "size": "Large",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 11,
+      "hp": 13,
+      "walk": 60,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        16,
+        13,
+        12,
+        11,
+        2,
+        7
+      ],
+      "saves": [
+        3,
+        1,
+        1,
+        0,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Hooves"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#ae49cf26-be34-46d3-8308-1d37a9b17f3a"
+    },
+    {
+      "name": "Scorpion",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 11,
+      "hp": 1,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        11,
+        8,
+        8,
+        1,
+        2
+      ],
+      "saves": [
+        -4,
+        0,
+        -1,
+        -1,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Sting"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#3e5ff7c8-5594-4480-a513-6ef34f4b5df8"
+    },
+    {
+      "name": "Seahorse",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 1,
+      "walk": 5,
+      "climb": 0,
+      "swim": 20,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        1,
+        12,
+        8,
+        10,
+        1,
+        2
+      ],
+      "saves": [
+        -5,
+        1,
+        -1,
+        0,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Water Breathing",
+        "Bubble Dash"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#b2f4e449-3f60-4e39-86f4-d92c95f04a5f"
+    },
+    {
+      "name": "Spider",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 12,
+      "hp": 1,
+      "walk": 20,
+      "climb": 20,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        14,
+        8,
+        10,
+        1,
+        2
+      ],
+      "saves": [
+        -4,
+        2,
+        -1,
+        0,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Spider Climb",
+        "Web Walker",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#f7779e22-f1ed-4de2-bd7e-c1308758cb9f"
+    },
+    {
+      "name": "Tiger",
+      "size": "Large",
+      "challenge": 1,
+      "challengeLabel": "1",
+      "armor": 13,
+      "hp": 30,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        17,
+        16,
+        14,
+        12,
+        3,
+        8
+      ],
+      "saves": [
+        3,
+        3,
+        2,
+        1,
+        -4,
+        -1
+      ],
+      "actionNames": [
+        "Rend",
+        "Nimble Escape"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#ec7163aa-bc62-4cd2-a76b-a1fd5a51e36f"
+    },
+    {
+      "name": "Venomous Snake",
+      "size": "Tiny",
+      "challenge": 0.125,
+      "challengeLabel": "1/8",
+      "armor": 12,
+      "hp": 5,
+      "walk": 30,
+      "climb": 0,
+      "swim": 30,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        2,
+        15,
+        11,
+        10,
+        1,
+        3
+      ],
+      "saves": [
+        -4,
+        2,
+        0,
+        0,
+        -5,
+        -4
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#5a9aff38-058a-464b-a306-7d6986002996"
+    },
+    {
+      "name": "Vulture",
+      "size": "Medium",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 10,
+      "hp": 5,
+      "walk": 10,
+      "climb": 0,
+      "swim": 0,
+      "fly": 50,
+      "burrow": 0,
+      "abilities": [
+        7,
+        10,
+        13,
+        12,
+        2,
+        4
+      ],
+      "saves": [
+        -2,
+        0,
+        1,
+        1,
+        -4,
+        -3
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Beak"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#5e9a1882-cf9a-441f-91e7-6a3fe23b24f7"
+    },
+    {
+      "name": "Warhorse",
+      "size": "Large",
+      "challenge": 0.5,
+      "challengeLabel": "1/2",
+      "armor": 11,
+      "hp": 19,
+      "walk": 60,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        18,
+        12,
+        13,
+        12,
+        2,
+        7
+      ],
+      "saves": [
+        4,
+        1,
+        1,
+        3,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Hooves"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#607bdd7a-ac0e-43a3-b606-6a1764f5cffe"
+    },
+    {
+      "name": "Weasel",
+      "size": "Tiny",
+      "challenge": 0,
+      "challengeLabel": "0",
+      "armor": 13,
+      "hp": 1,
+      "walk": 30,
+      "climb": 30,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        3,
+        16,
+        8,
+        12,
+        2,
+        3
+      ],
+      "saves": [
+        -4,
+        3,
+        -1,
+        1,
+        -4,
+        -4
+      ],
+      "actionNames": [
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#aefb6b05-1425-4304-8622-e04e4c4c76d4"
+    },
+    {
+      "name": "Wolf",
+      "size": "Medium",
+      "challenge": 0.25,
+      "challengeLabel": "1/4",
+      "armor": 12,
+      "hp": 11,
+      "walk": 40,
+      "climb": 0,
+      "swim": 0,
+      "fly": 0,
+      "burrow": 0,
+      "abilities": [
+        14,
+        15,
+        12,
+        12,
+        3,
+        6
+      ],
+      "saves": [
+        2,
+        2,
+        1,
+        1,
+        -4,
+        -2
+      ],
+      "actionNames": [
+        "Pack Tactics",
+        "Bite"
+      ],
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks#73128fa6-316b-46a5-a9c0-d3e09adf8ce1"
+    }
+  ]
+}

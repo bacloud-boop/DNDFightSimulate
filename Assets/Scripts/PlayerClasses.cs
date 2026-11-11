@@ -10,6 +10,9 @@ public sealed class PlayerClasses
         for(int i=0;i<levels.Length;i++)if(levels[i]>=3 && (choices[i]<0 || choices[i]>=Subclasses2024.Names[i].Length))return false;
         for(int i=0;i<levels.Length;i++)subclasses[i]=levels[i]>=3?choices[i]:-1;return true;
     }
+    public bool SavingThrowProficient(int ability) {
+        switch(InitialClass){case 0:case 10:return ability==0||ability==2;case 1:case 11:return ability==4||ability==3;case 2:case 8:return ability==0||ability==1;case 3:return ability==2||ability==5;case 5:return ability==1||ability==5;case 7:return ability==1||ability==4;default:return ability==3||ability==5;}
+    }
     public int HitDie(int index) => FirstLevelHp(index);
     public int InitialClass { get; private set; }
     public int this[int index] => levels[index];

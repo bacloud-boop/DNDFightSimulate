@@ -18,7 +18,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#AcidSplash",
-      "implementation": "implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Aid",
@@ -1269,7 +1269,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#CureWounds",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Dancing Lights",
@@ -2127,7 +2127,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FindFamiliar",
-      "implementation": "not_implemented"
+      "implementation": "learning_only"
     },
     {
       "name": "Find Steed",
@@ -2237,7 +2237,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#FireBolt",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Fire Shield",
@@ -2630,7 +2630,7 @@
       ],
       "duration": "24 hours",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Goodberry",
-      "implementation": "not_implemented"
+      "implementation": "learning_only"
     },
     {
       "name": "Grease",
@@ -2885,7 +2885,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HealingWord",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Heat Metal",
@@ -3016,7 +3016,7 @@
       ],
       "duration": "Concentration, up to 1 minute",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#HoldPerson",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Holy Aura",
@@ -3195,7 +3195,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#InflictWounds",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Insect Plague",
@@ -4352,7 +4352,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PoisonSpray",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Polymorph",
@@ -4408,7 +4408,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PowerWordKill",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Power Word Stun",
@@ -4894,7 +4894,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SacredFlame",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Sanctuary",
@@ -5311,7 +5311,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SparetheDying",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Speak with Animals",
