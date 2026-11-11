@@ -1,8 +1,9 @@
 public sealed class PlayerClasses
 {
-    public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士", "野蛮人"};
-    readonly int[] levels = {1,0,0,0,0,0,0,0,0,0,0};
-    readonly int[] subclasses = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+    public static readonly string[] Names = {"战士", "法师", "游侠", "术士", "契术师", "吟游诗人", "牧师", "游荡者", "武僧", "圣武士", "野蛮人", "德鲁伊"};
+    readonly int[] levels = CreateLevels();
+    static int[] CreateLevels(){var values=new int[Names.Length];values[0]=1;return values;}
+    readonly int[] subclasses = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat(-1,Names.Length));
     public int Subclass(int index) => levels[index]>=3?subclasses[index]:-1;
     public bool TryApplySubclasses(int[] choices) {
         if(choices==null || choices.Length!=levels.Length)return false;

@@ -46,41 +46,58 @@ public sealed partial class TrainingGame
                 Fill(CellRect(board,new Vector2Int(x,y)),new Color(.28f,.8f,.12f,.35f));
             Fill(CellRect(board,preview),inRange?new Color(.1f,.8f,.2f,.35f):new Color(.9f,.1f,.05f,.4f));
         }
-        bool hits=spellCenterChosen&&BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
+        bool hits=spellCenterChosen&&combat.Hp>0&&BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
         Surface(new Rect(1010,110,225,410),paperTexture);
         GUI.Label(new Rect(1025,125,195,42),"酸液飞溅",heading);
-        string target=spellCenterChosen?(hits?"木桩":"无目标"):"请点击地图选择中心";
-        GUI.Label(new Rect(1025,180,195,160),"射程 60 尺\n半径 5 尺\n选定目标："+target+(hover?"\n悬停范围内："+(BattleMap.FeetBetween(preview,map.Monster)<=5?"木桩":"无目标"):"")+"\n玩家自身不受影响",label);
+        string target=spellCenterChosen?AcidTargets(spellCenter):"请点击地图选择中心";
+        GUI.Label(new Rect(1025,180,195,160),"射程 60 尺\n半径 5 尺\n选定目标："+target+(hover?"\n悬停范围内："+AcidTargets(preview):"")+"\n范围内玩家也需豁免",label);
         if(Btn(new Rect(1025,355,195,48),"确认施法",spellCenterChosen&&combat.MagicActionAvailable&&!rolling))CastAcidSplash();
         if(Btn(new Rect(1025,420,195,48),"取消施法")){spellTargeting=false;spellCenterChosen=false;}
     }
     void CastAcidSplash()
     {
         if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || BattleMap.FeetBetween(map.Player,spellCenter)>60 || !combat.TryUseMagicAction())return;
-        bool hits=BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
+        bool hits=combat.Hp>0&&BattleMap.FeetBetween(spellCenter,map.Monster)<=5;
+        bool hitsPlayer=!combat.PlayerDead&&BattleMap.FeetBetween(spellCenter,map.Player)<=5;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
         int count=AcidSplash.DiceCount(classes.TotalLevel);
         spellTargeting=false;spellCenterChosen=false;
-        StartCoroutine(ResolveAcidSplash(hits,dc,count));
+        StartCoroutine(ResolveAcidSplash(hits,hitsPlayer,dc,count));
     }
-    IEnumerator ResolveAcidSplash(bool hits,int dc,int count)
+    string AcidTargets(Vector2Int center)
+    {
+        bool monster=combat.Hp>0&&BattleMap.FeetBetween(center,map.Monster)<=5;
+        bool player=!combat.PlayerDead&&BattleMap.FeetBetween(center,map.Player)<=5;
+        return monster&&player?"木桩、玩家":monster?"木桩":player?"玩家":"无目标";
+    }
+    bool DexteritySaveProficient => classes.InitialClass==2||classes.InitialClass==5||classes.InitialClass==7||classes.InitialClass==8;
+    IEnumerator ResolveAcidSplash(bool hitsMonster,bool hitsPlayer,int dc,int count)
     {
         rolling=true;logScroll=Vector2.zero;
-        string caster=PlayerClasses.Names[castingClass];
-        if(!hits){dice="酸液飞溅 · 范围内无目标";history.Insert(0,caster+"施放酸液飞溅，范围内无目标，消耗 1 动作。");rolling=false;yield break;}
-        int save=Random.Range(1,21),modifier=AcidSplash.Modifier(monsterAttributes[1]);
-        dice="酸液飞溅 · 木桩敏捷豁免 D20";
-        yield return PresentRoll(20,new[]{save},"豁免："+save+" + 敏捷 "+modifier+" = "+(save+modifier)+" / DC "+dc+(save+modifier>=dc?"，成功":"，失败"));
-        string details=caster+"酸液飞溅：木桩敏捷豁免 "+save+" + "+modifier+" = "+(save+modifier)+" / DC "+dc;
-        if(save+modifier>=dc){dice="敏捷豁免成功 · 强酸伤害 0";history.Insert(0,details+"，成功，不受伤害。");rolling=false;yield break;}
-        int[] values=new int[count];for(int i=0;i<count;i++)values[i]=Random.Range(1,7);
-        dice="敏捷豁免失败 · 酸液飞溅 "+count+"d6 强酸";
-        yield return PresentRoll(6,values,"强酸伤害："+System.Linq.Enumerable.Sum(values));
-        int damage=System.Linq.Enumerable.Sum(values);combat.ApplyDamage(damage);
-        dice="酸液飞溅 · 强酸伤害 "+damage;
-        history.Insert(0,details+"，失败；"+count+"d6="+string.Join("+",values)+"，强酸伤害 "+damage+"。");
-        if(combat.ResetIfDead()){history.Insert(0,"木桩死亡，双方回满，重新部署。");fighter.ResetBattle();BeginDeployment();}
-        rolling=false;
+        bool[] hit={hitsMonster,hitsPlayer},failed=new bool[2];
+        if(!hitsMonster&&!hitsPlayer){dice="酸液飞溅：无目标，已消耗动作。";history.Insert(0,dice);rolling=false;yield break;}
+        for(int i=0;i<2;i++)if(hit[i]){
+            string target=i==0?"木桩":"玩家";
+            int value=Random.Range(1,21),modifier=AcidSplash.Modifier(i==0?monsterAttributes[1]:attributes[1]);
+            if(i==1&&DexteritySaveProficient)modifier+=classes.ProficiencyBonus;
+            bool automaticFailure=i==1&&combat.PlayerHp==0;
+            if(!automaticFailure){
+                dice="酸液飞溅 · "+target+"敏捷豁免";
+                yield return PresentRoll(20,new[]{value},"豁免："+value+" + "+modifier+" / DC "+dc);
+            }
+            failed[i]=automaticFailure||value+modifier<dc;
+            history.Insert(0,"酸液飞溅："+target+(automaticFailure?"昏迷，敏捷豁免自动失败":("豁免 "+value+" + "+modifier+" / DC "+dc))+(failed[i]?"，失败。":"，成功，伤害0。"));
+        }
+        if(failed[0]||failed[1]){
+            int[] values=new int[count];for(int i=0;i<count;i++)values[i]=Random.Range(1,7);
+            int damage=System.Linq.Enumerable.Sum(values);dice="酸液飞溅 · 强酸伤害";
+            yield return PresentRoll(6,values,"强酸伤害："+damage+"；豁免失败者使用同一伤害骰结果");
+            if(failed[0])combat.ApplyDamage(damage);
+            if(failed[1])combat.ApplyPlayerDamage(damage);
+            dice="酸液飞溅："+damage+" 点强酸伤害";
+            history.Insert(0,count+"d6="+string.Join("+",values)+"，木桩伤害 "+(failed[0]?damage:0)+"，玩家伤害 "+(failed[1]?damage:0)+"。");
+        }else dice="酸液飞溅：目标全部豁免成功，伤害0。";
+        CheckBattleOutcome();rolling=false;
     }
     void DrawSpellTooltip()
     {

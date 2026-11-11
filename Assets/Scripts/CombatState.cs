@@ -1,6 +1,22 @@
 using System;
 public sealed class CombatState
 {
+    public bool PlayerDead {get;private set;}
+    public bool PlayerStable {get;private set;}
+    public int DeathSuccesses {get;private set;}
+    public int DeathFailures {get;private set;}
+    public bool NeedsDeathSave => PlayerHp==0&&!PlayerDead&&!PlayerStable;
+    public bool PlayerCanAct => PlayerHp>0&&!PlayerDead&&Hp>0;
+    public bool BattleFinished => PlayerDead || (Hp==0 && (PlayerHp>0||PlayerStable));
+    public string PlayerLifeLabel => PlayerDead?"死亡":PlayerHp>0?"清醒":PlayerStable?"稳定 / 昏迷":"倒地 / 昏迷";
+    public void ResolveDeathSave(int die) {
+        if(!NeedsDeathSave)return;
+        if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));
+        if(die==20){HealPlayer(1);return;}
+        if(die==1)DeathFailures+=2;else if(die>=10)DeathSuccesses++;else DeathFailures++;
+        if(DeathFailures>=3)PlayerDead=true;
+        else if(DeathSuccesses>=3){PlayerStable=true;DeathSuccesses=0;DeathFailures=0;}
+    }
     public int PlayerArmorClass { get; } = 10;
     public int MonsterProficiencyBonus { get; set; } = 0;
     public int MonsterAttackRange { get; private set; } = 5;
@@ -22,8 +38,8 @@ public sealed class CombatState
     public bool PlayerReactionAvailable { get; private set; } = true;
     public bool MonsterReactionAvailable { get; private set; } = true;
     public bool TryUseReaction(bool player) {
-        if(player) {if(!PlayerReactionAvailable)return false;PlayerReactionAvailable=false;}
-        else {if(!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
+        if(player) {if(!PlayerCanAct||!PlayerReactionAvailable)return false;PlayerReactionAvailable=false;}
+        else {if(Hp==0||!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
         BattleStarted=true;return true;
     }
     public void StartMonsterTurn() {MonsterReactionAvailable=true;}
@@ -31,24 +47,31 @@ public sealed class CombatState
     public int ActionsRemaining { get; private set; } = 1;
     public int ActionsThisRound { get; private set; } = 1;
     public int RestrictedActionsRemaining {get;private set;}
-    public bool MagicActionAvailable => ActionsRemaining>RestrictedActionsRemaining;
+    public bool MagicActionAvailable => PlayerCanAct&&ActionsRemaining>RestrictedActionsRemaining;
     public bool TryUseMagicAction(){if(!MagicActionAvailable)return false;BattleStarted=true;ActionsRemaining--;return true;}
-    public bool ActionAvailable => ActionsRemaining>0;
+    public bool ActionAvailable => PlayerCanAct&&ActionsRemaining>0;
     public bool BonusActionAvailable { get; private set; } = true;
     public bool TryUseAction() {
         if(!ActionAvailable) return false;
         BattleStarted=true;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;return true;
     }
     public bool TryUseBonusAction() {
-        if(!BonusActionAvailable) return false;
+        if(!PlayerCanAct||!BonusActionAvailable) return false;
         BattleStarted=true;BonusActionAvailable=false;return true;
     }
-    public void AddSurgeAction() { BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
-    public int HealPlayer(int amount) {int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));return PlayerHp-before;}
+    public void AddSurgeAction() {if(!PlayerCanAct)return; BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
+    public int HealPlayer(int amount) {if(PlayerDead)return 0;int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));if(PlayerHp>0){PlayerStable=false;DeathSuccesses=0;DeathFailures=0;}return PlayerHp-before;}
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ResetBattle() {PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
-    public void ApplyPlayerDamage(int damage) { PlayerHp = Math.Max(0, PlayerHp - Math.Max(0, damage)); }
+    public void ApplyPlayerDamage(int damage,bool critical=false) {
+        if(damage<=0||PlayerDead)return;
+        int before=PlayerHp;long overflow=(long)damage-before;
+        if(overflow>=PlayerMaxHp){PlayerHp=0;PlayerDead=true;return;}
+        PlayerHp=Math.Max(0,PlayerHp-damage);
+        if(before==0){PlayerStable=false;DeathFailures+=critical?2:1;if(DeathFailures>=3)PlayerDead=true;}
+        if(PlayerHp==0)PlayerReactionAvailable=false;
+    }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
 
         int newMaxHp = classes.CalculateMaxHp(constitution);
@@ -60,5 +83,5 @@ public sealed class CombatState
         if(newMaxHp != MaxHp) { MaxHp = newMaxHp; Hp = newMaxHp; }
     }
     public void EndRound() { BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
-    public bool ResetIfDead() { if(Hp>0 && PlayerHp>0) return false; ResetBattle(); return true; }
+
 }

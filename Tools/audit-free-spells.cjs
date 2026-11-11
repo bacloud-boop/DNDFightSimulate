@@ -1,0 +1,10 @@
+const fs=require('fs');const s=fs.readFileSync('Temp/spells-2024.html','utf8');const clean=v=>v.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').replace(/&#39;|&rsquo;/g,"'").replace(/\s+/g,' ').trim();
+const headings=[...s.matchAll(/<h3\b([^>]*)>([\s\S]*?)<\/h3>/g)];const spells=[];
+for(let i=0;i<headings.length;i++){
+ const h=headings[i];if(!h[1].includes('with-metadata'))continue;const block=s.slice(h.index+h[0].length,i+1<headings.length?headings[i+1].index:s.length);const meta=block.match(/<em>([\s\S]*?)<\/em>/);if(!meta)throw Error(clean(h[2]));const metadata=clean(meta[1]);if(!metadata.includes('Cantrip')&&!/^Level \d/.test(metadata))continue;
+ const field=name=>{const m=block.match(new RegExp('<strong>'+name+':<\\/strong>([\\s\\S]*?)<\\/p>'));return m?clean(m[1]):''};
+ const casters=(metadata.match(/\(([^)]+)\)/)||[])[1];const anchor=(h[2].match(/href="#([^"]+)"/)||[])[1];
+ const level=metadata.includes('Cantrip')?0:Number((metadata.match(/^Level (\d+)/)||[])[1]);
+ spells.push({name:clean(h[2]),level,school:metadata.replace(/^Level \d+ /,'').replace(/ Cantrip/,'').replace(/ \(.*/,''),classes:casters?casters.split(',').map(x=>x.trim()).filter(x=>x!=='Artificer'):[],castingTime:field('Casting Time').replace(/ or Ritual|Ritual/gi,'').trim(),range:field('Range'),components:[...field('Components').split('M')[0].matchAll(/\b[VS]\b/g)].map(x=>x[0]==='V'?'声音':'姿势'),duration:field('Duration'),source:'https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#'+anchor,implementation:clean(h[2])==='Acid Splash'?'implemented':clean(h[2])==='Alarm'?'learning_only':'not_implemented'});
+}
+if(new Set(spells.map(x=>x.name)).size!==spells.length)throw Error('duplicate spell');fs.mkdirSync('Docs',{recursive:true});fs.writeFileSync('Docs/FreeSpellInventory.json',JSON.stringify({scope:'Official publicly readable 2024 spell descriptions; audit inventory only, not a completed runtime spell library.',count:spells.length,spells},null,2));console.log('Audited '+spells.length+' unique spell metadata records.');

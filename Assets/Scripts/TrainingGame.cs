@@ -24,7 +24,8 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterRangeInput="5", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
-    readonly string[] classInputs = {"1","0","0","0","0","0","0","0","0","0","0"};
+    readonly string[] classInputs = CreateClassInputs();
+    static string[] CreateClassInputs(){var values=new string[PlayerClasses.Names.Length];for(int i=0;i<values.Length;i++)values[i]=i==0?"1":"0";return values;}
     Vector2 classScroll;
     Vector2 weaponScroll;
     int selectedClass;
@@ -129,12 +130,12 @@ public sealed partial class TrainingGame : MonoBehaviour
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
-        if(combat.Hp==0) { history.Insert(0,"木桩死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
+        CheckBattleOutcome();
         rolling=false;
     }
     void EndCombatRound()
     {
-        if(!spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0) {
+        if(!combat.BattleFinished && !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0) {
             combat.MarkBattleStarted();
             history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
             StartCoroutine(Counterattack());
@@ -143,10 +144,12 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Counterattack(bool endTurn=true)
     {
         rolling=true;
+        if(combat.PlayerDead){rolling=false;yield break;}
+        if(combat.Hp==0){if(endTurn){worldRounds++;combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn();
             yield return ChasePlayer();
-            if(page!="battle" || !map.Locked){rolling=false;yield break;}
+            if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
             rolling=true;
         }
         if(endTurn && map.DistanceFeet>combat.MonsterAttackRange) {
@@ -154,16 +157,19 @@ public sealed partial class TrainingGame : MonoBehaviour
             history.Insert(0,dice);
             combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
             movementMessage="拖动玩家棋子移动。";
+            yield return PlayerDeathSave();
             rolling=false;logScroll=Vector2.zero;yield break;
         }
-        int hitRoll=Random.Range(1,21);
+        int firstHit=Random.Range(1,21);
+        int secondHit=combat.PlayerHp==0&&map.DistanceFeet<=5?Random.Range(1,21):0;
+        int hitRoll=secondHit>0?Mathf.Max(firstHit,secondHit):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
         long hitTotal=(long)hitRoll+proficiency;
         dice="木桩反击 · 命中判定 D20";
-        yield return PresentRoll(20,new[]{hitRoll},"骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
+        yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
-        bool critical=hitRoll==20;
+        bool critical=hitRoll==20 || (combat.PlayerHp==0&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
             string details;
             var sides=new List<int>();var results=new List<int[]>();var counts=new List<int>();
@@ -174,12 +180,15 @@ public sealed partial class TrainingGame : MonoBehaviour
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
                 yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
-            combat.ApplyPlayerDamage(damage);
+            combat.ApplyPlayerDamage(damage,critical);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
-        if(combat.PlayerHp==0) { history.Insert(0,"玩家死亡，双方恢复满血，重新开始战斗。"); if(combat.ResetIfDead()){fighter.ResetBattle();BeginDeployment();} }
-        else if(endTurn) {combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";}
+        CheckBattleOutcome();
+        if(endTurn && !combat.PlayerDead) {
+            combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";
+            yield return PlayerDeathSave();
+        }
         if(endTurn)rolling=false;logScroll=Vector2.zero;
     }
     void DrawPanel()

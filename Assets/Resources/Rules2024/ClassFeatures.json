@@ -1835,6 +1835,167 @@
       "name": "Primal Champion",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20PrimalChampion",
       "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 1,
+      "name": "Spellcasting",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1DruidSpellcasting",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 1,
+      "name": "Druidic",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1Druidic",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 1,
+      "name": "Primal Order",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level1PrimalOrder",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 2,
+      "name": "Wild Shape",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2WildShape",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 2,
+      "name": "Wild Companion",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level2WildCompanion",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 3,
+      "name": "Druid Subclass",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level3DruidSubclass",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 4,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4DruidAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 5,
+      "name": "Wild Resurgence",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level5WildResurgence",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 6,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 7,
+      "name": "Elemental Fury",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level7ElementalFury",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 8,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4DruidAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 9,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 10,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 11,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 12,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4DruidAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 13,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 14,
+      "name": "Subclass feature",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 15,
+      "name": "Improved Elemental Fury",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level15ImprovedElementalFury",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 16,
+      "name": "Ability Score Improvement",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level4DruidAbilityScoreImprovement",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 17,
+      "name": "—",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 18,
+      "name": "Beast Spells",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level18BeastSpells",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 19,
+      "name": "Epic Boon",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level19DruidEpicBoon",
+      "status": "pending"
+    },
+    {
+      "classIndex": 11,
+      "level": 20,
+      "name": "Archdruid",
+      "source": "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes#Level20Archdruid",
+      "status": "pending"
     }
   ]
 }

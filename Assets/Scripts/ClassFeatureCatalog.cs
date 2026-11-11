@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable] public sealed class ClassFeatureRecords {public ClassFeatureRecord[] entries;}
 public sealed partial class TrainingGame
 {
-    readonly int[] subclassChoices={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+    readonly int[] subclassChoices=System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat(-1,PlayerClasses.Names.Length));
     ClassFeatureRecords featureRecords;
     Vector2 featureScroll;
     int catalogClassIndex;
@@ -33,7 +33,7 @@ public sealed partial class TrainingGame
     }
     bool ValidateSubclassDraft()
     {
-        for(int i=0;i<11;i++)if(int.TryParse(classInputs[i],out int level)&&level>=3&&(subclassChoices[i]<0||subclassChoices[i]>=Subclasses2024.Names[i].Length))return false;
+        for(int i=0;i<PlayerClasses.Names.Length;i++)if(int.TryParse(classInputs[i],out int level)&&level>=3&&(subclassChoices[i]<0||subclassChoices[i]>=Subclasses2024.Names[i].Length))return false;
         return true;
     }
     void DrawSubclassChoice(int index)

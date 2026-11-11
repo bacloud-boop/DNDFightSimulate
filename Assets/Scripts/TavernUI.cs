@@ -90,7 +90,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(95,520,250,120),"拿起武器，掷出命运。\n在酒馆桌面上演练每一次交锋。",centered);
         Surface(new Rect(1225,180,310,530),paperTexture);
         GUI.Label(new Rect(1250,215,260,45),"训练木桩",cardTitle);
-        GUI.DrawTexture(new Rect(1250,275,260,260),emblems[11]);
+        GUI.DrawTexture(new Rect(1250,275,260,260),emblems[PlayerClasses.Names.Length]);
         GUI.Label(new Rect(1250,555,260,75),"属性 · 装备 · 多职业\n命中 · 伤害 · 暴击",centered);
         Surface(new Rect(450,100,700,685),paperTexture);
         GUI.Label(new Rect(500,130,600,35),"D N D  ·  T A V E R N  T A B L E",centered);
@@ -141,7 +141,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))ResetCombat();
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
-        DrawMap(new Rect(600,110,400,400),!spellTargeting&&!rolling&&panel=="");
+        DrawMap(new Rect(600,110,400,400),combat.PlayerCanAct&&!spellTargeting&&!rolling&&panel=="");
         GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / 30 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,205,130),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
         if(rolling && !reactionPending && !monsterMoving) {
@@ -163,7 +163,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(945,555,260,48),selectedWeapon.HasLight?(bonusInRange?(CanLightBonusAttack?"轻型攻击（附赠动作）":"需先用另一轻型武器攻击"):"无法进行攻击 · 超出射程"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&CanLightBonusAttack&&combat.BonusActionAvailable))BonusAttack();
         string attackLabel=fighter.AttacksRemaining>0?"继续攻击 · 剩余 "+fighter.AttacksRemaining+" 次":combat.ActionAvailable?"攻击（动作） · "+selectedWeapon.Name:"动作已使用";
         if(Btn(new Rect(430,615,360,57),attackInRange?attackLabel:"无法进行攻击 · 超出射程",canAct&&attackInRange&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
-        if(Btn(new Rect(810,615,360,57),"结束回合 / 跳过剩余操作",canAct))EndCombatRound();
+        if(Btn(new Rect(810,615,360,57),combat.BattleFinished?"战斗结束 · 请重置":combat.PlayerHp==0?"跳过倒地回合 / 继续死亡豁免":"结束回合 / 跳过剩余操作",canAct&&!combat.BattleFinished))EndCombatRound();
         GUI.Label(new Rect(415,674,790,25),"动作 "+combat.ActionsRemaining+" / "+combat.ActionsThisRound+" · 附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1"+(fighter.NextAttackAdvantage?" · 下次攻击具有优势":"")+(combat.BattleStarted?" · 配置已锁定":" · 可配置"),new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         Surface(new Rect(365,705,870,150),paperTexture);
         GUI.Label(new Rect(390,713,810,30),"战斗卷轴",heading);

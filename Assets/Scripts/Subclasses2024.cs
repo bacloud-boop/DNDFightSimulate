@@ -11,6 +11,7 @@ public static class Subclasses2024
         new[]{"诡术师 Arcane Trickster","刺客 Assassin","魂刃 Soulknife","盗贼 Thief"},
         new[]{"慈悲武者 Mercy","暗影武者 Shadow","元素武者 Elements","散打武者 Open Hand"},
         new[]{"奉献之誓 Devotion","荣耀之誓 Glory","古贤之誓 Ancients","复仇之誓 Vengeance"},
-        new[]{"狂战士 Berserker","荒野之心 Wild Heart","世界树 World Tree","狂热者 Zealot"}
+        new[]{"狂战士 Berserker","荒野之心 Wild Heart","世界树 World Tree","狂热者 Zealot"},
+        new[]{"大地结社 Land","月亮结社 Moon","海洋结社 Sea","星辰结社 Stars"}
     };
 }

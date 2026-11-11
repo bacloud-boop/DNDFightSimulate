@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     }
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
-        if(rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
+        if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
         StartCoroutine(ResolveMovement(true,target,tactical));
     }
     // Entry point for future monster movement; deployment never invokes reactions.
@@ -47,7 +47,7 @@ public sealed partial class TrainingGame
                 } else yield return Counterattack(false);
             }else history.Insert(0,(defenderPlayer?"玩家":"木桩")+"放弃借机攻击，保留反应。");
             rolling=true;
-            if(page!="battle" || !map.Locked){rolling=false;yield break;}
+            if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerCanAct) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
         }
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
         bool moved=movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);

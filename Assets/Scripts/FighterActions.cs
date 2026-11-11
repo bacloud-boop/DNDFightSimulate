@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed partial class TrainingGame
 {
-    bool CanUseFeature => !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0;
+    bool CanUseFeature => combat.PlayerCanAct && !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0;
     void SecondWind()
     {
         if(!CanUseFeature || fighter.WindRemaining(classes[0])<=0 || !combat.TryUseBonusAction())return;
@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
-        combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();
+        outcomeRecorded=false;stableRecoveryAt=-1;combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();
         dice="战斗已重置 · 可修改配置";
         history.Insert(0,"—— 重置战斗：双方回满、回合归 1、特性次数与行动额度恢复 ——");
         logScroll=Vector2.zero;

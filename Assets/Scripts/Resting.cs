@@ -3,12 +3,12 @@ using System.Collections;
 
 public sealed partial class TrainingGame
 {
-    readonly int[] hitDiceSpent=new int[11];
+    readonly int[] hitDiceSpent=new int[PlayerClasses.Names.Length];
     bool shortRestReady,hasLongRest;
     long worldRounds,lastLongRestStart;
     string restMessage="";
     Vector2 restScroll;
-    bool OutsideCombat => !combat.BattleStarted&&!rolling&&!spellTargeting&&!reactionPending&&draggingToken<0;
+    bool OutsideCombat => (!combat.BattleStarted||combat.BattleFinished)&&!combat.PlayerDead&&!rolling&&!spellTargeting&&!reactionPending&&draggingToken<0;
     void ResetRestResources(){System.Array.Clear(hitDiceSpent,0,hitDiceSpent.Length);shortRestReady=false;}
     void DrawRestPanel()
     {
@@ -18,14 +18,14 @@ public sealed partial class TrainingGame
         GUILayout.Label("休息 · 战斗外",heading);
         GUILayout.Label("短休 1 小时；长休 8 小时。活动战斗需先结束或重置。",label);
         bool previous=GUI.enabled;GUI.enabled=OutsideCombat;
-        if(GUILayout.Button("完成短休",button)){worldRounds+=600;fighter.ShortRest();shortRestReady=true;restMessage="短休完成：回气恢复 1 次，动作如潮恢复全部；可逐颗消耗生命骰治疗。";}
+        if(GUILayout.Button("完成短休",button)){worldRounds+=600;UpdateStableRecovery();fighter.ShortRest();shortRestReady=true;restMessage="短休完成：回气恢复 1 次，动作如潮恢复全部；可逐颗消耗生命骰治疗。";}
         bool allowed=!hasLongRest||worldRounds-lastLongRestStart>=14400;
-        GUI.enabled=OutsideCombat&&allowed;
+        GUI.enabled=OutsideCombat&&allowed&&combat.PlayerHp>0;
         if(GUILayout.Button("完成长休",button)){lastLongRestStart=worldRounds;hasLongRest=true;worldRounds+=4800;fighter.LongRest();combat.HealPlayer(int.MaxValue);ResetRestResources();restMessage="长休完成：生命、生命骰及已接入的长休资源恢复。";}
         GUI.enabled=previous;
         if(!allowed)GUILayout.Label("距下一次长休尚需 "+((14400-(worldRounds-lastLongRestStart)+599)/600)+" 小时（可通过短休推进时间）。",label);
         GUILayout.Label(restMessage,label);
-        for(int i=0;i<11;i++)if(classes[i]>0){
+        for(int i=0;i<PlayerClasses.Names.Length;i++)if(classes[i]>0){
             int index=i;GUI.enabled=OutsideCombat&&shortRestReady&&hitDiceSpent[i]<classes[i];
             if(GUILayout.Button(PlayerClasses.Names[i]+" · 生命骰 d"+classes.HitDie(i)+" 剩 "+System.Math.Max(0,classes[i]-hitDiceSpent[i])+" / "+classes[i],button)){
                 StartCoroutine(SpendRestDie(index));

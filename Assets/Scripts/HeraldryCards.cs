@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
     {
         brassTexture=Grain(new Color(.60f,.40f,.17f),false);
         ironTexture=Grain(new Color(.30f,.28f,.25f),true);
-        gemTexture=HeraldryArt.Gem();emblems=new Texture2D[12];
+        gemTexture=HeraldryArt.Gem();emblems=new Texture2D[PlayerClasses.Names.Length+1];
         for(int i=0;i<emblems.Length;i++)emblems[i]=HeraldryArt.Create(i);
     }
     void ObserveVitalChanges()
@@ -56,7 +56,7 @@ public sealed partial class TrainingGame
         Rivet(x+9,119,player);Rivet(x+261,119,player);Rivet(x+9,846,player);Rivet(x+261,846,player);
         GUI.Label(new Rect(x+17,132,236,35),player?"冒险者铭牌":"训练木桩",PlaqueText(player,26,TextAnchor.MiddleCenter));
         Fill(new Rect(x+35,177,200,169),new Color(0,0,0,.23f));
-        GUI.DrawTexture(new Rect(x+53,182,164,164),emblems[player?classes.InitialClass:11],ScaleMode.ScaleToFit);
+        GUI.DrawTexture(new Rect(x+53,182,164,164),emblems[player?classes.InitialClass:PlayerClasses.Names.Length],ScaleMode.ScaleToFit);
         GUI.Label(new Rect(x+18,352,234,49),player?ClassSummary():"木桩靶心 · 训练目标",PlaqueText(player,17,TextAnchor.MiddleCenter));
         int hp=player?combat.PlayerHp:combat.Hp,maxHp=player?combat.PlayerMaxHp:combat.MaxHp;
         float flash=(player?playerFlashUntil:monsterFlashUntil)-Time.unscaledTime;
@@ -78,7 +78,7 @@ public sealed partial class TrainingGame
             EngravedRow(x,698,"本动作剩余攻击",fighter.AttacksRemaining.ToString(),player);
             EngravedRow(x,722,"回气",classes[0]>=1?fighter.WindRemaining(classes[0])+" / "+fighter.WindMaximum(classes[0]):"未解锁",player);
             EngravedRow(x,746,"动作如潮",classes[0]>=2?fighter.SurgeRemaining(classes[0])+" / "+(classes[0]>=17?2:1):"未解锁",player);
-            GUI.Label(new Rect(x+20,769,230,55),fighter.NextAttackAdvantage?"究明攻击 · 下次优势":fighter.SurgedThisRound?"动作如潮 · 本回合已用":"本场状态 · "+(combat.BattleStarted?"配置锁定":"可调整配置"),PlaqueText(player,16,TextAnchor.MiddleCenter));
+            GUI.Label(new Rect(x+20,769,230,55),combat.PlayerHp==0?combat.PlayerLifeLabel+"\n死亡豁免 成功"+combat.DeathSuccesses+" / 失败"+combat.DeathFailures: fighter.NextAttackAdvantage?"究明攻击 · 下次优势":fighter.SurgedThisRound?"动作如潮 · 本回合已用":"本场状态 · "+(combat.BattleStarted?"配置锁定":"可调整配置"),PlaqueText(player,16,TextAnchor.MiddleCenter));
             CardTab(new Rect(x+270,206,60,62),"属\n性","attributes",true);
             CardTab(new Rect(x+270,282,60,62),"武\n器","weapons",true);
             CardTab(new Rect(x+270,358,60,62),"职\n业","classes",true);

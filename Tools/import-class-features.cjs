@@ -1,5 +1,5 @@
 const fs=require('fs');const html=fs.readFileSync('Temp/classes-2024.html','utf8');
-const ids=['Fighter','Wizard','Ranger','Sorcerer','Warlock','Bard','Cleric','Rogue','Monk','Paladin','Barbarian'];
+const ids=['Fighter','Wizard','Ranger','Sorcerer','Warlock','Bard','Cleric','Rogue','Monk','Paladin','Barbarian','Druid'];
 const clean=s=>s.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&#39;|&rsquo;/g,"'").replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
 const entries=[];
 ids.forEach((name,classIndex)=>{let start=html.indexOf('id="'+name+'Features"');if(start<0)throw Error(name);const end=html.indexOf('</table>',start);const table=html.slice(start,end);for(const row of table.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)){const cells=[...row[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(x=>x[1]);if(cells.length<3)continue;const level=Number(clean(cells[0]));if(!level)continue;const anchors=[...cells[2].matchAll(/<a[^>]*href="([^\"]+)"[^>]*>([\s\S]*?)<\/a>/g)];if(anchors.length)for(const a of anchors)entries.push({classIndex,level,name:clean(a[2]),source:'https://www.dndbeyond.com/sources/dnd/br-2024/character-classes'+a[1],status:'pending'});else entries.push({classIndex,level,name:clean(cells[2]),source:'https://www.dndbeyond.com/sources/dnd/br-2024/character-classes',status:'pending'});}});

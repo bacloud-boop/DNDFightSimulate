@@ -65,6 +65,10 @@ public static class HeraldryArt
             case 10: // Double-headed axe
                 c.Line(128,34,128,230,15);c.Polygon(new Vector2(115,70),new Vector2(55,38),new Vector2(35,65),new Vector2(35,123),new Vector2(59,147),new Vector2(115,114));
                 c.Polygon(new Vector2(141,70),new Vector2(201,38),new Vector2(221,65),new Vector2(221,123),new Vector2(197,147),new Vector2(141,114));break;
+            case 11: // Druid oak staff and leaf
+                c.Line(109,48,109,232,12);c.Ring(109,51,28,9);
+                c.Polygon(new Vector2(123,132),new Vector2(149,72),new Vector2(208,48),new Vector2(196,111),new Vector2(158,146));
+                c.Line(125,139,195,64,5);c.Line(146,115,143,91,4);c.Line(163,96,184,99,4);break;
             default: // Wooden target
                 c.Line(128,34,128,236,17);c.Line(41,102,216,102,18);c.Ring(128,134,66,12);c.Ring(128,134,40,9);c.Ring(128,134,12,18);break;
         }
