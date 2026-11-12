@@ -67,7 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        ObserveVitalChanges();RefreshConcentration();RefreshWildShape();map.SetPlayerSpeed(Mathf.Max(0,(IsWildShaped?wildForm.walk:30)-(combat.PlayerSlowed?10:0)));
+        ObserveVitalChanges();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();
         if(combat.BattleStarted&&!combat.BattleFinished)knownFormReplacement=false;
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }

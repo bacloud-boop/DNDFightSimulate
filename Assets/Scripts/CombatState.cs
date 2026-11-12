@@ -6,7 +6,8 @@ public sealed class CombatState
     public bool MonsterSlowed {get;private set;}
     public bool PlayerOpportunityBlocked {get;private set;}
     public bool MonsterOpportunityBlocked {get;private set;}
-    public int MonsterSpeed => MonsterSlowed?20:30;
+    public int MonsterSpeedBonus {get;set;}
+    public int MonsterSpeed => Math.Max(0,30+MonsterSpeedBonus-(MonsterSlowed?10:0));
     public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}
@@ -96,7 +97,7 @@ public sealed class CombatState
     public int HealMonster(int amount){if(Hp==0||MonsterHealingBlocked)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+Math.Max(0,amount));return Hp-before;}
     public bool StabilizePlayer(){if(PlayerHp!=0||PlayerDead)return false;PlayerStable=true;DeathSuccesses=0;DeathFailures=0;return true;}
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ResetBattle() {MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
     public void ApplyPlayerDamage(int damage,bool critical=false) {
         if(damage<=0||PlayerDead)return;

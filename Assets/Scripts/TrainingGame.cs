@@ -97,6 +97,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false)
     {
         rolling=true;logScroll=Vector2.zero;
+        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds);proficiencyBonus+=magicBonus;
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
@@ -108,9 +109,9 @@ public sealed partial class TrainingGame : MonoBehaviour
         int hitRoll=rollHigh?Mathf.Max(firstHit,secondHit):rollLow?Mathf.Min(firstHit,secondHit):firstHit;
         string rollMode=rollHigh?"优势 2d20 取高":rollLow?"劣势 2d20 取低":advantage&&disadvantage?"优势劣势抵消 · 单骰":"单骰";
         dice="玩家命中判定 · "+rollMode;
-        yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
+        yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练/魔法 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
-        string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
+        string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练/魔法 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
         if(hitRoll==1 || (!critical && hitTotal<targetArmor)) {
             dice=hitDetails+"，未命中，伤害 0";
@@ -127,11 +128,13 @@ public sealed partial class TrainingGame : MonoBehaviour
         int[] damageRolls=attackWeapon.RollDamageDice(critical);
         if(damageRolls.Length>0) {
             dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
-            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+damageModifier+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+damageModifier));
+            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+damageModifier+" + 魔法 "+magicBonus+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+damageModifier+magicBonus));
         }
-        int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage;
+        int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+magicBonus;
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
         int damage=Mathf.Max(0,result+damageModifier);
+        if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");damage+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
+        if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;

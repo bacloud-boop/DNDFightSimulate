@@ -51,7 +51,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="False Life");directBothTargets=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="False Life"||IsTimedBuff(direct.Name));directBothTargets=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -85,7 +85,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Control&&directSlotLevel>=3)directBothTargets=GUILayout.Toggle(directBothTargets,"同时选中玩家与木桩（升环额外目标）",label);
+        if((definition.Control&&directSlotLevel>=3)||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
         string reason=DirectSpellInvalidReason(definition,casters.Length>0);
         GUILayout.Label(reason==""?"距离合法 · 消耗"+(definition.Bonus?"附赠动作":"动作"):reason,small);
@@ -101,6 +101,8 @@ public sealed partial class TrainingGame
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
+        if((spell.Name=="Divine Favor"||spell.Name=="Magic Weapon")&&!directTargetPlayer)return "此法术当前仅可用于自身或玩家装备的武器。";
+        if(spell.Name=="Magic Weapon"&&IsWildShaped)return "武器已融入兽形，当前不能触碰。";
         if(spell.Name=="Thunderwave"||IsSimpleEmanation(spell.Name))return "";
         if(spell.Name=="Magic Missile"||spell.Name=="Scorching Ray")return MissileTargetError(spell.DiceCount(classes.TotalLevel,directSlotLevel));
         if(spell.Name=="False Life"&&!directTargetPlayer)return "虚假生命只能以自身为目标。";
@@ -120,6 +122,7 @@ public sealed partial class TrainingGame
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;
         if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));if(!embedded)rolling=false;yield break;}
+        if(IsTimedBuff(spell.Name)){ApplyTimedBuff(spell,targetPlayer,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Scorching Ray"){yield return ResolveScorchingRays(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.ApplyDamage(combat.Hp);history.Insert(0,"律令死亡："+target+"生命不超过100，直接死亡。");CheckBattleOutcome();if(!embedded)rolling=false;yield break;}
         if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
