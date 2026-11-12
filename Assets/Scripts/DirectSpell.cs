@@ -9,7 +9,7 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(name=="Aid"?"\n非专注，持续8小时。":name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
     }
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
@@ -22,6 +22,9 @@ public sealed class DirectSpell
         new DirectSpell("Hold Person","人类定身术","1动作 · 60尺 · 声音、姿势。仅类人生物：感知豁免失败则麻痹，每个目标回合结束可再次豁免。二环1目标，提升环阶可增加目标。",2,60,0,save:3,control:true),
         new DirectSpell("Inflict Wounds","致伤术","1动作 · 接触（5尺） · 声音、姿势。体质豁免失败受2d10死灵伤害，成功减半向下取整。每提升1环增加1d10。",1,5,10,save:2,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Power Word Kill","律令死亡","1动作 · 60尺 · 声音。当前生命不超过100的目标直接死亡，否则受到12d12心灵伤害。无需命中或豁免。",9,60,12,damageType:"心灵",baseDice:12),
+        new DirectSpell("Bane","灾祸术","1动作 · 30尺 · 声音、姿势。至多3名生物魅力豁免失败后，攻击与豁免每次减1d4；专注1分钟。",1,30,4),
+        new DirectSpell("Hex","脆弱诅咒","附赠动作 · 90尺 · 声音、姿势。攻击检定命中目标额外1d6死灵伤害；选择一项属性，使目标该属性检定具有劣势（非豁免）。专注1小时；二环4小时、三四环8小时、五环以上24小时。",1,90,6,bonus:true),
+        new DirectSpell("Hunter's Mark","猎人印记","附赠动作 · 90尺 · 声音。攻击检定命中目标额外1d6力场伤害，寻找目标的察觉/求生具有优势。专注1小时；三四环8小时、五环以上24小时。",1,90,6,bonus:true),
         new DirectSpell("Mind Sliver","心灵之楔","1动作 · 60尺 · 声音。智力豁免失败受1d6心灵伤害，并在施法者下一回合结束前的下一次豁免减1d4；伤害随总等级强化。",0,60,6,save:4,damageType:"心灵"),
         new DirectSpell("Bless","祝福术","1动作 · 30尺 · 声音、姿势。至多3名生物每次攻击与豁免加1d4，专注至多1分钟；升环可增加目标。",1,30,4),
         new DirectSpell("Armor of Agathys","黯冰狱铠","附赠动作 · 自身 · 声音、姿势。获得5临时生命，被近战攻击命中时对攻击者造成5寒冷伤害；每升环两者各+5。持续1小时，无临时生命时提前结束，无需专注。",1,0,4,bonus:true),

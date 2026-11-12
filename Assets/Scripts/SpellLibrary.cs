@@ -88,8 +88,9 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Control&&directSlotLevel>=3)||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Control&&directSlotLevel>=3)||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
+        if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
         if(definition.Name=="Protection from Energy"){energyChoice=GUILayout.SelectionGrid(energyChoice,new[]{"强酸","寒冷","火焰","闪电","雷鸣"},3,new GUIStyle(button){fontSize=16,fixedHeight=34});if(!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受该法术",label);}
         string reason=DirectSpellInvalidReason(definition,casters.Length>0);
@@ -132,6 +133,8 @@ public sealed partial class TrainingGame
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
         if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Bane"){yield return ResolveBane(targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Hex"||spell.Name=="Hunter's Mark"){EndConcentration("开始新的专注法术");bool hex=spell.Name=="Hex";mark.Cast(hex,targetPlayer,hexAbility);concentrationSpell=spell.Chinese;concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+MarkEffect.Duration(hex,slotLevel);history.Insert(0,spell.Chinese+"标记"+target+"，攻击检定命中额外1d6"+(hex?"死灵；所选属性检定劣势（不影响豁免）":"力场；寻找目标的察觉/求生优势")+"。当前无技能检定/追踪系统，非战斗部分保留说明。");if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Bless"){EndConcentration("开始新的专注法术");concentrationSpell="祝福术";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+10;if(targetPlayer||directBothTargets)combat.PlayerBlessed=true;if(!targetPlayer||directBothTargets)combat.MonsterBlessed=true;history.Insert(0,"祝福术：选定目标攻击与豁免每次+1d4，专注至多1分钟。");if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Armor of Agathys"){agathys.Cast(slotLevel,worldRounds);combat.GrantPlayerTemporaryHp(slotLevel*5);history.Insert(0,"黯冰狱铠：获得"+(slotLevel*5)+"临时生命，近战命中反击"+(slotLevel*5)+"寒冷，至多1小时，临时生命耗尽时结束。");if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Power Word Fortify"){ApplyFortify();if(!embedded)rolling=false;yield break;}
@@ -153,12 +156,13 @@ public sealed partial class TrainingGame
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
-            int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0;bonus+=blessing;
+            int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0;bonus+=blessing-bane;
             int wardPenalty=targetPlayer&&combat.PlayerBladeWard?UnityEngine.Random.Range(1,5):0;bonus-=wardPenalty;
             if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return OfferShield(true);armor=combat.PlayerArmorClass;}
             critical=value==20;dice=spell.Chinese+(spell.Melee?" · 近战法术攻击":" · 远程法术攻击");
             yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
             if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次攻击 +"+blessing);
+            if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次攻击 -"+bane);
             if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护减值 "+wardPenalty);
             if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);if(!embedded)rolling=false;yield break;}
         }
@@ -187,6 +191,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Sliver"){combat.ApplySliver(targetPlayer);history.Insert(0,target+"下一次豁免减1d4，至玩家下一回合结束失效。");}
         if(!spell.Healing)amount=combat.AdjustTypedDamage(targetPlayer,amount,DamageTypes.Index(spell.DamageType));
+        if(spell.Attack){var extra=new ExtraMarkDamage();yield return RollMarkDamage(targetPlayer,critical,extra);amount+=extra.Value;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}

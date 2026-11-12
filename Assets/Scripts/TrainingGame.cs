@@ -98,7 +98,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false)
     {
         rolling=true;logScroll=Vector2.zero;
-        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing;
+        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing-bane;
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=(!attackWeapon.IsMelee&&combat.MonsterCanAct&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
@@ -112,6 +112,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice="玩家命中判定 · "+rollMode;
         yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练/魔法 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次武器攻击 +"+blessing);
+        if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次武器攻击 -"+bane);
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
         string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练/魔法 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
@@ -137,6 +138,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int damage=Mathf.Max(0,result+damageModifier);
         if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");damage+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
+        var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
@@ -182,13 +184,14 @@ public sealed partial class TrainingGame : MonoBehaviour
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
-        int blessing=combat.MonsterBlessed?Random.Range(1,5):0;
+        int blessing=combat.MonsterBlessed?Random.Range(1,5):0,bane=combat.MonsterBaned?Random.Range(1,5):0;
         int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
-        long hitTotal=(long)hitRoll+proficiency+blessing-wardPenalty;
+        long hitTotal=(long)hitRoll+proficiency+blessing-wardPenalty-bane;
         if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return OfferShield(true);targetArmor=combat.PlayerArmorClass;}
         dice="木桩反击 · 命中判定 D20";
-        yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" + 祝福 "+blessing+" - 剑刃防护 "+wardPenalty+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
+        yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" + 祝福 "+blessing+" - 剑刃防护 "+wardPenalty+" - 灾祸 "+bane+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次木桩攻击 +"+blessing);
+        if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次木桩攻击 -"+bane);
         if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护：攻击检定减去 "+wardPenalty+"；命中总值 "+hitTotal);
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);

@@ -124,7 +124,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollNaturalAttack(bool opportunity=false)
     {
-        var attack=BeastAttack.Find(wildForm.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing;
+        var attack=BeastAttack.Find(wildForm.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane;
         bool advantage=fighter.ConsumeAdvantage(classes[0])||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=combat.ConsumeMockery(true);bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
@@ -133,12 +133,13 @@ public sealed partial class TrainingGame
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");
         yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+combat.MonsterArmorClass);
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次自然攻击 +"+blessing);
+        if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次自然攻击 -"+bane);
         if(value==1||(value!=20&&value+hitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
         bool critical=value==20||(combat.MonsterParalyzed&&map.DistanceFeet<=5);int damage=attack.Fixed;
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
         int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);damage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
-        damage=Math.Max(0,damage);combat.ApplyDamage(damage);
+        damage=Math.Max(0,damage);var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;combat.ApplyDamage(damage);
         if(attack.KnockProne&&combat.Hp>0&&monsterProfile.SizeIndex<=2){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;
