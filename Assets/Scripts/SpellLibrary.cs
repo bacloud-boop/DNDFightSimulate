@@ -79,6 +79,7 @@ public sealed partial class TrainingGame
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
         if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
         else if(definition.Name=="Thunderwave")GUILayout.Label("确认后选择15尺立方方向并预览范围。",small);
+        else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
         else {
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
@@ -101,7 +102,7 @@ public sealed partial class TrainingGame
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Thunderwave"||IsSimpleEmanation(spell.Name))return "";
-        if(spell.Name=="Magic Missile")return MissileTargetError(spell.DiceCount(classes.TotalLevel,directSlotLevel));
+        if(spell.Name=="Magic Missile"||spell.Name=="Scorching Ray")return MissileTargetError(spell.DiceCount(classes.TotalLevel,directSlotLevel));
         if(spell.Name=="False Life"&&!directTargetPlayer)return "虚假生命只能以自身为目标。";
         int distance=directTargetPlayer?0:map.DistanceFeet;
         if(directBothTargets)distance=map.DistanceFeet;
@@ -111,21 +112,23 @@ public sealed partial class TrainingGame
         if(spell.Stable&&(!directTargetPlayer||combat.PlayerHp!=0))return "维生术需要生命为0且未死亡的目标。";
         return "";
     }
-    IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel)
+    IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded=false)
     {
-        if(!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
+        if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;
-        if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);rolling=false;yield break;}
-        if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));rolling=false;yield break;}
-        if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.ApplyDamage(combat.Hp);history.Insert(0,"律令死亡："+target+"生命不超过100，直接死亡。");CheckBattleOutcome();rolling=false;yield break;}
-        if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);rolling=false;yield break;}
-        if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");rolling=false;yield break;}
+        if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Scorching Ray"){yield return ResolveScorchingRays(caster,slotLevel);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.ApplyDamage(combat.Hp);history.Insert(0,"律令死亡："+target+"生命不超过100，直接死亡。");CheckBattleOutcome();if(!embedded)rolling=false;yield break;}
+        if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
+        if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");if(!embedded)rolling=false;yield break;}
         if(spell.Attack){
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=!spell.Melee&&combat.MonsterCanAct&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
+            advantage=combat.ConsumeGuidingLight(targetPlayer)||advantage;
             disadvantage=combat.ConsumeMockery(true)||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
@@ -133,17 +136,18 @@ public sealed partial class TrainingGame
             if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return OfferShield(true);armor=combat.PlayerArmorClass;}
             critical=value==20;dice=spell.Chinese+(spell.Melee?" · 近战法术攻击":" · 远程法术攻击");
             yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
-            if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
+            if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);if(!embedded)rolling=false;yield break;}
         }
         if(spell.Attack&&!targetPlayer&&combat.MonsterParalyzed&&map.DistanceFeet<=5)critical=true;
         if(spell.SaveAbility>=0){
             int targetModifier=AcidSplash.Modifier((targetPlayer?attributes:monsterAttributes)[spell.SaveAbility]);
             if(targetPlayer)targetModifier=PlayerSavingThrowModifier(spell.SaveAbility);
             int value=UnityEngine.Random.Range(1,21),dc=8+bonus;bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(targetPlayer?(combat.PlayerHp==0||combat.PlayerParalyzed):combat.MonsterParalyzed);
+            automatic=automatic||(spell.Name=="Blight"&&!targetPlayer&&monsterProfile.TypeIndex==12);
             dice=spell.Chinese+" · "+target+"豁免";
             if(!automatic)yield return PresentRoll(20,new[]{value},value+" + "+targetModifier+" / DC "+dc);
             saveSucceeded=!automatic&&value+targetModifier>=dc;
-            if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");rolling=false;yield break;}
+            if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");if(!embedded)rolling=false;yield break;}
         }
         int damageSides=spell.Name=="Toll the Dead"&&(targetPlayer?combat.PlayerHp<combat.PlayerMaxHp:combat.Hp<combat.MaxHp)?12:spell.Sides;
         int count=spell.DiceCount(classes.TotalLevel,slotLevel)*(critical?2:1),amount=0;
@@ -153,14 +157,15 @@ public sealed partial class TrainingGame
         if(saveSucceeded&&spell.HalfSave)amount/=2;
         dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+damageSides;
         yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
-        if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");rolling=false;yield break;}
+        if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");if(!embedded)rolling=false;yield break;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);
+        if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}
         if(spell.Name=="Ray of Frost"){combat.ApplyFrostSlow(targetPlayer);history.Insert(0,target+"速度降低10尺，至玩家下一回合开始。");}
         if(spell.Name=="Shocking Grasp"){combat.BlockOpportunity(targetPlayer);history.Insert(0,target+"不能借机攻击，至其下一回合开始；其他反应不受影响。");}
         if(spell.Name=="Vicious Mockery"){combat.ApplyMockery(targetPlayer);history.Insert(0,target+"下次攻击具有劣势，最迟在其下一回合结束时失效。");}
         if(spell.Name=="Chill Touch"){combat.BlockHealing(targetPlayer);history.Insert(0,target+"不能恢复生命，持续至玩家下一回合结束。");}
         history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+spell.DamageType+"伤害 ")+amount+"。");
-        dice=spell.Chinese+" · "+amount;CheckBattleOutcome();rolling=false;
+        dice=spell.Chinese+" · "+amount;CheckBattleOutcome();if(!embedded)rolling=false;
     }
 }

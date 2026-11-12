@@ -748,7 +748,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Blight",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Blinding Smite",
@@ -3528,7 +3528,7 @@
       "duration": "1轮",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Guiding_Bolt",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Gust of Wind",
@@ -6041,7 +6041,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Scorching_Ray",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Scrying",

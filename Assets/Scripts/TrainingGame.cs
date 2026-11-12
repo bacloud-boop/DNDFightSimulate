@@ -98,7 +98,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
-        advantage=advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
+        advantage=combat.ConsumeGuidingLight(false)||advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
         disadvantage=combat.ConsumeMockery(true)||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
@@ -172,7 +172,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterProne;
+        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterProne;
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;

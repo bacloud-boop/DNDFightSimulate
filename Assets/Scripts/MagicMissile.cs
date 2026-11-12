@@ -4,18 +4,18 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly bool[] missileTargetsPlayer=new bool[11];
-    void DrawMissileTargets(int count)
+    void DrawMissileTargets(int count,string kind="飞弹",string rules="每枚飞弹独立1d4+1；所有目标在施法前确定。")
     {
-        GUILayout.Label("每枚飞弹独立1d4+1；所有目标在施法前确定。",small);
+        GUILayout.Label(rules,small);
         for(int i=0;i<count;i++){
-            if(GUILayout.Button("飞弹 "+(i+1)+" → "+(missileTargetsPlayer[i]?"玩家（自身）":"木桩")+" · 点击切换",button))missileTargetsPlayer[i]=!missileTargetsPlayer[i];
+            if(GUILayout.Button(kind+" "+(i+1)+" → "+(missileTargetsPlayer[i]?"玩家（自身）":"木桩")+" · 点击切换",button))missileTargetsPlayer[i]=!missileTargetsPlayer[i];
         }
     }
     string MissileTargetError(int count)
     {
         for(int i=0;i<count;i++)if(!missileTargetsPlayer[i]){
-            if(combat.Hp==0)return "飞弹不能指定死亡的木桩。";
-            if(map.DistanceFeet>120)return "部分飞弹目标超过120尺，不能施放。";
+            if(combat.Hp==0)return "不能指定死亡的木桩。";
+            if(map.DistanceFeet>120)return "部分目标超过120尺，不能施放。";
         }
         return "";
     }

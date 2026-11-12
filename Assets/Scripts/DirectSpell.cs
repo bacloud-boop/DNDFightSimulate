@@ -11,7 +11,7 @@ public sealed class DirectSpell
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
         Summary=chinese+"｜"+name+"\n"+effect+(control?"\n专注，至多1分钟。":"\n非专注，即时。");
     }
-    public int DiceCount(int totalLevel,int slotLevel) => Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
+    public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
         new DirectSpell("Cure Wounds","疗伤术","1动作 · 接触（5尺） · 声音、姿势。治疗2d8+施法属性调整值，每提升1环增加2d8。",1,5,8,healing:true),
@@ -22,6 +22,9 @@ public sealed class DirectSpell
         new DirectSpell("Hold Person","人类定身术","1动作 · 60尺 · 声音、姿势。仅类人生物：感知豁免失败则麻痹，每个目标回合结束可再次豁免。二环1目标，提升环阶可增加目标。",2,60,0,save:3,control:true),
         new DirectSpell("Inflict Wounds","致伤术","1动作 · 接触（5尺） · 声音、姿势。体质豁免失败受2d10死灵伤害，成功减半向下取整。每提升1环增加1d10。",1,5,10,save:2,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Power Word Kill","律令死亡","1动作 · 60尺 · 声音。当前生命不超过100的目标直接死亡，否则受到12d12心灵伤害。无需命中或豁免。",9,60,12,damageType:"心灵",baseDice:12),
+        new DirectSpell("Blight","枯萎术","1动作 · 30尺 · 声音、姿势。体质豁免失败8d8死灵伤害，成功减半；植物生物自动失败。每升1环增加1d8；非生物植物的环境用法暂缓。",4,30,8,save:2,damageType:"死灵",baseDice:8,upcastDice:1,halfSave:true),
+        new DirectSpell("Guiding Bolt","光导箭","1动作 · 120尺 · 声音、姿势。远程法术攻击，命中4d6光耀伤害；至施法者下一回合结束，对目标的下一次攻击具有优势。每升1环增加1d6。",1,120,6,attack:true,damageType:"光耀",baseDice:4,upcastDice:1),
+        new DirectSpell("Scorching Ray","灼热射线","1动作 · 120尺 · 声音、姿势。三道射线分别选择目标并进行远程法术攻击，每道命中2d6火焰伤害；每升1环增加一道。",2,120,6,attack:true,damageType:"火焰",baseDice:2),
         new DirectSpell("Thunderclap","鸣雷破","1动作 · 自身5尺光环 · 姿势。范围内生物体质豁免失败受1d6雷鸣伤害，随总等级强化；巨大声响可传至100尺。",0,0,6,save:2,damageType:"雷鸣"),
         new DirectSpell("Word of Radiance","光耀祷词","1动作 · 自身5尺光环 · 声音。选择范围内可见生物，体质豁免失败受1d6光耀伤害，随总等级强化。",0,0,6,save:2,damageType:"光耀"),
         new DirectSpell("Thunderwave","雷鸣波","1动作 · 自身15尺立方 · 声音、姿势。体质豁免失败受2d8雷鸣并被推离10尺，成功伤害减半；每升1环增加1d8。",1,0,8,save:2,damageType:"雷鸣",baseDice:2,upcastDice:1,halfSave:true),

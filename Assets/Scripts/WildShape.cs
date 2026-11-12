@@ -127,6 +127,7 @@ public sealed partial class TrainingGame
         var attack=BeastAttack.Find(wildForm.name);rolling=true;
         bool advantage=fighter.ConsumeAdvantage(classes[0])||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=combat.ConsumeMockery(true);bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");

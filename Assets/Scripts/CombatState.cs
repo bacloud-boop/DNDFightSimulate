@@ -28,6 +28,9 @@ public sealed class CombatState
         if(DeathFailures>=3)PlayerDead=true;
         else if(DeathSuccesses>=3){PlayerStable=true;DeathSuccesses=0;DeathFailures=0;}
     }
+    int playerGuidedUntil,monsterGuidedUntil;
+    public void ApplyGuidingLight(bool player){if(player)playerGuidedUntil=Round+1;else monsterGuidedUntil=Round+1;}
+    public bool ConsumeGuidingLight(bool player){bool active=player?playerGuidedUntil>0:monsterGuidedUntil>0;if(player)playerGuidedUntil=0;else monsterGuidedUntil=0;return active;}
     int playerMockeryUntil;bool monsterMockery;
     public void ApplyMockery(bool player){if(player)playerMockeryUntil=Round+1;else monsterMockery=true;}
     public bool ConsumeMockery(bool player){bool active=player?playerMockeryUntil>0:monsterMockery;if(player)playerMockeryUntil=0;else monsterMockery=false;return active;}
@@ -36,8 +39,8 @@ public sealed class CombatState
     public bool PlayerHealingBlocked => playerHealingBlockedUntil>0;
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
-    public void ExpirePlayerTurnEffects(){if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
-    public void ClearShortDurationEffects(){ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public void ExpirePlayerTurnEffects(){if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
+    public void ClearShortDurationEffects(){playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
     public int PlayerTemporaryHp {get;private set;}
     public void GrantPlayerTemporaryHp(int amount){PlayerTemporaryHp=Math.Max(PlayerTemporaryHp,Math.Max(0,amount));}
     public void ClearPlayerTemporaryHp(){PlayerTemporaryHp=0;}
