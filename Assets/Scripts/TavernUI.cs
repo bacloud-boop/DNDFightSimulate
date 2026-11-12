@@ -67,7 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        ObserveVitalChanges();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();
+        RefreshAidEffects();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();
         if(combat.BattleStarted&&!combat.BattleFinished)knownFormReplacement=false;
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }

@@ -9,9 +9,9 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Aid"?"\n非专注，持续8小时。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"?"\n无需专注。":"\n非专注，即时。");
     }
-    public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
+    public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
         new DirectSpell("Cure Wounds","疗伤术","1动作 · 接触（5尺） · 声音、姿势。治疗2d8+施法属性调整值，每提升1环增加2d8。",1,5,8,healing:true),
@@ -22,6 +22,9 @@ public sealed class DirectSpell
         new DirectSpell("Hold Person","人类定身术","1动作 · 60尺 · 声音、姿势。仅类人生物：感知豁免失败则麻痹，每个目标回合结束可再次豁免。二环1目标，提升环阶可增加目标。",2,60,0,save:3,control:true),
         new DirectSpell("Inflict Wounds","致伤术","1动作 · 接触（5尺） · 声音、姿势。体质豁免失败受2d10死灵伤害，成功减半向下取整。每提升1环增加1d10。",1,5,10,save:2,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Power Word Kill","律令死亡","1动作 · 60尺 · 声音。当前生命不超过100的目标直接死亡，否则受到12d12心灵伤害。无需命中或豁免。",9,60,12,damageType:"心灵",baseDice:12),
+        new DirectSpell("Mass Healing Word","群体治愈真言","附赠动作 · 60尺 · 声音。至多6名可见目标共享2d4+施法属性调整值的治疗；每升1环增加1d4。",3,60,4,bonus:true,healing:true,baseDice:2,upcastDice:1),
+        new DirectSpell("Power Word Fortify","律令巩固","1动作 · 60尺 · 声音。为至多6名可见生物分配共计120点临时生命值；不叠加已有临时生命，不视为治疗。",7,60,4),
+        new DirectSpell("Aid","援助术","1动作 · 30尺 · 声音、姿势。至多3名目标的当前HP与上限各+5，持续8小时；每升1环额外+5，不叠加同名效果。到期扣回增加的当前HP，最低0。",2,30,4),
         new DirectSpell("Shield of Faith","虔诚护盾","附赠动作 · 60尺 · 声音、姿势。目标护甲等级+2，专注，至多10分钟。",1,60,4,bonus:true),
         new DirectSpell("Barkskin","树肤术","附赠动作 · 接触（5尺） · 声音、姿势。自愿目标的最终AC至少为17，持续1小时，无需专注。",2,5,4,bonus:true),
         new DirectSpell("Blade Ward","剑刃防护","1动作 · 自身 · 声音、姿势。持续期间，任何生物对你的每次攻击检定都减去独立1d4。专注，至多1分钟。",0,0,4),

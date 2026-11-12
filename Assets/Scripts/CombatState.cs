@@ -47,6 +47,9 @@ public sealed class CombatState
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
     public void ExpirePlayerTurnEffects(){if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
     public void ClearShortDurationEffects(){playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public int MonsterTemporaryHp {get;private set;}
+    public void GrantMonsterTemporaryHp(int amount){if(Hp>0)MonsterTemporaryHp=Math.Max(MonsterTemporaryHp,Math.Max(0,amount));}
+    public void ClearMonsterTemporaryHp(){MonsterTemporaryHp=0;}
     public int PlayerTemporaryHp {get;private set;}
     public void GrantPlayerTemporaryHp(int amount){PlayerTemporaryHp=Math.Max(PlayerTemporaryHp,Math.Max(0,amount));}
     public void ClearPlayerTemporaryHp(){PlayerTemporaryHp=0;}
@@ -71,8 +74,12 @@ public sealed class CombatState
         if(armorClass < 5 || armorClass > 30) throw new ArgumentOutOfRangeException(nameof(armorClass));
         monsterBaseArmor = armorClass;
     }
-    public int MaxHp { get; private set; } = 1000;
-    public int PlayerMaxHp { get; private set; } = 10;
+    int monsterBaseMaxHp=1000,playerBaseMaxHp=10;
+    public int PlayerAidBonus {get;private set;}
+    public int MonsterAidBonus {get;private set;}
+    readonly bool[] playerAidCredits=new bool[40],monsterAidCredits=new bool[40];
+    public int MaxHp => (int)Math.Min(int.MaxValue,(long)monsterBaseMaxHp+MonsterAidBonus);
+    public int PlayerMaxHp => (int)Math.Min(int.MaxValue,(long)playerBaseMaxHp+PlayerAidBonus);
     public int Hp { get; private set; } = 1000;
     public int PlayerHp { get; private set; } = 10;
     public int Round { get; private set; } = 1;
@@ -103,12 +110,26 @@ public sealed class CombatState
     }
     public void AddSurgeAction() {if(!PlayerCanAct)return; BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
     public int HealPlayer(int amount) {if(PlayerDead||PlayerHealingBlocked)return 0;int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));if(PlayerHp>0){PlayerStable=false;DeathSuccesses=0;DeathFailures=0;}return PlayerHp-before;}
+    public void KillMonster(){Hp=0;MonsterTemporaryHp=0;}
     public void KillPlayer(){PlayerTemporaryHp=0;PlayerHp=0;PlayerDead=true;PlayerStable=false;PlayerReactionAvailable=false;}
     public int HealMonster(int amount){if(Hp==0||MonsterHealingBlocked)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+Math.Max(0,amount));return Hp-before;}
     public bool StabilizePlayer(){if(PlayerHp!=0||PlayerDead)return false;PlayerStable=true;DeathSuccesses=0;DeathFailures=0;return true;}
+    public void SetAidBonus(bool player,int bonus)
+    {
+        if(bonus<0||bonus>40)throw new ArgumentOutOfRangeException(nameof(bonus));
+        int old=player?PlayerAidBonus:MonsterAidBonus;var credits=player?playerAidCredits:monsterAidCredits;
+        if(old==bonus)return;
+        if(player)PlayerAidBonus=bonus;else MonsterAidBonus=bonus;
+        if(bonus>old){int gained=player?HealPlayer(bonus-old):HealMonster(bonus-old);for(int i=old;i<bonus;i++)credits[i]=i-old<gained;}
+        else {
+            int remove=0;for(int i=bonus;i<old;i++){if(credits[i])remove++;credits[i]=false;}
+            if(player){int before=PlayerHp;PlayerHp=Math.Min(PlayerMaxHp,Math.Max(0,PlayerHp-remove));if(before>0&&PlayerHp==0){PlayerStable=false;PlayerReactionAvailable=false;}}
+            else Hp=Math.Min(MaxHp,Math.Max(0,Hp-remove));
+        }
+    }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
-    public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); Hp = Math.Max(0, Hp - damage); }
+    public void ResetBattle() {MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;Hp = Math.Max(0, Hp - (damage-absorbed)); }
     public void ApplyPlayerDamage(int damage,bool critical=false) {
         if(damage<=0||PlayerDead)return;
         int originalDamage=damage,before=PlayerHp;
@@ -123,12 +144,12 @@ public sealed class CombatState
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
 
         int newMaxHp = classes.CalculateMaxHp(constitution);
-        if(newMaxHp != PlayerMaxHp) { PlayerMaxHp = newMaxHp; PlayerHp = newMaxHp; }
+        if(newMaxHp != playerBaseMaxHp) { playerBaseMaxHp = newMaxHp; PlayerHp = PlayerMaxHp; }
 
     }
     public void UpdateMonsterMaxHp(int newMaxHp) {
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
-        if(newMaxHp != MaxHp) { MaxHp = newMaxHp; Hp = newMaxHp; }
+        if(newMaxHp != monsterBaseMaxHp) { monsterBaseMaxHp = newMaxHp; Hp = MaxHp; }
     }
     public void EndRound() {ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
 

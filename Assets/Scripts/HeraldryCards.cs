@@ -65,7 +65,7 @@ public sealed partial class TrainingGame
         GUI.DrawTexture(new Rect(x+25,410,42,50),gemTexture,ScaleMode.ScaleToFit);GUI.color=old;
         GUI.Label(new Rect(x+78,407,169,24),"生命",PlaqueText(player,15));
         GUI.Label(new Rect(x+78,430,169,32),hp+" / "+maxHp,PlaqueText(player,25));
-        if(player&&combat.PlayerTemporaryHp>0)GUI.Label(new Rect(x+78,458,169,19),"临时生命 +"+combat.PlayerTemporaryHp,PlaqueText(true,13));
+        if((player?combat.PlayerTemporaryHp:combat.MonsterTemporaryHp)>0)GUI.Label(new Rect(x+78,458,169,19),"临时生命 +"+(player?combat.PlayerTemporaryHp:combat.MonsterTemporaryHp),PlaqueText(player,13));
         Fill(new Rect(x+20,477,230,38),trim*new Color(.65f,.65f,.65f,1));
         GUI.Label(new Rect(x+28,479,214,32),"护甲等级  ·  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),PlaqueText(player,21,TextAnchor.MiddleCenter));
         if(player){
