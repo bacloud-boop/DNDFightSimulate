@@ -126,10 +126,11 @@ public sealed partial class TrainingGame
     {
         var attack=BeastAttack.Find(wildForm.name);rolling=true;
         bool advantage=fighter.ConsumeAdvantage(classes[0])||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        int first=UnityEngine.Random.Range(1,21),second=advantage?UnityEngine.Random.Range(1,21):0;
-        int value=advantage?Math.Max(first,second):first;
+        bool disadvantage=combat.ConsumeMockery(true);bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
+        int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");
-        yield return PresentRoll(20,advantage?new[]{first,second}:new[]{first},value+" + 野兽命中 "+attack.HitBonus+" / 护甲 "+combat.MonsterArmorClass);
+        yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中 "+attack.HitBonus+" / 护甲 "+combat.MonsterArmorClass);
         if(value==1||(value!=20&&value+attack.HitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
         bool critical=value==20||(combat.MonsterParalyzed&&map.DistanceFeet<=5);int damage=attack.Fixed;
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}

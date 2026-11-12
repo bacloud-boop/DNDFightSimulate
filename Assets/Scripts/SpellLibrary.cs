@@ -50,7 +50,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable);directBothTargets=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="False Life");directBothTargets=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -94,6 +94,7 @@ public sealed partial class TrainingGame
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
+        if(spell.Name=="False Life"&&!directTargetPlayer)return "虚假生命只能以自身为目标。";
         int distance=directTargetPlayer?0:map.DistanceFeet;
         if(directBothTargets)distance=map.DistanceFeet;
         if(spell.Control&&(!directTargetPlayer||directBothTargets)&&!monsterProfile.IsHumanoid)return "目标类型不合法：木桩不是类人生物。";
@@ -113,14 +114,14 @@ public sealed partial class TrainingGame
         if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");rolling=false;yield break;}
         if(spell.Attack){
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
-            bool disadvantage=combat.MonsterCanAct&&map.DistanceFeet<=5;
+            bool disadvantage=!spell.Melee&&combat.MonsterCanAct&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
-            disadvantage=disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            disadvantage=combat.ConsumeMockery(true)||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
-            critical=value==20;dice=spell.Chinese+" · 远程法术攻击";
-            yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"邻近敌人：劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
+            critical=value==20;dice=spell.Chinese+(spell.Melee?" · 近战法术攻击":" · 远程法术攻击");
+            yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
             if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
         }
         if(spell.Attack&&!targetPlayer&&combat.MonsterParalyzed&&map.DistanceFeet<=5)critical=true;
@@ -137,11 +138,15 @@ public sealed partial class TrainingGame
         int count=spell.DiceCount(classes.TotalLevel,slotLevel)*(critical?2:1),amount=0;
         int[] rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=UnityEngine.Random.Range(1,damageSides+1);amount+=rolls[i];}
         if(spell.Healing)amount=Math.Max(0,amount+modifier);
+        if(spell.Name=="False Life")amount+=4+5*(slotLevel-1);
         if(saveSucceeded&&spell.HalfSave)amount/=2;
         dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+damageSides;
-        yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
+        yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
+        if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");rolling=false;yield break;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);
+        if(spell.Name=="Vicious Mockery"){combat.ApplyMockery(targetPlayer);history.Insert(0,target+"下次攻击具有劣势，最迟在其下一回合结束时失效。");}
+        if(spell.Name=="Chill Touch"){combat.BlockHealing(targetPlayer);history.Insert(0,target+"不能恢复生命，持续至玩家下一回合结束。");}
         history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+spell.DamageType+"伤害 ")+amount+"。");
         dice=spell.Chinese+" · "+amount;CheckBattleOutcome();rolling=false;
     }
