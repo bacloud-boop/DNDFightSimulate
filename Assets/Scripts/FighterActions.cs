@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
         int healing=value+fighterLevel,actual=combat.HealPlayer(healing);
         dice="回气 D10="+value+" + "+fighterLevel+"，实际恢复 "+actual;
         history.Insert(0,dice+"，生命 "+combat.PlayerHp+" / "+combat.PlayerMaxHp+"。");
-        if(fighterLevel>=5){map.GrantTacticalMovement();history.Insert(0,"战术转进：获得独立 15 尺移动，本回合使用，不引发借机攻击。");}
+        if(fighterLevel>=5){map.GrantTacticalMovement();history.Insert(0,"战术转进：获得独立 "+(map.PlayerSpeed/2)+" 尺移动，本回合使用，不引发借机攻击。");}
         rolling=false;
     }
     void ActionSurge()
@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
-        EndConcentration("重置战斗");outcomeRecorded=false;stableRecoveryAt=-1;combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();
+        EndConcentration("重置战斗");EndWildShape("重置战斗");druid.LongRest();knownFormReplacement=false;outcomeRecorded=false;stableRecoveryAt=-1;combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();
         dice="战斗已重置 · 可修改配置";
         history.Insert(0,"—— 重置战斗：双方回满、回合归 1、特性次数与行动额度恢复 ——");
         logScroll=Vector2.zero;

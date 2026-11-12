@@ -18,10 +18,10 @@ public sealed partial class TrainingGame
         GUILayout.Label("休息 · 战斗外",heading);
         GUILayout.Label("短休 1 小时；长休 8 小时。活动战斗需先结束或重置。",label);
         bool previous=GUI.enabled;GUI.enabled=OutsideCombat;
-        if(GUILayout.Button("完成短休",button)){worldRounds+=600;UpdateStableRecovery();fighter.ShortRest();shortRestReady=true;restMessage="短休完成：回气恢复 1 次，动作如潮恢复全部；可逐颗消耗生命骰治疗。";}
+        if(GUILayout.Button("完成短休",button)){worldRounds+=600;UpdateStableRecovery();fighter.ShortRest();druid.ShortRest();RefreshWildShape();shortRestReady=true;restMessage="短休完成：回气恢复 1 次，动作如潮恢复全部，荒野形态恢复1次；可逐颗消耗生命骰治疗。";}
         bool allowed=!hasLongRest||worldRounds-lastLongRestStart>=14400;
         GUI.enabled=OutsideCombat&&allowed&&combat.PlayerHp>0;
-        if(GUILayout.Button("完成长休",button)){lastLongRestStart=worldRounds;hasLongRest=true;worldRounds+=4800;fighter.LongRest();combat.HealPlayer(int.MaxValue);ResetRestResources();restMessage="长休完成：生命、生命骰及已接入的长休资源恢复。";}
+        if(GUILayout.Button("完成长休",button)){lastLongRestStart=worldRounds;hasLongRest=true;worldRounds+=4800;fighter.LongRest();druid.LongRest();EndWildShape("长休");combat.ClearPlayerTemporaryHp();knownFormReplacement=true;combat.HealPlayer(int.MaxValue);ResetRestResources();restMessage="长休完成：生命、生命骰及已接入的长休资源恢复。";}
         GUI.enabled=previous;
         if(!allowed)GUILayout.Label("距下一次长休尚需 "+((14400-(worldRounds-lastLongRestStart)+599)/600)+" 小时（可通过短休推进时间）。",label);
         GUILayout.Label(restMessage,label);

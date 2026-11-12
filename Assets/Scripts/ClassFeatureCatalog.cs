@@ -18,6 +18,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("列出等级与来源。待接入条目不提供自动结算效果。",label);
         catalogClassIndex=GUILayout.SelectionGrid(catalogClassIndex,PlayerClasses.Names,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
         if(GUILayout.Button("查看官方免费野兽资料（效果待接入）",button)){panel="beasts";}
+        if(catalogClassIndex==11&&GUILayout.Button("荒野形态与已知形态",button))panel="druid";
         featureScroll=GUILayout.BeginScrollView(featureScroll);
         foreach(var feature in featureRecords.entries)if(feature.classIndex==catalogClassIndex){
             string status=FeatureStatus(feature);
@@ -29,6 +30,8 @@ public sealed partial class TrainingGame
     static string FeatureStatus(ClassFeatureRecord feature)
     {
         if(feature.classIndex==0 && (feature.name=="Second Wind"||feature.name.StartsWith("Action Surge")||feature.name.Contains("Extra Attack")||feature.name=="Tactical Shift"||feature.name=="Studied Attacks"))return "已接入";
+        if(feature.classIndex==11&&feature.name=="Wild Shape")return "部分接入：10种地面战斗形态";
+        if(feature.classIndex==11&&feature.name=="Beast Spells")return "已接入：18级解除兽形施法限制";
         if(feature.name=="Spellcasting")return "部分接入：现有法术";
         return "待接入：说明索引，无自动效果";
     }

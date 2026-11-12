@@ -16,6 +16,7 @@ public sealed class FighterFeatures
     public void UseWind() { SecondWindUsed++; }
     public void UseSurge() { ActionSurgeUsed++; SurgedThisRound=true; }
     public void BeginAttackAction(int level) { AttacksRemaining=AttacksPerAction(level); }
+    public void CancelAttackAction(){AttacksRemaining=0;}
     public void ConsumeAttack() { if(AttacksRemaining>0)AttacksRemaining--; }
     public bool ConsumeAdvantage(int level) { bool value=level>=13 && NextAttackAdvantage;NextAttackAdvantage=false;advantageTurnsRemaining=0;return value; }
     public void RecordMiss(int level) { if(level>=13){NextAttackAdvantage=true;advantageTurnsRemaining=2;} }

@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
     IEnumerable<int> EligibleCasters(SpellMetadata spell)
     {
-        for(int i=0;i<EnglishClassNames.Length;i++)if(classes[i]>0&&Array.IndexOf(spell.classes,EnglishClassNames[i])>=0)yield return i;
+        for(int i=0;i<EnglishClassNames.Length;i++)if(classes[i]>0&&(Array.IndexOf(spell.classes,EnglishClassNames[i])>=0||(i==11&&classes[11]>=2&&spell.name=="Find Familiar")))yield return i;
     }
     int SpellAbilityIndex(int classIndex) => classIndex==1?4:classIndex==2||classIndex==6||classIndex==11?3:5;
     static string SchoolChinese(string school)
@@ -92,6 +92,7 @@ public sealed partial class TrainingGame
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
+        if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         int distance=directTargetPlayer?0:map.DistanceFeet;
         if(directBothTargets)distance=map.DistanceFeet;
@@ -113,7 +114,8 @@ public sealed partial class TrainingGame
         if(spell.Attack){
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=combat.MonsterCanAct&&map.DistanceFeet<=5;
-            bool advantage=fighter.ConsumeAdvantage(classes[0])||(!targetPlayer&&combat.MonsterParalyzed);
+            bool advantage=fighter.ConsumeAdvantage(classes[0])||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
+            disadvantage=disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;

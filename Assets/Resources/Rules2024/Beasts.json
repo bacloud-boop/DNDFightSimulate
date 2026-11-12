@@ -1,5 +1,5 @@
 {
-  "description": "Mechanical stat facts for free 2024 individual Beasts with CR at most 1. Creature traits and action effects are not yet implemented. Flight is deferred.",
+  "description": "Mechanical stat facts for free 2024 individual Beasts with CR at most 1. This file stores numerical metadata and trait/action names. Ten forms have current ground-combat effects in BeastAttack.cs; other forms and off-map terrain effects are pending. Flight is deferred.",
   "entries": [
     {
       "name": "Ape",

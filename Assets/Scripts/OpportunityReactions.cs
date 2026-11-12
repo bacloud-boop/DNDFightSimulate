@@ -25,7 +25,7 @@ public sealed partial class TrainingGame
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=defenderPlayer?combat.PlayerReactionAvailable&&combat.PlayerCanAct:combat.MonsterReactionAvailable&&combat.MonsterCanAct;
         int reach=defenderPlayer?5:combat.MonsterAttackRange;
-        if(!tactical && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
+        if(!tactical && !(movingPlayer&&IsWildShaped&&BeastAttack.Find(wildForm.name).Agile) && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
             reactionForPlayer=defenderPlayer;reactionRange=reach;reactionDecision=0;reactionPending=true;
             dice="移动将离开 "+reach+" 尺范围，等待借机攻击选择。";
             while(reactionDecision==0)yield return null;
@@ -33,8 +33,9 @@ public sealed partial class TrainingGame
             if(reactionDecision==1 && combat.TryUseReaction(defenderPlayer)) {
                 history.Insert(0,(defenderPlayer?"玩家":"木桩")+"消耗反应，在目标离开 "+reach+" 尺范围前借机攻击一次。");
                 if(defenderPlayer) {
-                    var weapon=selectedWeapon;bool advantage=fighter.ConsumeAdvantage(classes[0]);
-                    yield return Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"玩家借机攻击",true);
+                    if(IsWildShaped)yield return RollNaturalAttack(true);
+                    else {var weapon=selectedWeapon;bool advantage=fighter.ConsumeAdvantage(classes[0]);
+                    yield return Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"玩家借机攻击",true);}
                 } else yield return Counterattack(false);
             }else history.Insert(0,(defenderPlayer?"玩家":"木桩")+"放弃借机攻击，保留反应。");
             rolling=true;

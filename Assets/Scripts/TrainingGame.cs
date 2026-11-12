@@ -12,7 +12,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly FighterFeatures fighter = new FighterFeatures();
     Weapon actionWeapon;
     readonly HashSet<Weapon> lightAttacksThisTurn=new HashSet<Weapon>();
-    bool CanLightBonusAttack => selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
+    bool CanLightBonusAttack => !IsWildShaped && selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
     string panel="";
     readonly MonsterDamage monster = new MonsterDamage();
     readonly string[] damageInputs = {"0","0","0","0","0","0"};
@@ -68,6 +68,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     public void Attack()
     {
         if(!combat.PlayerCanAct || spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0)return;
+        if(IsWildShaped){NaturalAttack();return;}
         Weapon weapon=fighter.AttacksRemaining>0?actionWeapon:selectedWeapon;
         if(!CheckWeaponRange(weapon))return;
         if(fighter.AttacksRemaining==0) {
@@ -97,8 +98,8 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;logScroll=Vector2.zero;
         int targetArmor=combat.MonsterArmorClass;
-        advantage=advantage||combat.MonsterParalyzed;
-        bool disadvantage=!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet);
+        advantage=advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
+        bool disadvantage=(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -152,6 +153,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.Hp==0){if(endTurn){worldRounds++;combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn();
+            if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(15);history.Insert(0,"木桩消耗15尺移动力起身。");}
             yield return ChasePlayer();
             if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
             rolling=true;
@@ -168,8 +170,9 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         int firstHit=Random.Range(1,21);
-        int secondHit=(combat.PlayerHp==0||combat.PlayerParalyzed)?Random.Range(1,21):0;
-        int hitRoll=secondHit>0?Mathf.Max(firstHit,secondHit):firstHit;
+        bool monsterAdvantage=combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.MonsterProne;
+        int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
+        int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
         long hitTotal=(long)hitRoll+proficiency;
@@ -205,6 +208,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="rest"){DrawRestPanel();return;}
         if(panel=="features"){DrawFeatureCatalog();return;}
         if(panel=="beasts"){DrawBeastCatalog();return;}
+        if(panel=="druid"){DrawDruidPanel();return;}
         bool left=panel=="weapons" || panel=="attributes" || panel=="classes";
         float targetX=left?350:770;
         float x=Mathf.Lerp(left?35:1120,targetX,Mathf.SmoothStep(0,1,drawerProgress));
@@ -212,8 +216,9 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(Btn(new Rect(x+370,125,90,46),"关闭")) {panel=""; return;}
         GUILayout.BeginArea(new Rect(x+20,185,440,640));
         if(combat.BattleStarted && panel!="weapons")GUILayout.Label("战斗已开始，重置战斗后才能修改配置。",label);
+        if(panel=="weapons"&&IsWildShaped)GUILayout.Label("武器已融入荒野形态，恢复原形后可切换。",label);
         if(panel=="weapons" && (rolling||fighter.AttacksRemaining>0))GUILayout.Label("本次攻击动作尚未完成，暂时不能切换武器。",label);
-        GUI.enabled=panel=="weapons"?(!rolling&&fighter.AttacksRemaining==0):!combat.BattleStarted;
+        GUI.enabled=panel=="weapons"?(!rolling&&fighter.AttacksRemaining==0&&!IsWildShaped):!combat.BattleStarted;
         panelScroll=GUILayout.BeginScrollView(panelScroll);
         if(panel=="weapons") {
             GUILayout.Label("玩家武器",heading);
@@ -240,7 +245,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.EndScrollView();
             GUILayout.Label("总等级 1～20，各职业 0～20，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
-                if(ValidateSubclassDraft() && classes.TryApply(classInputs,selectedClass) && classes.TryApplySubclasses(subclassChoices)) { ResetRestResources(); combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
+                if(ValidateSubclassDraft() && classes.TryApply(classInputs,selectedClass) && classes.TryApplySubclasses(subclassChoices)) { ResetRestResources();druid.LongRest();knownFormsLevel=-1; combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
                 else classError="等级须合法，初始职业至少1级；每个达到3级的职业须选择子职业。";
             }
             GUILayout.Label(classError,label);

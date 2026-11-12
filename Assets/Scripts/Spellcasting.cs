@@ -25,7 +25,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(x+235,235,205,48),(castingClass==3?"✓ ":"")+"术士 · 魅力",classes[3]>=1))castingClass=3;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
         GUI.Label(new Rect(x+20,305,440,70),"敏捷豁免 DC "+dc+" · "+AcidSplash.DiceCount(classes.TotalLevel)+"d6 强酸\n射程 60 尺 · 5 尺半径球状",label);
-        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable;
+        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable&&CanCastInCurrentForm;
         if(GUI.Button(new Rect(x+20,400,440,65),new GUIContent("酸液飞溅 · 选择施法位置",AcidSplash.Summary),button)){
             panel="";spellTargeting=true;spellCenterChosen=false;
         }
@@ -51,12 +51,12 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(1025,125,195,42),"酸液飞溅",heading);
         string target=spellCenterChosen?AcidTargets(spellCenter):"请点击地图选择中心";
         GUI.Label(new Rect(1025,180,195,160),"射程 60 尺\n半径 5 尺\n选定目标："+target+(hover?"\n悬停范围内："+AcidTargets(preview):"")+"\n范围内玩家也需豁免",label);
-        if(Btn(new Rect(1025,355,195,48),"确认施法",spellCenterChosen&&combat.MagicActionAvailable&&!rolling))CastAcidSplash();
+        if(Btn(new Rect(1025,355,195,48),"确认施法",spellCenterChosen&&combat.MagicActionAvailable&&!rolling&&CanCastInCurrentForm))CastAcidSplash();
         if(Btn(new Rect(1025,420,195,48),"取消施法")){spellTargeting=false;spellCenterChosen=false;}
     }
     void CastAcidSplash()
     {
-        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || rolling || map.DistanceToCell(true,spellCenter)>60 || !combat.TryUseMagicAction())return;
+        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || !CanCastInCurrentForm || rolling || map.DistanceToCell(true,spellCenter)>60 || !combat.TryUseMagicAction())return;
         bool hits=combat.Hp>0&&map.DistanceToCell(false,spellCenter)<=5;
         bool hitsPlayer=!combat.PlayerDead&&map.DistanceToCell(true,spellCenter)<=5;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
@@ -79,7 +79,7 @@ public sealed partial class TrainingGame
         for(int i=0;i<2;i++)if(hit[i]){
             string target=i==0?"木桩":"玩家";
             int value=Random.Range(1,21),modifier=AcidSplash.Modifier(i==0?monsterAttributes[1]:attributes[1]);
-            if(i==1&&DexteritySaveProficient)modifier+=classes.ProficiencyBonus;
+            if(i==1)modifier=PlayerSavingThrowModifier(1);
             bool automaticFailure=i==0?combat.MonsterParalyzed:combat.PlayerHp==0||combat.PlayerParalyzed;
             if(!automaticFailure){
                 dice="酸液飞溅 · "+target+"敏捷豁免";

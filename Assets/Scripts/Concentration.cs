@@ -24,7 +24,10 @@ public sealed partial class TrainingGame
     }
     int PlayerSavingThrowModifier(int ability)
     {
-        return AcidSplash.Modifier(attributes[ability])+(classes.SavingThrowProficient(ability)?classes.ProficiencyBonus:0);
+        int modifier=AcidSplash.Modifier(EffectivePlayerAbility(ability));
+        bool beastProficient=IsWildShaped&&wildForm.saves[ability]>AcidSplash.Modifier(wildForm.abilities[ability]);
+        int result=modifier+((classes.SavingThrowProficient(ability)||beastProficient)?classes.ProficiencyBonus:0);
+        return beastProficient?Mathf.Max(result,wildForm.saves[ability]):result;
     }
     IEnumerator MaintainConcentration(int damage)
     {
@@ -58,7 +61,7 @@ public sealed partial class TrainingGame
             int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(3):AcidSplash.Modifier(monsterAttributes[3]);
             dice="人类定身术 · "+target+"感知豁免";
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
-            if(value+modifier<holdPersonDc){if(targetPlayer)combat.PlayerParalyzed=true;else combat.MonsterParalyzed=true;history.Insert(0,target+"豁免失败，陷入麻痹。");}
+            if(value+modifier<holdPersonDc){if(targetPlayer){combat.PlayerParalyzed=true;EndWildShape("麻痹导致失能");}else combat.MonsterParalyzed=true;history.Insert(0,target+"豁免失败，陷入麻痹。");}
             else history.Insert(0,target+"豁免成功，未受定身影响。");
         }
         resolvingHoldPerson=false;RefreshConcentration();

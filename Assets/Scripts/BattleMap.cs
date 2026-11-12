@@ -13,11 +13,15 @@ public sealed class BattleMap
     public int MonsterSpaces {get;private set;}=1;
     public bool Locked {get;private set;}
     public const int MovementPerRound=30;
+    public int PlayerSpeed {get;private set;}=MovementPerRound;
+    public int MovementSpent {get;private set;}
     public int MovementRemaining {get;private set;} = MovementPerRound;
+    public void SetPlayerSpeed(int speed){PlayerSpeed=System.Math.Max(0,speed);MovementRemaining=System.Math.Max(0,PlayerSpeed-MovementSpent);}
+    public void SpendMonsterMovement(int feet){MonsterMovementRemaining=System.Math.Max(0,MonsterMovementRemaining-System.Math.Max(0,feet));}
     public int MonsterMovementRemaining {get;private set;} = 30;
     public void StartMonsterMovementTurn() {MonsterMovementRemaining=30;}
     public int TacticalMovementRemaining {get;private set;}
-    public void GrantTacticalMovement() {TacticalMovementRemaining+=MovementPerRound/2;}
+    public void GrantTacticalMovement() {TacticalMovementRemaining+=PlayerSpeed/2;}
     public int MovementBudget(bool tactical) => tactical?TacticalMovementRemaining:MovementRemaining;
     public Vector2Int RoundStartPlayer {get;private set;}
     public static int FeetBetween(Vector2Int a,Vector2Int b) => Mathf.RoundToInt(Vector2Int.Distance(a,b)*5);
@@ -61,12 +65,12 @@ public sealed class BattleMap
     public bool CanMoveTo(Vector2Int cell,bool tactical=false) => Locked&&cell!=Player&&MovementBudget(tactical)>0&&CanPlace(true,cell)&&FeetBetween(Player,cell)<=MovementBudget(tactical)&&!SegmentCrossesBody(Player,cell,PlayerSpaces,Monster,MonsterSpaces);
     public bool MovePlayer(Vector2Int cell,bool tactical=false) {
         if(!CanMoveTo(cell,tactical))return false;
-        if(tactical)TacticalMovementRemaining-=FeetBetween(Player,cell);else MovementRemaining-=FeetBetween(Player,cell);
+        if(tactical)TacticalMovementRemaining-=FeetBetween(Player,cell);else {int cost=FeetBetween(Player,cell);MovementSpent+=cost;MovementRemaining-=cost;}
         Player=cell;return true;
     }
     public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&cell!=Monster&&CanPlace(false,cell)&&FeetBetween(Monster,cell)<=MonsterMovementRemaining&&!SegmentCrossesBody(Monster,cell,MonsterSpaces,Player,PlayerSpaces);
     public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=FeetBetween(Monster,cell);Monster=cell;return true;}
-    public void RefreshMovement() {MovementRemaining=MovementPerRound;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
+    public void RefreshMovement() {MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)
     {
@@ -79,6 +83,24 @@ public sealed class BattleMap
         }
         if(bestCost==int.MaxValue)return false;
         if(player){PlayerSpaces=spaces;Player=best;}else {MonsterSpaces=spaces;Monster=best;}return true;
+    }
+    public bool CanResizePlayerAt(int spaces,Vector2Int anchor)
+    {
+        if(spaces<1||spaces>4||!Inside(anchor,spaces)||Overlap(anchor,spaces,Monster,MonsterSpaces))return false;
+        if(spaces>=PlayerSpaces)return anchor.x<=Player.x&&anchor.y<=Player.y&&anchor.x+spaces>=Player.x+PlayerSpaces&&anchor.y+spaces>=Player.y+PlayerSpaces;
+        return anchor.x>=Player.x&&anchor.y>=Player.y&&anchor.x+spaces<=Player.x+PlayerSpaces&&anchor.y+spaces<=Player.y+PlayerSpaces;
+    }
+    public bool TryResizePlayerAt(int spaces,Vector2Int anchor){if(!CanResizePlayerAt(spaces,anchor))return false;PlayerSpaces=spaces;Player=anchor;return true;}
+    public bool FindPlayerResizePlacement(int spaces,out Vector2Int result,Vector2Int? referenceCell=null)
+    {
+        result=Player;double best=double.MaxValue;
+        for(int y=Player.y-spaces+1;y<Player.y+PlayerSpaces;y++)for(int x=Player.x-spaces+1;x<Player.x+PlayerSpaces;x++){
+            var cell=new Vector2Int(x,y);if(!CanResizePlayerAt(spaces,cell))continue;
+            if(referenceCell.HasValue&&(referenceCell.Value.x<x||referenceCell.Value.y<y||referenceCell.Value.x>=x+spaces||referenceCell.Value.y>=y+spaces))continue;
+            double dx=x+spaces*.5-(Player.x+PlayerSpaces*.5),dy=y+spaces*.5-(Player.y+PlayerSpaces*.5),distance=dx*dx+dy*dy;
+            if(distance<best){best=distance;result=cell;}
+        }
+        return best<double.MaxValue;
     }
     public void Select(int index) {if(Locked || index<0 || index>=Sizes.Length)return;Selected=index;Player=Vector2Int.zero;Monster=new Vector2Int(Size-MonsterSpaces,Size-MonsterSpaces);}
     public bool Place(bool player,Vector2Int cell) {
