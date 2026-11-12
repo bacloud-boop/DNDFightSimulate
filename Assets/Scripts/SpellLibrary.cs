@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
         Surface(new Rect(350,110,480,745),paperTexture);
         if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,635));
-        GUILayout.Label("免费法术集 · "+spellMetadata.count+"项",heading);
+        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
         GUILayout.Label("法术位资源暂不扣除；学习数量限制暂不启用。未接入条目不能施法。飞行相关暂缓。",small);
         spellSearch=GUILayout.TextField(spellSearch,fieldStyle);
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
             bool eligible=System.Linq.Enumerable.Any(EligibleCasters(spell));
             if(onlyClassSpells&&!eligible)continue;
             var direct=DirectSpell.Find(spell.name);
-            string chinese=direct!=null?direct.Chinese:spell.name=="Acid Splash"?"酸液飞溅":spell.name=="Alarm"?"警报术":spell.name=="Goodberry"?"神莓术":spell.name=="Find Familiar"?"召唤魔宠":spell.name=="Teleport"?"传送术":spell.name=="Plane Shift"?"异界传送":spell.name=="Gate"?"异界之门":"";
+            string chinese=!string.IsNullOrEmpty(spell.chineseName)?spell.chineseName:direct!=null?direct.Chinese:spell.name=="Acid Splash"?"酸液飞溅":spell.name=="Alarm"?"警报术":spell.name=="Goodberry"?"神莓术":spell.name=="Find Familiar"?"召唤魔宠":spell.name=="Teleport"?"传送术":spell.name=="Plane Shift"?"异界传送":spell.name=="Gate"?"异界之门":"";
             if(spellSearch!=""&&(spell.name+chinese).IndexOf(spellSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
             bool available=direct!=null||spell.name=="Acid Splash";
             string status=available?"战斗结算已接入":IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
@@ -133,12 +133,13 @@ public sealed partial class TrainingGame
             saveSucceeded=!automatic&&value+targetModifier>=dc;
             if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");rolling=false;yield break;}
         }
+        int damageSides=spell.Name=="Toll the Dead"&&(targetPlayer?combat.PlayerHp<combat.PlayerMaxHp:combat.Hp<combat.MaxHp)?12:spell.Sides;
         int count=spell.DiceCount(classes.TotalLevel,slotLevel)*(critical?2:1),amount=0;
-        int[] rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=UnityEngine.Random.Range(1,spell.Sides+1);amount+=rolls[i];}
+        int[] rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=UnityEngine.Random.Range(1,damageSides+1);amount+=rolls[i];}
         if(spell.Healing)amount=Math.Max(0,amount+modifier);
         if(saveSucceeded&&spell.HalfSave)amount/=2;
-        dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+spell.Sides;
-        yield return PresentRoll(spell.Sides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
+        dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+damageSides;
+        yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);
         history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+spell.DamageType+"伤害 ")+amount+"。");

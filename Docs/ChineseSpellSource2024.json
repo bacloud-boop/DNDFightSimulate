@@ -1,0 +1,5807 @@
+{
+  "source": "https://5echm.kagangtuya.top/?page=速查/法术速查/5E万法大全.html",
+  "edition": "PHB24",
+  "count": 391,
+  "scope": "Source index only; does not indicate implemented effects.",
+  "spells": [
+    {
+      "name": "酸液飞溅Acid Splash",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Acid_Splash",
+      "classes": "术 法",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "援助术Aid",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Aid",
+      "classes": "诗 牧 德 帕 软",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "警报术Alarm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Alarm",
+      "classes": "软 法",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "变身术Alter Self",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Alter_Self",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "化兽为友Animal Friendship",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Animal_Friendship",
+      "classes": "诗 德 软",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "动物信使Animal Messenger",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Animal_Messenger",
+      "classes": "诗 德 软",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "动物形态Animal Shapes",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Animal_Shapes",
+      "classes": "德",
+      "levelLabel": "八环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "活化死尸Animate Dead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Animate_Dead",
+      "classes": "牧 法",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "活化物件Animate Objects",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Animate_Objects",
+      "classes": "诗 术 法",
+      "levelLabel": "五环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防活物护罩Antilife Shell",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Antilife_Shell",
+      "classes": "德",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "反魔法场Antimagic Field",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Antimagic_Field",
+      "classes": "牧 法",
+      "levelLabel": "八环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "嫌恶术/关怀术Antipathy/Sympathy",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#AntipathySympathy",
+      "classes": "诗 德 法",
+      "levelLabel": "八环",
+      "school": "惑控",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "秘法眼Arcane Eye",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Arcane_Eye",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "秘法门Arcane Gate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Arcane_Gate",
+      "classes": "术 法 锁",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "秘法锁Arcane Lock",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Arcane_Lock",
+      "classes": "法",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "复苏秘法Arcane Vigor",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Arcane_Vigor",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "黯冰狱铠Armor of Agathys",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Armor_of_Agathys",
+      "classes": "锁",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "哈达之臂Arms of Hadar",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Arms_of_Hadar",
+      "classes": "锁",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "星界投影Astral Projection",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Astral_Projection",
+      "classes": "牧 法 锁",
+      "levelLabel": "九环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "卜筮术Augury",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Augury",
+      "classes": "牧 德 法",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "生命灵光Aura of Life",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Aura_of_Life",
+      "classes": "牧 帕",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "净化灵光Aura of Purity",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Aura_of_Purity",
+      "classes": "牧 帕",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "活力灵光Aura of Vitality",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Aura_of_Vitality",
+      "classes": "牧 德 帕",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "启蒙术Awaken",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Awaken",
+      "classes": "诗 德",
+      "levelLabel": "五环",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "灾祸术Bane",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Bane",
+      "classes": "诗 牧 锁",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "放逐斩Banishing Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Banishing_Smite",
+      "classes": "帕",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "放逐术Banishment",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Banishment",
+      "classes": "牧 帕 术 法 锁",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "树肤术Barkskin",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Barkskin",
+      "classes": "德 软",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "希望信标Beacon of Hope",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Beacon_of_Hope",
+      "classes": "牧",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "野兽感官Beast Sense",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Beast_Sense",
+      "classes": "德 软",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "摧心术Befuddlement",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Befuddlement",
+      "classes": "诗 德 法 锁",
+      "levelLabel": "八环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "降咒Bestow Curse",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Bestow_Curse",
+      "classes": "诗 牧 法",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "毕格比之手Bigby's Hand",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Bigby",
+      "classes": "术 法",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "剑刃护壁Blade Barrier",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Blade_Barrier",
+      "classes": "牧",
+      "levelLabel": "六环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "剑刃防护Blade Ward",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Blade_Ward",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "祝福术Bless",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Bless",
+      "classes": "牧 帕",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "枯萎术Blight",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Blight",
+      "classes": "德 术 法 锁",
+      "levelLabel": "四环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "致盲斩Blinding Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Blinding_Smite",
+      "classes": "帕",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "目盲术/耳聋术Blindness/Deafness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#BlindnessDeafness",
+      "classes": "诗 牧 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "闪现术Blink",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Blink",
+      "classes": "术 法",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "朦胧术Blur",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Blur",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "燃烧之手Burning Hands",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Burning_Hands",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "召雷术Call Lightning",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Call_Lightning",
+      "classes": "德",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "安定心神Calm Emotions",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Calm_Emotions",
+      "classes": "诗 牧",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "连锁闪电Chain Lightning",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Chain_Lightning",
+      "classes": "术 法",
+      "levelLabel": "六环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魅惑怪物Charm Monster",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Charm_Monster",
+      "classes": "诗 德 术 法 锁",
+      "levelLabel": "四环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魅惑类人Charm Person",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Charm_Person",
+      "classes": "诗 德 术 法 锁",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "颤栗之触Chill Touch",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Chill_Touch",
+      "classes": "术 法 锁",
+      "levelLabel": "戏法",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "繁彩球Chromatic Orb",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Chromatic_Orb",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "死亡法阵Circle of Death",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Circle_of_Death",
+      "classes": "术 法 锁",
+      "levelLabel": "六环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "原力法阵Circle of Power",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Circle_of_Power",
+      "classes": "牧 帕 法",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "鹰眼术Clairvoyance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Clairvoyance",
+      "classes": "诗 牧 术 法",
+      "levelLabel": "三环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "克隆术Clone",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Clone",
+      "classes": "法",
+      "levelLabel": "八环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "匕首之云Cloud of Daggers",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Cloud_of_Daggers",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "死云术Cloudkill",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Cloudkill",
+      "classes": "术 法",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "七彩喷射Color Spray",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Color_Spray",
+      "classes": "诗 术 法",
+      "levelLabel": "一环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "命令术Command",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Command",
+      "classes": "诗 牧 帕",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "通神术Commune",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Commune",
+      "classes": "牧",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "问道自然Commune with Nature",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Commune_with_Nature",
+      "classes": "德 软",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "强令对决Compelled Duel",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Compelled_Duel",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "通晓语言Comprehend Languages",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Comprehend_Languages",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "强迫术Compulsion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Compulsion",
+      "classes": "诗",
+      "levelLabel": "四环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "寒冰锥Cone of Cold",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Cone_of_Cold",
+      "classes": "德 术 法",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "困惑术Confusion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Confusion",
+      "classes": "诗 德 术 法",
+      "levelLabel": "四环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤兽群Conjure Animals",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Conjure_Animals",
+      "classes": "德 软",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "箭如雨下Conjure Barrage",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Conjure_Barrage",
+      "classes": "软",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤圣光Conjure Celestial",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Conjure_Celestial",
+      "classes": "牧",
+      "levelLabel": "七环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤元素Conjure Elemental",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Conjure_Elemental",
+      "classes": "德 法",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤妖精Conjure Fey",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Conjure_Fey",
+      "classes": "德",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤微元素群Conjure Minor Elementals",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Conjure_Minor_Elementals",
+      "classes": "德 法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "万箭齐发Conjure Volley",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Conjure_Volley",
+      "classes": "软",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "咒唤林地卫士Conjure Woodland Beings",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Conjure_Woodland_Beings",
+      "classes": "德 软",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "异界探知Contact Other Plane",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Contact_Other_Plane",
+      "classes": "法 锁",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "疫病术Contagion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Contagion",
+      "classes": "牧 德",
+      "levelLabel": "五环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "触发术Contingency",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Contingency",
+      "classes": "法",
+      "levelLabel": "六环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "不灭明焰Continual Flame",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Continual_Flame",
+      "classes": "牧 德 法",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "操控水体Control Water",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Control_Water",
+      "classes": "牧 德 法",
+      "levelLabel": "四环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "操控天气Control Weather",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Control_Weather",
+      "classes": "牧 德 法",
+      "levelLabel": "八环",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "警戒箭阵Cordon of Arrows",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Cordon_of_Arrows",
+      "classes": "软",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "法术反制Counterspell",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Counterspell",
+      "classes": "术 法 锁",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "反应",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "造粮术Create Food and Water",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Create_Food_and_Water",
+      "classes": "牧 帕",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "唤起亡灵Create Undead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Create_Undead",
+      "classes": "牧 法 锁",
+      "levelLabel": "六环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "造水术/枯水术Create or Destroy Water",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Create_or_Destroy_Water",
+      "classes": "牧 德",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "造物术Creation",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Creation",
+      "classes": "术 法",
+      "levelLabel": "五环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "疯狂冠冕Crown of Madness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Crown_of_Madness",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "十字军披风Crusader's Mantle",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Crusader",
+      "classes": "帕",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "疗伤术Cure Wounds",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Cure_Wounds",
+      "classes": "诗 牧 德 帕 软",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "舞光术Dancing Lights",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Dancing_Lights",
+      "classes": "诗 术 法",
+      "levelLabel": "戏法",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "黑暗术Darkness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Darkness",
+      "classes": "术 法 锁",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "黑暗视觉Darkvision",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Darkvision",
+      "classes": "德 软 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "昼明术Daylight",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Daylight",
+      "classes": "牧 德 帕 软 术",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防死结界Death Ward",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Death_Ward",
+      "classes": "牧 帕",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "延迟爆裂火球Delayed Blast Fireball",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Delayed_Blast_Fireball",
+      "classes": "术 法",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "半位面Demiplane",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Demiplane",
+      "classes": "术 法 锁",
+      "levelLabel": "八环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "湮灭波Destructive Wave",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Destructive_Wave",
+      "classes": "帕",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "侦测善恶Detect Evil and Good",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Detect_Evil_and_Good",
+      "classes": "牧 帕",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "侦测魔法Detect Magic",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Detect_Magic",
+      "classes": "诗 牧 德 帕 软 术 法 锁",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "侦测毒性和疾病Detect Poison and Disease",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Detect_Poison_and_Disease",
+      "classes": "牧 德 帕 软",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "侦测思想Detect Thoughts",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Detect_Thoughts",
+      "classes": "诗 术 法",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "任意门Dimension Door",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Dimension_Door",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "易容术Disguise Self",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Disguise_Self",
+      "classes": "诗 术 法",
+      "levelLabel": "一环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "解离术Disintegrate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Disintegrate",
+      "classes": "术 法",
+      "levelLabel": "六环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "驱逐善恶Dispel Evil and Good",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Dispel_Evil_and_Good",
+      "classes": "牧 帕",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "解除魔法Dispel Magic",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Dispel_Magic",
+      "classes": "诗 牧 德 帕 软 术 法 锁",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "不谐低语Dissonant Whispers",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Dissonant_Whispers",
+      "classes": "诗",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "预言术Divination",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Divination",
+      "classes": "牧 德 法",
+      "levelLabel": "四环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "神恩Divine Favor",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Divine_Favor",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "至圣斩Divine Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Divine_Smite",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "圣言术Divine Word",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Divine_Word",
+      "classes": "牧",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "支配野兽Dominate Beast",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Dominate_Beast",
+      "classes": "德 软 术",
+      "levelLabel": "四环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "支配怪物Dominate Monster",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Dominate_Monster",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "八环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "支配类人Dominate Person",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Dominate_Person",
+      "classes": "诗 术 法",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "龙息术Dragon's Breath",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Dragon",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "卓姆吉瞬间召唤Drawmij's Instant Summons",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Drawmij",
+      "classes": "法",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "托梦术Dream",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Dream",
+      "classes": "诗 法 锁",
+      "levelLabel": "五环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "德鲁伊伎俩Druidcraft",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Druidcraft",
+      "classes": "德",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "地震术Earthquake",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Earthquake",
+      "classes": "牧 德 术",
+      "levelLabel": "八环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔能爆Eldritch Blast",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Eldritch_Blast",
+      "classes": "锁",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "元素武器Elemental Weapon",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Elemental_Weapon",
+      "classes": "德 帕 软",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "四象法门Elementalism",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Elementalism",
+      "classes": "德 术 法",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "强化属性Enhance Ability",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Enhance_Ability",
+      "classes": "诗 牧 德 软 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "变巨术/缩小术Enlarge/Reduce",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Enlarge_Reduce",
+      "classes": "诗 德 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "捕获打击Ensnaring Strike",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Ensnaring_Strike",
+      "classes": "软",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "纠缠术Entangle",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Entangle",
+      "classes": "德 软",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "注目术Enthrall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Enthrall",
+      "classes": "诗 锁",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "以太化Etherealness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Etherealness",
+      "classes": "诗 牧 术 法 锁",
+      "levelLabel": "七环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "艾伐黑触手Evard's Black Tentacles",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Evard",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "脚底抹油Expeditious Retreat",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Expeditious_Retreat",
+      "classes": "术 法 锁",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "摄心目光Eyebite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Eyebite",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "六环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "鬼斧神工Fabricate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Fabricate",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "妖火Faerie Fire",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Faerie_Fire",
+      "classes": "诗 德",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "虚假生命False Life",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#False_Life",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "恐惧术Fear",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Fear",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "三环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "羽落术Feather Fall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Feather_Fall",
+      "classes": "诗 术 法",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "反应",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "假死术Feign Death",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Feign_Death",
+      "classes": "诗 牧 德 法",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "寻获魔宠Find Familiar",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Find_Familiar",
+      "classes": "法",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "寻获坐骑Find Steed",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Find_Steed",
+      "classes": "帕",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "寻找陷阱Find Traps",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Find_Traps",
+      "classes": "牧 德 软",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "寻路术Find the Path",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Find_the_Path",
+      "classes": "诗 牧 德",
+      "levelLabel": "六环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "死亡一指Finger of Death",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Finger_of_Death",
+      "classes": "术 法 锁",
+      "levelLabel": "七环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火焰箭Fire Bolt",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Fire_Bolt",
+      "classes": "术 法",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火焰护盾Fire Shield",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Fire_Shield",
+      "classes": "德 术 法",
+      "levelLabel": "四环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火焰风暴Fire Storm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Fire_Storm",
+      "classes": "牧 德 术",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火球术Fireball",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Fireball",
+      "classes": "术 法",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火焰刀Flame Blade",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Flame_Blade",
+      "classes": "德 术",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "焰击术Flame Strike",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Flame_Strike",
+      "classes": "牧",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "炽焰法球Flaming Sphere",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Flaming_Sphere",
+      "classes": "德 术 法",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "石化术Flesh to Stone",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Flesh_to_Stone",
+      "classes": "德 术 法",
+      "levelLabel": "六环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "飞行术Fly",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Fly",
+      "classes": "术 法 锁",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "云雾术Fog Cloud",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Fog_Cloud",
+      "classes": "德 软 术 法",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "禁制术Forbiddance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Forbiddance",
+      "classes": "牧",
+      "levelLabel": "六环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "力场监牢Forcecage",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Forcecage",
+      "classes": "诗 法 锁",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "预见术Foresight",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Foresight",
+      "classes": "诗 德 法 锁",
+      "levelLabel": "九环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "月光涌泉Fount of Moonlight",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Fount_of_Moonlight",
+      "classes": "诗 德",
+      "levelLabel": "四环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "行动自如Freedom of Movement",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Freedom_of_Movement",
+      "classes": "诗 牧 德 软",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "交友术Friends",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Friends",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "气化形体Gaseous Form",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Gaseous_Form",
+      "classes": "术 法 锁",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "异界之门Gate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Gate",
+      "classes": "牧 术 法 锁",
+      "levelLabel": "九环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "指使术Geas",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Geas",
+      "classes": "诗 牧 德 帕 法",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "遗体防腐Gentle Repose",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Gentle_Repose",
+      "classes": "牧 帕 法",
+      "levelLabel": "二环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "巨虫术Giant Insect",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Giant_Insect",
+      "classes": "德",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "花言巧语Glibness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Glibness",
+      "classes": "诗 锁",
+      "levelLabel": "八环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "法术无效结界Globe of Invulnerability",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Globe_of_Invulnerability",
+      "classes": "术 法",
+      "levelLabel": "六环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "守卫刻纹Glyph of Warding",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Glyph_of_Warding",
+      "classes": "诗 牧 法",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "神莓术Goodberry",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Goodberry",
+      "classes": "德 软",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "擒抱藤Grasping Vine",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Grasping_Vine",
+      "classes": "德 软",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "油腻术Grease",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Grease",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "高等隐形术Greater Invisibility",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Greater_Invisibility",
+      "classes": "诗 术 法",
+      "levelLabel": "四环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "高等复原术Greater Restoration",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Greater_Restoration",
+      "classes": "诗 牧 德 帕 软",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "信仰守卫Guardian of Faith",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Guardian_of_Faith",
+      "classes": "牧",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "铜墙铁壁Guards and Wards",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Guards_and_Wards",
+      "classes": "诗 法",
+      "levelLabel": "六环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "神导术Guidance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Guidance",
+      "classes": "牧 德",
+      "levelLabel": "戏法",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "光导箭Guiding Bolt",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Guiding_Bolt",
+      "classes": "牧",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "造风术Gust of Wind",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Gust_of_Wind",
+      "classes": "德 软 术 法",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "荆棘之雨Hail of Thorns",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Hail_of_Thorns",
+      "classes": "软",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "圣居Hallow",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Hallow",
+      "classes": "牧",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "幻景Hallucinatory Terrain",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Hallucinatory_Terrain",
+      "classes": "诗 德 法 锁",
+      "levelLabel": "四环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "重伤术Harm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Harm",
+      "classes": "牧",
+      "levelLabel": "六环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "加速术Haste",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Haste",
+      "classes": "术 法",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "医疗术Heal",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Heal",
+      "classes": "牧 德",
+      "levelLabel": "六环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "治愈真言Healing Word",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Healing_Word",
+      "classes": "诗 牧 德",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "灼热金属Heat Metal",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Heat_Metal",
+      "classes": "诗 德",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "炼狱叱喝Hellish Rebuke",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Hellish_Rebuke",
+      "classes": "锁",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "反应",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "英雄宴Heroes' Feast",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Heroes",
+      "classes": "诗 牧 德",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "英雄气概Heroism",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Heroism",
+      "classes": "诗 帕",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "脆弱诅咒Hex",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Hex",
+      "classes": "锁",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "定身怪物Hold Monster",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Hold_Monster",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "定身类人Hold Person",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Hold_Person",
+      "classes": "诗 牧 德 术 法 锁",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "圣洁灵光Holy Aura",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Holy_Aura",
+      "classes": "牧",
+      "levelLabel": "八环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "哈达之欲Hunger of Hadar",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Hunger_of_Hadar",
+      "classes": "锁",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "猎人印记Hunter's Mark",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Hunter",
+      "classes": "软",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "催眠图纹Hypnotic Pattern",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Hypnotic_Pattern",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "三环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "冰刃Ice Knife",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Ice_Knife",
+      "classes": "德 术 法",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "冰风暴Ice Storm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Ice_Storm",
+      "classes": "德 术 法",
+      "levelLabel": "四环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "鉴定术Identify",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Identify",
+      "classes": "诗 法",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "迷幻手稿Illusory Script",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Illusory_Script",
+      "classes": "诗 法",
+      "levelLabel": "一环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "禁锢术Imprisonment",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Imprisonment",
+      "classes": "法 锁",
+      "levelLabel": "九环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "焚云术Incendiary Cloud",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Incendiary_Cloud",
+      "classes": "德 术 法",
+      "levelLabel": "八环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "致伤术Inflict Wounds",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Inflict_Wounds",
+      "classes": "牧",
+      "levelLabel": "一环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "疫病虫群Insect Plague",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Insect_Plague",
+      "classes": "牧 德 术",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "隐形术Invisibility",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Invisibility",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "贾拉兹光辉风暴Jallarzi's Storm of Radiance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Jallarzi",
+      "classes": "法 锁",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "跳跃术Jump",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Jump",
+      "classes": "德 软 术 法",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "敲击术Knock",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Knock",
+      "classes": "诗 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "通晓传奇Legend Lore",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Legend_Lore",
+      "classes": "诗 牧 法",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "李欧蒙秘藏箱Leomund's Secret Chest",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Leomund",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "李欧蒙小屋Leomund's Tiny Hut",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Leomund",
+      "classes": "诗 法",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "次等复原术Lesser Restoration",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Lesser_Restoration",
+      "classes": "诗 牧 德 帕 软",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "浮空术Levitate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Levitate",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "光亮术Light",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Light",
+      "classes": "诗 牧 术 法",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "闪电箭矢Lightning Arrows",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Lightning_Arrows",
+      "classes": "软",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "闪电束Lightning Bolt",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Lightning_Bolt",
+      "classes": "术 法",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "动植物定位术Locate Animals or Plants",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Locate_Animals_or_Plants",
+      "classes": "诗 德 软",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "生物定位术Locate Creature",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Locate_Creature",
+      "classes": "诗 牧 德 帕 软 法",
+      "levelLabel": "四环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "物件定位术Locate Object",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Locate_Object",
+      "classes": "诗 牧 德 帕 软 法",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "大步奔行Longstrider",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Longstrider",
+      "classes": "诗 德 软 法",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "法师护甲Mage Armor",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Mage_Armor",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "法师之手Mage Hand",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Mage_Hand",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防护法阵Magic Circle",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Magic_Circle",
+      "classes": "牧 帕 法 锁",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔魂壶Magic Jar",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Magic_Jar",
+      "classes": "法",
+      "levelLabel": "六环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔法飞弹Magic Missile",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Magic_Missile",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔嘴术Magic Mouth",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Magic_Mouth",
+      "classes": "诗 法",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔化武器Magic Weapon",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Magic_Weapon",
+      "classes": "帕 软 术 法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "高级幻影Major Image",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Major_Image",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "三环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "群体疗伤术Mass Cure Wounds",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Mass_Cure_Wounds",
+      "classes": "诗 牧 德",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "群体医疗术Mass Heal",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Mass_Heal",
+      "classes": "牧",
+      "levelLabel": "九环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "群体治愈真言Mass Healing Word",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Mass_Healing_Word",
+      "classes": "诗 牧",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "群体暗示术Mass Suggestion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Mass_Suggestion",
+      "classes": "诗 术 法",
+      "levelLabel": "六环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "迷宫术Maze",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Maze",
+      "classes": "法",
+      "levelLabel": "八环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "融身入石Meld Into Stone",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Meld_Into_Stone",
+      "classes": "牧 德 软",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "马友夫强酸箭Melf's Acid Arrow",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Melf",
+      "classes": "法",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "修复术Mending",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Mending",
+      "classes": "诗 牧 德 术 法",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "传讯术Message",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Message",
+      "classes": "诗 德 术 法",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "流星爆Meteor Swarm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Meteor_Swarm",
+      "classes": "术 法",
+      "levelLabel": "九环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "心灵屏障Mind Blank",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Mind_Blank",
+      "classes": "诗 法",
+      "levelLabel": "八环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "心灵之楔Mind Sliver",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Mind_Sliver",
+      "classes": "术 法 锁",
+      "levelLabel": "戏法",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "心灵尖刺Mind Spike",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Mind_Spike",
+      "classes": "术 法 锁",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "次级幻象Minor Illusion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Minor_Illusion",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "海市蜃楼Mirage Arcane",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Mirage_Arcane",
+      "classes": "诗 德 法",
+      "levelLabel": "七环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "镜影术Mirror Image",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Mirror_Image",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "假象术Mislead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Mislead",
+      "classes": "诗 法 锁",
+      "levelLabel": "五环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "迷踪步Misty Step",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Misty_Step",
+      "classes": "术 法 锁",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "篡改记忆Modify Memory",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Modify_Memory",
+      "classes": "诗 法",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "月华之光Moonbeam",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Moonbeam",
+      "classes": "德",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔邓肯忠犬Mordenkainen's Faithful Hound",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Mordenkainen",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔邓肯豪宅术Mordenkainen's Magnificent Mansion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Mordenkainen",
+      "classes": "诗 法",
+      "levelLabel": "七环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔邓肯私人密室Mordenkainen's Private Sanctum",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Mordenkainen",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔邓肯之剑Mordenkainen's Sword",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Mordenkainen",
+      "classes": "诗 法",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "地动术Move Earth",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Move_Earth",
+      "classes": "德 术 法",
+      "levelLabel": "六环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "回避侦测Nondetection",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Nondetection",
+      "classes": "诗 软 法",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "涅斯图魔法灵光Nystul's Magic Aura",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Nystul",
+      "classes": "法",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "欧提路克冰封法球Otiluke's Freezing Sphere",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Otiluke",
+      "classes": "术 法",
+      "levelLabel": "六环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "欧提路克弹力法球Otiluke's Resilient Sphere",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Otiluke",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "奥图迷舞Otto's Irresistible Dance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Otto",
+      "classes": "诗 法",
+      "levelLabel": "六环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "行动无踪Pass without Trace",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Pass_without_Trace",
+      "classes": "德 软",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "穿墙术Passwall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Passwall",
+      "classes": "法",
+      "levelLabel": "五环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魅影之力Phantasmal Force",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Phantasmal_Force",
+      "classes": "诗 术 法",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魅影杀手Phantasmal Killer",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Phantasmal_Killer",
+      "classes": "诗 法",
+      "levelLabel": "四环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魅影驹Phantom Steed",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Phantom_Steed",
+      "classes": "法",
+      "levelLabel": "三环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "异界誓盟Planar Ally",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Planar_Ally",
+      "classes": "牧",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "异界誓缚Planar Binding",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Planar_Binding",
+      "classes": "诗 牧 德 法 锁",
+      "levelLabel": "五环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "位面转移Plane Shift",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Plane_Shift",
+      "classes": "牧 德 术 法 锁",
+      "levelLabel": "七环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "植物滋长Plant Growth",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Plant_Growth",
+      "classes": "诗 德 软",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "毒气喷涌Poison Spray",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Poison_Spray",
+      "classes": "德 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "变形术Polymorph",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Polymorph",
+      "classes": "诗 德 术 法",
+      "levelLabel": "四环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "律令巩固Power Word Fortify",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Power_Word_Fortify",
+      "classes": "诗 牧",
+      "levelLabel": "七环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "律令医疗Power Word Heal",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Power_Word_Heal",
+      "classes": "诗 牧",
+      "levelLabel": "九环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "律令死亡Power Word Kill",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Power_Word_Kill",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "九环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "律令震慑Power Word Stun",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Power_Word_Stun",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "八环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "治疗祷言Prayer of Healing",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Prayer_of_Healing",
+      "classes": "牧 帕",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔法伎俩Prestidigitation",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Prestidigitation",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "虹光喷射Prismatic Spray",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Prismatic_Spray",
+      "classes": "诗 术 法",
+      "levelLabel": "七环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "虹光法墙Prismatic Wall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Prismatic_Wall",
+      "classes": "诗 法",
+      "levelLabel": "九环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "燃火术Produce Flame",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Produce_Flame",
+      "classes": "德",
+      "levelLabel": "戏法",
+      "school": "咒法",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "预置幻象Programmed Illusion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Programmed_Illusion",
+      "classes": "诗 法",
+      "levelLabel": "六环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "投影术Project Image",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Project_Image",
+      "classes": "诗 法",
+      "levelLabel": "七环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防护能量Protection from Energy",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Protection_from_Energy",
+      "classes": "牧 德 软 术 法",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防护善恶Protection from Evil and Good",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Protection_from_Evil_and_Good",
+      "classes": "牧 德 帕 法 锁",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "防护毒素Protection from Poison",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Protection_from_Poison",
+      "classes": "牧 德 帕 软",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "净化饮食Purify Food and Drink",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Purify_Food_and_Drink",
+      "classes": "牧 德 帕",
+      "levelLabel": "一环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "死者复活Raise Dead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Raise_Dead",
+      "classes": "诗 牧 帕",
+      "levelLabel": "五环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "拉瑞心灵联结Rary's Telepathic Bond",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Rary",
+      "classes": "诗 法",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "衰弱射线Ray of Enfeeblement",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Ray_of_Enfeeblement",
+      "classes": "法 锁",
+      "levelLabel": "二环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "冷冻射线Ray of Frost",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Ray_of_Frost",
+      "classes": "术 法",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "致病射线Ray of Sickness",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Ray_of_Sickness",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "再生术Regenerate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Regenerate",
+      "classes": "诗 牧 德",
+      "levelLabel": "七环",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "转生术Reincarnate",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Reincarnate",
+      "classes": "德",
+      "levelLabel": "五环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "移除诅咒Remove Curse",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Remove_Curse",
+      "classes": "牧 帕 法 锁",
+      "levelLabel": "三环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "抵抗术Resistance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Resistance",
+      "classes": "牧 德",
+      "levelLabel": "戏法",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "复生术Resurrection",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Resurrection",
+      "classes": "诗 牧",
+      "levelLabel": "七环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "反转重力Reverse Gravity",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Reverse_Gravity",
+      "classes": "德 术 法",
+      "levelLabel": "七环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "回生术Revivify",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Revivify",
+      "classes": "牧 德 帕 软",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "魔绳术Rope Trick",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Rope_Trick",
+      "classes": "法",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "圣火术Sacred Flame",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Sacred_Flame",
+      "classes": "牧",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "庇护术Sanctuary",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Sanctuary",
+      "classes": "牧",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "灼热射线Scorching Ray",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Scorching_Ray",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "探知术Scrying",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Scrying",
+      "classes": "诗 牧 德 法 锁",
+      "levelLabel": "五环",
+      "school": "预言",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "炽焰斩Searing Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Searing_Smite",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "识破隐形See Invisibility",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#See_Invisibility",
+      "classes": "诗 术 法",
+      "levelLabel": "二环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "伪装术Seeming",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Seeming",
+      "classes": "诗 术 法",
+      "levelLabel": "五环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "短讯术Sending",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Sending",
+      "classes": "诗 牧 法",
+      "levelLabel": "三环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "隔离术Sequester",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Sequester",
+      "classes": "法",
+      "levelLabel": "七环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "形体变化Shapechange",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Shapechange",
+      "classes": "德 法",
+      "levelLabel": "九环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "粉碎音波Shatter",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Shatter",
+      "classes": "诗 术 法",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "护盾术Shield",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Shield",
+      "classes": "术 法",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "反应",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "虔诚护盾Shield of Faith",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Shield_of_Faith",
+      "classes": "牧 帕",
+      "levelLabel": "一环",
+      "school": "防护",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "橡棍术Shillelagh",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Shillelagh",
+      "classes": "德",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "闪耀斩Shining Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Shining_Smite",
+      "classes": "帕",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "电爪Shocking Grasp",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Shocking_Grasp",
+      "classes": "术 法",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "沉默术Silence",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Silence",
+      "classes": "诗 牧 软",
+      "levelLabel": "二环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "无声幻影Silent Image",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Silent_Image",
+      "classes": "诗 术 法",
+      "levelLabel": "一环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "拟像术Simulacrum",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Simulacrum",
+      "classes": "法",
+      "levelLabel": "七环",
+      "school": "幻术",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "睡眠术Sleep",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Sleep",
+      "classes": "诗 术 法",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "雪雨暴Sleet Storm",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Sleet_Storm",
+      "classes": "德 术 法",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "缓慢术Slow",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Slow",
+      "classes": "诗 术 法",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "术法爆发Sorcerous Burst",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Sorcerous_Burst",
+      "classes": "术",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "维生术Spare the Dying",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Spare_the_Dying",
+      "classes": "牧 德",
+      "levelLabel": "戏法",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "动物交谈Speak with Animals",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Speak_with_Animals",
+      "classes": "诗 德 软 锁",
+      "levelLabel": "一环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "死者交谈Speak with Dead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Speak_with_Dead",
+      "classes": "诗 牧 法",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "植物交谈Speak with Plants",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Speak_with_Plants",
+      "classes": "诗 德 软",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "蛛行术Spider Climb",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Spider_Climb",
+      "classes": "术 法 锁",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "荆棘丛生Spike Growth",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Spike_Growth",
+      "classes": "德 软",
+      "levelLabel": "二环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "灵体卫士Spirit Guardians",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Spirit_Guardians",
+      "classes": "牧",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "灵体武器Spiritual Weapon",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Spiritual_Weapon",
+      "classes": "牧",
+      "levelLabel": "二环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "惊惧斩Staggering Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Staggering_Smite",
+      "classes": "帕",
+      "levelLabel": "四环",
+      "school": "惑控",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "点点星芒Starry Wisp",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Starry_Wisp",
+      "classes": "诗 德",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "钢风斩Steel Wind Strike",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Steel_Wind_Strike",
+      "classes": "软 法",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "臭云术Stinking Cloud",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Stinking_Cloud",
+      "classes": "诗 术 法",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "塑石术Stone Shape",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Stone_Shape",
+      "classes": "牧 德 法",
+      "levelLabel": "四环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "石肤术Stoneskin",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Stoneskin",
+      "classes": "德 软 术 法",
+      "levelLabel": "四环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "复仇风暴Storm of Vengeance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Storm_of_Vengeance",
+      "classes": "德",
+      "levelLabel": "九环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "暗示术Suggestion",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Suggestion",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "异怪召唤术Summon Aberration",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Summon_Aberration",
+      "classes": "法 锁",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "野兽召唤术Summon Beast",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Summon_Beast",
+      "classes": "德 软",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "天界召唤术Summon Celestial",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Summon_Celestial",
+      "classes": "牧 帕",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "构装召唤术Summon Construct",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Summon_Construct",
+      "classes": "法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "龙类召唤术Summon Dragon",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Summon_Dragon",
+      "classes": "法",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "元素召唤术Summon Elemental",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Summon_Elemental",
+      "classes": "德 软 法",
+      "levelLabel": "四环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "妖精召唤术Summon Fey",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Summon_Fey",
+      "classes": "德 软 法 锁",
+      "levelLabel": "三环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "邪魔召唤术Summon Fiend",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Summon_Fiend",
+      "classes": "法 锁",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "亡灵召唤术Summon Undead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Summon_Undead",
+      "classes": "法 锁",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "阳炎射线Sunbeam",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Sunbeam",
+      "classes": "牧 德 术 法",
+      "levelLabel": "六环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "阳炎爆Sunburst",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Sunburst",
+      "classes": "牧 德 术 法",
+      "levelLabel": "八环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "迅捷箭袋Swift Quiver",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Swift_Quiver",
+      "classes": "软",
+      "levelLabel": "五环",
+      "school": "变化",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "徽记术Symbol",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Symbol",
+      "classes": "诗 牧 德 法",
+      "levelLabel": "七环",
+      "school": "防护",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "突触静止Synaptic Static",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Synaptic_Static",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "塔莎泡泡坩埚Tasha's Bubbling Cauldron",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Tasha",
+      "classes": "法 锁",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "塔莎狂笑术Tasha's Hideous Laughter",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Tasha",
+      "classes": "诗 法 锁",
+      "levelLabel": "一环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "心灵遥控Telekinesis",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Telekinesis",
+      "classes": "术 法",
+      "levelLabel": "五环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "心灵感应Telepathy",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Telepathy",
+      "classes": "法",
+      "levelLabel": "八环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "传送术Teleport",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/7%E7%8E%AF.htm#Teleport",
+      "classes": "诗 术 法",
+      "levelLabel": "七环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "传送法阵Teleportation Circle",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Teleportation_Circle",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "谭森浮碟术Tenser's Floating Disk",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Tenser",
+      "classes": "法",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "奇术Thaumaturgy",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Thaumaturgy",
+      "classes": "牧",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "荆棘之鞭Thorn Whip",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Thorn_Whip",
+      "classes": "德",
+      "levelLabel": "戏法",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "鸣雷破Thunderclap",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Thunderclap",
+      "classes": "诗 德 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "雷鸣斩Thunderous Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Thunderous_Smite",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "雷鸣波Thunderwave",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Thunderwave",
+      "classes": "诗 德 术 法",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "时间停止Time Stop",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Time_Stop",
+      "classes": "术 法",
+      "levelLabel": "九环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "亡者丧钟Toll the Dead",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Toll_the_Dead",
+      "classes": "牧 法 锁",
+      "levelLabel": "戏法",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "巧言术Tongues",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Tongues",
+      "classes": "诗 牧 术 法 锁",
+      "levelLabel": "三环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "木遁术Transport via Plants",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Transport_via_Plants",
+      "classes": "德",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "树跃术Tree Stride",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Tree_Stride",
+      "classes": "德 软",
+      "levelLabel": "五环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "完全变形术True Polymorph",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#True_Polymorph",
+      "classes": "诗 法 锁",
+      "levelLabel": "九环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "完全复生术True Resurrection",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#True_Resurrection",
+      "classes": "牧 德",
+      "levelLabel": "九环",
+      "school": "死灵",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "真知术True Seeing",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#True_Seeing",
+      "classes": "诗 牧 术 法 锁",
+      "levelLabel": "六环",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "克敌先击True Strike",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#True_Strike",
+      "classes": "诗 术 法 锁",
+      "levelLabel": "戏法",
+      "school": "预言",
+      "castingTimeCategory": "动作",
+      "components": [
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "海啸术Tsunami",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/8%E7%8E%AF.htm#Tsunami",
+      "classes": "德",
+      "levelLabel": "八环",
+      "school": "咒法",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "隐形仆役Unseen Servant",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Unseen_Servant",
+      "classes": "诗 法 锁",
+      "levelLabel": "一环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "汲血之触Vampiric Touch",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Vampiric_Touch",
+      "classes": "术 法 锁",
+      "levelLabel": "三环",
+      "school": "死灵",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "恶言相加Vicious Mockery",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Vicious_Mockery",
+      "classes": "诗",
+      "levelLabel": "戏法",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "浓酸球Vitriolic Sphere",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Vitriolic_Sphere",
+      "classes": "术 法",
+      "levelLabel": "四环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "火墙术Wall of Fire",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/4%E7%8E%AF.htm#Wall_of_Fire",
+      "classes": "德 术 法",
+      "levelLabel": "四环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "力场墙Wall of Force",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Wall_of_Force",
+      "classes": "法",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "冰墙术Wall of Ice",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Wall_of_Ice",
+      "classes": "法",
+      "levelLabel": "六环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "石墙术Wall of Stone",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Wall_of_Stone",
+      "classes": "德 术 法",
+      "levelLabel": "五环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "棘墙术Wall of Thorns",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Wall_of_Thorns",
+      "classes": "德",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "守护之链Warding Bond",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Warding_Bond",
+      "classes": "牧 帕",
+      "levelLabel": "二环",
+      "school": "防护",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "水下呼吸Water Breathing",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Water_Breathing",
+      "classes": "德 软 术 法",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "水上行走Water Walk",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Water_Walk",
+      "classes": "牧 德 软 术",
+      "levelLabel": "三环",
+      "school": "变化",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "蛛网术Web",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Web",
+      "classes": "术 法",
+      "levelLabel": "二环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "怪影杀手Weird",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Weird",
+      "classes": "法 锁",
+      "levelLabel": "九环",
+      "school": "幻术",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "御风而行Wind Walk",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Wind_Walk",
+      "classes": "德",
+      "levelLabel": "六环",
+      "school": "变化",
+      "castingTimeCategory": "其他",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "风墙术Wind Wall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Wind_Wall",
+      "classes": "德 软",
+      "levelLabel": "三环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "祈愿术Wish",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/9%E7%8E%AF.htm#Wish",
+      "classes": "术 法",
+      "levelLabel": "九环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "巫术箭Witch Bolt",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Witch_Bolt",
+      "classes": "术 法 锁",
+      "levelLabel": "一环",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "光耀祷词Word of Radiance",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Word_of_Radiance",
+      "classes": "牧",
+      "levelLabel": "戏法",
+      "school": "塑能",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "回返真言Word of Recall",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Word_of_Recall",
+      "classes": "牧",
+      "levelLabel": "六环",
+      "school": "咒法",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "激愤斩Wrathful Smite",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Wrathful_Smite",
+      "classes": "帕",
+      "levelLabel": "一环",
+      "school": "死灵",
+      "castingTimeCategory": "附赠",
+      "components": [
+        "声音"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "悠兰德王者威仪Yolande's Regal Presence",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Yolande",
+      "classes": "诗 法",
+      "levelLabel": "五环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": true,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    },
+    {
+      "name": "诚实之域Zone of Truth",
+      "href": "../../%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Zone_of_Truth",
+      "classes": "诗 牧 帕",
+      "levelLabel": "二环",
+      "school": "惑控",
+      "castingTimeCategory": "动作",
+      "components": [
+        "声音",
+        "姿势"
+      ],
+      "concentration": false,
+      "sourceBook": "PHB24",
+      "implementation": "source_index_only"
+    }
+  ]
+}
