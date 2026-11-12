@@ -11,7 +11,7 @@ public sealed class DirectSpell
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
         Summary=chinese+"｜"+name+"\n"+effect+(control?"\n专注，至多1分钟。":"\n非专注，即时。");
     }
-    public int DiceCount(int totalLevel,int slotLevel) => Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
+    public int DiceCount(int totalLevel,int slotLevel) => Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
         new DirectSpell("Cure Wounds","疗伤术","1动作 · 接触（5尺） · 声音、姿势。治疗2d8+施法属性调整值，每提升1环增加2d8。",1,5,8,healing:true),
@@ -22,6 +22,7 @@ public sealed class DirectSpell
         new DirectSpell("Hold Person","人类定身术","1动作 · 60尺 · 声音、姿势。仅类人生物：感知豁免失败则麻痹，每个目标回合结束可再次豁免。二环1目标，提升环阶可增加目标。",2,60,0,save:3,control:true),
         new DirectSpell("Inflict Wounds","致伤术","1动作 · 接触（5尺） · 声音、姿势。体质豁免失败受2d10死灵伤害，成功减半向下取整。每提升1环增加1d10。",1,5,10,save:2,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Power Word Kill","律令死亡","1动作 · 60尺 · 声音。当前生命不超过100的目标直接死亡，否则受到12d12心灵伤害。无需命中或豁免。",9,60,12,damageType:"心灵",baseDice:12),
+        new DirectSpell("Magic Missile","魔法飞弹","1动作 · 120尺 · 声音、姿势。三枚飞弹自动命中，分别选择目标，每枚独立1d4+1力场伤害并同时结算；每升1环增加一枚，不进行攻击或豁免检定。",1,120,4,damageType:"力场",baseDice:3),
         new DirectSpell("False Life","虚假生命","1动作 · 自身 · 声音、姿势。获得2d4+4临时生命，每升1环增加5点；临时生命不叠加，不计为治疗。",1,0,4,baseDice:2),
         new DirectSpell("Vicious Mockery","恶言相加","1动作 · 60尺 · 声音。感知豁免失败受到1d6心灵伤害，且目标在其下一回合结束前的下一次攻击具有劣势。总等级5/11/17时增加1d6。",0,60,6,save:3,damageType:"心灵"),
         new DirectSpell("Chill Touch","颤栗之触","1动作 · 接触（5尺） · 声音、姿势。近战法术攻击，命中造成1d10死灵伤害，目标直至施法者下一回合结束不能恢复生命。总等级5/11/17时增加1d10。",0,5,10,attack:true,damageType:"死灵",melee:true),
