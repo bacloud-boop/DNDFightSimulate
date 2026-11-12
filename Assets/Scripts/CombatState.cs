@@ -37,12 +37,14 @@ public sealed class CombatState
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
     public void ExpirePlayerTurnEffects(){if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
-    public void ClearShortDurationEffects(){PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public void ClearShortDurationEffects(){ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
     public int PlayerTemporaryHp {get;private set;}
     public void GrantPlayerTemporaryHp(int amount){PlayerTemporaryHp=Math.Max(PlayerTemporaryHp,Math.Max(0,amount));}
     public void ClearPlayerTemporaryHp(){PlayerTemporaryHp=0;}
     int? playerArmorOverride;
-    public int PlayerArmorClass => playerArmorOverride??10;
+    public bool ShieldActive {get;private set;}
+    public void ActivateShield(){ShieldActive=true;}
+    public int PlayerArmorClass => (playerArmorOverride??10)+(ShieldActive?5:0);
     public void SetPlayerArmorOverride(int? armor){playerArmorOverride=armor;}
     public int MonsterProficiencyBonus { get; set; } = 0;
     public int MonsterAttackRange { get; private set; } = 5;
@@ -114,6 +116,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != MaxHp) { MaxHp = newMaxHp; Hp = newMaxHp; }
     }
-    public void EndRound() {PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
+    public void EndRound() {ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
 
 }

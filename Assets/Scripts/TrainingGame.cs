@@ -178,6 +178,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
         long hitTotal=(long)hitRoll+proficiency;
+        if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return OfferShield(true);targetArmor=combat.PlayerArmorClass;}
         dice="木桩反击 · 命中判定 D20";
         yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;

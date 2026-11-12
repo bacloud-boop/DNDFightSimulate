@@ -44,9 +44,10 @@ public sealed partial class TrainingGame
             string chinese=!string.IsNullOrEmpty(spell.chineseName)?spell.chineseName:direct!=null?direct.Chinese:spell.name=="Acid Splash"?"酸液飞溅":spell.name=="Alarm"?"警报术":spell.name=="Goodberry"?"神莓术":spell.name=="Find Familiar"?"召唤魔宠":spell.name=="Teleport"?"传送术":spell.name=="Plane Shift"?"异界传送":spell.name=="Gate"?"异界之门":"";
             if(spellSearch!=""&&(spell.name+chinese).IndexOf(spellSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
             bool available=direct!=null||spell.name=="Acid Splash";
-            string status=available?"战斗结算已接入":IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
+            bool reactionSpell=spell.name=="Shield";
+            string status=reactionSpell?"反应触发时选择施放":available?"战斗结算已接入":IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
             string text=(chinese==""?spell.name:chinese+" · "+spell.name)+"\n"+(spell.level==0?"戏法":spell.level+"环")+" · "+SchoolChinese(spell.school)+" · "+status;
-            string tooltip=direct!=null?direct.Summary:spell.name=="Acid Splash"?AcidSplash.Summary:spell.name=="Alarm"?AlarmSpell.Summary:spell.name+"\n施法时间："+spell.castingTime+"\n距离："+spell.range+"\n成分："+string.Join("、",spell.components)+"\n持续："+spell.duration+"\n"+(IsLearningOnly(spell.name)?"仅开放学习，不能施放或带入预先生成的效果。":"效果待接入。");
+            string tooltip=reactionSpell?"护盾术｜Shield\n一环防护 · 反应 · 声音、姿势\n被攻击命中或成为魔法飞弹目标时选择施放。AC+5，免疫魔法飞弹，至下一玩家回合开始。选择前隐藏命中骰值与总值。":direct!=null?direct.Summary:spell.name=="Acid Splash"?AcidSplash.Summary:spell.name=="Alarm"?AlarmSpell.Summary:spell.name+"\n施法时间："+spell.castingTime+"\n距离："+spell.range+"\n成分："+string.Join("、",spell.components)+"\n持续："+spell.duration+"\n"+(IsLearningOnly(spell.name)?"仅开放学习，不能施放或带入预先生成的效果。":"效果待接入。");
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
@@ -125,6 +126,7 @@ public sealed partial class TrainingGame
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
+            if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return OfferShield(true);armor=combat.PlayerArmorClass;}
             critical=value==20;dice=spell.Chinese+(spell.Melee?" · 近战法术攻击":" · 远程法术攻击");
             yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
             if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}

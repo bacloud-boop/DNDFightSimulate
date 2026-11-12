@@ -24,7 +24,7 @@ for entry in index:
  timing=re.sub(r'或?\s*仪式','',field('施法时间')).strip()
  record={'name':previous['name'] if previous else english,'chineseName':chinese,'level':levels[entry['levelLabel']],'school':entry['school'],'classes':[classes[c] for c in entry['classes'].split() if c in classes],'castingTime':timing,'range':field('施法距离'),'components':entry['components'],'duration':field('持续时间'),'concentration':entry['concentration'],'source':urllib.parse.urljoin('https://5echm.kagangtuya.top/topics/速查/法术速查/5E万法大全.html',entry['href'].split('#')[0]+'#'+anchor),'implementation':previous['implementation'] if previous else 'not_implemented'}
  assert record['range'] and record['castingTime'] and record['duration'],english
- if record['name'] in set(re.findall(r'new DirectSpell\("([^"]+)"',Path('Assets/Scripts/DirectSpell.cs').read_text(encoding='utf-8-sig')))|{'Acid Splash'}:record['implementation']='combat_implemented'
+ if record['name'] in set(re.findall(r'new DirectSpell\("([^"]+)"',Path('Assets/Scripts/DirectSpell.cs').read_text(encoding='utf-8-sig')))|{'Acid Splash','Shield'}:record['implementation']='combat_implemented'
  spells.append(record)
 assert len(spells)==391 and len({norm(s['name']) for s in spells})==391
 result={'count':len(spells),'scope':'PHB2024 source metadata; implementation status is explicit.','spells':spells}

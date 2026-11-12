@@ -23,19 +23,20 @@ public sealed partial class TrainingGame
     {
         var targets=new bool[count];var rolls=new int[count];
         for(int i=0;i<count;i++){targets[i]=missileTargetsPlayer[i];rolls[i]=Random.Range(1,5);}
+        if(System.Array.Exists(targets,x=>x))yield return OfferShield(false);
         for(int i=0;i<count;i++){
             dice="魔法飞弹 "+(i+1)+" / "+count+" → "+(targets[i]?"玩家":"木桩");
-            yield return PresentRoll(4,new[]{rolls[i]},"本枚 "+rolls[i]+" + 1 = "+(rolls[i]+1)+" 力场伤害；投骰结束后同时结算");
+            yield return PresentRoll(4,new[]{rolls[i]},"本枚 "+rolls[i]+" + 1 = "+(rolls[i]+1)+" 力场伤害；投骰结束后同时结算"+(targets[i]&&combat.ShieldActive?"（护盾术：本枚伤害0）":""));
         }
         int playerDamage=0,monsterDamage=0;
         for(int i=0;i<count;i++){
-            int damage=rolls[i]+1;
+            int damage=targets[i]&&combat.ShieldActive?0:rolls[i]+1;
             if(targets[i]){combat.ApplyPlayerDamage(damage);playerDamage+=damage;}
             else {combat.ApplyDamage(damage);monsterDamage+=damage;}
             history.Insert(0,"魔法飞弹 "+(i+1)+" → "+(targets[i]?"玩家":"木桩")+"：1d4="+rolls[i]+" + 1，"+damage+"力场伤害。");
         }
         // Each dart is a separate source for concentration; HP is settled before these saves.
-        for(int i=0;i<count;i++)if(targets[i])yield return MaintainConcentration(rolls[i]+1);
+        for(int i=0;i<count;i++)if(targets[i]&&!combat.ShieldActive)yield return MaintainConcentration(rolls[i]+1);
         dice="魔法飞弹：玩家 "+playerDamage+"，木桩 "+monsterDamage+" 力场伤害";
         CheckBattleOutcome();
     }
