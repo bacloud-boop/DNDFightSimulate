@@ -9,7 +9,7 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"?"\n无需专注。":"\n非专注，即时。");
     }
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?2*Math.Max(1,slotLevel):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
@@ -22,6 +22,10 @@ public sealed class DirectSpell
         new DirectSpell("Hold Person","人类定身术","1动作 · 60尺 · 声音、姿势。仅类人生物：感知豁免失败则麻痹，每个目标回合结束可再次豁免。二环1目标，提升环阶可增加目标。",2,60,0,save:3,control:true),
         new DirectSpell("Inflict Wounds","致伤术","1动作 · 接触（5尺） · 声音、姿势。体质豁免失败受2d10死灵伤害，成功减半向下取整。每提升1环增加1d10。",1,5,10,save:2,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Power Word Kill","律令死亡","1动作 · 60尺 · 声音。当前生命不超过100的目标直接死亡，否则受到12d12心灵伤害。无需命中或豁免。",9,60,12,damageType:"心灵",baseDice:12),
+        new DirectSpell("Shield of Faith","虔诚护盾","附赠动作 · 60尺 · 声音、姿势。目标护甲等级+2，专注，至多10分钟。",1,60,4,bonus:true),
+        new DirectSpell("Barkskin","树肤术","附赠动作 · 接触（5尺） · 声音、姿势。自愿目标的最终AC至少为17，持续1小时，无需专注。",2,5,4,bonus:true),
+        new DirectSpell("Blade Ward","剑刃防护","1动作 · 自身 · 声音、姿势。持续期间，任何生物对你的每次攻击检定都减去独立1d4。专注，至多1分钟。",0,0,4),
+        new DirectSpell("Protection from Energy","防护能量","1动作 · 接触（5尺） · 声音、姿势。自愿生物获得一种能量抗性：强酸、寒冷、火焰、闪电或雷鸣。专注，至多1小时。",3,5,4),
         new DirectSpell("Divine Favor","神恩","附赠动作 · 自身 · 声音、姿势。持续1分钟，武器攻击命中额外1d4光耀伤害；无需专注。",1,0,4,bonus:true),
         new DirectSpell("Magic Weapon","魔化武器","附赠动作 · 接触 · 声音、姿势。当前非魔法武器命中与伤害+1，持续1小时；三至五环+2，六环以上+3。再施放时原效果结束，无需专注。",2,0,4,bonus:true),
         new DirectSpell("Longstrider","大步奔行","1动作 · 接触（5尺） · 声音、姿势。目标速度+10尺，持续1小时，无需专注；每升1环可额外指定一个目标。",1,5,4),

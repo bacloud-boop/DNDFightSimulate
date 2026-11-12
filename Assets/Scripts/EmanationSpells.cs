@@ -28,9 +28,10 @@ public sealed partial class TrainingGame
         if(!failed[0]&&!failed[1]){history.Insert(0,spell.Chinese+"：目标均通过体质豁免，伤害0。");yield break;}
         int[] values=new int[AcidSplash.DiceCount(classes.TotalLevel)];int damage=0;for(int i=0;i<values.Length;i++){values[i]=Random.Range(1,7);damage+=values[i];}
         dice=spell.Chinese+" · 共享伤害骰";yield return PresentRoll(6,values,"豁免失败者受到 "+damage+" 点"+spell.DamageType+"伤害，成功者0");
-        if(failed[0])combat.ApplyDamage(damage);if(failed[1])combat.ApplyPlayerDamage(damage);
-        history.Insert(0,spell.Chinese+"：木桩 "+(failed[0]?damage:0)+"，玩家 "+(failed[1]?damage:0)+" 点"+spell.DamageType+"伤害。");
-        if(failed[1])yield return MaintainConcentration(damage);
+        int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,DamageTypes.Index(spell.DamageType)):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,DamageTypes.Index(spell.DamageType)):0;
+        if(failed[0])combat.ApplyDamage(monsterDamage);if(failed[1])combat.ApplyPlayerDamage(playerDamage);
+        history.Insert(0,spell.Chinese+"：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 点"+spell.DamageType+"伤害。");
+        if(failed[1])yield return MaintainConcentration(playerDamage);
         CheckBattleOutcome();
     }
 }

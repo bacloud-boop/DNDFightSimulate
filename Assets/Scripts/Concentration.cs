@@ -5,6 +5,7 @@ public sealed partial class TrainingGame
 {
     string concentrationSpell="";
     int concentrationExpiresRound;
+    long concentrationExpiresWorld=-1;
     int holdPersonDc;
     bool resolvingHoldPerson;
     bool IsConcentrating => concentrationSpell!="";
@@ -12,14 +13,14 @@ public sealed partial class TrainingGame
     {
         if(!IsConcentrating)return;
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");
-        concentrationSpell="";combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
+        concentrationSpell="";concentrationExpiresWorld=-1;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
     }
     void RefreshConcentration()
     {
         if(!IsConcentrating||resolvingHoldPerson)return;
         if(combat.Hp==0)combat.MonsterParalyzed=false;
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndConcentration("施法者失能或死亡");
-        else if(combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
+        else if((concentrationExpiresWorld>=0&&worldRounds>=concentrationExpiresWorld)||combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
         else if(concentrationSpell=="人类定身术"&&!combat.PlayerParalyzed&&!combat.MonsterParalyzed)EndConcentration("所有目标均已摆脱效果");
     }
     int PlayerSavingThrowModifier(int ability)

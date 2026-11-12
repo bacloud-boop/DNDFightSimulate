@@ -35,13 +35,14 @@ public sealed partial class TrainingGame
         }
         int[] rolls=new int[slot+1];int amount=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);amount+=rolls[i];}
         dice="雷鸣波 · 共享雷鸣伤害骰";yield return PresentRoll(8,rolls,"合计 "+amount+"，成功豁免者减半向下取整");
+        int playerDamage=0;
         for(int i=0;i<2;i++)if(targets[i]){
-            int damage=failed[i]?amount:amount/2;
+            int damage=combat.AdjustTypedDamage(i==1,failed[i]?amount:amount/2,12);if(i==1)playerDamage=damage;
             if(i==0)combat.ApplyDamage(damage);else combat.ApplyPlayerDamage(damage);
             int pushed=i==0&&failed[i]?map.ForceMoveAway(false,origin,originSpaces,10):0;
             history.Insert(0,"雷鸣波对"+(i==0?"木桩":"玩家")+"："+(failed[i]?"豁免失败":"豁免成功")+"，"+damage+"雷鸣伤害，推离"+pushed+"尺。强制位移不消耗移动力、不触发借机、不追加碰撞伤害。");
         }
-        if(player)yield return MaintainConcentration(failed[1]?amount:amount/2);
+        if(player)yield return MaintainConcentration(playerDamage);
         dice="雷鸣波 · 结算完成";CheckBattleOutcome();rolling=false;
     }
 }

@@ -15,6 +15,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     bool CanLightBonusAttack => !IsWildShaped && selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
     string panel="";
     readonly MonsterDamage monster = new MonsterDamage();
+    readonly int[] damageTypeInputs=new int[6];
     readonly string[] damageInputs = {"0","0","0","0","0","0"};
     string inputError="";
     readonly PlayerAttributes attributes = new PlayerAttributes();
@@ -180,10 +181,12 @@ public sealed partial class TrainingGame : MonoBehaviour
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
-        long hitTotal=(long)hitRoll+proficiency;
+        int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
+        long hitTotal=(long)hitRoll+proficiency-wardPenalty;
         if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return OfferShield(true);targetArmor=combat.PlayerArmorClass;}
         dice="木桩反击 · 命中判定 D20";
         yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
+        if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护：攻击检定减去 "+wardPenalty+"；命中总值 "+hitTotal);
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
@@ -196,6 +199,8 @@ public sealed partial class TrainingGame : MonoBehaviour
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
                 yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
+            int rawDamage=damage;damage=combat.AdjustPlayerPacket(monster.LastRawTypedDamage);
+            if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
             yield return MaintainConcentration(damage);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
@@ -315,8 +320,10 @@ public sealed partial class TrainingGame : MonoBehaviour
                 GUILayout.Label(i<5?"D"+MonsterDamage.Sides[i]+" 数量":"固定加值",label,GUILayout.Width(200));
                 damageInputs[i]=IntegerField(damageInputs[i],i==5);
                 GUILayout.EndHorizontal();
+                damageTypeInputs[i]=GUILayout.SelectionGrid(damageTypeInputs[i],DamageTypes.Names,5,new GUIStyle(button){fontSize=15,fixedHeight=30});
+                GUILayout.Space(8);
             }
-            GUILayout.Label("骰子数量为非负整数；固定加值可为负；总伤害最低为 0。",label);
+            GUILayout.Label("骰子数量为非负整数；固定加值可为负，只抵扣同类型；每类最低为0。",label);
             if(GUILayout.Button("应用",button)) ApplyMonsterSettings();
             GUILayout.Label(inputError,label);
         }
@@ -341,6 +348,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         long count=0;for(int i=0;i<5;i++) count+=values[i];
         if(count>10000) {inputError="单次反击骰子总数不能超过 10000。";return;}
         for(int i=0;i<5;i++) monster.Counts[i]=values[i];
+        for(int i=0;i<6;i++)monster.Types[i]=damageTypeInputs[i];
         monster.Bonus=values[5]; inputError="已应用，下次回合结束时生效。";
     }
     public void QuitGame()

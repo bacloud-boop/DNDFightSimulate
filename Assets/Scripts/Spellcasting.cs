@@ -93,10 +93,11 @@ public sealed partial class TrainingGame
             int[] values=new int[count];for(int i=0;i<count;i++)values[i]=Random.Range(1,7);
             int damage=System.Linq.Enumerable.Sum(values);dice="酸液飞溅 · 强酸伤害";
             yield return PresentRoll(6,values,"强酸伤害："+damage+"；豁免失败者使用同一伤害骰结果");
-            if(failed[0])combat.ApplyDamage(damage);
-            if(failed[1]){combat.ApplyPlayerDamage(damage);yield return MaintainConcentration(damage);}
+            int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,3):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,3):0;
+            if(failed[0])combat.ApplyDamage(monsterDamage);
+            if(failed[1]){combat.ApplyPlayerDamage(playerDamage);yield return MaintainConcentration(playerDamage);}
             dice="酸液飞溅："+damage+" 点强酸伤害";
-            history.Insert(0,count+"d6="+string.Join("+",values)+"，木桩伤害 "+(failed[0]?damage:0)+"，玩家伤害 "+(failed[1]?damage:0)+"。");
+            history.Insert(0,count+"d6="+string.Join("+",values)+"，木桩伤害 "+monsterDamage+"，玩家伤害 "+playerDamage+"。");
         }else dice="酸液飞溅：目标全部豁免成功，伤害0。";
         CheckBattleOutcome();rolling=false;
     }
