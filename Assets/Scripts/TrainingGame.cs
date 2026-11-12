@@ -154,8 +154,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.PlayerDead){rolling=false;yield break;}
         if(combat.Hp==0){if(endTurn){worldRounds++;combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
-            worldRounds++;shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn();
-            if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(15);history.Insert(0,"木桩消耗15尺移动力起身。");}
+            worldRounds++;shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
+            if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
             yield return ChasePlayer();
             if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
             rolling=true;

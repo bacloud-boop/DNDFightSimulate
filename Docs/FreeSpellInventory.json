@@ -5799,7 +5799,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Ray_of_Frost",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Ray of Sickness",
@@ -6302,7 +6302,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Shocking_Grasp",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Silence",

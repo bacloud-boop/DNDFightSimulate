@@ -150,6 +150,8 @@ public sealed partial class TrainingGame
         if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");rolling=false;yield break;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);
+        if(spell.Name=="Ray of Frost"){combat.ApplyFrostSlow(targetPlayer);history.Insert(0,target+"速度降低10尺，至玩家下一回合开始。");}
+        if(spell.Name=="Shocking Grasp"){combat.BlockOpportunity(targetPlayer);history.Insert(0,target+"不能借机攻击，至其下一回合开始；其他反应不受影响。");}
         if(spell.Name=="Vicious Mockery"){combat.ApplyMockery(targetPlayer);history.Insert(0,target+"下次攻击具有劣势，最迟在其下一回合结束时失效。");}
         if(spell.Name=="Chill Touch"){combat.BlockHealing(targetPlayer);history.Insert(0,target+"不能恢复生命，持续至玩家下一回合结束。");}
         history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+spell.DamageType+"伤害 ")+amount+"。");
