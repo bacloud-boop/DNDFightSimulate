@@ -27,7 +27,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(x+20,305,440,70),"敏捷豁免 DC "+dc+" · "+AcidSplash.DiceCount(classes.TotalLevel)+"d6 强酸\n射程 60 尺 · 5 尺半径球状",label);
         bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable&&CanCastInCurrentForm;
         if(GUI.Button(new Rect(x+20,400,440,65),new GUIContent("酸液飞溅 · 选择施法位置",AcidSplash.Summary),button)){
-            panel="";spellTargeting=true;spellCenterChosen=false;
+            panel="";thunderwaveTargeting=false;spellTargeting=true;spellCenterChosen=false;
         }
         GUI.enabled=previous;
         GUI.Label(new Rect(x+20,490,440,90),"悬停查看简概。点击后在地图选择格心，预览目标，再确认施法。",label);
@@ -35,6 +35,7 @@ public sealed partial class TrainingGame
     void DrawSpellTargeting(Rect board)
     {
         if(!spellTargeting)return;
+        if(thunderwaveTargeting){DrawThunderwaveTargeting(board);return;}
         Vector2 pointer=BoardPointer();var e=Event.current;
         bool hover=board.Contains(pointer);
         var cell=hover?new Vector2Int(Mathf.FloorToInt((pointer.x-board.x)/(board.width/map.Size)),Mathf.FloorToInt((pointer.y-board.y)/(board.width/map.Size))):spellCenter;

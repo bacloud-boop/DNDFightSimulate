@@ -77,7 +77,9 @@ public sealed partial class TrainingGame
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
-        if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
+        else if(definition.Name=="Thunderwave")GUILayout.Label("确认后选择15尺立方方向并预览范围。",small);
+        else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
         else {
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
@@ -87,7 +89,7 @@ public sealed partial class TrainingGame
         string reason=DirectSpellInvalidReason(definition,casters.Length>0);
         GUILayout.Label(reason==""?"距离合法 · 消耗"+(definition.Bonus?"附赠动作":"动作"):reason,small);
         bool previous=GUI.enabled;GUI.enabled=reason=="";
-        if(GUILayout.Button("确认施法",button)){panel="";StartCoroutine(ResolveDirectSpell(definition,directTargetPlayer,directCastingClass,directSlotLevel));}
+        if(GUILayout.Button("确认施法",button)){panel="";if(definition.Name=="Thunderwave")BeginThunderwave(directCastingClass,directSlotLevel);else StartCoroutine(ResolveDirectSpell(definition,directTargetPlayer,directCastingClass,directSlotLevel));}
         GUI.enabled=previous;GUILayout.EndScrollView();GUILayout.EndArea();
     }
     string DirectSpellInvalidReason(DirectSpell spell,bool eligible)
@@ -98,6 +100,7 @@ public sealed partial class TrainingGame
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
+        if(spell.Name=="Thunderwave"||IsSimpleEmanation(spell.Name))return "";
         if(spell.Name=="Magic Missile")return MissileTargetError(spell.DiceCount(classes.TotalLevel,directSlotLevel));
         if(spell.Name=="False Life"&&!directTargetPlayer)return "虚假生命只能以自身为目标。";
         int distance=directTargetPlayer?0:map.DistanceFeet;
@@ -114,6 +117,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;
+        if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);rolling=false;yield break;}
         if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));rolling=false;yield break;}
         if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.ApplyDamage(combat.Hp);history.Insert(0,"律令死亡："+target+"生命不超过100，直接死亡。");CheckBattleOutcome();rolling=false;yield break;}
         if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);rolling=false;yield break;}

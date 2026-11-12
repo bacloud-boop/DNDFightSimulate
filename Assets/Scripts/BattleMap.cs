@@ -84,6 +84,21 @@ public sealed class BattleMap
         if(bestCost==int.MaxValue)return false;
         if(player){PlayerSpaces=spaces;Player=best;}else {MonsterSpaces=spaces;Monster=best;}return true;
     }
+    public int ForceMoveAway(bool player,Vector2Int origin,int originSpaces,int feet)
+    {
+        var start=player?Player:Monster;int spaces=player?PlayerSpaces:MonsterSpaces;
+        double dx=start.x+spaces*.5-origin.x-originSpaces*.5,dy=start.y+spaces*.5-origin.y-originSpaces*.5,length=System.Math.Sqrt(dx*dx+dy*dy);
+        if(length==0||feet<=0)return 0;
+        var last=start;var obstacle=player?Monster:Player;int obstacleSpaces=player?MonsterSpaces:PlayerSpaces;
+        for(int distance=1;distance<=feet;distance++){
+            var candidate=new Vector2Int(start.x+Mathf.RoundToInt((float)(dx/length*distance/5)),start.y+Mathf.RoundToInt((float)(dy/length*distance/5)));
+            if(candidate==last)continue;
+            if(FeetBetween(start,candidate)>feet)continue;
+            if(!CanPlace(player,candidate)||SegmentCrossesBody(last,candidate,spaces,obstacle,obstacleSpaces))break;
+            last=candidate;
+        }
+        if(player)Player=last;else Monster=last;return FeetBetween(start,last);
+    }
     public bool CanResizePlayerAt(int spaces,Vector2Int anchor)
     {
         if(spaces<1||spaces>4||!Inside(anchor,spaces)||Overlap(anchor,spaces,Monster,MonsterSpaces))return false;
