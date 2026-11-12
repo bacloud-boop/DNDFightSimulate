@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     Vector2 spellLibraryScroll,directSpellScroll;
     bool onlyClassSpells=true;
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
-    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar";
+    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
             bool eligible=System.Linq.Enumerable.Any(EligibleCasters(spell));
             if(onlyClassSpells&&!eligible)continue;
             var direct=DirectSpell.Find(spell.name);
-            string chinese=direct!=null?direct.Chinese:spell.name=="Acid Splash"?"酸液飞溅":spell.name=="Alarm"?"警报术":spell.name=="Goodberry"?"神莓术":spell.name=="Find Familiar"?"召唤魔宠":"";
+            string chinese=direct!=null?direct.Chinese:spell.name=="Acid Splash"?"酸液飞溅":spell.name=="Alarm"?"警报术":spell.name=="Goodberry"?"神莓术":spell.name=="Find Familiar"?"召唤魔宠":spell.name=="Teleport"?"传送术":spell.name=="Plane Shift"?"异界传送":spell.name=="Gate"?"异界之门":"";
             if(spellSearch!=""&&(spell.name+chinese).IndexOf(spellSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
             bool available=direct!=null||spell.name=="Acid Splash";
             string status=available?"战斗结算已接入":IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";

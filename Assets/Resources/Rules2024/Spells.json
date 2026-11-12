@@ -2501,7 +2501,7 @@
       ],
       "duration": "Concentration, up to 1 minute",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Gate",
-      "implementation": "not_implemented"
+      "implementation": "learning_only"
     },
     {
       "name": "Geas",
@@ -4312,7 +4312,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#PlaneShift",
-      "implementation": "not_implemented"
+      "implementation": "learning_only"
     },
     {
       "name": "Plant Growth",
@@ -5684,7 +5684,7 @@
       ],
       "duration": "Instantaneous",
       "source": "https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Teleport",
-      "implementation": "not_implemented"
+      "implementation": "learning_only"
     },
     {
       "name": "Teleportation Circle",
