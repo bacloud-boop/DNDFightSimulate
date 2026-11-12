@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     {
         if(!IsConcentrating)return;
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");
-        concentrationSpell="";concentrationExpiresWorld=-1;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
+        concentrationSpell="";concentrationExpiresWorld=-1;combat.PlayerBlessed=combat.MonsterBlessed=false;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
     }
     void RefreshConcentration()
     {
@@ -36,6 +36,7 @@ public sealed partial class TrainingGame
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed){EndConcentration("施法者失能或死亡");yield break;}
         int dc=ConcentrationRules.DamageSaveDc(damage),value=Random.Range(1,21),modifier=PlayerSavingThrowModifier(2);
         dice=concentrationSpell+" · 受伤专注豁免";
+        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,new[]{value},value+" + 体质豁免 "+modifier+" / DC "+dc);
         if(value+modifier<dc)EndConcentration("专注豁免失败");else history.Insert(0,"专注豁免成功，维持"+concentrationSpell+"。");
     }
@@ -44,6 +45,7 @@ public sealed partial class TrainingGame
         if(!combat.MonsterParalyzed||concentrationSpell!="人类定身术"||combat.Hp==0)yield break;
         int value=Random.Range(1,21),modifier=AcidSplash.Modifier(monsterAttributes[3]);
         dice="木桩回合结束 · 人类定身术感知豁免";
+        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
         if(value+modifier>=holdPersonDc){combat.MonsterParalyzed=false;history.Insert(0,"木桩通过感知豁免，摆脱麻痹。");RefreshConcentration();}
         else history.Insert(0,"木桩感知豁免失败，继续麻痹。");
@@ -61,6 +63,7 @@ public sealed partial class TrainingGame
             string target=targetPlayer?"玩家":"木桩";
             int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(3):AcidSplash.Modifier(monsterAttributes[3]);
             dice="人类定身术 · "+target+"感知豁免";
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
             if(value+modifier<holdPersonDc){if(targetPlayer){combat.PlayerParalyzed=true;EndWildShape("麻痹导致失能");}else combat.MonsterParalyzed=true;history.Insert(0,target+"豁免失败，陷入麻痹。");}
             else history.Insert(0,target+"豁免成功，未受定身影响。");

@@ -82,6 +82,7 @@ public sealed partial class TrainingGame
             int value=Random.Range(1,21),modifier=AcidSplash.Modifier(i==0?monsterAttributes[1]:attributes[1]);
             if(i==1)modifier=PlayerSavingThrowModifier(1);
             bool automaticFailure=i==0?combat.MonsterParalyzed:combat.PlayerHp==0||combat.PlayerParalyzed;
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,automaticFailure,adjustment);modifier+=adjustment.Value;
             if(!automaticFailure){
                 dice="酸液飞溅 · "+target+"敏捷豁免";
                 yield return PresentRoll(20,new[]{value},"豁免："+value+" + "+modifier+" / DC "+dc);

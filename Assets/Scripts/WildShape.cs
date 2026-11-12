@@ -124,15 +124,16 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollNaturalAttack(bool opportunity=false)
     {
-        var attack=BeastAttack.Find(wildForm.name);rolling=true;
+        var attack=BeastAttack.Find(wildForm.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing;
         bool advantage=fighter.ConsumeAdvantage(classes[0])||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=combat.ConsumeMockery(true);bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");
-        yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中 "+attack.HitBonus+" / 护甲 "+combat.MonsterArmorClass);
-        if(value==1||(value!=20&&value+attack.HitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
+        yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+combat.MonsterArmorClass);
+        if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次自然攻击 +"+blessing);
+        if(value==1||(value!=20&&value+hitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
         bool critical=value==20||(combat.MonsterParalyzed&&map.DistanceFeet<=5);int damage=attack.Fixed;
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));

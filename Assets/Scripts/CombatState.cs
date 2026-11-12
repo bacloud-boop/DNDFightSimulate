@@ -6,6 +6,12 @@ public sealed class CombatState
     public int MonsterEnergyResistance {get;set;}=-1;
     public int AdjustTypedDamage(bool player,int amount,int type){return type>=0&&(player?PlayerEnergyResistance:MonsterEnergyResistance)==type?amount/2:amount;}
     public int AdjustPlayerPacket(long[] packet){long total=0;for(int i=0;i<packet.Length;i++)total+=Math.Min(int.MaxValue,PlayerEnergyResistance==i?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
+    public bool PlayerBlessed {get;set;}
+    public bool MonsterBlessed {get;set;}
+    int playerSliverUntil,monsterSliverUntil;
+    public void ApplySliver(bool player){if(player)playerSliverUntil=Round+1;else monsterSliverUntil=Round+1;}
+    public bool ConsumeSliver(bool player){bool active=player?playerSliverUntil>0:monsterSliverUntil>0;if(player)playerSliverUntil=0;else monsterSliverUntil=0;return active;}
+    public bool MonsterAttackIsMelee {get;set;}=true;
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
     public bool MonsterSlowed {get;private set;}
@@ -26,11 +32,11 @@ public sealed class CombatState
     public bool PlayerCanAct => PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&Hp>0;
     public bool BattleFinished => PlayerDead || (Hp==0 && (PlayerHp>0||PlayerStable));
     public string PlayerLifeLabel => PlayerDead?"死亡":PlayerParalyzed?"麻痹":PlayerHp>0?"清醒":PlayerStable?"稳定 / 昏迷":"倒地 / 昏迷";
-    public void ResolveDeathSave(int die) {
+    public void ResolveDeathSave(int die,int adjustment=0) {
         if(!NeedsDeathSave)return;
         if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));
         if(die==20){HealPlayer(1);return;}
-        if(die==1)DeathFailures+=2;else if(die>=10)DeathSuccesses++;else DeathFailures++;
+        if(die==1)DeathFailures+=2;else if(die+adjustment>=10)DeathSuccesses++;else DeathFailures++;
         if(DeathFailures>=3)PlayerDead=true;
         else if(DeathSuccesses>=3){PlayerStable=true;DeathSuccesses=0;DeathFailures=0;}
     }
@@ -45,8 +51,8 @@ public sealed class CombatState
     public bool PlayerHealingBlocked => playerHealingBlockedUntil>0;
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
-    public void ExpirePlayerTurnEffects(){if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
-    public void ClearShortDurationEffects(){playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public void ExpirePlayerTurnEffects(){if(Round>=playerSliverUntil)playerSliverUntil=0;if(Round>=monsterSliverUntil)monsterSliverUntil=0;if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
+    public void ClearShortDurationEffects(){playerSliverUntil=monsterSliverUntil=0;playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
     public int MonsterTemporaryHp {get;private set;}
     public void GrantMonsterTemporaryHp(int amount){if(Hp>0)MonsterTemporaryHp=Math.Max(MonsterTemporaryHp,Math.Max(0,amount));}
     public void ClearMonsterTemporaryHp(){MonsterTemporaryHp=0;}
@@ -128,7 +134,7 @@ public sealed class CombatState
         }
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ResetBattle() {PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;Hp = Math.Max(0, Hp - (damage-absorbed)); }
     public void ApplyPlayerDamage(int damage,bool critical=false) {
         if(damage<=0||PlayerDead)return;

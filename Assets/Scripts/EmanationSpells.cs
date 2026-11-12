@@ -23,6 +23,7 @@ public sealed partial class TrainingGame
         if(!targets[0]&&!targets[1]){history.Insert(0,spell.Chinese+"：未选中范围内生物，已消耗动作。");yield break;}
         for(int i=0;i<2;i++)if(targets[i]){
             int value=Random.Range(1,21),modifier=i==0?AcidSplash.Modifier(monsterAttributes[2]):PlayerSavingThrowModifier(2);dice=spell.Chinese+" · "+(i==0?"木桩":"玩家")+"体质豁免";
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);failed[i]=value+modifier<dc;
         }
         if(!failed[0]&&!failed[1]){history.Insert(0,spell.Chinese+"：目标均通过体质豁免，伤害0。");yield break;}

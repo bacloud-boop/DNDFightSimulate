@@ -23,7 +23,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     string attributeError="";
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
     readonly CreatureProfile monsterProfile=new CreatureProfile();
-    int monsterTypeDraft=9,monsterSizeDraft=2;
+    int monsterTypeDraft=9,monsterSizeDraft=2,monsterAttackKindDraft;
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterRangeInput="5", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
@@ -98,10 +98,10 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false)
     {
         rolling=true;logScroll=Vector2.zero;
-        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds);proficiencyBonus+=magicBonus;
+        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing;
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
+        bool disadvantage=(!attackWeapon.IsMelee&&combat.MonsterCanAct&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
         disadvantage=combat.ConsumeMockery(true)||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
@@ -111,6 +111,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string rollMode=rollHigh?"优势 2d20 取高":rollLow?"劣势 2d20 取低":advantage&&disadvantage?"优势劣势抵消 · 单骰":"单骰";
         dice="玩家命中判定 · "+rollMode;
         yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练/魔法 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
+        if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次武器攻击 +"+blessing);
         int hitTotal=hitRoll+proficiencyBonus+abilityModifier;
         string hitDetails=attackKind+" · "+rollMode+(twoDice?" ["+firstHit+", "+secondHit+"]":"")+" D20="+hitRoll+"，熟练/魔法 "+proficiencyBonus+"，"+abilityLabel+" "+abilityModifier+"，命中总值 "+hitTotal+" / 目标护甲 "+targetArmor;
         bool critical=hitRoll==20;
@@ -156,9 +157,9 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;
         if(combat.PlayerDead){rolling=false;yield break;}
-        if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
+        if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
-            worldRounds++;RefreshAidEffects();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
+            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
             if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
             yield return ChasePlayer();
             if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
@@ -176,20 +177,23 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterProne;
+        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
         int targetArmor=combat.PlayerArmorClass;
+        int blessing=combat.MonsterBlessed?Random.Range(1,5):0;
         int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
-        long hitTotal=(long)hitRoll+proficiency-wardPenalty;
+        long hitTotal=(long)hitRoll+proficiency+blessing-wardPenalty;
         if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return OfferShield(true);targetArmor=combat.PlayerArmorClass;}
         dice="木桩反击 · 命中判定 D20";
-        yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
+        yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" + 祝福 "+blessing+" - 剑刃防护 "+wardPenalty+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
+        if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次木桩攻击 +"+blessing);
         if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护：攻击检定减去 "+wardPenalty+"；命中总值 "+hitTotal);
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
+            int frostRetaliation=AgathysRetaliation(combat.MonsterAttackIsMelee);
             string details;
             var sides=new List<int>();var results=new List<int[]>();var counts=new List<int>();
             int damage=monster.Roll(out details,critical,(s,v,c)=>{sides.Add(s);results.Add(v);counts.Add(c);});
@@ -202,6 +206,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             int rawDamage=damage;damage=combat.AdjustPlayerPacket(monster.LastRawTypedDamage);
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
+            ApplyAgathysRetaliation(frostRetaliation,false);
             yield return MaintainConcentration(damage);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);
@@ -263,6 +268,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUI.enabled=true;if(GUILayout.Button("查看职业特性目录 / 接入状态",button)){catalogClassIndex=selectedClass;panel="features";}
         } else if(panel=="monsterAttributes") {
             GUILayout.Label("怪物属性",heading);
+            GUILayout.Label("攻击类型（当前 "+(combat.MonsterAttackIsMelee?"近战":"远程")+"）",label);
+            monsterAttackKindDraft=GUILayout.SelectionGrid(monsterAttackKindDraft,new[]{"近战攻击","远程攻击"},2,new GUIStyle(button){fontSize=17,fixedHeight=36});
             GUILayout.Label("生物类型（当前 "+CreatureProfile.TypeNames[monsterProfile.TypeIndex]+"）",label);
             monsterTypeDraft=GUILayout.SelectionGrid(monsterTypeDraft,CreatureProfile.TypeNames,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
             GUILayout.Label("体型（当前 "+CreatureProfile.SizeNames[monsterProfile.SizeIndex]+"）",label);
@@ -296,7 +303,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; combat.UpdateMonsterAttackRange(attackRange); monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {

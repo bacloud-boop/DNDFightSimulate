@@ -31,6 +31,7 @@ public sealed partial class TrainingGame
         if(!monster&&!player){history.Insert(0,"雷鸣波：范围无生物，已消耗动作。声响可传至300尺，当前无听觉警戒系统。");rolling=false;yield break;}
         for(int i=0;i<2;i++)if(targets[i]){
             int value=Random.Range(1,21),modifier=i==0?AcidSplash.Modifier(monsterAttributes[2]):PlayerSavingThrowModifier(2);dice="雷鸣波 · "+(i==0?"木桩":"玩家")+"体质豁免";
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);failed[i]=value+modifier<dc;
         }
         int[] rolls=new int[slot+1];int amount=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);amount+=rolls[i];}
