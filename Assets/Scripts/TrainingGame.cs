@@ -25,6 +25,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly CreatureProfile monsterProfile=new CreatureProfile();
     int monsterTypeDraft=9,monsterSizeDraft=2,monsterAttackKindDraft;
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
+    string monsterSpeedInput="30";
     string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterRangeInput="5", monsterAttributeError="";
     readonly PlayerClasses classes = new PlayerClasses();
     readonly string[] classInputs = CreateClassInputs();
@@ -186,7 +187,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||!MonsterSeesPlayer||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
-        int proficiency=combat.MonsterProficiencyBonus+combat.MonsterRevivalPenalty;
+        long proficiency=combat.MonsterHitBonus;
         int targetArmor=combat.PlayerArmorClass;
         int blessing=combat.MonsterBlessed?Random.Range(1,5):0,bane=combat.MonsterBaned?Random.Range(1,5):0;
         int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
@@ -228,6 +229,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="originalMonster"){DrawOriginalMonster();return;}
         if(panel=="aftermath"){DrawAftermath();return;}
         if(panel=="spells"){DrawSpellPanel();return;}
         if(panel=="rest"){DrawRestPanel();return;}
@@ -279,6 +281,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUI.enabled=true;if(GUILayout.Button("查看职业特性目录 / 接入状态",button)){catalogClassIndex=selectedClass;panel="features";}
         } else if(panel=="monsterAttributes") {
             GUILayout.Label("怪物属性",heading);
+            GUILayout.Label("基础移动力（尺，当前 "+combat.MonsterBaseSpeed+"）",small);monsterSpeedInput=IntegerField(monsterSpeedInput,false);
             DrawVisionConfiguration(false);
             GUILayout.Label("攻击类型（当前 "+(combat.MonsterAttackIsMelee?"近战":"远程")+"）",label);
             monsterAttackKindDraft=GUILayout.SelectionGrid(monsterAttackKindDraft,new[]{"近战攻击","远程攻击"},2,new GUIStyle(button){fontSize=17,fixedHeight=36});
@@ -309,14 +312,15 @@ public sealed partial class TrainingGame : MonoBehaviour
             monsterRangeInput=IntegerField(monsterRangeInput,false);
             GUILayout.EndHorizontal();
             if(GUILayout.Button("应用",button)) {
-                int maxHp, armorClass, proficiency, attackRange, visionRange;
-                if(!VisionInputValid(false,out visionRange))monsterAttributeError="黑暗视觉距离必须为非负整数。";
+                int maxHp, armorClass, proficiency, attackRange, visionRange, speed;
+                if(!int.TryParse(monsterSpeedInput,out speed)||speed<0)monsterAttributeError="移动力必须为非负整数。";
+                else if(!VisionInputValid(false,out visionRange))monsterAttributeError="黑暗视觉距离必须为非负整数。";
                 else if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
                 else if(!int.TryParse(monsterArmorInput,out armorClass) || armorClass<5 || armorClass>30) monsterAttributeError="护甲等级必须为 5～30 的整数。";
                 else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {

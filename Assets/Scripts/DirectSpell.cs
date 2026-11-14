@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("True Resurrection","完全复生术","战后或外部救援 · 1小时 · 接触 · 声音、姿势。死亡200年以内、非老死的自愿目标满HP复活，解除毒素、魔法疾病及诅咒；亡灵恢复完整生前形态，原位置必须容纳其占地。",9,5,0),
         new DirectSpell("Revivify","回生术","战后或外部救援 · 1动作 · 接触 · 声音、姿势。死亡不超过1分钟的自愿目标复活为1HP，不修复缺失器官，也不能复活老死者。计入施法6秒。",3,5,0),
         new DirectSpell("Raise Dead","死者复活","战后或外部救援 · 1小时 · 接触 · 声音、姿势。死亡不超过10天、死亡时非亡灵且尸体完整的自愿目标复活为1HP，并解除毒素。d20检定减4，每次完成长休减轻1。",5,5,0),
         new DirectSpell("Gentle Repose","遗体防腐","战后或外部施法 · 1动作 · 接触 · 声音、姿势。尸体10天内不会腐败或变成亡灵，这段时间不计入复活法术的死亡时限。",2,5,0),

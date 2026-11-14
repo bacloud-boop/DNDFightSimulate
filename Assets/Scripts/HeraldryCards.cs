@@ -97,6 +97,7 @@ public sealed partial class TrainingGame
             CardTab(new Rect(x-60,206,60,62),"伤\n害","monster",false);
             CardTab(new Rect(x-60,282,60,62),"属\n性","monsterAttributes",false);
             CardTab(new Rect(x-60,358,60,62),"技\n能","monsterSkills",false);
+            CardTab(new Rect(x-60,434,60,62),"生\n前","originalMonster",false);
         }
     }
     void DisposeHeraldry()

@@ -40,7 +40,16 @@ public sealed class CombatState
     public bool PlayerOpportunityBlocked {get;private set;}
     public bool MonsterOpportunityBlocked {get;private set;}
     public int MonsterSpeedBonus {get;set;}
-    public int MonsterSpeed => Math.Max(0,30+MonsterSpeedBonus-(MonsterSlowed?10:0));
+    public int MonsterBaseSpeed {get;private set;}=30;
+    public long MonsterHitBonus=>(long)MonsterProficiencyBonus+MonsterRevivalPenalty;
+    public int MonsterBaseMaxHp=>monsterBaseMaxHp;
+    public int MonsterBaseArmorClass=>monsterBaseArmor;
+    public void UpdateMonsterBaseSpeed(int speed){if(speed<0)throw new ArgumentOutOfRangeException(nameof(speed));MonsterBaseSpeed=speed;}
+    public void RestoreMonsterBase(int hp,int armor,int proficiency,int range,int speed,bool melee){
+        if(hp<1||armor<5||armor>30||range<0||speed<0)throw new ArgumentException("Invalid monster form");
+        monsterBaseMaxHp=hp;monsterBaseArmor=armor;MonsterProficiencyBonus=proficiency;MonsterAttackRange=range;MonsterBaseSpeed=speed;MonsterAttackIsMelee=melee;
+    }
+    public int MonsterSpeed => (int)Math.Min(int.MaxValue,Math.Max(0,(long)MonsterBaseSpeed+MonsterSpeedBonus-(MonsterSlowed?10:0)));
     public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}

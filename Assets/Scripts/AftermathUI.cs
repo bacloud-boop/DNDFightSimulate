@@ -9,15 +9,15 @@ public sealed partial class TrainingGame {
  void AdvanceAftermathTime(long rounds){ObserveDeaths();worldRounds+=rounds;playerCorpse.Age(worldRounds);monsterCorpse.Age(worldRounds);if(rounds>1)combat.ClearShortDurationEffects();RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();UpdateStableRecovery();ObserveDeaths();}
  bool CanPlayerAftermathCast=>combat.Aftermath&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&CanCastInCurrentForm;
  bool KnowsRevival(string name){if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);var metadata=spellMetadata.spells.FirstOrDefault(x=>x.name==name);return metadata!=null&&EligibleCasters(metadata).Any();}
- string RevivalError(string name,bool player,bool external){ObserveDeaths();if(!combat.Aftermath)return "请在战后阶段使用。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
+ string RevivalError(string name,bool player,bool external){ObserveDeaths();if(!combat.Aftermath)return "请在战后阶段使用。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)return "生前形态在原位置越界或与玩家占地重叠，禁止施法且不推进时间。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
  void DrawAftermath(){
   Surface(new Rect(350,110,540,745),paperTexture);if(Btn(new Rect(780,125,90,46),"关闭")){panel="";return;}
   GUILayout.BeginArea(new Rect(375,185,490,635));aftermathScroll=GUILayout.BeginScrollView(aftermathScroll);
   GUILayout.Label("战后施法与外部救援",heading);GUILayout.Label("外部救援仅针对玩家，不入场、视为合法且可接触目标，法术位不限。复活后手动继续，不重置HP和职业次数。",small);
   ObserveDeaths();GUILayout.Label("玩家："+combat.PlayerLifeLabel+(playerCorpse.Dead?" · 有效死亡 "+playerCorpse.Age(worldRounds)*6+"秒":"")+"\n木桩："+(combat.Hp==0?"死亡 · 有效死亡 "+monsterCorpse.Age(worldRounds)*6+"秒":"存活"),small);
   revivalWilling=GUILayout.Toggle(revivalWilling,"确认目标灵魂愿意复活",label);
-  foreach(string name in new[]{"Revivify","Raise Dead","Gentle Repose"}){
-   var spell=DirectSpell.Find(name);GUILayout.Label(spell.Summary,small);
+  foreach(string name in new[]{"Revivify","Raise Dead","Gentle Repose","True Resurrection"}){
+   var spell=DirectSpell.Find(name);GUILayout.Label(spell.Summary,small);if(name=="True Resurrection"&&monsterCorpse.Dead&&monsterCorpse.Type==13)GUILayout.Label("生前："+CreatureProfile.TypeNames[originalMonster.Type]+" · "+CreatureProfile.SizeNames[originalMonster.Size]+" · 原位置"+(CanRestoreOriginalMonster?"可容纳（绿色）":"不可容纳（红色），禁止施法"),small);
    foreach(bool external in new[]{false,true}){
     bool targetPlayer=external;string reason=RevivalError(name,targetPlayer,external);bool old=GUI.enabled;GUI.enabled=!rolling&&reason=="";
     if(GUILayout.Button((external?"外部施法者 → 玩家：":"玩家 → 木桩：")+spell.Chinese,button)){panel="";StartCoroutine(CastRevival(name,targetPlayer,external));}GUI.enabled=old;if(reason!="")GUILayout.Label(reason,small);
@@ -39,14 +39,17 @@ public sealed partial class TrainingGame {
   // Longer casting requires concentration; no interruptions exist in the paused aftermath scene.
   if(RevivalRules.Duration(name)>1)EndConcentration("开始长时间施法");
   AdvanceAftermathTime(RevivalRules.Duration(name));yield return null;
-  string error=RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);if(name=="Revivify"||name=="Raise Dead"){
-   // Eligibility was checked against completion time before advancing. Recheck current age without adding casting twice.
-   var corpse=player?playerCorpse:monsterCorpse;error=!corpse.Dead?"目标已不再死亡。":name=="Raise Dead"&&corpse.Type==13?"亡灵目标不合法。":corpse.Age(worldRounds)>(name=="Revivify"?10:144000)?"已超过死亡时限。":"";
-  }
+  string error=RevivalRules.CompletionError(name,player?playerCorpse:monsterCorpse,worldRounds);
+  if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)error="原位置无法容纳生前形态，复生失败。";
   if(!external&&(combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed))error="施法者在施法期间失能，施法失败。";
   if(error==""){
    if(name=="Gentle Repose")(player?playerCorpse:monsterCorpse).Preserve(worldRounds);
-   else {combat.Revive(player,1,name=="Raise Dead");if(name=="Raise Dead")combat.ClearPoison(player);stableRecoveryAt=-1;ObserveDeaths();}
+   else {
+    bool full=name=="True Resurrection";
+    if(full&&!player&&monsterCorpse.Type==13)RestoreOriginalMonster();
+    combat.Revive(player,full?(player?combat.PlayerMaxHp:combat.MaxHp):1,name=="Raise Dead");
+    if(full){combat.ClearPoison(player);if(mark.Active&&mark.Hex&&mark.Applies(player))EndConcentration("完全复生术解除诅咒");}
+    if(name=="Raise Dead")combat.ClearPoison(player);stableRecoveryAt=-1;ObserveDeaths();}
    history.Insert(0,(external?"外部救援：":"战后施法：")+chinese+"对"+(player?"玩家":"木桩")+"生效，耗时 "+RevivalRules.Duration(name)*6+" 秒。"+(name=="Raise Dead"?"复活者d20检定减4，每次完成长休减轻1。":""));dice=chinese+" · 已完成";
   }else {history.Insert(0,chinese+"失败："+error);dice=chinese+" · 失败";}rolling=false;
  }

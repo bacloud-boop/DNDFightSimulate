@@ -104,6 +104,8 @@ public sealed class BattleMap
         }
         if(player)Player=last;else Monster=last;return FeetBetween(start,last);
     }
+    public bool CanRestoreMonsterFootprint(int spaces)=>spaces>=1&&spaces<=4&&Inside(Monster,spaces)&&!Overlap(Monster,spaces,Player,PlayerSpaces);
+    public bool RestoreMonsterFootprint(int spaces){if(!CanRestoreMonsterFootprint(spaces))return false;MonsterSpaces=spaces;return true;}
     public bool CanResizePlayerAt(int spaces,Vector2Int anchor)
     {
         if(spaces<1||spaces>4||!Inside(anchor,spaces)||Overlap(anchor,spaces,Monster,MonsterSpaces))return false;

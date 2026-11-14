@@ -10,7 +10,10 @@ public sealed class CorpseClock {
  public void Clear(){Dead=false;age=0;last=DeathAt=0;preservedUntil=-1;}
 }
 public static class RevivalRules {
- public static bool Supported(string name)=>name=="Revivify"||name=="Raise Dead"||name=="Gentle Repose";
- public static long Duration(string name)=>name=="Raise Dead"?600:1;
- public static string Error(string name,CorpseClock corpse,long now){if(!corpse.Dead)return "目标必须已经死亡；倒地但未死亡不能作为复活目标。";if(name=="Gentle Repose")return "";if(name=="Raise Dead"&&corpse.Type==13)return "死者复活不能复活死亡时为亡灵的目标。";long limit=name=="Revivify"?10:144000;return corpse.ProjectedAge(now,Duration(name))>limit?"计入施法耗时后超过复活时限。":"";}
+ public static bool Supported(string name)=>name=="Revivify"||name=="Raise Dead"||name=="Gentle Repose"||name=="True Resurrection";
+ public static long Duration(string name)=>name=="Raise Dead"||name=="True Resurrection"?600:1;
+ public static long Limit(string name)=>name=="Revivify"?10:name=="True Resurrection"?200L*365*14400:144000;
+ static string Eligibility(string name,CorpseClock corpse){if(!Supported(name))return "该复活法术尚未接入。";if(!corpse.Dead)return "目标必须已经死亡；倒地但未死亡不能作为复活目标。";return name=="Raise Dead"&&corpse.Type==13?"死者复活不能复活死亡时为亡灵的目标。":"";}
+ public static string Error(string name,CorpseClock corpse,long now){string error=Eligibility(name,corpse);if(error!=""||name=="Gentle Repose")return error;return corpse.ProjectedAge(now,Duration(name))>Limit(name)?"计入施法耗时后超过复活时限。":"";}
+ public static string CompletionError(string name,CorpseClock corpse,long now){string error=Eligibility(name,corpse);if(error!=""||name=="Gentle Repose")return error;return corpse.Age(now)>Limit(name)?"已超过复活时限。":"";}
 }

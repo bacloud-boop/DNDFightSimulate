@@ -77,7 +77,7 @@ public sealed partial class TrainingGame
         DrawMap(new Rect(550,225,500,500),!rolling&&panel=="");
         GUI.Label(new Rect(390,735,820,35),deploymentMessage,centered);
         if(Btn(new Rect(590,787,420,48),"开始战斗 · 锁定位置",!rolling&&panel==""&&draggingToken<0)) {
-            if(map.Lock()){page="battle";history.Insert(0,"部署完成："+BattleMap.Names[map.Selected]+"，玩家占地左上格("+(map.Player.x+1)+","+(map.Player.y+1)+")，木桩占地左上格("+(map.Monster.x+1)+","+(map.Monster.y+1)+")，距离 "+map.DistanceFeet+" 尺。");}
+            if(map.Lock()){map.StartMonsterMovementTurn(combat.MonsterSpeed);page="battle";history.Insert(0,"部署完成："+BattleMap.Names[map.Selected]+"，玩家占地左上格("+(map.Player.x+1)+","+(map.Player.y+1)+")，木桩占地左上格("+(map.Monster.x+1)+","+(map.Monster.y+1)+")，距离 "+map.DistanceFeet+" 尺。");}
         }
         if(panel!="")DrawPanel();
     }
