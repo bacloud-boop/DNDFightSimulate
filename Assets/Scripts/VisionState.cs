@@ -50,9 +50,10 @@ public sealed class VisionState
         }return false;
     }
     // 0 clear, 1 dim/visual Perception disadvantage, 2 cannot see.
-    public int Quality(double ax,double ay,double bx,double by,int darkvision,long now,int blindsight=0){
-        Refresh(now);double distance=Distance(ax,ay,bx,by);if(blindsight>0&&distance<=blindsight)return 0;
+    public int Quality(double ax,double ay,double bx,double by,int darkvision,long now,int blindsight=0,bool truesight=false){
+        Refresh(now);double distance=Distance(ax,ay,bx,by);if(blindsight>0&&Math.Round(distance)<=blindsight)return 0;
         foreach(var fog in Zones)if(fog.Fog){double lo,hi;if(Interval(fog,ax,ay,bx,by,out lo,out hi))return 2;}
+        if(truesight)return 0;
         if(MagicalBlock(ax,ay,bx,by,now))return 2;
         int light=Light(bx,by,now);if(darkvision>0&&Math.Round(distance)<=darkvision)light=Math.Max(0,light-1);return light;
     }

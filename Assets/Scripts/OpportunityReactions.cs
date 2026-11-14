@@ -34,13 +34,14 @@ public sealed partial class TrainingGame
             reactionPending=false;
             if(reactionDecision==1 && combat.TryUseReaction(defenderPlayer)) {
                 history.Insert(0,(defenderPlayer?"玩家":"木桩")+"消耗反应，在目标离开 "+reach+" 尺范围前借机攻击一次。");
-                playerSightOverride=opportunityPlayerSight;monsterSightOverride=opportunityMonsterSight;
+                // At the reach boundary, the nearest occupied-cell distance equals the trigger reach (up to rounding).
+                opportunitySenseDistance=reach;playerSightOverride=opportunityPlayerSight;monsterSightOverride=opportunityMonsterSight;
                 if(defenderPlayer) {
                     if(IsWildShaped)yield return RollNaturalAttack(true);
                     else {var weapon=selectedWeapon;bool advantage=fighter.ConsumeAdvantage(classes[0]);
                     yield return Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"玩家借机攻击",true);}
                 } else yield return Counterattack(false);
-                playerSightOverride=monsterSightOverride=null;
+                opportunitySenseDistance=null;playerSightOverride=monsterSightOverride=null;
             }else history.Insert(0,(defenderPlayer?"玩家":"木桩")+"放弃借机攻击，保留反应。");
             rolling=true;
             if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerCanAct) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}

@@ -9,7 +9,7 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(name=="Gentle Repose"?"\n非专注，持续10天。":name=="Mirror Image"?"\n非专注，持续1分钟。":name=="Death Ward"?"\n非专注，持续8小时。":name=="Fog Cloud"?"\n专注，至多1小时。":name=="Expeditious Retreat"?"\n专注，至多10分钟。":name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Blur"||name=="Greater Invisibility"?"\n专注，至多1分钟。":name=="See Invisibility"||name=="True Seeing"?"\n非专注，持续1小时。":name=="Gentle Repose"?"\n非专注，持续10天。":name=="Mirror Image"?"\n非专注，持续1分钟。":name=="Death Ward"?"\n非专注，持续8小时。":name=="Fog Cloud"?"\n专注，至多1小时。":name=="Expeditious Retreat"?"\n专注，至多10分钟。":name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
     }
     public int EmanationRadius=>Name=="Arms of Hadar"?10:Name=="Thunderclap"||Name=="Word of Radiance"?5:0;
     public int BurstRadius=>Name=="Fireball"?20:Name=="Shatter"?10:Name=="Circle of Death"?60:0;
@@ -17,6 +17,10 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Blur","朦胧术","1动作 · 自身 · 声音。对你的攻击具有劣势；能用盲视或真实视觉感知你的攻击者不受影响。",2,0,4),
+        new DirectSpell("Greater Invisibility","高等隐形术","1动作 · 接触（5尺） · 声音、姿势。目标隐形；攻击、伤害或施法不会自动结束本法术。已知位置仍显示棋子。",4,5,4),
+        new DirectSpell("See Invisibility","识破隐形","1动作 · 自身 · 声音、姿势。能看见隐形生物和物件，仍受光照与云雾遮挡；以太位面观察保留说明，当前无位面实体。",2,0,4),
+        new DirectSpell("True Seeing","真知术","1动作 · 接触（5尺） · 声音、姿势。自愿目标获得120尺真实视觉，可识破隐形、魔法黑暗、朦胧与镜像；实体云雾仍遮挡。当前未建模的变形原貌、以太位面效果保留说明。",6,5,4),
         new DirectSpell("True Resurrection","完全复生术","战后或外部救援 · 1小时 · 接触 · 声音、姿势。死亡200年以内、非老死的自愿目标满HP复活，解除毒素、魔法疾病及诅咒；亡灵恢复完整生前形态，原位置必须容纳其占地。",9,5,0),
         new DirectSpell("Revivify","回生术","战后或外部救援 · 1动作 · 接触 · 声音、姿势。死亡不超过1分钟的自愿目标复活为1HP，不修复缺失器官，也不能复活老死者。计入施法6秒。",3,5,0),
         new DirectSpell("Raise Dead","死者复活","战后或外部救援 · 1小时 · 接触 · 声音、姿势。死亡不超过10天、死亡时非亡灵且尸体完整的自愿目标复活为1HP，并解除毒素。d20检定减4，每次完成长休减轻1。",5,5,0),

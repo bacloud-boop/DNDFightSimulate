@@ -10,24 +10,24 @@ public sealed partial class TrainingGame
     int Visibility(bool viewerPlayer,bool targetPlayer){
         if(viewerPlayer==targetPlayer)return 0;
         int? snapshot=viewerPlayer?playerSightOverride:monsterSightOverride;if(snapshot.HasValue)return snapshot.Value;
-        return VisibilityAt(viewerPlayer,targetPlayer?map.Player:map.Monster,targetPlayer?map.PlayerSpaces:map.MonsterSpaces);
+        var from=viewerPlayer?map.Player:map.Monster;var target=targetPlayer?map.Player:map.Monster;return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetPlayer?map.PlayerSpaces:map.MonsterSpaces,senses.Invisible(targetPlayer,worldRounds));
     }
     int VisibilityAt(bool viewerPlayer,Vector2Int target,int targetSize){
         var from=viewerPlayer?map.Player:map.Monster;
         return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetSize);
     }
-    int VisibilityBetween(bool viewerPlayer,double fromX,double fromY,int fromSize,double targetX,double targetY,int targetSize){
+    int VisibilityBetween(bool viewerPlayer,double fromX,double fromY,int fromSize,double targetX,double targetY,int targetSize,bool invisible=false){
         int range=viewerPlayer?PlayerDarkvision:vision.Range(false,worldRounds),best=2,blind=viewerPlayer?PlayerBlindsight:0;
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){
-            best=Mathf.Min(best,vision.Quality((fromX+fx)*5,(fromY+fy)*5,(targetX+tx)*5,(targetY+ty)*5,range,worldRounds,blind));if(best==0)return 0;
+            double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
         }return best;
     }
     bool OpportunitySight(bool movingPlayer,Vector2Int from,Vector2Int to,int reach,out int playerSight,out int monsterSight){
         var defender=movingPlayer?map.Monster:map.Player;int movingSize=movingPlayer?map.PlayerSpaces:map.MonsterSpaces,defenderSize=movingPlayer?map.MonsterSpaces:map.PlayerSpaces;
         double t=VisionState.ReachExit(from.x,from.y,to.x,to.y,movingSize,defender.x,defender.y,defenderSize,reach);
         double x=from.x+(to.x-from.x)*t,y=from.y+(to.y-from.y)*t;
-        playerSight=movingPlayer?VisibilityBetween(true,x,y,movingSize,defender.x,defender.y,defenderSize):VisibilityBetween(true,defender.x,defender.y,defenderSize,x,y,movingSize);
-        monsterSight=movingPlayer?VisibilityBetween(false,defender.x,defender.y,defenderSize,x,y,movingSize):VisibilityBetween(false,x,y,movingSize,defender.x,defender.y,defenderSize);
+        playerSight=movingPlayer?VisibilityBetween(true,x,y,movingSize,defender.x,defender.y,defenderSize,senses.Invisible(false,worldRounds)):VisibilityBetween(true,defender.x,defender.y,defenderSize,x,y,movingSize,senses.Invisible(false,worldRounds));
+        monsterSight=movingPlayer?VisibilityBetween(false,defender.x,defender.y,defenderSize,x,y,movingSize,senses.Invisible(true,worldRounds)):VisibilityBetween(false,x,y,movingSize,defender.x,defender.y,defenderSize,senses.Invisible(true,worldRounds));
         return t>=0&&(movingPlayer?monsterSight:playerSight)<2;
     }
     bool PlayerSeesMonster=>Visibility(true,false)<2;

@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     {
         if(!IsConcentrating)return;
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");
-        expeditiousRetreat=false;vision.EndFog();vision.EndDarkness();concentrationSpell="";concentrationExpiresWorld=-1;checkBuff.Clear();mark.Clear();combat.PlayerBaned=combat.MonsterBaned=false;combat.PlayerBlessed=combat.MonsterBlessed=false;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
+        senses.EndConcentration();expeditiousRetreat=false;vision.EndFog();vision.EndDarkness();concentrationSpell="";concentrationExpiresWorld=-1;checkBuff.Clear();mark.Clear();combat.PlayerBaned=combat.MonsterBaned=false;combat.PlayerBlessed=combat.MonsterBlessed=false;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
     }
     void RefreshConcentration()
     {
