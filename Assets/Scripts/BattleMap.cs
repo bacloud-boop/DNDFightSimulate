@@ -15,8 +15,11 @@ public sealed class BattleMap
     public const int MovementPerRound=30;
     public int PlayerSpeed {get;private set;}=MovementPerRound;
     public int MovementSpent {get;private set;}
+    public int DashesThisTurn {get;private set;}
+    public int MovementMaximum=>PlayerSpeed*(1+DashesThisTurn);
+    public void Dash(){DashesThisTurn++;MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
     public int MovementRemaining {get;private set;} = MovementPerRound;
-    public void SetPlayerSpeed(int speed){PlayerSpeed=System.Math.Max(0,speed);MovementRemaining=System.Math.Max(0,PlayerSpeed-MovementSpent);}
+    public void SetPlayerSpeed(int speed){PlayerSpeed=System.Math.Max(0,speed);MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
     public void SpendMonsterMovement(int feet){MonsterMovementRemaining=System.Math.Max(0,MonsterMovementRemaining-System.Math.Max(0,feet));}
     public int MonsterMovementRemaining {get;private set;} = 30;
     public void StartMonsterMovementTurn(int speed=30) {MonsterMovementRemaining=System.Math.Max(0,speed);}
@@ -68,9 +71,11 @@ public sealed class BattleMap
         if(tactical)TacticalMovementRemaining-=FeetBetween(Player,cell);else {int cost=FeetBetween(Player,cell);MovementSpent+=cost;MovementRemaining-=cost;}
         Player=cell;return true;
     }
+    public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&CanPlace(true,cell)&&FeetBetween(Player,cell)<=range;
+    public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;Player=cell;return true;}
     public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&cell!=Monster&&CanPlace(false,cell)&&FeetBetween(Monster,cell)<=MonsterMovementRemaining&&!SegmentCrossesBody(Monster,cell,MonsterSpaces,Player,PlayerSpaces);
     public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=FeetBetween(Monster,cell);Monster=cell;return true;}
-    public void RefreshMovement() {MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
+    public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)
     {

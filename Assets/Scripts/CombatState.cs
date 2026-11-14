@@ -1,6 +1,8 @@
 using System;
 public sealed class CombatState
 {
+    public Func<bool,bool> DeathWardGuard {get;set;}
+    bool PreventDeath(bool player)=>DeathWardGuard!=null&&DeathWardGuard(player);
     public bool PlayerBladeWard {get;set;}
     public int PlayerEnergyResistance {get;set;}=-1;
     public int MonsterEnergyResistance {get;set;}=-1;
@@ -118,8 +120,8 @@ public sealed class CombatState
     }
     public void AddSurgeAction() {if(!PlayerCanAct)return; BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
     public int HealPlayer(int amount) {if(PlayerDead||PlayerHealingBlocked)return 0;int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));if(PlayerHp>0){PlayerStable=false;DeathSuccesses=0;DeathFailures=0;}return PlayerHp-before;}
-    public void KillMonster(){Hp=0;MonsterTemporaryHp=0;}
-    public void KillPlayer(){PlayerTemporaryHp=0;PlayerHp=0;PlayerDead=true;PlayerStable=false;PlayerReactionAvailable=false;}
+    public void KillMonster(){if(Hp>0&&PreventDeath(false))return;Hp=0;MonsterTemporaryHp=0;}
+    public void KillPlayer(){if(!PlayerDead&&PreventDeath(true))return;PlayerTemporaryHp=0;PlayerHp=0;PlayerDead=true;PlayerStable=false;PlayerReactionAvailable=false;}
     public int HealMonster(int amount){if(Hp==0||MonsterHealingBlocked)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+Math.Max(0,amount));return Hp-before;}
     public bool StabilizePlayer(){if(PlayerHp!=0||PlayerDead)return false;PlayerStable=true;DeathSuccesses=0;DeathFailures=0;return true;}
     public void SetAidBonus(bool player,int bonus)
@@ -131,19 +133,20 @@ public sealed class CombatState
         if(bonus>old){int gained=player?HealPlayer(bonus-old):HealMonster(bonus-old);for(int i=old;i<bonus;i++)credits[i]=i-old<gained;}
         else {
             int remove=0;for(int i=bonus;i<old;i++){if(credits[i])remove++;credits[i]=false;}
-            if(player){int before=PlayerHp;PlayerHp=Math.Min(PlayerMaxHp,Math.Max(0,PlayerHp-remove));if(before>0&&PlayerHp==0){PlayerStable=false;PlayerReactionAvailable=false;}}
-            else Hp=Math.Min(MaxHp,Math.Max(0,Hp-remove));
+            if(player){int before=PlayerHp;PlayerHp=Math.Min(PlayerMaxHp,Math.Max(0,PlayerHp-remove));if(before>0&&PlayerHp==0){if(PreventDeath(true))PlayerHp=1;else {PlayerStable=false;PlayerReactionAvailable=false;}}}
+            else {int before=Hp;Hp=Math.Min(MaxHp,Math.Max(0,Hp-remove));if(before>0&&Hp==0&&PreventDeath(false))Hp=1;}
         }
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
     public void ResetBattle() {PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
-    public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;Hp = Math.Max(0, Hp - (damage-absorbed)); }
+    public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining); }
     public void ApplyPlayerDamage(int damage,bool critical=false) {
         if(damage<=0||PlayerDead)return;
         int originalDamage=damage,before=PlayerHp;
         int absorbed=Math.Min(damage,PlayerTemporaryHp);PlayerTemporaryHp-=absorbed;damage-=absorbed;
         if(before==0){PlayerStable=false;if(originalDamage>=PlayerMaxHp){PlayerDead=true;return;}DeathFailures+=critical?2:1;if(DeathFailures>=3)PlayerDead=true;return;}
         if(damage==0)return;
+        if(damage>=before&&PreventDeath(true)){PlayerHp=1;return;}
         long overflow=(long)damage-before;
         if(overflow>=PlayerMaxHp){PlayerHp=0;PlayerDead=true;return;}
         PlayerHp=Math.Max(0,PlayerHp-damage);

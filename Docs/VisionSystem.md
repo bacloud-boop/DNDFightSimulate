@@ -33,3 +33,8 @@
 来源：[官方2024法术说明](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Darkness)、[黑暗视觉与光照术语](https://www.dndbeyond.com/sources/dnd/br-2024/rules-glossary#Darkvision)、[官方野兽资料](https://www.dndbeyond.com/sources/dnd/br-2024/creature-stat-blocks)。只保存机械事实与项目说明。
 
 Unity 2022.3.62f3c1全项目静态编译通过；`Tools/Tests/VisionChecks.cs`覆盖基础光照、黑暗视觉距离、精确区域相交、魔法光覆盖、驱散顺序、盲视、到期、清除与借机范围交点。`Tools/check-spell-status.py`校验两份清单与运行时法术名称及状态一致。按用户要求不启动实机验证。
+
+
+## 云雾术
+
+云雾以独立的重度遮蔽区域记录，不属于黑暗或光源。云雾所在格显示灰色覆盖；穿过其区域的视线被阻断，黑暗视觉不能穿透，盲视可在有效范围内感知。昼明术不会驱散云雾，结束云雾专注不清除非专注光源。默认20尺半径，升环每环+20尺，持续1小时；强风消散待环境系统。

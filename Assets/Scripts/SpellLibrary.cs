@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;energyTargetWilling=false;visionWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;energyTargetWilling=false;visionWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -82,7 +82,8 @@ public sealed partial class TrainingGame
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
         if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
         else if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
-        else if(definition.Name=="Darkness"||definition.Name=="Daylight")DrawVisionSpellChoices(definition);
+        else if(definition.Name=="Misty Step"||definition.Name=="Expeditious Retreat")DrawMobilityChoices(definition);
+        else if(definition.Name=="Darkness"||definition.Name=="Daylight"||definition.Name=="Fog Cloud")DrawVisionSpellChoices(definition);
         else if(definition.Name=="True Strike"){GUILayout.Label("武器："+selectedWeapon.Name+" · "+selectedWeapon.DamageDice+" · "+selectedWeapon.RangeText,small);trueStrikeRadiant=GUILayout.Toggle(trueStrikeRadiant,"将武器基础伤害改为光耀（否则为"+selectedWeapon.DamageType+"）",label);}
         else if(definition.Name=="Thunderwave")GUILayout.Label("确认后选择15尺立方方向并预览范围。",small);
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
@@ -114,6 +115,8 @@ public sealed partial class TrainingGame
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Armor of Agathys"&&!directTargetPlayer)return "黯冰狱铠只能作用于自身。";
         if(SpellRequiresSight(spell.Name)&&(!directTargetPlayer||directBothTargets)&&!PlayerSeesMonster&&spell.Name!="Magic Missile"&&spell.Name!="Power Word Fortify")return "此法术需要看见所选目标。";
+        if(spell.Name=="Misty Step")return MistyStepError();
+        if(spell.Name=="Expeditious Retreat")return "";
         if(IsVisionSpell(spell.Name))return VisionSpellError(spell);
         if(spell.Name=="Power Word Fortify")return FortifyInvalidReason();
         if(spell.Name=="Blade Ward"&&!directTargetPlayer)return "剑刃防护只能作用于自身。";
@@ -140,6 +143,8 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        if(spell.Name=="Death Ward"){ApplyDeathWard(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Misty Step"||spell.Name=="Expeditious Retreat"){ApplyMobilitySpell(spell);if(!embedded)rolling=false;yield break;}
         if(IsVisionSpell(spell.Name)){ApplyVisionSpell(spell,targetPlayer,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="True Strike"){yield return Roll(selectedWeapon,modifier,classes.ProficiencyBonus,"施法属性修正",fighter.ConsumeAdvantage(classes[0]),"克敌机先",trueStrike:true,radiantWeapon:trueStrikeRadiant);if(!embedded)rolling=false;yield break;}
         if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
@@ -156,7 +161,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Protection from Energy"){EndConcentration("开始新的专注法术");concentrationSpell="防护能量";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+600;if(targetPlayer)combat.PlayerEnergyResistance=EnergyTypes[energyChoice];else combat.MonsterEnergyResistance=EnergyTypes[energyChoice];history.Insert(0,target+"获得"+DamageTypes.Names[EnergyTypes[energyChoice]]+"抗性，专注至多1小时。");if(!embedded)rolling=false;yield break;}
         if(IsTimedBuff(spell.Name)){ApplyTimedBuff(spell,targetPlayer,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Scorching Ray"){yield return ResolveScorchingRays(caster,slotLevel);if(!embedded)rolling=false;yield break;}
-        if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.KillMonster();history.Insert(0,"律令死亡："+target+"生命不超过100，直接死亡。");CheckBattleOutcome();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Power Word Kill"&&(targetPlayer?combat.PlayerHp:combat.Hp)<=100){if(targetPlayer)combat.KillPlayer();else combat.KillMonster();history.Insert(0,"律令死亡："+target+((targetPlayer?combat.PlayerDead:combat.Hp==0)?"生命不超过100，直接死亡。":"防死结界抵消本次直接死亡，生命不变。"));CheckBattleOutcome();if(!embedded)rolling=false;yield break;}
         if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");if(!embedded)rolling=false;yield break;}
         if(spell.Attack){

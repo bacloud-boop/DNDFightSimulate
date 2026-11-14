@@ -40,27 +40,31 @@ public sealed partial class TrainingGame
     bool VisionInputValid(bool player,out int range)=>int.TryParse(player?playerVisionInput:monsterVisionInput,out range)&&range>=0;
     void DrawVisionMap(Rect board){
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){
+            if(vision.FogAt(x*5,y*5,worldRounds))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.55f,.62f,.65f,.62f));
             int light=vision.Light(x*5,y*5,worldRounds);if(light>0)Fill(CellRect(board,new Vector2Int(x,y)),new Color(.025f,.025f,.07f,light==2?.63f:.26f));
         }
-        if(panel=="spells"&&(selectedSpellName=="Darkness"||selectedSpellName=="Daylight")){
-            Vector2Int cell;if(VisionPoint(out cell)){float radius=selectedSpellName=="Darkness"?15:60;for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++)if(VisionState.Distance(cell.x*5,cell.y*5,x*5,y*5)<=radius)Fill(CellRect(board,new Vector2Int(x,y)),new Color(.6f,.4f,.85f,.25f));}
+        if(panel=="spells"&&(selectedSpellName=="Darkness"||selectedSpellName=="Daylight"||selectedSpellName=="Fog Cloud")){
+            Vector2Int cell;if(VisionPoint(out cell)){float radius=selectedSpellName=="Fog Cloud"?20*directSlotLevel:selectedSpellName=="Darkness"?15:60;for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++)if(VisionState.Distance(cell.x*5,cell.y*5,x*5,y*5)<=radius)Fill(CellRect(board,new Vector2Int(x,y)),new Color(.6f,.4f,.85f,.25f));}
         }
     }
     bool VisionPoint(out Vector2Int cell){int x=0,y=0;bool valid=int.TryParse(visionColumn,out x)&&int.TryParse(visionRow,out y);cell=new Vector2Int(x-1,y-1);return valid&&map.Inside(cell,1);}
-    static bool IsVisionSpell(string name)=>name=="Darkvision"||name=="Darkness"||name=="Daylight";
+    static bool IsVisionSpell(string name)=>name=="Darkvision"||name=="Darkness"||name=="Daylight"||name=="Fog Cloud";
     void DrawVisionSpellChoices(DirectSpell spell){
         if(spell.Name=="Darkvision"){if(!directTargetPlayer)visionWilling=GUILayout.Toggle(visionWilling,"确认木桩自愿接受黑暗视觉",label);return;}
-        GUILayout.Label("固定地面源点（列、行，1～"+map.Size+"）；紫色区域预览。物件承载及遮盖暂缓。",small);
+        GUILayout.Label("固定地面源点（列、行，1～"+map.Size+"）；紫色区域预览。"+(spell.Name=="Fog Cloud"?"":"物件承载及遮盖暂缓。"),small);
         visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);
         Vector2Int cell;GUILayout.Label(VisionPoint(out cell)?"源点距离 "+map.DistanceToCell(true,cell)+" 尺":"请输入地图内的格子",small);
     }
     string VisionSpellError(DirectSpell spell){
         if(spell.Name=="Darkvision"&&!directTargetPlayer&&combat.Hp==0)return "死亡目标不能接受此法术。";
         if(spell.Name=="Darkvision")return !directTargetPlayer&&!visionWilling?"目标须自愿，请先确认。":!directTargetPlayer&&map.DistanceFeet>5?"目标超出接触距离。":"";
-        Vector2Int cell;return !VisionPoint(out cell)?"源点须位于地图内。":map.DistanceToCell(true,cell)>60?"源点超过60尺。":"";
+        Vector2Int cell;return !VisionPoint(out cell)?"源点须位于地图内。":map.DistanceToCell(true,cell)>(spell.Name=="Fog Cloud"?120:60)?"源点超出法术射程。":"";
     }
     void ApplyVisionSpell(DirectSpell spell,bool player,int slot){
-        if(spell.Name=="Darkvision"){vision.GrantDarkvision(player,worldRounds);history.Insert(0,(player?"玩家":"木桩")+"获得150尺黑暗视觉，持续8小时，不降低已有更远的视觉距离。");}
+        if(spell.Name=="Fog Cloud"){
+            Vector2Int cell;if(!VisionPoint(out cell))return;EndConcentration("开始新的专注法术");vision.AddFog(cell.x*5,cell.y*5,slot,worldRounds);concentrationSpell=spell.Chinese;concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+600;history.Insert(0,"云雾术："+(20*slot)+"尺半径重度遮蔽，专注1小时；普通视觉与黑暗视觉无法穿透，强风环境消散待环境系统接入。");
+        }
+        else if(spell.Name=="Darkvision"){vision.GrantDarkvision(player,worldRounds);history.Insert(0,(player?"玩家":"木桩")+"获得150尺黑暗视觉，持续8小时，不降低已有更远的视觉距离。");}
         else {Vector2Int cell;if(!VisionPoint(out cell))return;bool dark=spell.Name=="Darkness";
             if(dark)EndConcentration("开始新的专注法术");bool hadDarkness=vision.HasDarkness(worldRounds);
             vision.AddZone(dark,cell.x*5,cell.y*5,slot,worldRounds);

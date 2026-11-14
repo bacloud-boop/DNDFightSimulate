@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 public sealed class VisionZone
 {
-    public double X,Y;public int Level;public bool Dark;public long End;
-    public double Radius=>Dark?15:120;
+    public double X,Y;public int Level;public bool Dark,Fog;public int FogRadius;public long End;
+    public double Radius=>Fog?FogRadius:Dark?15:120;
 }
 public sealed class VisionState
 {
@@ -17,20 +17,23 @@ public sealed class VisionState
     static bool Contains(VisionZone z,double x,double y,double radius)=>Distance(z.X,z.Y,x,y)<=radius+.000001;
     public static double Distance(double ax,double ay,double bx,double by)=>Math.Sqrt((ax-bx)*(ax-bx)+(ay-by)*(ay-by));
     public void Refresh(long now){Zones.RemoveAll(z=>now>=z.End);}
+    public void AddFog(double x,double y,int slot,long now){Refresh(now);Zones.Add(new VisionZone{X=x,Y=y,Fog=true,FogRadius=20*slot,Level=slot,End=now+600});}
+    public void EndFog(){Zones.RemoveAll(z=>z.Fog);}
+    public bool FogAt(double x,double y,long now){Refresh(now);return Zones.Exists(z=>z.Fog&&Contains(z,x,y,z.Radius));}
     public void EndDarkness(){Zones.RemoveAll(z=>z.Dark);}
     public bool HasDarkness(long now){Refresh(now);return Zones.Exists(z=>z.Dark);}
     public void AddZone(bool dark,double x,double y,int slot,long now){
         Refresh(now);var added=new VisionZone{Dark=dark,X=x,Y=y,Level=slot,End=now+(dark?100:600)};
         // The outer dim-light region is part of Daylight's area.
-        Zones.RemoveAll(z=>z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3));
-        if(dark&&slot<=3&&Zones.Exists(z=>!z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
+        Zones.RemoveAll(z=>!z.Fog&&z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3));
+        if(dark&&slot<=3&&Zones.Exists(z=>!z.Fog&&!z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
         // Existing Darkness also dispels a newly overlapping light spell of level <=2.
         if(!dark&&slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
         Zones.Add(added);
     }
     public int Light(double x,double y,long now){
         Refresh(now);int magical=2;bool dark=false;
-        foreach(var z in Zones){if(z.Dark){dark|=Contains(z,x,y,15);}else if(Contains(z,x,y,120))magical=Math.Min(magical,Contains(z,x,y,60)?0:1);}
+        foreach(var z in Zones){if(z.Fog)continue;if(z.Dark){dark|=Contains(z,x,y,15);}else if(Contains(z,x,y,120))magical=Math.Min(magical,Contains(z,x,y,60)?0:1);}
         return dark?magical:Math.Min(BaseLight,magical);
     }
     // Exact interval of a line segment inside a circular area.
@@ -42,13 +45,14 @@ public sealed class VisionState
     }
     bool MagicalBlock(double ax,double ay,double bx,double by,long now){
         foreach(var dark in Zones)if(dark.Dark){double lo,hi;if(!Interval(dark,ax,ay,bx,by,out lo,out hi))continue;
-            var lights=new List<double[]>();foreach(var light in Zones)if(!light.Dark){double a,b;if(Interval(light,ax,ay,bx,by,out a,out b))lights.Add(new[]{a,b});}
+            var lights=new List<double[]>();foreach(var light in Zones)if(!light.Fog&&!light.Dark){double a,b;if(Interval(light,ax,ay,bx,by,out a,out b))lights.Add(new[]{a,b});}
             lights.Sort((a,b)=>a[0].CompareTo(b[0]));double covered=lo;foreach(var light in lights){if(light[1]<covered)continue;if(light[0]>covered+.000001)break;covered=Math.Max(covered,light[1]);}if(covered<hi-.000001||hi==lo&&Light(ax+(bx-ax)*lo,ay+(by-ay)*lo,now)==2)return true;
         }return false;
     }
     // 0 clear, 1 dim/visual Perception disadvantage, 2 cannot see.
     public int Quality(double ax,double ay,double bx,double by,int darkvision,long now,int blindsight=0){
         Refresh(now);double distance=Distance(ax,ay,bx,by);if(blindsight>0&&distance<=blindsight)return 0;
+        foreach(var fog in Zones)if(fog.Fog){double lo,hi;if(Interval(fog,ax,ay,bx,by,out lo,out hi))return 2;}
         if(MagicalBlock(ax,ay,bx,by,now))return 2;
         int light=Light(bx,by,now);if(darkvision>0&&Math.Round(distance)<=darkvision)light=Math.Max(0,light-1);return light;
     }

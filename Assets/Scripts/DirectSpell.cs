@@ -9,11 +9,15 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Death Ward"?"\n非专注，持续8小时。":name=="Fog Cloud"?"\n专注，至多1小时。":name=="Expeditious Retreat"?"\n专注，至多10分钟。":name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
     }
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Death Ward","防死结界","1动作 · 接触（5尺） · 声音、姿势。首次将降至0生命时改为1生命（包括伤害或临时生命上限效果结束）；或抵消一次不造成伤害的直接死亡效果，然后法术结束。不会阻止已经倒地后的死亡豁免失败。",4,5,4),
+        new DirectSpell("Misty Step","迷踪步","附赠动作 · 自身 · 声音。传送至30尺内可见且未被占据的地面位置，不消耗移动力、不引发借机攻击；仍须容纳完整占地。",2,0,4,bonus:true),
+        new DirectSpell("Expeditious Retreat","脚底抹油","附赠动作 · 自身 · 声音、姿势。立即疾走一次，持续期间可使用附赠动作疾走。疾走增加相当于当前速度的本回合移动距离。",1,0,4,bonus:true),
+        new DirectSpell("Fog Cloud","云雾术","1动作 · 120尺 · 声音、姿势。指定点产生20尺半径重度遮蔽云雾，每升1环半径+20尺。普通视觉与黑暗视觉不能穿透；强风环境消散暂缓。",1,120,4),
         new DirectSpell("Darkvision","黑暗视觉","1动作 · 接触（5尺） · 声音、姿势。自愿生物获得150尺黑暗视觉，持续8小时；不能看穿黑暗术。",2,5,4),
         new DirectSpell("Darkness","黑暗术","1动作 · 60尺 · 声音。固定点产生15尺半径魔法黑暗，普通黑暗视觉无法穿透，非魔法光不能照亮；与二环以下光照法术重叠时驱散后者。物件承载与遮盖的环境用法暂缓。",2,60,4),
         new DirectSpell("Daylight","昼明术","1动作 · 60尺 · 声音、姿势。固定点产生60尺半径明亮阳光，外围再60尺微光，持续1小时；驱散重叠的三环以下黑暗法术。物件承载与遮盖暂缓。",3,60,4),

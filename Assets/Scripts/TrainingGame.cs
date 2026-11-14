@@ -41,6 +41,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
+        InitializeDeathWard();
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat("MusicVolume", .35f));
