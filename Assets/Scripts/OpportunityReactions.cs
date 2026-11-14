@@ -8,6 +8,7 @@ public sealed partial class TrainingGame
     int reactionRange=5;
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
+        if(combat.Aftermath){if(!rolling&&panel==""&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&map.MovePlayer(target,tactical))history.Insert(0,"战后移动：接近尸体；本段不触发借机攻击。");return;}
         if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
         StartCoroutine(ResolveMovement(true,target,tactical));
     }

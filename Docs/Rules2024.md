@@ -157,3 +157,10 @@
 法术的点燃、物件破坏及声响警戒继续按已确认环境系统暂缓规则保留说明。资料来源：[2024官方范围法术说明](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Fireball)、[授权2024哈达之臂条目](https://roll20.net/compendium/dnd5e/Spells:Arms%20of%20Hadar?expansion=32231&iframe=true)。
 
 当前59项战斗效果、6项仅学习、326项待实现。全项目Unity 2022.3.62f3c1静态编译、扩展SpellStatusChecks（反应禁用/恢复/重置、范围尺寸、升环骰数、死亡法阵d8及冰刃爆炸成长）、法术清单一致性检查通过，未启动实机验证。
+
+
+## 战后复活与外部救援
+
+已加入[战后阶段与复活](AftermathAndRevival.md)。回生术、死者复活、遗体防腐接入死亡时限、世界时间、尸体保护、亡灵限制、复活减值和长休恢复。外部救援按已确认简化方案运行；复活后手动继续新回合，保留HP、职业资源与仍有效的法术，不自动重置战斗。
+
+当前62项法术效果已接入、6项仅学习、323项待实现。静态编译、RevivalChecks与法术清单一致性检查通过，未实机验证。

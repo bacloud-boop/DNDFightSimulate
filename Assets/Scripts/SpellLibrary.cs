@@ -67,6 +67,7 @@ public sealed partial class TrainingGame
     }
     void DrawDirectSpellPanel()
     {
+        if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
         Surface(new Rect(350,110,480,745),paperTexture);
@@ -78,7 +79,7 @@ public sealed partial class TrainingGame
         if(Array.IndexOf(casters,directCastingClass)<0&&casters.Length>0)directCastingClass=casters[0];
         foreach(int caster in casters)if(GUILayout.Button((caster==directCastingClass?"✓ ":"")+PlayerClasses.Names[caster]+" · "+PlayerAttributes.Names[SpellAbilityIndex(caster)],button))directCastingClass=caster;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
-        GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
+        GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+combat.PlayerRevivalPenalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
         if(IsPointBurst(definition))DrawPointBurstChoices(definition);
         else if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
@@ -112,6 +113,7 @@ public sealed partial class TrainingGame
         if(!eligible)return "当前职业不可施放。";
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
+        if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
@@ -143,6 +145,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded=false)
     {
+        if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
@@ -173,6 +176,7 @@ public sealed partial class TrainingGame
         if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");if(!embedded)rolling=false;yield break;}
         if(spell.Attack){
+            bonus+=combat.PlayerRevivalPenalty;
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));

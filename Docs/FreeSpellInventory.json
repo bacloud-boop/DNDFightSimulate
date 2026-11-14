@@ -3268,7 +3268,7 @@
       "duration": "10日",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Gentle_Repose",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Giant Insect",
@@ -5739,7 +5739,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Raise_Dead",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Rary’s Telepathic Bond",
@@ -5964,7 +5964,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Revivify",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Rope Trick",

@@ -67,8 +67,8 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();
-        if(combat.BattleStarted&&!combat.BattleFinished)knownFormReplacement=false;
+        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();
+        if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath)knownFormReplacement=false;
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
     void OnGUI()
@@ -142,7 +142,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))ResetCombat();
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
-        DrawMap(new Rect(600,110,400,400),combat.PlayerCanAct&&!spellTargeting&&!rolling&&panel=="");DrawWildShapePreview(new Rect(600,110,400,400));DrawEmanationPreview(new Rect(600,110,400,400));DrawTeleportPreview(new Rect(600,110,400,400));DrawPointBurstPreview(new Rect(600,110,400,400));DrawIceKnifePreview(new Rect(600,110,400,400));DrawDashActions();
+        DrawMap(new Rect(600,110,400,400),(combat.PlayerCanAct||(combat.Aftermath&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed))&&!spellTargeting&&!rolling&&panel=="");DrawWildShapePreview(new Rect(600,110,400,400));DrawEmanationPreview(new Rect(600,110,400,400));DrawTeleportPreview(new Rect(600,110,400,400));DrawPointBurstPreview(new Rect(600,110,400,400));DrawIceKnifePreview(new Rect(600,110,400,400));DrawDashActions();
         GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / "+map.MovementMaximum+" 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,205,205),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺\n基础："+new[]{"明亮","微光","黑暗"}[vision.BaseLight]+"\n你"+(PlayerSeesMonster?"能":"不能")+"看见木桩\n木桩"+(MonsterSeesPlayer?"能":"不能")+"看见你",new GUIStyle(lightTitle){fontSize=16});
         if(rolling && !reactionPending && !monsterMoving) {
@@ -156,7 +156,8 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1015,375,205,48),"普通移动 · "+map.MovementRemaining+"尺",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))tacticalMovement=false;
         if(Btn(new Rect(1015,430,205,48),"战术转进 · "+map.TacticalMovementRemaining+"尺",!spellTargeting&&!rolling&&panel==""&&draggingToken<0&&classes[0]>=5))tacticalMovement=true;
         GUI.Label(new Rect(1015,485,205,36),tacticalMovement?"当前：战术转进（免借机）":"当前：普通移动",new GUIStyle(lightTitle){fontSize=15});
-        bool canAct=!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
+        if(combat.Aftermath&&Btn(new Rect(380,459,205,48),"战后施法 / 外部救援",!rolling&&panel==""&&draggingToken<0))panel="aftermath";
+        bool canAct=!combat.Aftermath&&!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
         bool attackInRange=IsWildShaped?map.DistanceFeet<=5:(fighter.AttacksRemaining>0?actionWeapon:selectedWeapon).CanReach(map.DistanceFeet);
         bool bonusInRange=selectedWeapon.CanReach(map.DistanceFeet);
         if(Btn(new Rect(395,555,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / "+fighter.WindMaximum(classes[0]):"回气 · 战士 1 级解锁",canAct&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();
@@ -164,7 +165,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(945,555,260,48),IsWildShaped?"武器已融入形态":selectedWeapon.HasLight?(bonusInRange?(CanLightBonusAttack?"轻型攻击（附赠动作）":"需先用另一轻型武器攻击"):"无法进行攻击 · 超出射程"):"轻型攻击 · 需轻型武器",canAct&&bonusInRange&&CanLightBonusAttack&&combat.BonusActionAvailable))BonusAttack();
         string attackLabel=fighter.AttacksRemaining>0?"继续攻击 · 剩余 "+fighter.AttacksRemaining+" 次":combat.ActionAvailable?"攻击（动作） · "+(IsWildShaped?BeastAttack.Find(wildForm.name).AttackName:selectedWeapon.Name):"动作已使用";
         if(Btn(new Rect(430,615,360,57),attackInRange?attackLabel:"无法进行攻击 · 超出射程",canAct&&attackInRange&&(combat.ActionAvailable||fighter.AttacksRemaining>0)))Attack();
-        if(Btn(new Rect(810,615,360,57),combat.BattleFinished?"战斗结束 · 请重置":combat.PlayerHp==0?"跳过倒地回合 / 继续死亡豁免":"结束回合 / 跳过剩余操作",canAct&&!combat.BattleFinished))EndCombatRound();
+        if(Btn(new Rect(810,615,360,57),combat.Aftermath?"战后阶段 · 左侧菜单":combat.BattleFinished?"战斗结束 · 请重置":combat.PlayerHp==0?"跳过倒地回合 / 继续死亡豁免":"结束回合 / 跳过剩余操作",canAct&&!combat.BattleFinished))EndCombatRound();
         GUI.Label(new Rect(415,674,790,25),"动作 "+combat.ActionsRemaining+" / "+combat.ActionsThisRound+" · 附赠动作 "+(combat.BonusActionAvailable?1:0)+" / 1"+(fighter.NextAttackAdvantage?" · 下次攻击具有优势":"")+(combat.BattleStarted?" · 配置已锁定":" · 可配置"),new GUIStyle(centered){fontSize=16,normal={textColor=new Color(.98f,.86f,.63f)}});
         Surface(new Rect(365,705,870,150),paperTexture);
         GUI.Label(new Rect(390,713,810,30),"战斗卷轴",heading);

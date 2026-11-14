@@ -97,6 +97,7 @@ public sealed partial class TrainingGame
             int beast=wildForm.skillModifiers[skill],baseModifier=AcidSplash.Modifier(wildForm.abilities[ability]);beastProficient=beast>baseModifier;
             if(beastProficient){int beastTier=Math.Min(2,Math.Max(1,(beast-baseModifier)/2));modifier=Math.Max(modifier,Math.Max(beast,AcidSplash.Modifier(score)+classes.ProficiencyBonus*beastTier));}
         }
+        modifier+=combat.PlayerRevivalPenalty;
         bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
         bool disadvantage=combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;

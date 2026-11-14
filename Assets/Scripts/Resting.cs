@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
     long worldRounds,lastLongRestStart;
     string restMessage="";
     Vector2 restScroll;
-    bool OutsideCombat => (!combat.BattleStarted||combat.BattleFinished)&&!combat.PlayerDead&&!rolling&&!spellTargeting&&!reactionPending&&draggingToken<0;
+    bool OutsideCombat => (!combat.BattleStarted||combat.BattleFinished||combat.Aftermath)&&!combat.PlayerDead&&!combat.NeedsDeathSave&&!rolling&&!spellTargeting&&!reactionPending&&draggingToken<0;
     void ResetRestResources(){System.Array.Clear(hitDiceSpent,0,hitDiceSpent.Length);shortRestReady=false;}
     void DrawRestPanel()
     {
@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button("完成短休",button)){worldRounds+=600;RefreshAidEffects();combat.ClearShortDurationEffects();UpdateStableRecovery();fighter.ShortRest();druid.ShortRest();RefreshWildShape();shortRestReady=true;restMessage="短休完成：回气恢复 1 次，动作如潮恢复全部，荒野形态恢复1次；可逐颗消耗生命骰治疗。";}
         bool allowed=!hasLongRest||worldRounds-lastLongRestStart>=14400;
         GUI.enabled=OutsideCombat&&allowed&&combat.PlayerHp>0;
-        if(GUILayout.Button("完成长休",button)){lastLongRestStart=worldRounds;hasLongRest=true;worldRounds+=4800;RefreshAidEffects();combat.ClearShortDurationEffects();fighter.LongRest();druid.LongRest();EndWildShape("长休");combat.ClearPlayerTemporaryHp();knownFormReplacement=true;combat.HealPlayer(int.MaxValue);ResetRestResources();restMessage="长休完成：生命、生命骰及已接入的长休资源恢复。";}
+        if(GUILayout.Button("完成长休",button)){lastLongRestStart=worldRounds;hasLongRest=true;worldRounds+=4800;RefreshAidEffects();combat.ClearShortDurationEffects();combat.CompleteLongRest(true);fighter.LongRest();druid.LongRest();EndWildShape("长休");combat.ClearPlayerTemporaryHp();knownFormReplacement=true;combat.HealPlayer(int.MaxValue);ResetRestResources();restMessage="长休完成：生命、生命骰及已接入的长休资源恢复。";}
         GUI.enabled=previous;
         if(!allowed)GUILayout.Label("距下一次长休尚需 "+((14400-(worldRounds-lastLongRestStart)+599)/600)+" 小时（可通过短休推进时间）。",label);
         GUILayout.Label(restMessage,label);
