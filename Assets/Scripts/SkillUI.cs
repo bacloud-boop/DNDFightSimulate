@@ -55,6 +55,7 @@ public sealed partial class TrainingGame
         checkCircumstance=GUILayout.SelectionGrid(checkCircumstance,new[]{"正常","情境优势","情境劣势"},3,new GUIStyle(button){fontSize=15,fixedHeight=34});
         bool canTrack=checkKind==1&&(checkSkill==12||checkSkill==13)&&mark.Active&&!mark.Hex;
         GUI.enabled=canTrack;checkTracking=GUILayout.Toggle(canTrack&&checkTracking,canTrack?"此次检定用于寻找标记目标（"+(mark.TargetPlayer?"玩家自身":"木桩")+"）":"当前没有适用的猎人印记寻找检定",label);GUI.enabled=previous;
+        if(checkKind==1&&checkSkill==12)checkVisual=GUILayout.Toggle(checkVisual,"此察觉检定依赖视觉，观察木桩",label);
         GUILayout.Label("本次DC（整数）",label);checkDc=IntegerField(checkDc,true);
         int dc;bool validDc=int.TryParse(checkDc,out dc);
         bool canRoll=SkillProfileReady&&page=="battle"&&map.Locked&&!rolling&&!spellTargeting&&!reactionPending&&!shieldPending&&draggingToken<0&&combat.ActionAvailable&&validDc&&(!tool||checkToolAvailable);
@@ -84,7 +85,9 @@ public sealed partial class TrainingGame
     IEnumerator RollSkillCheck(int dc)
     {
         if(!SkillProfileReady||!combat.TryUseAction())yield break;
-        rolling=true;int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
+        rolling=true;
+        if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
+        int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];
         int tier=skill>=0?playerSkillTiers[skill]:0;bool toolProf=tool>=0&&playerSkillTiers[18+tool]>0;
         int effectiveTier=Math.Max(tier,toolProf?1:0),score=EffectivePlayerAbility(ability);
@@ -95,7 +98,7 @@ public sealed partial class TrainingGame
             if(beastProficient){int beastTier=Math.Min(2,Math.Max(1,(beast-baseModifier)/2));modifier=Math.Max(modifier,Math.Max(beast,AcidSplash.Modifier(score)+classes.ProficiencyBonus*beastTier));}
         }
         bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
-        bool disadvantage=checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
+        bool disadvantage=(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
         int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];

@@ -144,7 +144,7 @@ public sealed partial class TrainingGame
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
         DrawMap(new Rect(600,110,400,400),combat.PlayerCanAct&&!spellTargeting&&!rolling&&panel=="");DrawWildShapePreview(new Rect(600,110,400,400));DrawEmanationPreview(new Rect(600,110,400,400));
         GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / "+map.PlayerSpeed+" 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
-        GUI.Label(new Rect(380,120,205,130),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺",lightTitle);
+        GUI.Label(new Rect(380,120,205,205),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺\n基础："+new[]{"明亮","微光","黑暗"}[vision.BaseLight]+"\n你"+(PlayerSeesMonster?"能":"不能")+"看见木桩\n木桩"+(MonsterSeesPlayer?"能":"不能")+"看见你",new GUIStyle(lightTitle){fontSize=16});
         if(rolling && !reactionPending && !monsterMoving) {
             Fill(new Rect(365,105,870,405),new Color(.1f,.045f,.02f,.8f));
             if(!simpleDice)GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);

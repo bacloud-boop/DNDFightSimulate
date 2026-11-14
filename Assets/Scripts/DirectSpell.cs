@@ -9,11 +9,14 @@ public sealed class DirectSpell
     public DirectSpell(string name,string chinese,string effect,int level,int range,int sides,bool bonus=false,bool attack=false,bool healing=false,bool stable=false,int save=-1,string damageType="",int baseDice=0,int upcastDice=0,bool halfSave=false,bool control=false,bool melee=false)
     {
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
-        Summary=chinese+"｜"+name+"\n"+effect+(name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
+        Summary=chinese+"｜"+name+"\n"+effect+(name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
     }
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Darkvision","黑暗视觉","1动作 · 接触（5尺） · 声音、姿势。自愿生物获得150尺黑暗视觉，持续8小时；不能看穿黑暗术。",2,5,4),
+        new DirectSpell("Darkness","黑暗术","1动作 · 60尺 · 声音。固定点产生15尺半径魔法黑暗，普通黑暗视觉无法穿透，非魔法光不能照亮；与二环以下光照法术重叠时驱散后者。物件承载与遮盖的环境用法暂缓。",2,60,4),
+        new DirectSpell("Daylight","昼明术","1动作 · 60尺 · 声音、姿势。固定点产生60尺半径明亮阳光，外围再60尺微光，持续1小时；驱散重叠的三环以下黑暗法术。物件承载与遮盖暂缓。",3,60,4),
         new DirectSpell("True Strike","克敌机先","1施法动作 · 自身 · 姿势。用当前武器攻击一次，命中与伤害改用施法属性；可选武器原伤害或光耀。总等级5/11/17额外1d6/2d6/3d6光耀，暴击伤害骰翻倍，不触发额外攻击。",0,0,6),
         new DirectSpell("Guidance","指引术","1动作 · 接触（5尺） · 声音、姿势。自愿生物所选一项技能的每次属性检定加1d4，使用后不消失。",0,5,4),
         new DirectSpell("Enhance Ability","强化属性","1动作 · 接触（5尺） · 声音、姿势。目标所选力量/敏捷/智力/感知/魅力属性的检定具有优势；每升一环增加一目标，各目标可选不同属性。",2,5,4),

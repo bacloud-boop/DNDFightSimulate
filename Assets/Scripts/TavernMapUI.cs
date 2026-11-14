@@ -31,6 +31,7 @@ public sealed partial class TrainingGame
             Fill(new Rect(board.x+i*size,board.y,1,board.height),new Color(.32f,.21f,.09f,.45f));
             Fill(new Rect(board.x,board.y+i*size,board.width,1),new Color(.32f,.21f,.09f,.45f));
         }
+        DrawVisionMap(board);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
         if(draggingToken!=0)Token(playerRect,true);

@@ -32,7 +32,7 @@ public static class SkillCreationRules
     public static int[] Preview(PlayerClasses c,int background,IDictionary<string,int> choices,out List<SkillGrant> replacements,out string error)
     {
         var tiers=new int[55];error=background<0?"请选择背景。":"";var seenGroups=new HashSet<string>();
-        foreach(var grant in BaseGrants(c,background)){
+        foreach(var grant in BaseGrants(c,background).OrderBy(g=>g.Options.Length==1?0:1)){
             int value=Choice(grant,choices);
             if(Array.IndexOf(grant.Options,value)<0){if(error=="")error="请完成所有职业、背景与专长熟练选择。";continue;}
             if(!seenGroups.Add(grant.Group+":"+value)){error="同一来源的多项选择不能重复。";continue;}

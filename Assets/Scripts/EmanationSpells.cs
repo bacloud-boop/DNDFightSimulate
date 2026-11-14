@@ -14,11 +14,11 @@ public sealed partial class TrainingGame
         GUILayout.Label("自身周围5尺光环，按整个占地计算范围。",small);
         emanationSelf=GUILayout.Toggle(emanationSelf,"将源点自身纳入范围",label);
         if(spell.Name=="Word of Radiance")emanationMonster=GUILayout.Toggle(emanationMonster,"选择范围内木桩",label);
-        GUILayout.Label(map.DistanceFeet<=5?"木桩在范围内":"木桩在范围外",small);
+        GUILayout.Label(spell.Name=="Word of Radiance"&&!PlayerSeesMonster?"木桩不可见，不能选为光耀祷词目标":map.DistanceFeet<=5?"木桩在范围内":"木桩在范围外",small);
     }
     IEnumerator ResolveSimpleEmanation(DirectSpell spell,int caster)
     {
-        bool[] targets={combat.Hp>0&&map.DistanceFeet<=5&&(spell.Name=="Thunderclap"||emanationMonster),emanationSelf};
+        bool[] targets={combat.Hp>0&&map.DistanceFeet<=5&&(spell.Name=="Thunderclap"||emanationMonster&&PlayerSeesMonster),emanationSelf};
         bool[] failed=new bool[2];int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         if(!targets[0]&&!targets[1]){history.Insert(0,spell.Chinese+"：未选中范围内生物，已消耗动作。");yield break;}
         for(int i=0;i<2;i++)if(targets[i]){

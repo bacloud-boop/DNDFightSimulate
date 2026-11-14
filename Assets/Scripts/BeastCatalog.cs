@@ -5,7 +5,7 @@ using UnityEngine;
 {
     public string name,size,challengeLabel,source;
     public float challenge;
-    public int armor,hp,walk,climb,swim,fly,burrow;
+    public int armor,hp,walk,climb,swim,fly,burrow,darkvision,blindsight;
     // Same order as player attributes: Str, Dex, Con, Wis, Int, Cha.
     public int[] abilities,saves,skillModifiers;
     public string[] actionNames;

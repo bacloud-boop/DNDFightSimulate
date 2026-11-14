@@ -11,6 +11,7 @@ public sealed partial class TrainingGame
     string FortifyInvalidReason()
     {
         int player,monster;if(!int.TryParse(fortifyPlayerInput,out player)||!int.TryParse(fortifyMonsterInput,out monster)||player<0||monster<0||player>120||monster>120||player+monster!=120)return "两项必须为0～120的整数，合计恰好120。";
+        if(monster>0&&!PlayerSeesMonster)return "律令巩固需要看见目标。";
         if(monster>0&&(combat.Hp==0||map.DistanceFeet>60))return "木桩必须存活且位于60尺内。";
         return "";
     }

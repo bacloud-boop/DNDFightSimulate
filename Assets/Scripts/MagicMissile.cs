@@ -14,6 +14,7 @@ public sealed partial class TrainingGame
     string MissileTargetError(int count)
     {
         for(int i=0;i<count;i++)if(!missileTargetsPlayer[i]){
+            if(selectedSpellName=="Magic Missile"&&!PlayerSeesMonster)return "魔法飞弹需要看见所选目标。";
             if(combat.Hp==0)return "不能指定死亡的木桩。";
             if(map.DistanceFeet>120)return "部分目标超过120尺，不能施放。";
         }

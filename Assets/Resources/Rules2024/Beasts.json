@@ -13,6 +13,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         16,
         14,
@@ -68,6 +70,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         8,
         14,
@@ -122,6 +126,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 5,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         10,
         11,
@@ -175,6 +181,8 @@
       "swim": 0,
       "fly": 30,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 60,
       "abilities": [
         2,
         15,
@@ -228,6 +236,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         15,
         12,
@@ -282,6 +292,8 @@
       "swim": 0,
       "fly": 60,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         6,
         14,
@@ -336,6 +348,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         13,
         11,
@@ -390,6 +404,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         12,
@@ -443,6 +459,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         15,
         8,
@@ -496,6 +514,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         3,
         15,
@@ -550,6 +570,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 10,
       "abilities": [
         15,
         14,
@@ -604,6 +626,8 @@
       "swim": 20,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 30,
       "abilities": [
         6,
         11,
@@ -658,6 +682,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         15,
         10,
@@ -712,6 +738,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         11,
         16,
@@ -766,6 +794,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         15,
@@ -820,6 +850,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         18,
         10,
@@ -873,6 +905,8 @@
       "swim": 0,
       "fly": 60,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         6,
         15,
@@ -926,6 +960,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         16,
         10,
@@ -979,6 +1015,8 @@
       "swim": 20,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         1,
         13,
@@ -1034,6 +1072,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 10,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         13,
         10,
@@ -1087,6 +1127,8 @@
       "swim": 0,
       "fly": 60,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 120,
       "abilities": [
         15,
         16,
@@ -1140,6 +1182,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 30,
       "abilities": [
         5,
         14,
@@ -1193,6 +1237,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 30,
       "abilities": [
         13,
         13,
@@ -1247,6 +1293,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 30,
       "abilities": [
         8,
         10,
@@ -1301,6 +1349,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         12,
         13,
@@ -1357,6 +1407,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         13,
@@ -1410,6 +1462,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         16,
         14,
@@ -1464,6 +1518,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         15,
         12,
@@ -1518,6 +1574,8 @@
       "swim": 60,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         13,
@@ -1573,6 +1631,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         7,
         16,
@@ -1627,6 +1687,8 @@
       "swim": 40,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         15,
         12,
@@ -1682,6 +1744,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         14,
         16,
@@ -1738,6 +1802,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         15,
         13,
@@ -1794,6 +1860,8 @@
       "swim": 40,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 10,
       "abilities": [
         10,
         18,
@@ -1847,6 +1915,8 @@
       "swim": 0,
       "fly": 50,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         10,
         14,
@@ -1901,6 +1971,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         11,
         17,
@@ -1954,6 +2026,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 10,
       "abilities": [
         12,
         16,
@@ -2008,6 +2082,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         11,
         10,
@@ -2061,6 +2137,8 @@
       "swim": 0,
       "fly": 60,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         5,
         16,
@@ -2114,6 +2192,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         11,
         13,
@@ -2168,6 +2248,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 90,
+      "blindsight": 0,
       "abilities": [
         8,
         15,
@@ -2221,6 +2303,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         15,
@@ -2278,6 +2362,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         2,
         11,
@@ -2332,6 +2418,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         13,
         14,
@@ -2385,6 +2473,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         14,
         10,
@@ -2439,6 +2529,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         4,
         15,
@@ -2495,6 +2587,8 @@
       "swim": 0,
       "fly": 60,
       "burrow": 0,
+      "darkvision": 120,
+      "blindsight": 0,
       "abilities": [
         3,
         13,
@@ -2549,6 +2643,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         14,
         16,
@@ -2603,6 +2699,8 @@
       "swim": 40,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         2,
         16,
@@ -2657,6 +2755,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         15,
         10,
@@ -2710,6 +2810,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         2,
         11,
@@ -2764,6 +2866,8 @@
       "swim": 0,
       "fly": 50,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         2,
         14,
@@ -2818,6 +2922,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 30,
       "abilities": [
         14,
         15,
@@ -2873,6 +2979,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         16,
         13,
@@ -2926,6 +3034,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 10,
       "abilities": [
         2,
         11,
@@ -2979,6 +3089,8 @@
       "swim": 20,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         1,
         12,
@@ -3033,6 +3145,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 30,
+      "blindsight": 0,
       "abilities": [
         2,
         14,
@@ -3088,6 +3202,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         17,
         16,
@@ -3142,6 +3258,8 @@
       "swim": 30,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 10,
       "abilities": [
         2,
         15,
@@ -3195,6 +3313,8 @@
       "swim": 0,
       "fly": 50,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         7,
         10,
@@ -3249,6 +3369,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 0,
+      "blindsight": 0,
       "abilities": [
         18,
         12,
@@ -3302,6 +3424,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         3,
         16,
@@ -3355,6 +3479,8 @@
       "swim": 0,
       "fly": 0,
       "burrow": 0,
+      "darkvision": 60,
+      "blindsight": 0,
       "abilities": [
         14,
         15,
