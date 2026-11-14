@@ -187,3 +187,10 @@
 来源：[2024移除诅咒](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#RemoveCurse)、[群体疗伤术](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#MassCureWounds)。当前70项法术效果、6项仅学习、315项待实现。
 
 本批静态编译、InvisibilityChecks、DeathWardChecks、CurseHealingChecks、范围几何FootprintChecks及法术目录一致性检查通过；未启动实机验证。
+
+
+## 挑战等级CR
+
+按用户确认，怪物当前属性与独立生前资料均新增CR下拉选项：0、1/8、1/4、1/2、1～30，默认0。首次操作后锁定；复制当前资料与完全复生术恢复生前形态时同时复制/恢复CR。怪物卡显示当前CR。标准分数只用于挑战等级，伤害、HP、动作与其他既有数值仍按整数输入和结算。
+
+内部用八分之一CR为单位进行精确比较，避免浮点误差；不通过CR自动改写熟练、HP或其他已配置属性。变形术效果尚未因此加入目录，当前仍70项效果、6项仅学习、315项待实现。静态编译及ChallengeRatingChecks通过，未实机验证。

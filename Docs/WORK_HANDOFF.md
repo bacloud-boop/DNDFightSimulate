@@ -29,7 +29,9 @@
 - cbc566e已推送。用户确认普通隐形术只结束触发行为的那个目标隐形。现已接入普通隐形术、攻击/施法/伤害来源触发与施法代次保护，同时新增移除诅咒、群体疗伤术。当前70项效果、6项仅学习、315项待实现。
 - DamageDealt回调明确伤害来源，ApplyDamage默认玩家来源，ApplyPlayerDamage默认怪物来源；玩家自伤/范围法术必须显式sourcePlayer:true，后续怪物施法同理按来源传参。高等隐形不受普通隐形触发影响。后续施法新增入口应沿用ResolveDirectSpell包装器或显式完成施法通知。
 - 静态编译、InvisibilityChecks、DeathWardChecks、CurseHealingChecks、FootprintChecks和目录一致性检查通过；未实机验证。保留无关README旧改动、=0和PackageManagerSettings.asset。
-- 下一步变形术需要木桩的目标CR，目前当前形态和生前资料均无CR。需确认可编辑CR的标准选项/默认值，尤其1/8、1/4、1/2与先前整数输入规则的关系；变形术尚未写效果。
+- cf06aff已推送。用户确认采用标准CR选项（0、1/8、1/4、1/2、1～30），默认0；当前与生前资料现已加入独立CR，可复制与恢复，内部用八分之一单位精确比较。静态编译、ChallengeRatingChecks通过。当前仍70项效果、6项仅学习、315项待实现。
+- 变形术效果尚未实现。继续前需确认与已有荒野形态的叠加方式，以及变大后的占地采用荒野形态预览选择还是严格原位。完整野兽动作目前仅10种，资料63种CR≤1；后续若支持更高CR变形，仍需扩展官方免费野兽数据与真实动作，不能把资料导入当成动作完成。
+- 单独编译MonsterFormData.cs或CreatureProfile.cs的纯规则测试时也须加入ChallengeRatings.cs。
 - 后续继续其他法术固定效果，飞行/环境/开放裁定暂缓规则继续生效。不要宣称391项全部完成。
 
 ---

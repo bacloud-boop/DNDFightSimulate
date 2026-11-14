@@ -88,7 +88,7 @@ public sealed partial class TrainingGame
             CardTab(new Rect(x+270,586,60,62),"技\n能","skills",true);
         }else{
             EngravedRow(x,540,"熟练加值",combat.MonsterProficiencyBonus.ToString(),false);
-            EngravedRow(x,575,"反击时机","回合结束",false);
+            EngravedRow(x,575,"挑战等级","CR "+ChallengeRatings.Names[monsterProfile.ChallengeIndex],false);
             EngravedRow(x,610,"移动力",map.MonsterMovementRemaining+" / "+combat.MonsterSpeed+"尺",false);
             EngravedRow(x,645,"与玩家距离",map.DistanceFeet+" 尺",false);
             EngravedRow(x,680,"攻击距离",(combat.MonsterAttackIsMelee?"近战 ":"远程 ")+combat.MonsterAttackRange+" 尺",false);

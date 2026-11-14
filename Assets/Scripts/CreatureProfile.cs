@@ -3,6 +3,8 @@ public sealed class CreatureProfile
 {
     public static readonly string[] TypeNames={"异怪","野兽","天界","构装生物","龙","元素","妖精","邪魔","巨人","类人生物","怪兽","泥怪","植物","亡灵"};
     public static readonly string[] SizeNames={"微型","小型","中型","大型","巨型","超巨型"};
+    public int ChallengeIndex {get;private set;}
+    public bool TryApplyChallenge(int index){if(!ChallengeRatings.Valid(index))return false;ChallengeIndex=index;return true;}
     public int TypeIndex {get;private set;}=9;
     public int SizeIndex {get;private set;}=2;
     public static int SpacesForSize(int size) => size<=2?1:size==3?2:size==4?3:4;

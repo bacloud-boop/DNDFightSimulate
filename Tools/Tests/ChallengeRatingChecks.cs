@@ -1,0 +1,5 @@
+using System;
+class ChallengeRatingChecks {
+ static void Check(bool ok,string message){if(!ok)throw new Exception(message);}
+ static void Main(){Check(ChallengeRatings.Names.Length==34&&ChallengeRatings.Names[0]=="0"&&ChallengeRatings.Names[33]=="30","standard labels");Check(ChallengeRatings.Eighths(0)==0&&ChallengeRatings.Eighths(1)==1&&ChallengeRatings.Eighths(2)==2&&ChallengeRatings.Eighths(3)==4&&ChallengeRatings.Eighths(4)==8&&ChallengeRatings.Eighths(33)==240,"exact integer comparison units");var p=new CreatureProfile();Check(p.ChallengeIndex==0&&p.TryApplyChallenge(3)&&p.ChallengeIndex==3,"default and selection");Check(!p.TryApplyChallenge(34)&&!p.TryApplyChallenge(-1)&&p.ChallengeIndex==3,"invalid selection preserves existing profile");var form=new MonsterFormData();string error;form.ChallengeIndex=2;var copy=form.Copy();copy.ChallengeIndex=33;Check(form.ChallengeIndex==2&&copy.ChallengeIndex==33&&form.Valid(out error),"independent original form CR");copy.ChallengeIndex=34;Check(!copy.Valid(out error),"invalid original form CR rejected");Console.WriteLine("PASS: standard CR choices, exact fractional comparison, independent profiles and bounds");}
+}

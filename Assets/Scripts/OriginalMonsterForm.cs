@@ -5,13 +5,14 @@ public sealed partial class TrainingGame {
  MonsterFormData originalMonster=new MonsterFormData(),originalDraft;
  string[] originalAbilityInputs,originalStatInputs,originalDamageInputs;string originalMessage="";Vector2 originalScroll;
  void BeginOriginalDraft(MonsterFormData form){originalDraft=form.Copy();originalAbilityInputs=form.Abilities.Select(v=>v.ToString()).ToArray();originalStatInputs=new[]{form.MaxHp,form.Armor,form.Proficiency,form.AttackRange,form.Speed,form.Darkvision}.Select(v=>v.ToString()).ToArray();originalDamageInputs=form.Dice.Concat(new[]{form.Bonus}).Select(v=>v.ToString()).ToArray();}
- MonsterFormData CurrentMonsterForm(){var form=new MonsterFormData{Type=monsterProfile.TypeIndex==13?9:monsterProfile.TypeIndex,Size=monsterProfile.SizeIndex,MaxHp=combat.MonsterBaseMaxHp,Armor=combat.MonsterBaseArmorClass,Proficiency=combat.MonsterProficiencyBonus,AttackRange=combat.MonsterAttackRange,Speed=combat.MonsterBaseSpeed,Darkvision=vision.MonsterRange,Melee=combat.MonsterAttackIsMelee,Bonus=monster.Bonus};for(int i=0;i<6;i++)form.Abilities[i]=monsterAttributes[i];Array.Copy(monsterSkillTiers,form.Skills,18);Array.Copy(monster.Counts,form.Dice,5);Array.Copy(monster.Types,form.DamageTypes,6);return form;}
+ MonsterFormData CurrentMonsterForm(){var form=new MonsterFormData{ChallengeIndex=monsterProfile.ChallengeIndex,Type=monsterProfile.TypeIndex==13?9:monsterProfile.TypeIndex,Size=monsterProfile.SizeIndex,MaxHp=combat.MonsterBaseMaxHp,Armor=combat.MonsterBaseArmorClass,Proficiency=combat.MonsterProficiencyBonus,AttackRange=combat.MonsterAttackRange,Speed=combat.MonsterBaseSpeed,Darkvision=vision.MonsterRange,Melee=combat.MonsterAttackIsMelee,Bonus=monster.Bonus};for(int i=0;i<6;i++)form.Abilities[i]=monsterAttributes[i];Array.Copy(monsterSkillTiers,form.Skills,18);Array.Copy(monster.Counts,form.Dice,5);Array.Copy(monster.Types,form.DamageTypes,6);return form;}
  void DrawOriginalMonster(){
   if(originalDraft==null)BeginOriginalDraft(originalMonster);Surface(new Rect(770,110,480,745),paperTexture);if(Btn(new Rect(1140,125,90,46),"关闭")){panel="";return;}
   GUILayout.BeginArea(new Rect(790,185,440,635));originalScroll=GUILayout.BeginScrollView(originalScroll);GUILayout.Label("木桩生前形态 · 独立资料",heading);GUILayout.Label("仅在亡灵接受完全复生术时恢复；其他复活不切换形态。首次操作后锁定。",small);
   bool old=GUI.enabled;GUI.enabled=!combat.BattleStarted;
   if(GUILayout.Button("复制当前基础配置到草稿",button)){BeginOriginalDraft(CurrentMonsterForm());originalMessage="已复制基础数值；若当前是亡灵，生前类型暂置为类人生物，请确认后应用。";}
   GUILayout.Label("生前类型（不允许亡灵）",small);originalDraft.Type=GUILayout.SelectionGrid(originalDraft.Type,CreatureProfile.TypeNames.Take(13).ToArray(),3,new GUIStyle(button){fontSize=15,fixedHeight=32});
+  GUILayout.Label("生前挑战等级CR（标准分数仅用于CR）",small);originalDraft.ChallengeIndex=GUILayout.SelectionGrid(originalDraft.ChallengeIndex,ChallengeRatings.Names,6,new GUIStyle(button){fontSize=15,fixedHeight=30});
   GUILayout.Label("生前体型",small);originalDraft.Size=GUILayout.SelectionGrid(originalDraft.Size,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
   for(int i=0;i<6;i++){GUILayout.Label(PlayerAttributes.Names[i],small);originalAbilityInputs[i]=IntegerField(originalAbilityInputs[i],false);}
   string[] names={"最大HP（至少1）","护甲等级（5～30）","熟练加值（可负）","攻击距离（尺）","移动力（尺）","黑暗视觉（尺）"};for(int i=0;i<6;i++){GUILayout.Label(names[i],small);originalStatInputs[i]=IntegerField(originalStatInputs[i],i==2);}
@@ -33,9 +34,9 @@ public sealed partial class TrainingGame {
  bool CanRestoreOriginalMonster=>map.CanRestoreMonsterFootprint(CreatureProfile.SpacesForSize(originalMonster.Size));
  bool RestoreOriginalMonster(){
   if(!CanRestoreOriginalMonster)return false;
-  var form=originalMonster;map.RestoreMonsterFootprint(CreatureProfile.SpacesForSize(form.Size));monsterProfile.TryApply(form.Type,form.Size);monsterAttributes.TryApply(form.Abilities.Select(v=>v.ToString()).ToArray());
+  var form=originalMonster;map.RestoreMonsterFootprint(CreatureProfile.SpacesForSize(form.Size));monsterProfile.TryApply(form.Type,form.Size);monsterProfile.TryApplyChallenge(form.ChallengeIndex);monsterAttributes.TryApply(form.Abilities.Select(v=>v.ToString()).ToArray());
   combat.RestoreMonsterBase(form.MaxHp,form.Armor,form.Proficiency,form.AttackRange,form.Speed,form.Melee);vision.MonsterRange=form.Darkvision;monsterVisionInput=form.Darkvision.ToString();
-  monsterTypeDraft=form.Type;monsterSizeDraft=form.Size;monsterAttackKindDraft=form.Melee?0:1;monsterHpInput=form.MaxHp.ToString();monsterArmorInput=form.Armor.ToString();monsterProficiencyInput=form.Proficiency.ToString();monsterRangeInput=form.AttackRange.ToString();monsterSpeedInput=form.Speed.ToString();
+  monsterChallengeDraft=form.ChallengeIndex;monsterTypeDraft=form.Type;monsterSizeDraft=form.Size;monsterAttackKindDraft=form.Melee?0:1;monsterHpInput=form.MaxHp.ToString();monsterArmorInput=form.Armor.ToString();monsterProficiencyInput=form.Proficiency.ToString();monsterRangeInput=form.AttackRange.ToString();monsterSpeedInput=form.Speed.ToString();
   for(int i=0;i<6;i++){monsterAttributeInputs[i]=form.Abilities[i].ToString();damageTypeInputs[i]=monster.Types[i]=form.DamageTypes[i];damageInputs[i]=(i<5?form.Dice[i]:form.Bonus).ToString();}Array.Copy(form.Dice,monster.Counts,5);monster.Bonus=form.Bonus;Array.Copy(form.Skills,monsterSkillTiers,18);Array.Copy(form.Skills,monsterSkillDraft,18);monsterSkillsDirty=false;
   history.Insert(0,"完全复生术：恢复已保存的完整生前基础资料，保持原占地左上格；当前类型 "+monsterProfile.Label+"。");return true;
  }

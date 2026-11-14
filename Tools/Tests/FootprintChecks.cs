@@ -1,4 +1,4 @@
-// Standalone model check. Compile with BattleMap.cs and CreatureProfile.cs.
+// Standalone model check. Compile with BattleMap.cs, CreatureProfile.cs and ChallengeRatings.cs.
 // Minimal Unity value-type substitutes allow checks without launching the Unity Editor.
 using System;
 namespace UnityEngine {
