@@ -228,6 +228,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="features"){DrawFeatureCatalog();return;}
         if(panel=="beasts"){DrawBeastCatalog();return;}
         if(panel=="druid"){DrawDruidPanel();return;}
+        if(panel=="skills"){DrawSkillPanel();return;}
+        if(panel=="monsterSkills"){DrawMonsterSkills();return;}
         bool left=panel=="weapons" || panel=="attributes" || panel=="classes";
         float targetX=left?350:770;
         float x=Mathf.Lerp(left?35:1120,targetX,Mathf.SmoothStep(0,1,drawerProgress));

@@ -13,6 +13,7 @@ public sealed class FighterFeatures
     public void LongRest() {SecondWindUsed=0;ActionSurgeUsed=0;}
     public int SurgeRemaining(int level) => level>=2?(level>=17?2:1)-ActionSurgeUsed:0;
     public bool CanSurge(int level) => SurgeRemaining(level)>0 && !SurgedThisRound;
+    public bool TacticalMind(int level,int total,int dc,int roll){if(roll<1||roll>10)throw new System.ArgumentOutOfRangeException(nameof(roll));if(level<2||WindRemaining(level)<=0||(long)total+roll<dc)return false;UseWind();return true;}
     public void UseWind() { SecondWindUsed++; }
     public void UseSurge() { ActionSurgeUsed++; SurgedThisRound=true; }
     public void BeginAttackAction(int level) { AttacksRemaining=AttacksPerAction(level); }

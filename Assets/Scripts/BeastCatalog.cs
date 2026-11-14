@@ -7,7 +7,7 @@ using UnityEngine;
     public float challenge;
     public int armor,hp,walk,climb,swim,fly,burrow;
     // Same order as player attributes: Str, Dex, Con, Wis, Int, Cha.
-    public int[] abilities,saves;
+    public int[] abilities,saves,skillModifiers;
     public string[] actionNames;
     public bool EligibleForBaseWildShape(int druidLevel)
     {

@@ -32,6 +32,10 @@ public sealed partial class TrainingGame
         if(feature.classIndex==0 && (feature.name=="Second Wind"||feature.name.StartsWith("Action Surge")||feature.name.Contains("Extra Attack")||feature.name=="Tactical Shift"||feature.name=="Studied Attacks"))return "已接入";
         if(feature.classIndex==11&&feature.name=="Wild Shape")return "部分接入：10种地面战斗形态";
         if(feature.classIndex==11&&feature.name=="Beast Spells")return "已接入：18级解除兽形施法限制";
+        if(feature.classIndex==0&&feature.name=="Tactical Mind")return "已接入：手动检定失败时选择";
+        if(feature.name=="Expertise"||feature.name=="Scholar")return "已接入：技能创建选择";
+        if(feature.name=="Jack of All Trades"||feature.name=="Reliable Talent")return "已接入：手动技能检定";
+        if(feature.classIndex==2&&feature.name=="Deft Explorer")return "部分接入：专精；语言待接入";
         if(feature.name=="Spellcasting")return "部分接入：现有法术";
         return "待接入：说明索引，无自动效果";
     }

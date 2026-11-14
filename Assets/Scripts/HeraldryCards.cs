@@ -85,6 +85,7 @@ public sealed partial class TrainingGame
             CardTab(new Rect(x+270,358,60,62),"职\n业","classes",true);
             CardTab(new Rect(x+270,434,60,62),"法\n术","spells",true);
             if(classes[11]>0)CardTab(new Rect(x+270,510,60,62),"兽\n形","druid",true);
+            CardTab(new Rect(x+270,586,60,62),"技\n能","skills",true);
         }else{
             EngravedRow(x,540,"熟练加值",combat.MonsterProficiencyBonus.ToString(),false);
             EngravedRow(x,575,"反击时机","回合结束",false);
@@ -95,6 +96,7 @@ public sealed partial class TrainingGame
             GUI.Label(new Rect(x+20,755,230,64),combat.MonsterParalyzed?"麻痹 · 回合结束可豁免":combat.MonsterProne?"倒地 · 下个回合起身":rolling?"战斗结算中":monsterProfile.Label+"\n配置 · "+(combat.BattleStarted?"已锁定":"可编辑"),PlaqueText(false,17,TextAnchor.MiddleCenter));
             CardTab(new Rect(x-60,206,60,62),"伤\n害","monster",false);
             CardTab(new Rect(x-60,282,60,62),"属\n性","monsterAttributes",false);
+            CardTab(new Rect(x-60,358,60,62),"技\n能","monsterSkills",false);
         }
     }
     void DisposeHeraldry()

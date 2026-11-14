@@ -1,0 +1,556 @@
+{
+  "edition": "PHB2024",
+  "scope": "2024 skill/tool proficiency-source facts. Background ability boosts, crafting, inventory and unrelated origin-feat effects are separate features.",
+  "backgrounds": [
+    {
+      "name": "侍僧",
+      "skills": [
+        10,
+        8
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        20
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "工匠",
+      "skills": [
+        6,
+        17
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "proficiencyFeat": "Crafter"
+    },
+    {
+      "name": "骗子",
+      "skills": [
+        14,
+        2
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        50
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "罪犯",
+      "skills": [
+        2,
+        3
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        54
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "艺人",
+      "skills": [
+        1,
+        16
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "proficiencyFeat": "Musician"
+    },
+    {
+      "name": "农民",
+      "skills": [
+        9,
+        7
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        21
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "卫兵",
+      "skills": [
+        0,
+        12
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        35,
+        36,
+        37,
+        38
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "向导",
+      "skills": [
+        3,
+        13
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        22
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "隐士",
+      "skills": [
+        11,
+        8
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        51
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "商人",
+      "skills": [
+        9,
+        17
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        52
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "贵族",
+      "skills": [
+        5,
+        17
+      ],
+      "skilledFeat": true,
+      "toolOptions": [
+        35,
+        36,
+        37,
+        38
+      ],
+      "proficiencyFeat": "Skilled"
+    },
+    {
+      "name": "智者",
+      "skills": [
+        4,
+        5
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        20
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "水手",
+      "skills": [
+        1,
+        12
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        52
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "抄写员",
+      "skills": [
+        6,
+        12
+      ],
+      "skilledFeat": true,
+      "toolOptions": [
+        20
+      ],
+      "proficiencyFeat": "Skilled"
+    },
+    {
+      "name": "士兵",
+      "skills": [
+        0,
+        15
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        35,
+        36,
+        37,
+        38
+      ],
+      "proficiencyFeat": ""
+    },
+    {
+      "name": "流浪者",
+      "skills": [
+        10,
+        3
+      ],
+      "skilledFeat": false,
+      "toolOptions": [
+        54
+      ],
+      "proficiencyFeat": ""
+    }
+  ],
+  "classes": [
+    {
+      "classIndex": 0,
+      "initialCount": 2,
+      "skills": [
+        1,
+        9,
+        0,
+        5,
+        10,
+        15,
+        17,
+        12,
+        13
+      ]
+    },
+    {
+      "classIndex": 1,
+      "initialCount": 2,
+      "skills": [
+        4,
+        5,
+        10,
+        6,
+        11,
+        7,
+        8
+      ]
+    },
+    {
+      "classIndex": 2,
+      "initialCount": 3,
+      "skills": [
+        9,
+        0,
+        10,
+        6,
+        7,
+        12,
+        3,
+        13
+      ]
+    },
+    {
+      "classIndex": 3,
+      "initialCount": 2,
+      "skills": [
+        4,
+        14,
+        10,
+        15,
+        17,
+        8
+      ]
+    },
+    {
+      "classIndex": 4,
+      "initialCount": 2,
+      "skills": [
+        4,
+        14,
+        5,
+        15,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "classIndex": 5,
+      "initialCount": 3,
+      "skills": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "classIndex": 6,
+      "initialCount": 2,
+      "skills": [
+        5,
+        10,
+        11,
+        17,
+        8
+      ]
+    },
+    {
+      "classIndex": 7,
+      "initialCount": 4,
+      "skills": [
+        1,
+        0,
+        14,
+        10,
+        15,
+        6,
+        12,
+        17,
+        2,
+        3
+      ]
+    },
+    {
+      "classIndex": 8,
+      "initialCount": 2,
+      "skills": [
+        1,
+        0,
+        5,
+        10,
+        8,
+        3
+      ]
+    },
+    {
+      "classIndex": 9,
+      "initialCount": 2,
+      "skills": [
+        0,
+        10,
+        15,
+        11,
+        17,
+        8
+      ]
+    },
+    {
+      "classIndex": 10,
+      "initialCount": 2,
+      "skills": [
+        9,
+        0,
+        15,
+        7,
+        12,
+        13
+      ]
+    },
+    {
+      "classIndex": 11,
+      "initialCount": 2,
+      "skills": [
+        4,
+        9,
+        10,
+        11,
+        7,
+        12,
+        8,
+        13
+      ]
+    }
+  ],
+  "sources": [
+    "https://www.dndbeyond.com/sources/dnd/br-2024/character-classes",
+    "https://5echm.kagangtuya.top/"
+  ],
+  "tools": [
+    {
+      "name": "炼金工具",
+      "ability": 4
+    },
+    {
+      "name": "酿酒工具",
+      "ability": 4
+    },
+    {
+      "name": "书法工具",
+      "ability": 1
+    },
+    {
+      "name": "木匠工具",
+      "ability": 0
+    },
+    {
+      "name": "制图工具",
+      "ability": 3
+    },
+    {
+      "name": "鞋匠工具",
+      "ability": 1
+    },
+    {
+      "name": "厨师工具",
+      "ability": 3
+    },
+    {
+      "name": "玻璃匠工具",
+      "ability": 4
+    },
+    {
+      "name": "珠宝匠工具",
+      "ability": 4
+    },
+    {
+      "name": "皮匠工具",
+      "ability": 1
+    },
+    {
+      "name": "石匠工具",
+      "ability": 0
+    },
+    {
+      "name": "画家工具",
+      "ability": 3
+    },
+    {
+      "name": "陶匠工具",
+      "ability": 4
+    },
+    {
+      "name": "铁匠工具",
+      "ability": 0
+    },
+    {
+      "name": "修补工具",
+      "ability": 1
+    },
+    {
+      "name": "织布工具",
+      "ability": 1
+    },
+    {
+      "name": "木雕工具",
+      "ability": 1
+    },
+    {
+      "name": "骰子",
+      "ability": 3
+    },
+    {
+      "name": "龙棋",
+      "ability": 3
+    },
+    {
+      "name": "纸牌",
+      "ability": 3
+    },
+    {
+      "name": "三龙牌",
+      "ability": 3
+    },
+    {
+      "name": "风笛",
+      "ability": 5
+    },
+    {
+      "name": "鼓",
+      "ability": 5
+    },
+    {
+      "name": "扬琴",
+      "ability": 5
+    },
+    {
+      "name": "长笛",
+      "ability": 5
+    },
+    {
+      "name": "号角",
+      "ability": 5
+    },
+    {
+      "name": "鲁特琴",
+      "ability": 5
+    },
+    {
+      "name": "里拉琴",
+      "ability": 5
+    },
+    {
+      "name": "排箫",
+      "ability": 5
+    },
+    {
+      "name": "芦笛",
+      "ability": 5
+    },
+    {
+      "name": "提琴",
+      "ability": 5
+    },
+    {
+      "name": "易容工具",
+      "ability": 5
+    },
+    {
+      "name": "文书伪造工具",
+      "ability": 1
+    },
+    {
+      "name": "草药工具",
+      "ability": 4
+    },
+    {
+      "name": "领航工具",
+      "ability": 3
+    },
+    {
+      "name": "毒药工具",
+      "ability": 4
+    },
+    {
+      "name": "盗贼工具",
+      "ability": 1
+    }
+  ]
+}
