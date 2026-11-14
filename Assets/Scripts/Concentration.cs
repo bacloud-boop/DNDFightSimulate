@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
         if(combat.Hp==0)combat.MonsterParalyzed=false;
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndConcentration("施法者失能或死亡");
         else if((concentrationExpiresWorld>=0&&worldRounds>=concentrationExpiresWorld)||combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
-        else if(concentrationSpell=="人类定身术"&&!combat.PlayerParalyzed&&!combat.MonsterParalyzed)EndConcentration("所有目标均已摆脱效果");
+        else if((concentrationSpell=="人类定身术"||concentrationSpell=="怪物定身术")&&!combat.PlayerParalyzed&&!combat.MonsterParalyzed)EndConcentration("所有目标均已摆脱效果");
     }
     int PlayerSavingThrowModifier(int ability)
     {
@@ -42,9 +42,9 @@ public sealed partial class TrainingGame
     }
     IEnumerator RepeatHoldPersonSave()
     {
-        if(!combat.MonsterParalyzed||concentrationSpell!="人类定身术"||combat.Hp==0)yield break;
+        if(!combat.MonsterParalyzed||(concentrationSpell!="人类定身术"&&concentrationSpell!="怪物定身术")||combat.Hp==0)yield break;
         int value=Random.Range(1,21),modifier=AcidSplash.Modifier(monsterAttributes[3]);
-        dice="木桩回合结束 · 人类定身术感知豁免";
+        dice="木桩回合结束 · "+concentrationSpell+"感知豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
         if(value+modifier>=holdPersonDc){combat.MonsterParalyzed=false;history.Insert(0,"木桩通过感知豁免，摆脱麻痹。");RefreshConcentration();}
@@ -53,16 +53,16 @@ public sealed partial class TrainingGame
     IEnumerator ResolveHoldPerson(DirectSpell spell,bool player,int caster,bool both)
     {
         EndConcentration("开始新的专注法术");
-        resolvingHoldPerson=true;concentrationSpell=spell.Chinese;concentrationExpiresRound=combat.Round+10;
+        resolvingHoldPerson=true;concentrationSpell=spell.Chinese;concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+10;
         holdPersonDc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         bool[] targets={both||!player,both||player};
         for(int i=0;i<2;i++)if(targets[i]){
             bool targetPlayer=i==1;
-            if(!targetPlayer&&(!monsterProfile.IsHumanoid||combat.Hp==0))continue;
+            if(!targetPlayer&&(!spell.AllowsCreatureType(monsterProfile.TypeIndex)||combat.Hp==0))continue;
             if(targetPlayer&&combat.PlayerDead)continue;
             string target=targetPlayer?"玩家":"木桩";
             int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(3):AcidSplash.Modifier(monsterAttributes[3]);
-            dice="人类定身术 · "+target+"感知豁免";
+            dice=spell.Chinese+" · "+target+"感知豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
             if(value+modifier<holdPersonDc){if(targetPlayer){combat.PlayerParalyzed=true;EndWildShape("麻痹导致失能");}else combat.MonsterParalyzed=true;history.Insert(0,target+"豁免失败，陷入麻痹。");}

@@ -74,5 +74,5 @@ public sealed partial class TrainingGame
             history.Insert(0,spell.Chinese+"源点("+(cell.x+1)+","+(cell.y+1)+")，"+(dark?"15尺半径魔法黑暗，专注10分钟":"60尺明亮阳光，外围再60尺微光，持续1小时")+"。");
         }dice=spell.Chinese+" · 已生效";
     }
-    static bool SpellRequiresSight(string name)=>name=="Bane"||name=="Blight"||name=="Healing Word"||name=="Mass Healing Word"||name=="Hold Person"||name=="Hex"||name=="Hunter's Mark"||name=="Magic Missile"||name=="Power Word Kill"||name=="Power Word Fortify"||name=="Sacred Flame"||name=="Mind Sliver"||name=="Toll the Dead";
+    static bool SpellRequiresSight(string name)=>name=="Bane"||name=="Blight"||name=="Healing Word"||name=="Mass Healing Word"||name=="Hold Monster"||name=="Hold Person"||name=="Hex"||name=="Hunter's Mark"||name=="Magic Missile"||name=="Power Word Kill"||name=="Power Word Fortify"||name=="Sacred Flame"||name=="Mind Sliver"||name=="Toll the Dead";
 }

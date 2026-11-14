@@ -126,7 +126,7 @@ public sealed partial class TrainingGame
     {
         var attack=BeastAttack.Find(wildForm.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane;
         bool advantage=fighter.ConsumeAdvantage(classes[0])||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=combat.ConsumeMockery(true)||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        bool disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;

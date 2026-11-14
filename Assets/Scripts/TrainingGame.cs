@@ -103,7 +103,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
-        disadvantage=combat.ConsumeMockery(true)||disadvantage;
+        disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -181,8 +181,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             RefreshConcentration();yield return PlayerDeathSave();
             rolling=false;logScroll=Vector2.zero;yield break;
         }
-        int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||!MonsterSeesPlayer||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
+        mirrorIntercepted=false;int firstHit=Random.Range(1,21);
+        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||!MonsterSeesPlayer||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         int proficiency=combat.MonsterProficiencyBonus;
@@ -190,7 +190,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int blessing=combat.MonsterBlessed?Random.Range(1,5):0,bane=combat.MonsterBaned?Random.Range(1,5):0;
         int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
         long hitTotal=(long)hitRoll+proficiency+blessing-wardPenalty-bane;
-        if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return OfferShield(true);targetArmor=combat.PlayerArmorClass;}
+        if(hitRoll!=1&&(hitRoll==20||hitTotal>=targetArmor)){yield return ResolvePlayerHitDefense(hitRoll,hitTotal,MonsterSeesPlayer,false);targetArmor=combat.PlayerArmorClass;}
         dice="木桩反击 · 命中判定 D20";
         yield return PresentRoll(20,secondHit>0?new[]{firstHit,secondHit}:new[]{firstHit},"采用骰值 "+hitRoll+" + 熟练 "+proficiency+" + 祝福 "+blessing+" - 剑刃防护 "+wardPenalty+" - 灾祸 "+bane+" = "+hitTotal+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitTotal>=targetArmor?"，命中":"，未命中"));
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次木桩攻击 +"+blessing);
@@ -198,7 +198,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护：攻击检定减去 "+wardPenalty+"；命中总值 "+hitTotal);
         string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
-        if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
+        if(mirrorIntercepted){dice="镜像术拦截 · 本体伤害0";history.Insert(0,hitDetails+"，攻击转移至镜像，本体伤害0。");}
+        else if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
             int frostRetaliation=AgathysRetaliation(combat.MonsterAttackIsMelee);
             string details;
             var sides=new List<int>();var results=new List<int[]>();var counts=new List<int>();

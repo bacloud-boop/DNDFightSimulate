@@ -2,6 +2,15 @@ using System.Collections;
 using UnityEngine;
 public sealed partial class TrainingGame
 {
+    IEnumerator ResolveEldritchBlast(int caster){
+        int count=AcidSplash.DiceCount(classes.TotalLevel);var targets=new bool[count];for(int i=0;i<count;i++)targets[i]=missileTargetsPlayer[i];
+        for(int i=0;i<count;i++){
+            if(!combat.PlayerCanAct)yield break;
+            if(!targets[i]&&combat.Hp==0)continue;
+            var beam=new DirectSpell("Eldritch Blast Beam","魔能爆 "+(i+1)+" / "+count,"",0,120,10,attack:true,damageType:"力场",baseDice:1);
+            yield return ResolveDirectSpell(beam,targets[i],caster,1,true);
+        }
+    }
     IEnumerator ResolveScorchingRays(int caster,int slot)
     {
         int count=slot+1;var targets=new bool[count];for(int i=0;i<count;i++)targets[i]=missileTargetsPlayer[i];

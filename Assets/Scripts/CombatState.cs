@@ -12,6 +12,10 @@ public sealed class CombatState
     public bool MonsterBaned {get;set;}
     public bool PlayerBlessed {get;set;}
     public bool MonsterBlessed {get;set;}
+    int playerPoisonUntil,monsterPoisonUntil;
+    public bool PlayerPoisoned=>playerPoisonUntil>0;
+    public bool MonsterPoisoned=>monsterPoisonUntil>0;
+    public void ApplyPoison(bool player){if(player)playerPoisonUntil=Round+1;else monsterPoisonUntil=Round+1;}
     int playerSliverUntil,monsterSliverUntil;
     public void ApplySliver(bool player){if(player)playerSliverUntil=Round+1;else monsterSliverUntil=Round+1;}
     public bool ConsumeSliver(bool player){bool active=player?playerSliverUntil>0:monsterSliverUntil>0;if(player)playerSliverUntil=0;else monsterSliverUntil=0;return active;}
@@ -55,8 +59,8 @@ public sealed class CombatState
     public bool PlayerHealingBlocked => playerHealingBlockedUntil>0;
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
-    public void ExpirePlayerTurnEffects(){if(Round>=playerSliverUntil)playerSliverUntil=0;if(Round>=monsterSliverUntil)monsterSliverUntil=0;if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
-    public void ClearShortDurationEffects(){playerSliverUntil=monsterSliverUntil=0;playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public void ExpirePlayerTurnEffects(){if(Round>=playerPoisonUntil)playerPoisonUntil=0;if(Round>=monsterPoisonUntil)monsterPoisonUntil=0;if(Round>=playerSliverUntil)playerSliverUntil=0;if(Round>=monsterSliverUntil)monsterSliverUntil=0;if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
+    public void ClearShortDurationEffects(){playerPoisonUntil=monsterPoisonUntil=0;playerSliverUntil=monsterSliverUntil=0;playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
     public int MonsterTemporaryHp {get;private set;}
     public void GrantMonsterTemporaryHp(int amount){if(Hp>0)MonsterTemporaryHp=Math.Max(MonsterTemporaryHp,Math.Max(0,amount));}
     public void ClearMonsterTemporaryHp(){MonsterTemporaryHp=0;}

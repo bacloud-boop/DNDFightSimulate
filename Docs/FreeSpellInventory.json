@@ -2397,7 +2397,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Eldritch_Blast",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Elemental Weapon",
@@ -3809,7 +3809,7 @@
       "duration": "专注，至多1分钟",
       "concentration": true,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/5%E7%8E%AF.htm#Hold_Monster",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Hold Person",
@@ -4903,7 +4903,7 @@
       "duration": "1分钟",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Mirror_Image",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Mislead",
@@ -5819,7 +5819,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Ray_of_Sickness",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Regenerate",

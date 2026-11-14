@@ -81,7 +81,7 @@ public sealed partial class TrainingGame
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
         if(page=="battle" && spellTargeting)DrawSpellTargeting(new Rect(600,110,400,400));
         DrawSpellTooltip();
-        DrawReactionPrompt();DrawShieldPrompt();DrawTacticalMindPrompt();
+        DrawReactionPrompt();DrawShieldPrompt();DrawDefenseOrder();DrawTacticalMindPrompt();
     }
     void DrawHome()
     {

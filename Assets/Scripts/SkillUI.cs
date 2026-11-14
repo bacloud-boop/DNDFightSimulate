@@ -98,7 +98,7 @@ public sealed partial class TrainingGame
             if(beastProficient){int beastTier=Math.Min(2,Math.Max(1,(beast-baseModifier)/2));modifier=Math.Max(modifier,Math.Max(beast,AcidSplash.Modifier(score)+classes.ProficiencyBonus*beastTier));}
         }
         bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
-        bool disadvantage=(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
+        bool disadvantage=combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
         int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];
