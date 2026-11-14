@@ -9,5 +9,6 @@ public sealed class MarkEffect
     public bool CheckDisadvantage(bool player,int ability)=>Applies(player)&&Hex&&ability==Ability;
     public int DamageType=>Hex?8:6;
     public static long Duration(bool hex,int slot)=>slot>=5?14400:slot>=3?4800:hex&&slot==2?2400:600;
+    public bool RemoveCurse(bool player){if(!Active||!Hex||TargetPlayer!=player)return false;Clear();return true;}
     public void Clear(){Active=false;}
 }

@@ -95,7 +95,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
@@ -146,13 +146,21 @@ public sealed partial class TrainingGame
         if(spell.Stable&&(!directTargetPlayer||combat.PlayerHp!=0))return "维生术需要生命为0且未死亡的目标。";
         return "";
     }
-    IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded=false)
+    int spellCastSequence;
+    IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded=false){
+        long token=senses.Token(true,worldRounds);int sequence=spellCastSequence;
+        yield return ResolveDirectSpellCore(spell,targetPlayer,caster,slotLevel,embedded);
+        if(!embedded&&sequence!=spellCastSequence)BreakOrdinaryInvisibility(true,"施法",token);
+    }
+    IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
+        if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}
         if(IsSenseSpell(spell.Name)){ApplySenseSpell(spell,targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Knife"){yield return ResolveIceKnife(targetPlayer,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(IsPointBurst(spell)){yield return ResolvePointBurst(spell,caster,slotLevel);if(!embedded)rolling=false;yield break;}
@@ -190,6 +198,7 @@ public sealed partial class TrainingGame
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
             int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0;bonus+=blessing-bane;
+            BreakOrdinaryInvisibility(true,"进行攻击检定");
             int wardPenalty=targetPlayer&&combat.PlayerBladeWard?UnityEngine.Random.Range(1,5):0;bonus-=wardPenalty;
             mirrorIntercepted=false;
             if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,value+bonus,true,PerceivesWithSpecialSense(true,true));armor=combat.PlayerArmorClass;}
@@ -229,7 +238,7 @@ public sealed partial class TrainingGame
         if(!spell.Healing)amount=combat.AdjustTypedDamage(targetPlayer,amount,DamageTypes.Index(spell.DamageType));
         if(spell.Attack){var extra=new ExtraMarkDamage();yield return RollMarkDamage(targetPlayer,critical,extra);amount+=extra.Value;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
-        else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
+        else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}
         if(spell.Name=="Ray of Frost"){combat.ApplyFrostSlow(targetPlayer);history.Insert(0,target+"速度降低10尺，至玩家下一回合开始。");}
         if(spell.Name=="Shocking Grasp"){combat.BlockOpportunity(targetPlayer);history.Insert(0,target+"不能借机攻击，至其下一回合开始；其他反应不受影响。");}

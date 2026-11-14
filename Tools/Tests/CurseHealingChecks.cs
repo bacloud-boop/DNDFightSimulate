@@ -1,0 +1,5 @@
+using System;
+class CurseHealingChecks {
+ static void Check(bool ok,string message){if(!ok)throw new Exception(message);}
+ static void Main(){var mark=new MarkEffect();mark.Cast(true,false,0);Check(!mark.RemoveCurse(true)&&mark.Active,"remove curse only affects matching target");Check(mark.RemoveCurse(false)&&!mark.Active,"hex removed");mark.Cast(false,false,0);Check(!mark.RemoveCurse(false)&&mark.Active,"hunters mark is not a curse");var spell=DirectSpell.Find("Mass Cure Wounds");Check(spell.Level==5&&spell.Range==60&&spell.BurstRadius==30&&spell.Sides==8&&spell.DiceCount(1,5)==5&&spell.DiceCount(20,9)==9,"2024 mass healing geometry and scaling");var c=new CombatState();c.ApplyDamage(20);c.ApplyPlayerDamage(4);Check(c.HealMonster(50)==20&&c.HealPlayer(50)==4,"individual healing capped at each target maximum");c.ApplyDamage(20);c.BlockHealing(false);Check(c.HealMonster(50)==0,"healing prevention respected");c.KillMonster();Check(c.HealMonster(50)==0,"healing cannot resurrect");Console.WriteLine("PASS: target-specific curse removal, noncurse preservation, mass cure geometry/scaling and healing restrictions");}
+}

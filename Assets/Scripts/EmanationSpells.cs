@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
         int[] values=new int[spell.DiceCount(classes.TotalLevel,slot)];int damage=0;for(int i=0;i<values.Length;i++){values[i]=Random.Range(1,7);damage+=values[i];}
         dice=spell.Chinese+" · 共享伤害骰";yield return PresentRoll(6,values,"豁免失败者受到 "+damage+" 点"+spell.DamageType+"伤害，成功者"+(spell.HalfSave?"减半向下取整":"0"));
         int monsterDamage=targets[0]?combat.AdjustTypedDamage(false,failed[0]?damage:spell.HalfSave?damage/2:0,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustTypedDamage(true,failed[1]?damage:spell.HalfSave?damage/2:0,DamageTypes.Index(spell.DamageType)):0;
-        if(targets[0])combat.ApplyDamage(monsterDamage);if(targets[1])combat.ApplyPlayerDamage(playerDamage);
+        if(targets[0])combat.ApplyDamage(monsterDamage);if(targets[1])combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);
         history.Insert(0,spell.Chinese+"：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 点"+spell.DamageType+"伤害。");
         if(targets[1])yield return MaintainConcentration(playerDamage);
         CheckBattleOutcome();

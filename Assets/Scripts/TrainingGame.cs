@@ -42,7 +42,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
-        InitializeDeathWard();
+        InitializeDeathWard();InitializeInvisibilityEvents();
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat("MusicVolume", .35f));
@@ -111,6 +111,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool twoDice=rollHigh||rollLow;
         int firstHit=Random.Range(1,21),secondHit=twoDice?Random.Range(1,21):0;
         int hitRoll=rollHigh?Mathf.Max(firstHit,secondHit):rollLow?Mathf.Min(firstHit,secondHit):firstHit;
+        BreakOrdinaryInvisibility(true,"进行攻击检定");
         string rollMode=rollHigh?"优势 2d20 取高":rollLow?"劣势 2d20 取低":advantage&&disadvantage?"优势劣势抵消 · 单骰":"单骰";
         dice="玩家命中判定 · "+rollMode;
         yield return PresentRoll(20,twoDice?new[]{firstHit,secondHit}:new[]{firstHit},"采用 "+hitRoll+" + 熟练/魔法/复活 "+proficiencyBonus+" + 属性 "+abilityModifier+" = "+(hitRoll+proficiencyBonus+abilityModifier)+" / 护甲 "+targetArmor+(hitRoll==20?"，暴击":hitRoll==1?"，必失":hitRoll+proficiencyBonus+abilityModifier>=targetArmor?"，命中":"，未命中"));
@@ -187,6 +188,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
+        BreakOrdinaryInvisibility(false,"进行攻击检定");
         long proficiency=combat.MonsterHitBonus;
         int targetArmor=combat.PlayerArmorClass;
         int blessing=combat.MonsterBlessed?Random.Range(1,5):0,bane=combat.MonsterBaned?Random.Range(1,5):0;

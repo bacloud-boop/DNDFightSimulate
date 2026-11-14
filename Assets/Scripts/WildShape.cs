@@ -130,6 +130,7 @@ public sealed partial class TrainingGame
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
+        BreakOrdinaryInvisibility(true,"进行攻击检定");
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");
         yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+combat.MonsterArmorClass);
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次自然攻击 +"+blessing);

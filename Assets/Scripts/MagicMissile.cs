@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
         int playerDamage=0,monsterDamage=0;
         for(int i=0;i<count;i++){
             int damage=targets[i]&&combat.ShieldActive?0:rolls[i]+1;
-            if(targets[i]){combat.ApplyPlayerDamage(damage);playerDamage+=damage;}
+            if(targets[i]){combat.ApplyPlayerDamage(damage,sourcePlayer:true);playerDamage+=damage;}
             else {combat.ApplyDamage(damage);monsterDamage+=damage;}
             history.Insert(0,"魔法飞弹 "+(i+1)+" → "+(targets[i]?"玩家":"木桩")+"：1d4="+rolls[i]+" + 1，"+damage+"力场伤害。");
         }

@@ -72,7 +72,8 @@ public sealed partial class TrainingGame
         return monster&&player?"木桩、玩家":monster?"木桩":player?"玩家":"无目标";
     }
     bool DexteritySaveProficient => classes.SavingThrowProficient(1);
-    IEnumerator ResolveAcidSplash(bool hitsMonster,bool hitsPlayer,int dc,int count)
+    IEnumerator ResolveAcidSplash(bool hitsMonster,bool hitsPlayer,int dc,int count){long token=senses.Token(true,worldRounds);yield return ResolveAcidSplashCore(hitsMonster,hitsPlayer,dc,count);BreakOrdinaryInvisibility(true,"施法",token);}
+    IEnumerator ResolveAcidSplashCore(bool hitsMonster,bool hitsPlayer,int dc,int count)
     {
         rolling=true;logScroll=Vector2.zero;
         bool[] hit={hitsMonster,hitsPlayer},failed=new bool[2];
@@ -96,7 +97,7 @@ public sealed partial class TrainingGame
             yield return PresentRoll(6,values,"强酸伤害："+damage+"；豁免失败者使用同一伤害骰结果");
             int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,3):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,3):0;
             if(failed[0])combat.ApplyDamage(monsterDamage);
-            if(failed[1]){combat.ApplyPlayerDamage(playerDamage);yield return MaintainConcentration(playerDamage);}
+            if(failed[1]){combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);yield return MaintainConcentration(playerDamage);}
             dice="酸液飞溅："+damage+" 点强酸伤害";
             history.Insert(0,count+"d6="+string.Join("+",values)+"，木桩伤害 "+monsterDamage+"，玩家伤害 "+playerDamage+"。");
         }else dice="酸液飞溅：目标全部豁免成功，伤害0。";

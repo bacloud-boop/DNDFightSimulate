@@ -26,7 +26,10 @@
 - 静态编译、MonsterFormChecks、FootprintChecks、RevivalChecks和法术清单一致性检查通过；未实机验证。详见Docs/AftermathAndRevival.md。器官缺失、尸体消失、疾病状态等当前没有实际战斗状态，不能宣称已经完整建立这些独立系统。复活术与转生术仍未实现。
 - README旧改动、=0和PackageManagerSettings.asset继续保留；本批生前形态/完全复生术单独提交推送，实际提交ID以git log为准。
 - ce48463已推送。新增朦胧术、高等隐形术、识破隐形、真知术与SenseEffects；接入攻击、目标可见性、借机攻击、视觉察觉及镜像绕过。当前67项效果、6项仅学习、318项待实现。静态编译、SenseChecks、目录一致性检查通过，未实机验证。
-- 下一项普通隐形术尚未实现；2024多目标升环后某一目标攻击/造成伤害/施法，需先确认是只结束该目标隐形还是结束整次施法所有目标。不要静默套用高等隐形术或旧版规则。
+- cbc566e已推送。用户确认普通隐形术只结束触发行为的那个目标隐形。现已接入普通隐形术、攻击/施法/伤害来源触发与施法代次保护，同时新增移除诅咒、群体疗伤术。当前70项效果、6项仅学习、315项待实现。
+- DamageDealt回调明确伤害来源，ApplyDamage默认玩家来源，ApplyPlayerDamage默认怪物来源；玩家自伤/范围法术必须显式sourcePlayer:true，后续怪物施法同理按来源传参。高等隐形不受普通隐形触发影响。后续施法新增入口应沿用ResolveDirectSpell包装器或显式完成施法通知。
+- 静态编译、InvisibilityChecks、DeathWardChecks、CurseHealingChecks、FootprintChecks和目录一致性检查通过；未实机验证。保留无关README旧改动、=0和PackageManagerSettings.asset。
+- 下一步变形术需要木桩的目标CR，目前当前形态和生前资料均无CR。需确认可编辑CR的标准选项/默认值，尤其1/8、1/4、1/2与先前整数输入规则的关系；变形术尚未写效果。
 - 后续继续其他法术固定效果，飞行/环境/开放裁定暂缓规则继续生效。不要宣称391项全部完成。
 
 ---

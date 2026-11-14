@@ -25,7 +25,8 @@ public sealed partial class TrainingGame
         GUI.enabled=previous;if(GUILayout.Button("取消",button)){spellTargeting=false;thunderwaveTargeting=false;}
         GUILayout.EndArea();
     }
-    IEnumerator ResolveThunderwave(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces)
+    IEnumerator ResolveThunderwave(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces){long token=senses.Token(true,worldRounds);yield return ResolveThunderwaveCore(monster,player,dc,slot,origin,originSpaces);BreakOrdinaryInvisibility(true,"施法",token);}
+    IEnumerator ResolveThunderwaveCore(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces)
     {
         rolling=true;bool[] targets={monster,player},failed=new bool[2];
         if(!monster&&!player){history.Insert(0,"雷鸣波：范围无生物，已消耗动作。声响可传至300尺，当前无听觉警戒系统。");rolling=false;yield break;}
@@ -39,7 +40,7 @@ public sealed partial class TrainingGame
         int playerDamage=0;
         for(int i=0;i<2;i++)if(targets[i]){
             int damage=combat.AdjustTypedDamage(i==1,failed[i]?amount:amount/2,12);if(i==1)playerDamage=damage;
-            if(i==0)combat.ApplyDamage(damage);else combat.ApplyPlayerDamage(damage);
+            if(i==0)combat.ApplyDamage(damage);else combat.ApplyPlayerDamage(damage,sourcePlayer:true);
             int pushed=i==0&&failed[i]?map.ForceMoveAway(false,origin,originSpaces,10):0;
             history.Insert(0,"雷鸣波对"+(i==0?"木桩":"玩家")+"："+(failed[i]?"豁免失败":"豁免成功")+"，"+damage+"雷鸣伤害，推离"+pushed+"尺。强制位移不消耗移动力、不触发借机、不追加碰撞伤害。");
         }

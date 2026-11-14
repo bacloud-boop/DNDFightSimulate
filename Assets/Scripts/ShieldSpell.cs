@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
         dice=attackTrigger?"攻击已命中 · 等待护盾术选择":"成为魔法飞弹目标 · 等待护盾术选择";
         while(shieldDecision==0)yield return null;
         shieldPending=false;
-        if(shieldDecision==1&&combat.TryUseReaction(true)){combat.ActivateShield();history.Insert(0,"玩家消耗反应施放护盾术：AC+5，免疫魔法飞弹，至下一玩家回合开始。");}
+        if(shieldDecision==1&&combat.TryUseReaction(true)){combat.ActivateShield();BreakOrdinaryInvisibility(true,"施放护盾术");history.Insert(0,"玩家消耗反应施放护盾术：AC+5，免疫魔法飞弹，至下一玩家回合开始。");}
         else history.Insert(0,"玩家放弃护盾术，保留反应。");
     }
     void DrawShieldPrompt()

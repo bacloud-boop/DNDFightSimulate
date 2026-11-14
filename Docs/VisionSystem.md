@@ -52,4 +52,15 @@ Unity 2022.3.62f3c1全项目静态编译通过；`Tools/Tests/VisionChecks.cs`�
 
 来源：[2024朦胧术](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Blur)、[高等隐形术](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#GreaterInvisibility)、[识破隐形](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#SeeInvisibility)、[真知术](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#TrueSeeing)。
 
-验证增加SenseChecks，覆盖效果对象、期限、专注与非专注独立性、整数射程边界、魔法黑暗与实体云雾的区别、清除与重置；静态编译和法术清单一致性检查通过。普通隐形术尚未接入，不应与高等隐形术状态混淆。
+验证增加SenseChecks，覆盖效果对象、期限、专注与非专注独立性、整数射程边界、魔法黑暗与实体云雾的区别、清除与重置；静态编译和法术清单一致性检查通过。普通隐形术见下节，与高等隐形术的结束触发分开记录。
+
+
+## 普通隐形术
+
+隐形术已接入：二环动作、接触、专注1小时；升环每环增加一个目标，当前场上最多选择双方。按用户裁定，某目标攻击、造成伤害或施法，只结束该目标的隐形。其他目标仍受原专注保护；所有目标均结束、专注中断或到期时才清除整组效果。
+
+攻击时先根据原隐形状态计算本次优势/劣势并选择骰值，随后攻击者显形；失手也会显形。武器、轻型、自然、法术及借机攻击均接入；多束法术只有尚未显形时的攻击能获得相应隐形收益。造成伤害按来源角色触发，包括伤害全部由临时生命吸收、防死结界阻止倒地以及黯冰狱铠反伤；不把受伤者误作来源，0伤害不触发伤害事件。
+
+施法触发覆盖普通施法、酸液飞溅、雷鸣波、护盾术反应及玩家战后施法。取消或未能支付行动的施法不触发。再次对自身施放隐形术后，新生效的隐形不会被旧施法完成通知立即清除。治疗和其他不造成伤害的法术仍在完成施法后结束原有隐形。高等隐形术不受这些触发影响。
+
+来源：[2024隐形术](https://www.dndbeyond.com/sources/dnd/br-2024/spell-descriptions#Invisibility)，其中多目标结束范围按用户确认的逐目标规则结算。InvisibilityChecks覆盖目标独立性、重施代次、期限、伤害归属、临时生命、零伤害、防死结界与高等隐形区别；DeathWardChecks回归通过。

@@ -12,6 +12,7 @@ public sealed class CombatState
         if(player){if(!PlayerDead)return false;PlayerDead=false;PlayerStable=false;DeathFailures=DeathSuccesses=0;PlayerHp=Math.Min(PlayerMaxHp,hp);if(ordeal)PlayerRevivalPenalty=-4;}
         else {if(Hp>0)return false;Hp=Math.Min(MaxHp,hp);if(ordeal)MonsterRevivalPenalty=-4;}return true;
     }
+    public Action<bool> DamageDealt {get;set;}
     public Func<bool,bool> DeathWardGuard {get;set;}
     bool PreventDeath(bool player)=>DeathWardGuard!=null&&DeathWardGuard(player);
     public bool PlayerBladeWard {get;set;}
@@ -166,9 +167,10 @@ public sealed class CombatState
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
     public void ResetBattle() {Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
-    public void ApplyDamage(int damage) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining); }
-    public void ApplyPlayerDamage(int damage,bool critical=false) {
+    public void ApplyDamage(int damage,bool sourcePlayer=true) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageDealt?.Invoke(sourcePlayer); }
+    public void ApplyPlayerDamage(int damage,bool critical=false,bool sourcePlayer=false) {
         if(damage<=0||PlayerDead)return;
+        try{
         int originalDamage=damage,before=PlayerHp;
         int absorbed=Math.Min(damage,PlayerTemporaryHp);PlayerTemporaryHp-=absorbed;damage-=absorbed;
         if(before==0){PlayerStable=false;if(originalDamage>=PlayerMaxHp){PlayerDead=true;return;}DeathFailures+=critical?2:1;if(DeathFailures>=3)PlayerDead=true;return;}
@@ -178,6 +180,7 @@ public sealed class CombatState
         if(overflow>=PlayerMaxHp){PlayerHp=0;PlayerDead=true;return;}
         PlayerHp=Math.Max(0,PlayerHp-damage);
         if(PlayerHp==0)PlayerReactionAvailable=false;
+        }finally{DamageDealt?.Invoke(sourcePlayer);}
     }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
 
