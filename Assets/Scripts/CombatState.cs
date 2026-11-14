@@ -23,6 +23,9 @@ public sealed class CombatState
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
     public bool MonsterSlowed {get;private set;}
+    public bool PlayerReactionsBlocked {get;private set;}
+    public bool MonsterReactionsBlocked {get;private set;}
+    public void BlockReactions(bool player){if(player)PlayerReactionsBlocked=true;else MonsterReactionsBlocked=true;}
     public bool PlayerOpportunityBlocked {get;private set;}
     public bool MonsterOpportunityBlocked {get;private set;}
     public int MonsterSpeedBonus {get;set;}
@@ -60,7 +63,7 @@ public sealed class CombatState
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;
     public void BlockHealing(bool player){if(player)playerHealingBlockedUntil=Round+1;else monsterHealingBlockedUntil=Round+1;}
     public void ExpirePlayerTurnEffects(){if(Round>=playerPoisonUntil)playerPoisonUntil=0;if(Round>=monsterPoisonUntil)monsterPoisonUntil=0;if(Round>=playerSliverUntil)playerSliverUntil=0;if(Round>=monsterSliverUntil)monsterSliverUntil=0;if(Round>=playerGuidedUntil)playerGuidedUntil=0;if(Round>=monsterGuidedUntil)monsterGuidedUntil=0;if(Round>=playerMockeryUntil)playerMockeryUntil=0;if(Round>=playerHealingBlockedUntil)playerHealingBlockedUntil=0;if(Round>=monsterHealingBlockedUntil)monsterHealingBlockedUntil=0;}
-    public void ClearShortDurationEffects(){playerPoisonUntil=monsterPoisonUntil=0;playerSliverUntil=monsterSliverUntil=0;playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
+    public void ClearShortDurationEffects(){PlayerReactionsBlocked=MonsterReactionsBlocked=false;playerPoisonUntil=monsterPoisonUntil=0;playerSliverUntil=monsterSliverUntil=0;playerGuidedUntil=0;monsterGuidedUntil=0;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false;MonsterOpportunityBlocked=false;playerMockeryUntil=0;monsterMockery=false;playerHealingBlockedUntil=0;monsterHealingBlockedUntil=0;}
     public int MonsterTemporaryHp {get;private set;}
     public void GrantMonsterTemporaryHp(int amount){if(Hp>0)MonsterTemporaryHp=Math.Max(MonsterTemporaryHp,Math.Max(0,amount));}
     public void ClearMonsterTemporaryHp(){MonsterTemporaryHp=0;}
@@ -101,11 +104,11 @@ public sealed class CombatState
     public bool PlayerReactionAvailable { get; private set; } = true;
     public bool MonsterReactionAvailable { get; private set; } = true;
     public bool TryUseReaction(bool player) {
-        if(player) {if(!PlayerCanAct||!PlayerReactionAvailable)return false;PlayerReactionAvailable=false;}
-        else {if(!MonsterCanAct||!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
+        if(player) {if(!PlayerCanAct||PlayerReactionsBlocked||!PlayerReactionAvailable)return false;PlayerReactionAvailable=false;}
+        else {if(!MonsterCanAct||MonsterReactionsBlocked||!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
         BattleStarted=true;return true;
     }
-    public void StartMonsterTurn() {MonsterOpportunityBlocked=false;MonsterReactionAvailable=true;}
+    public void StartMonsterTurn() {MonsterReactionsBlocked=false;MonsterOpportunityBlocked=false;MonsterReactionAvailable=true;}
     public void MarkBattleStarted() { BattleStarted=true; }
     public int ActionsRemaining { get; private set; } = 1;
     public int ActionsThisRound { get; private set; } = 1;
@@ -166,6 +169,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != monsterBaseMaxHp) { monsterBaseMaxHp = newMaxHp; Hp = MaxHp; }
     }
-    public void EndRound() {ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
+    public void EndRound() {PlayerReactionsBlocked=false;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
 
 }

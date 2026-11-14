@@ -3,7 +3,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     bool shieldPending;int shieldDecision;bool shieldAttackTrigger;
-    bool CanOfferShield => !combat.ShieldActive&&combat.PlayerCanAct&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&(classes[1]>0||classes[3]>0);
+    bool CanOfferShield => !combat.ShieldActive&&!combat.PlayerReactionsBlocked&&combat.PlayerCanAct&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&(classes[1]>0||classes[3]>0);
     IEnumerator OfferShield(bool attackTrigger)
     {
         if(!CanOfferShield)yield break;

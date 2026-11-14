@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         if(from==target)yield break;
         combat.MarkBattleStarted();rolling=true;
         bool defenderPlayer=!movingPlayer;
-        bool reactionAvailable=defenderPlayer?combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked;
+        bool reactionAvailable=defenderPlayer?!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked;
         int reach=defenderPlayer?5:combat.MonsterAttackRange;
         int opportunityPlayerSight,opportunityMonsterSight;
         if(OpportunitySight(movingPlayer,from,target,reach,out opportunityPlayerSight,out opportunityMonsterSight) && !tactical && !(movingPlayer&&IsWildShaped&&BeastAttack.Find(wildForm.name).Agile) && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {

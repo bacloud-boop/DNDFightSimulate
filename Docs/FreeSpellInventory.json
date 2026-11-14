@@ -362,7 +362,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Arms_of_Hadar",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Astral Projection",
@@ -1013,7 +1013,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/6%E7%8E%AF.htm#Circle_of_Death",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Circle of Power",
@@ -2933,7 +2933,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/3%E7%8E%AF.htm#Fireball",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Flame Blade",
@@ -3930,7 +3930,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Ice_Knife",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Ice Storm",
@@ -6205,7 +6205,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Shatter",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Shield",

@@ -80,7 +80,8 @@ public sealed partial class TrainingGame
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
-        if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
+        if(IsPointBurst(definition))DrawPointBurstChoices(definition);
+        else if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
         else if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
         else if(definition.Name=="Misty Step"||definition.Name=="Expeditious Retreat")DrawMobilityChoices(definition);
         else if(definition.Name=="Darkness"||definition.Name=="Daylight"||definition.Name=="Fog Cloud")DrawVisionSpellChoices(definition);
@@ -114,6 +115,7 @@ public sealed partial class TrainingGame
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
+        if(IsPointBurst(spell))return PointBurstError(spell);
         if(spell.Name=="Mirror Image"&&!directTargetPlayer)return "镜像术只能作用于自身。";
         if(spell.Name=="Armor of Agathys"&&!directTargetPlayer)return "黯冰狱铠只能作用于自身。";
         if(SpellRequiresSight(spell.Name)&&(!directTargetPlayer||directBothTargets)&&!PlayerSeesMonster&&spell.Name!="Magic Missile"&&spell.Name!="Power Word Fortify")return "此法术需要看见所选目标。";
@@ -145,12 +147,14 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        if(spell.Name=="Ice Knife"){yield return ResolveIceKnife(targetPlayer,caster,slotLevel);if(!embedded)rolling=false;yield break;}
+        if(IsPointBurst(spell)){yield return ResolvePointBurst(spell,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mirror Image"){mirrorImage.Cast(worldRounds);history.Insert(0,"镜像术：三个替身，持续1分钟，无需专注。");if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Death Ward"){ApplyDeathWard(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Misty Step"||spell.Name=="Expeditious Retreat"){ApplyMobilitySpell(spell);if(!embedded)rolling=false;yield break;}
         if(IsVisionSpell(spell.Name)){ApplyVisionSpell(spell,targetPlayer,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="True Strike"){yield return Roll(selectedWeapon,modifier,classes.ProficiencyBonus,"施法属性修正",fighter.ConsumeAdvantage(classes[0]),"克敌机先",trueStrike:true,radiantWeapon:trueStrikeRadiant);if(!embedded)rolling=false;yield break;}
-        if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
+        if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Guidance"||spell.Name=="Enhance Ability"){ApplyCheckBuff(spell,targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Bane"){yield return ResolveBane(targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}

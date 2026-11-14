@@ -11,10 +11,17 @@ public sealed class DirectSpell
         Name=name;Chinese=chinese;Effect=effect;DamageType=damageType;BaseDice=baseDice;UpcastDice=upcastDice;HalfSave=halfSave;Control=control;Melee=melee;Level=level;Range=range;Sides=sides;Bonus=bonus;Attack=attack;Healing=healing;Stable=stable;SaveAbility=save;
         Summary=chinese+"｜"+name+"\n"+effect+(name=="Mirror Image"?"\n非专注，持续1分钟。":name=="Death Ward"?"\n非专注，持续8小时。":name=="Fog Cloud"?"\n专注，至多1小时。":name=="Expeditious Retreat"?"\n专注，至多10分钟。":name=="Darkness"?"\n专注，至多10分钟。":name=="Darkvision"||name=="Daylight"?"\n无需专注。":name=="Guidance"?"\n专注，至多1分钟。":name=="Enhance Ability"?"\n专注，至多1小时。":name=="Aid"?"\n非专注，持续8小时。":name=="Hex"||name=="Hunter's Mark"?"\n专注，持续时间由环阶决定。":name=="Bane"||name=="Bless"?"\n专注，至多1分钟。":name=="Shield of Faith"?"\n专注，至多10分钟。":name=="Blade Ward"?"\n专注，至多1分钟。":name=="Protection from Energy"?"\n专注，至多1小时。":control?"\n专注，至多1分钟。":name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin"||name=="Armor of Agathys"?"\n无需专注。":"\n非专注，即时。");
     }
+    public int EmanationRadius=>Name=="Arms of Hadar"?10:Name=="Thunderclap"||Name=="Word of Radiance"?5:0;
+    public int BurstRadius=>Name=="Fireball"?20:Name=="Shatter"?10:Name=="Circle of Death"?60:0;
     public bool AllowsCreatureType(int type)=>Name!="Hold Person"||type==9;
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Ice Knife","冰刃","1动作 · 60尺 · 姿势。远程法术攻击命中1d10穿刺；无论命中与否，目标及其5尺内生物敏捷豁免，失败2d6寒冷、成功0。升环每环仅爆炸伤害+1d6，暴击仅翻倍穿刺骰。",1,60,6,baseDice:2,upcastDice:1),
+        new DirectSpell("Fireball","火球术","1动作 · 150尺 · 声音、姿势。指定点20尺半径内所有生物敏捷豁免，失败8d6火焰，成功减半；每升一环+1d6。点燃物件等环境效果暂缓。",3,150,6,save:1,damageType:"火焰",baseDice:8,upcastDice:1,halfSave:true),
+        new DirectSpell("Shatter","粉碎音波","1动作 · 60尺 · 声音、姿势。指定点10尺半径内所有生物体质豁免，失败3d8雷鸣，成功减半；构装生物此豁免劣势。每升一环+1d8；物件破坏暂缓。",2,60,8,save:2,damageType:"雷鸣",baseDice:3,upcastDice:1,halfSave:true),
+        new DirectSpell("Circle of Death","死亡法阵","1动作 · 150尺 · 声音、姿势。指定点60尺半径内所有生物体质豁免，失败8d8死灵，成功减半；每升一环+2d8。",6,150,8,save:2,damageType:"死灵",baseDice:8,upcastDice:2,halfSave:true),
+        new DirectSpell("Arms of Hadar","哈达之臂","1动作 · 自身10尺光环 · 声音、姿势。力量豁免失败受2d6死灵并无法进行反应，至目标下回合开始；成功伤害减半。每升一环+1d6。",1,0,6,save:0,damageType:"死灵",baseDice:2,upcastDice:1,halfSave:true),
         new DirectSpell("Hold Monster","怪物定身术","1动作 · 90尺 · 声音、姿势。可见生物感知豁免失败则麻痹，目标每个回合结束再次豁免。五环1目标，每升一环增加1目标；2024条文不排除亡灵。",5,90,0,save:3,control:true),
         new DirectSpell("Eldritch Blast","魔能爆","1动作 · 120尺 · 声音、姿势。每束独立远程法术攻击，命中1d10力场。总等级5/11/17时变为2/3/4束，分别选择目标。",0,120,10,attack:true),
         new DirectSpell("Ray of Sickness","致病射线","1动作 · 60尺 · 声音、姿势。远程法术攻击，命中2d8毒素并中毒至施法者下一回合结束，无额外豁免；每升一环伤害+1d8。",1,60,8,attack:true,damageType:"毒素",baseDice:2,upcastDice:1),
