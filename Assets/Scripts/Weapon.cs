@@ -4,6 +4,7 @@ public sealed class Weapon
     public int DiceSides { get; }
     public int DiceCount { get; }
     public int FixedDamage { get; }
+    public string DamageType => Name=="短棒"||Name=="巨棒"||Name=="轻锤"||Name=="硬头锤"||Name=="长棍"||Name=="链枷"||Name=="巨锤"||Name=="战锤"||Name=="投石索"?"钝击":Name.StartsWith("长剑")||Name=="弯刀"||Name=="鞭"||Name=="手斧"||Name=="镰刀"||Name=="战斧"||Name=="长柄刀"||Name=="巨斧"||Name=="巨剑"||Name=="戟"?"挥砍":"穿刺";
     public string DamageDice => DiceCount==0?FixedDamage.ToString():DiceCount+"d"+DiceSides;
     public bool HasFinesse { get; }
     public bool HasLight { get; }
@@ -13,7 +14,7 @@ public sealed class Weapon
     public string RangeText => IsMelee?ReachFeet+"尺":ReachFeet+"/"+MaxRangeFeet+"尺";
     public bool CanReach(int distanceFeet) => distanceFeet<=MaxRangeFeet;
     public bool HasRangeDisadvantage(int distanceFeet) => !IsMelee && distanceFeet>ReachFeet && CanReach(distanceFeet);
-    public string Traits => (IsMelee?"近战武器":"远程武器")+" · "+RangeText+" · "+(HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
+    public string Traits => (IsMelee?"近战武器":"远程武器")+" · "+DamageType+" · "+RangeText+" · "+(HasFinesse?"灵巧":"无灵巧")+(HasLight?" · 轻型":"");
     public Weapon(string name, int diceSides, bool hasFinesse = false, int diceCount = 1, bool hasLight = false, bool isMelee = true, int rangeFeet = 5, int maxRangeFeet = 5, int fixedDamage = 0) { Name = name; DiceSides = diceSides; HasFinesse = hasFinesse; DiceCount = diceCount; HasLight = hasLight; IsMelee = isMelee; ReachFeet = rangeFeet; MaxRangeFeet = maxRangeFeet; FixedDamage = fixedDamage; }
     public bool UsesDexterity(PlayerAttributes attributes) => HasFinesse?attributes.DexterityModifier>attributes.StrengthModifier:!IsMelee;
     public int AttackModifier(PlayerAttributes attributes) => UsesDexterity(attributes) ? attributes.DexterityModifier : attributes.StrengthModifier;

@@ -9,6 +9,7 @@ public sealed partial class TrainingGame
     string spellSearch="",selectedSpellName="";
     Vector2 spellLibraryScroll,directSpellScroll;
     bool onlyClassSpells=true;
+    bool trueStrikeRadiant=true;
     int energyChoice=2;bool energyTargetWilling;
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
@@ -53,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;energyTargetWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Healing||direct.Stable||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;energyTargetWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -81,6 +82,7 @@ public sealed partial class TrainingGame
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
         if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
         else if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
+        else if(definition.Name=="True Strike"){GUILayout.Label("武器："+selectedWeapon.Name+" · "+selectedWeapon.DamageDice+" · "+selectedWeapon.RangeText,small);trueStrikeRadiant=GUILayout.Toggle(trueStrikeRadiant,"将武器基础伤害改为光耀（否则为"+selectedWeapon.DamageType+"）",label);}
         else if(definition.Name=="Thunderwave")GUILayout.Label("确认后选择15尺立方方向并预览范围。",small);
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
@@ -88,8 +90,9 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Control&&directSlotLevel>=3)||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||((definition.Control||definition.Name=="Enhance Ability")&&directSlotLevel>=3)||(definition.Name=="Longstrider"&&directSlotLevel>=2))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
+        DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
         if(definition.Name=="Protection from Energy"){energyChoice=GUILayout.SelectionGrid(energyChoice,new[]{"强酸","寒冷","火焰","闪电","雷鸣"},3,new GUIStyle(button){fontSize=16,fixedHeight=34});if(!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受该法术",label);}
@@ -110,10 +113,12 @@ public sealed partial class TrainingGame
         if(spell.Name=="Armor of Agathys"&&!directTargetPlayer)return "黯冰狱铠只能作用于自身。";
         if(spell.Name=="Power Word Fortify")return FortifyInvalidReason();
         if(spell.Name=="Blade Ward"&&!directTargetPlayer)return "剑刃防护只能作用于自身。";
+        if(spell.Name=="Guidance"&&!directTargetPlayer&&!energyTargetWilling)return "指引术需要自愿目标，请先确认。";
         if(spell.Name=="Barkskin"&&!directTargetPlayer&&!energyTargetWilling)return "树肤术需要自愿目标，请先确认。";
         if(spell.Name=="Protection from Energy"&&!directTargetPlayer&&!energyTargetWilling)return "此法术需要自愿目标，请确认木桩是否接受。";
         if((spell.Name=="Divine Favor"||spell.Name=="Magic Weapon")&&!directTargetPlayer)return "此法术当前仅可用于自身或玩家装备的武器。";
         if(spell.Name=="Magic Weapon"&&IsWildShaped)return "武器已融入兽形，当前不能触碰。";
+        if(spell.Name=="True Strike"){if(IsWildShaped)return "武器已融入兽形，当前无法使用。";if(!selectedWeapon.CanReach(map.DistanceFeet))return "目标超出当前武器射程。";return "";}
         if(spell.Name=="Thunderwave"||IsSimpleEmanation(spell.Name))return "";
         if(spell.Name=="Magic Missile"||spell.Name=="Scorching Ray")return MissileTargetError(spell.DiceCount(classes.TotalLevel,directSlotLevel));
         if(spell.Name=="False Life"&&!directTargetPlayer)return "虚假生命只能以自身为目标。";
@@ -131,7 +136,9 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        if(spell.Name=="True Strike"){yield return Roll(selectedWeapon,modifier,classes.ProficiencyBonus,"施法属性修正",fighter.ConsumeAdvantage(classes[0]),"克敌机先",trueStrike:true,radiantWeapon:trueStrikeRadiant);if(!embedded)rolling=false;yield break;}
         if(IsSimpleEmanation(spell.Name)){yield return ResolveSimpleEmanation(spell,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Guidance"||spell.Name=="Enhance Ability"){ApplyCheckBuff(spell,targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Magic Missile"){yield return ResolveMagicMissile(spell.DiceCount(classes.TotalLevel,slotLevel));if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Bane"){yield return ResolveBane(targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Hex"||spell.Name=="Hunter's Mark"){EndConcentration("开始新的专注法术");bool hex=spell.Name=="Hex";mark.Cast(hex,targetPlayer,hexAbility);concentrationSpell=spell.Chinese;concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+MarkEffect.Duration(hex,slotLevel);history.Insert(0,spell.Chinese+"标记"+target+"，攻击检定命中额外1d6"+(hex?"死灵；所选属性检定劣势（不影响豁免）":"力场；寻找目标的察觉/求生优势")+"。玩家技能入口已接入对应属性劣势与寻找目标优势；场景探索结果由手动DC检定表示。");if(!embedded)rolling=false;yield break;}

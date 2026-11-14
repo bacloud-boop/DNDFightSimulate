@@ -95,7 +95,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice="无法进行攻击：目标距离 "+map.DistanceFeet+" 尺，"+weapon.Name+"射程 "+weapon.RangeText+"。";
         return false;
     }
-    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false)
+    IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false,bool trueStrike=false,bool radiantWeapon=false)
     {
         rolling=true;logScroll=Vector2.zero;
         int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing-bane;
@@ -127,7 +127,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string hitLabel=critical?"暴击（伤害骰数量翻倍）":"命中";
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
-        int damageModifier=attackWeapon.DiceCount==0?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
+        int damageModifier=attackWeapon.DiceCount==0&&!trueStrike?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
         int[] damageRolls=attackWeapon.RollDamageDice(critical);
         if(damageRolls.Length>0) {
             dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
@@ -135,9 +135,11 @@ public sealed partial class TrainingGame : MonoBehaviour
         }
         int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+magicBonus;
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
-        int damage=Mathf.Max(0,result+damageModifier);
-        if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");damage+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
+        int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
+        if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
+        if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
+        int damage=0;for(int i=0;i<weaponDamageByType.Length;i++)damage+=combat.AdjustTypedDamage(false,weaponDamageByType[i],i);
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);

@@ -2463,7 +2463,7 @@
       "duration": "专注，至多1小时",
       "concentration": true,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Enhance_Ability",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Enlarge/Reduce",
@@ -3509,7 +3509,7 @@
       "duration": "专注，至多1分钟",
       "concentration": true,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#Guidance",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Guiding Bolt",
@@ -3874,7 +3874,7 @@
       "implementation": "not_implemented"
     },
     {
-      "name": "Hunter’s Mark",
+      "name": "Hunter's Mark",
       "chineseName": "猎人印记",
       "level": 1,
       "school": "预言",
@@ -3889,7 +3889,7 @@
       "duration": "专注，至多1小时",
       "concentration": true,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/1%E7%8E%AF.htm#Hunter's_Mark",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Hypnotic Pattern",
@@ -7482,7 +7482,7 @@
       "duration": "立即",
       "concentration": false,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/0%E7%8E%AF.htm#True_Strike",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Tsunami",

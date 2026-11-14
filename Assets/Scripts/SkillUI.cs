@@ -94,11 +94,13 @@ public sealed partial class TrainingGame
             int beast=wildForm.skillModifiers[skill],baseModifier=AcidSplash.Modifier(wildForm.abilities[ability]);beastProficient=beast>baseModifier;
             if(beastProficient){int beastTier=Math.Min(2,Math.Max(1,(beast-baseModifier)/2));modifier=Math.Max(modifier,Math.Max(beast,AcidSplash.Modifier(score)+classes.ProficiencyBonus*beastTier));}
         }
-        bool advantage=checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
+        bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
         bool disadvantage=checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
         int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];
+        int guidanceBonus=0;
+        if(checkBuff.Guided(true,skill,worldRounds)){guidanceBonus=UnityEngine.Random.Range(1,5);yield return PresentRoll(4,new[]{guidanceBonus},"指引术：本次"+name+"检定 +"+guidanceBonus);modifier+=guidanceBonus;}
         int total=effective+modifier;bool success=SkillCheckRules.Success(effective,modifier,dc);
         dice=name+"检定 · "+(advantage&&disadvantage?"优势劣势抵消":advantage?"优势":disadvantage?"劣势":"正常");
         yield return PresentRoll(20,two?new[]{first,second}:new[]{first},"采用 "+raw+(effective!=raw?"，可靠才能按10":"")+" + 调整 "+modifier+" = "+total+" / DC "+dc+"，"+(success?"成功":"失败"));
