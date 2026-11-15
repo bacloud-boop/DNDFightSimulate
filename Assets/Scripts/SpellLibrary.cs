@@ -81,7 +81,8 @@ public sealed partial class TrainingGame
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+combat.PlayerRevivalPenalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
-        if(IsPointBurst(definition))DrawPointBurstChoices(definition);
+        if(definition.Name=="Silence")DrawSilenceChoices();
+        else if(IsPointBurst(definition))DrawPointBurstChoices(definition);
         else if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
         else if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
         else if(definition.Name=="Misty Step"||definition.Name=="Expeditious Retreat")DrawMobilityChoices(definition);
@@ -122,10 +123,13 @@ public sealed partial class TrainingGame
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
+        if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
+        if(MockeryTargetError(spell,directTargetPlayer)!="")return MockeryTargetError(spell,directTargetPlayer);
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Shillelagh")return !directTargetPlayer?"橡棍术只作用于自身持有的武器。":ShillelaghError();
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
+        if(spell.Name=="Silence")return SilenceError();
         if((spell.Name=="Blur"||spell.Name=="See Invisibility")&&!directTargetPlayer)return "此法术只能作用于自身。";
         if(spell.Name=="True Seeing"&&!directTargetPlayer&&!trueSeeingWilling)return "真知术需要自愿目标。";
         if(spell.Name=="Polymorph"){string error=PolymorphError();if(error!="")return error;}
@@ -164,10 +168,13 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        if(!SpellVoiceAllowed(true,spell.Name))yield break;
+        if(MockeryTargetError(spell,targetPlayer)!="")yield break;
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
         if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
+        if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
@@ -179,6 +186,7 @@ public sealed partial class TrainingGame
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Arcane Vigor"){yield return ResolveArcaneVigor(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Polymorph"){yield return ResolvePolymorph(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}

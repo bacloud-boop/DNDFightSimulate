@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
             CardTab(new Rect(x-60,434,60,62),"生\n前","originalMonster",false);
             if(Btn(new Rect(x-60,586,60,62),"法\n术",!rolling&&panel==""))OpenMonsterSpells();
         }
+        DrawSilenceStatus(x,player);
     }
     void DisposeHeraldry()
     {

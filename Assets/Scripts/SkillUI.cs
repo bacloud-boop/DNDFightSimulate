@@ -56,6 +56,7 @@ public sealed partial class TrainingGame
         bool canTrack=checkKind==1&&(checkSkill==12||checkSkill==13)&&mark.Active&&!mark.Hex;
         GUI.enabled=canTrack;checkTracking=GUILayout.Toggle(canTrack&&checkTracking,canTrack?"此次检定用于寻找标记目标（"+(mark.TargetPlayer?"玩家自身":"木桩")+"）":"当前没有适用的猎人印记寻找检定",label);GUI.enabled=previous;
         if(checkKind==1&&checkSkill==12)checkVisual=GUILayout.Toggle(checkVisual,"此察觉检定依赖视觉，观察木桩",label);
+        checkHearing=GUILayout.Toggle(checkHearing,"此检定依赖听觉，听取木桩位置的声音",label);
         GUILayout.Label("本次DC（整数）",label);checkDc=IntegerField(checkDc,true);
         int dc;bool validDc=int.TryParse(checkDc,out dc);
         bool canRoll=(SkillProfileReady||PlayerPolymorphed)&&page=="battle"&&map.Locked&&!rolling&&!spellTargeting&&!reactionPending&&!shieldPending&&draggingToken<0&&combat.ActionAvailable&&validDc&&(!tool||checkToolAvailable&&!PlayerPolymorphed);
@@ -86,6 +87,7 @@ public sealed partial class TrainingGame
     {
         if((!SkillProfileReady&&!PlayerPolymorphed)||!combat.TryUseAction())yield break;
         rolling=true;
+        if(checkHearing&&!SilenceHearMonster()){history.Insert(0,"听觉检定自动失败：沉默术阻止声音传达，消耗1动作。");dice="听觉检定 · 自动失败";rolling=false;yield break;}
         if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
         int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];
