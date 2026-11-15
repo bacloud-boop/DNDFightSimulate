@@ -105,7 +105,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator FinishMonsterSpellTurn()
     {
-        if(!combat.PlayerDead){yield return RepeatHoldPersonSave();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();}
+        if(!combat.PlayerDead){yield return RepeatHoldPersonSave();yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();}
         rolling=false;
     }
 }

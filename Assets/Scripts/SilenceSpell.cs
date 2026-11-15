@@ -11,8 +11,8 @@ public sealed partial class TrainingGame
         if(!SilenceCentre(player))return true;
         var spell=SpellInfo(name);return spell==null||System.Array.IndexOf(spell.components,"声音")<0;
     }
-    bool SilenceHearMonster()=>!silence.BlocksSound(map.Player.x+(map.PlayerSpaces-1)*.5,map.Player.y+(map.PlayerSpaces-1)*.5,map.Monster.x+(map.MonsterSpaces-1)*.5,map.Monster.y+(map.MonsterSpaces-1)*.5,worldRounds);
-    string MockeryTargetError(DirectSpell spell,bool self)=>spell.Name=="Vicious Mockery"&&!self&&!silence.CanSeeOrHear(PlayerSeesMonster,map.Player.x+(map.PlayerSpaces-1)*.5,map.Player.y+(map.PlayerSpaces-1)*.5,map.Monster.x+(map.MonsterSpaces-1)*.5,map.Monster.y+(map.MonsterSpaces-1)*.5,worldRounds)?"恶言相加需要看见或听见目标；当前目标不可见且声音被沉默术阻断。":"";
+    bool SilenceHearMonster()=>!sensory.Deafened(true,worldRounds)&&!silence.BlocksSound(map.Player.x+(map.PlayerSpaces-1)*.5,map.Player.y+(map.PlayerSpaces-1)*.5,map.Monster.x+(map.MonsterSpaces-1)*.5,map.Monster.y+(map.MonsterSpaces-1)*.5,worldRounds);
+    string MockeryTargetError(DirectSpell spell,bool self)=>spell.Name=="Vicious Mockery"&&!self&&!PlayerSeesMonster&&!SilenceHearMonster()?"恶言相加需要看见或听见目标；当前目标不可见且无法听见。":"";
     void DrawSilenceChoices()
     {
         GUILayout.Label("固定20尺半径球状范围，选择中心列、行（1～"+map.Size+"），射程120尺。",small);
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
     }
     void DrawSilenceStatus(float x,bool player)
     {
-        string text=SilenceWhole(player)?"失聪 · 雷鸣免疫 · 禁声":SilenceCentre(player)?"中心沉默 · 禁止声音施法":"";
+        string text=sensory.Blinded(player,worldRounds)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
         if(text!="")GUI.Label(new Rect(x+20,823,230,22),text,PlaqueText(player,14,TextAnchor.MiddleCenter));
     }
 }

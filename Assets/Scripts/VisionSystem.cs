@@ -19,8 +19,9 @@ public sealed partial class TrainingGame
     int VisibilityBetween(bool viewerPlayer,double fromX,double fromY,int fromSize,double targetX,double targetY,int targetSize,bool invisible=false){
         if(mindSpike.IgnoresInvisibility(viewerPlayer,!viewerPlayer,worldRounds))invisible=false;
         int range=viewerPlayer?PlayerDarkvision:MonsterPolymorphed?Mathf.Max(vision.SpellRange(false,worldRounds),polymorph.Darkvision):vision.Range(false,worldRounds),best=2,blind=viewerPlayer?PlayerBlindsight:MonsterPolymorphed?polymorph.Blindsight:0;
+        bool viewerBlinded=sensory.Blinded(viewerPlayer,worldRounds);
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){
-            double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
+            double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(SensoryAfflictions.BlocksSight(viewerBlinded,blind,distance))quality=2;if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
         }return best;
     }
     bool OpportunitySight(bool movingPlayer,Vector2Int from,Vector2Int to,int reach,out int playerSight,out int monsterSight){

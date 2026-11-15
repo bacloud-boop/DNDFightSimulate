@@ -87,7 +87,7 @@ public sealed partial class TrainingGame
     {
         if((!SkillProfileReady&&!PlayerPolymorphed)||!combat.TryUseAction())yield break;
         rolling=true;
-        if(checkHearing&&!SilenceHearMonster()){history.Insert(0,"听觉检定自动失败：沉默术阻止声音传达，消耗1动作。");dice="听觉检定 · 自动失败";rolling=false;yield break;}
+        if(checkHearing&&!SilenceHearMonster()){history.Insert(0,"听觉检定自动失败：耳聋或沉默术使玩家无法听见声源，消耗1动作。");dice="听觉检定 · 自动失败";rolling=false;yield break;}
         if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
         int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];

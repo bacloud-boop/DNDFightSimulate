@@ -96,7 +96,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Name=="Blindness/Deafness"&&directSlotLevel>=3)||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
@@ -105,6 +105,7 @@ public sealed partial class TrainingGame
         if(definition.Name=="Shillelagh")DrawShillelaghOptions();
         if(definition.Name=="Thorn Whip")DrawThornWhipChoices();
         if(definition.Name=="Arcane Vigor")DrawArcaneVigorChoices();
+        if(definition.Name=="Blindness/Deafness")DrawBlindnessDeafnessChoices();
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -130,6 +131,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Blindness/Deafness")return BlindnessDeafnessError(directTargetPlayer,directSlotLevel,directBothTargets);
         if((spell.Name=="Blur"||spell.Name=="See Invisibility")&&!directTargetPlayer)return "此法术只能作用于自身。";
         if(spell.Name=="True Seeing"&&!directTargetPlayer&&!trueSeeingWilling)return "真知术需要自愿目标。";
         if(spell.Name=="Polymorph"){string error=PolymorphError();if(error!="")return error;}
@@ -168,6 +170,7 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
         if(!SpellVoiceAllowed(true,spell.Name))yield break;
         if(MockeryTargetError(spell,targetPlayer)!="")yield break;
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
@@ -175,6 +178,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Blindness/Deafness"&&BlindnessDeafnessError(targetPlayer,slotLevel,blindnessBoth)!="")yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
@@ -187,6 +191,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Blindness/Deafness"){yield return ResolveBlindnessDeafness(targetPlayer,caster,slotLevel,blindnessBoth,blindnessPlayer,blindnessMonster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Arcane Vigor"){yield return ResolveArcaneVigor(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Polymorph"){yield return ResolvePolymorph(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}

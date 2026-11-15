@@ -31,6 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
+        sensory.Clear();
         monsterSpells.Reset();
         shillelagh.Clear();
         senses.Clear();hasMonsterLongRest=false;playerCorpse.Clear();monsterCorpse.Clear();revivalWilling=false;mirrorImage.Clear();deathWard.Clear();vision.ClearEffects();agathys.Clear();aidEffects.Clear();timedBuffs.Clear();combat.MonsterSpeedBonus=0;EndConcentration("重置战斗");EndWildShape("重置战斗");druid.LongRest();knownFormReplacement=false;outcomeRecorded=false;stableRecoveryAt=-1;combat.ResetBattle();fighter.ResetBattle();actionWeapon=null;BeginDeployment();

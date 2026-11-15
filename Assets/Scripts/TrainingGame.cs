@@ -164,14 +164,14 @@ public sealed partial class TrainingGame : MonoBehaviour
             combat.MarkBattleStarted();
             combat.ExpirePlayerTurnEffects();
             history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
-            StartCoroutine(Counterattack());
+            StartCoroutine(EndPlayerTurnWithSensorySaves());
         }
     }
     IEnumerator Counterattack(bool endTurn=true)
     {
         rolling=true;
         if(combat.PlayerDead){rolling=false;yield break;}
-        if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
+        if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
             if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
@@ -187,12 +187,12 @@ public sealed partial class TrainingGame : MonoBehaviour
             }
         }
         if(endTurn&&!combat.MonsterCanAct){
-            history.Insert(0,"木桩麻痹，跳过移动与攻击。");yield return RepeatHoldPersonSave();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
+            history.Insert(0,"木桩麻痹，跳过移动与攻击。");yield return RepeatHoldPersonSave();yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
         }
         if(endTurn && map.DistanceFeet>MonsterAttackReach) {
             dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+MonsterAttackReach+" 尺。";
             history.Insert(0,dice);
-            combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
+            yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
             movementMessage="拖动玩家棋子移动。";
             RefreshConcentration();yield return PlayerDeathSave();
             rolling=false;logScroll=Vector2.zero;yield break;
@@ -239,7 +239,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         } else {dice="木桩未命中 · 伤害 0";history.Insert(0,hitDetails+"，未命中，伤害 0。");}
         CheckBattleOutcome();
         if(endTurn && !combat.PlayerDead) {
-            combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";
+            yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;movementMessage="拖动玩家棋子移动。";
             RefreshConcentration();yield return PlayerDeathSave();
         }
         if(endTurn)rolling=false;logScroll=Vector2.zero;
