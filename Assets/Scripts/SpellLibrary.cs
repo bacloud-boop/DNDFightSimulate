@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -103,6 +103,7 @@ public sealed partial class TrainingGame
         if(definition.Name=="Sorcerous Burst")DrawSorcerousBurstChoices();
         if(definition.Name=="Shillelagh")DrawShillelaghOptions();
         if(definition.Name=="Thorn Whip")DrawThornWhipChoices();
+        if(definition.Name=="Arcane Vigor")DrawArcaneVigorChoices();
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -124,6 +125,7 @@ public sealed partial class TrainingGame
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Shillelagh")return !directTargetPlayer?"橡棍术只作用于自身持有的武器。":ShillelaghError();
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
+        if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if((spell.Name=="Blur"||spell.Name=="See Invisibility")&&!directTargetPlayer)return "此法术只能作用于自身。";
         if(spell.Name=="True Seeing"&&!directTargetPlayer&&!trueSeeingWilling)return "真知术需要自愿目标。";
         if(spell.Name=="Polymorph"){string error=PolymorphError();if(error!="")return error;}
@@ -165,6 +167,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
         if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
+        if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
@@ -174,6 +177,7 @@ public sealed partial class TrainingGame
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Arcane Vigor"){yield return ResolveArcaneVigor(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Polymorph"){yield return ResolvePolymorph(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}
         if(IsSenseSpell(spell.Name)){ApplySenseSpell(spell,targetPlayer);if(!embedded)rolling=false;yield break;}

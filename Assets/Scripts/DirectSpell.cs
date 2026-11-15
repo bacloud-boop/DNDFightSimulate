@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Arcane Vigor","活力奥法","附赠动作 · 自身 · 声音、姿势。消耗并投掷1～2颗未使用的生命骰，恢复骰值之和加一次施法属性调整值的HP，不加体质调整值。每升一环可多用1颗生命骰；多职业可自行分配，和短休共用同一资源。",2,0,0,bonus:true),
         new DirectSpell("Thorn Whip","荆棘之鞭","1动作 · 30尺 · 声音、姿势。近战法术攻击，命中造成1d6穿刺伤害，总等级5/11/17时增至2d6/3d6/4d6。大型或更小的目标可向施法者拉近至多10尺；施法前选择距离，遇阻停下，不消耗移动力或触发借机攻击。",0,30,6,attack:true,damageType:"穿刺",melee:true),
         new DirectSpell("Detect Evil and Good","侦测善恶","1动作 · 自身 · 声音、姿势 · 专注至多10分钟。感知30尺内异怪、天界、元素、妖精、邪魔或亡灵的位置，不判断阵营、不赋予视觉。圣居术区域与遮挡材质按环境系统暂缓，现有无墙壁训练场以金色边框提示符合条件的存活木桩。",1,0,0),
         new DirectSpell("Shillelagh","橡棍术","附赠动作 · 自身 · 声音、姿势 · 非专注1分钟。附魔持有的短棒或长棍，伤害骰变为1d8，总等级5/11/17时为1d10/1d12/2d6；可改用施法属性作命中与伤害，并选择原类型或力场伤害。再次施法替换旧效果；切换武器或装备融入形态视为放手并结束，不立即攻击。",0,0,0,bonus:true),
