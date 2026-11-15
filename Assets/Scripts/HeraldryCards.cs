@@ -70,7 +70,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(x+28,479,214,32),"护甲等级  ·  "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass),PlaqueText(player,21,TextAnchor.MiddleCenter));
         if(player){
             EngravedRow(x,530,"当前武器",selectedWeapon.Name,player);
-            EngravedRow(x,554,"伤害 / 射程",selectedWeapon.DamageDice+" / "+selectedWeapon.RangeText,player);
+            EngravedRow(x,554,"伤害 / 射程",PlayerWeaponDamageDice+" / "+selectedWeapon.RangeText,player);
             EngravedRow(x,578,"剩余动作",combat.ActionsRemaining+" / "+combat.ActionsThisRound,player);
             EngravedRow(x,602,"附赠动作",(combat.BonusActionAvailable?1:0)+" / 1",player);
             EngravedRow(x,626,"移动力",map.MovementRemaining+" / "+map.PlayerSpeed+"尺",player);

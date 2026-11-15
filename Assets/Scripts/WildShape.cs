@@ -68,6 +68,7 @@ public sealed partial class TrainingGame
         if(WildShapeInvalidReason(form)!="")return;
         var reference=FormReferenceCell;Vector2Int anchor;if(!druid.TryBeginWildShape(classes[11],combat,map,BeastSpaces(form),out anchor,reference))return;
         wildNormalOffset=reference-anchor;wildForm=form;wildShapeEndsAt=worldRounds+DruidFeatures.DurationRounds(classes[11]);
+        RefreshShillelagh();
         combat.SetPlayerArmorOverride(form.armor);map.SetPlayerSpeed(form.walk);combat.GrantPlayerTemporaryHp(classes[11]);
         history.Insert(0,"荒野形态："+BeastAttack.Find(form.name).Chinese+"，消耗附赠动作与1次使用；获得"+classes[11]+"临时生命（不叠加），速度"+form.walk+"尺。武器融入形态。");
         panel="";dice="荒野形态 · "+BeastAttack.Find(form.name).Chinese;wildShapeMessage="";

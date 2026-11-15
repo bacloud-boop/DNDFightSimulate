@@ -101,6 +101,9 @@ public sealed partial class TrainingGame : MonoBehaviour
     IEnumerator Roll(Weapon attackWeapon, int abilityModifier, int proficiencyBonus, string abilityLabel, bool advantage, string attackKind="动作攻击", bool opportunity=false,bool trueStrike=false,bool radiantWeapon=false)
     {
         rolling=true;logScroll=Vector2.zero;
+        bool shillelaghAttack=shillelagh.Applies(attackWeapon.Name,worldRounds);
+        bool forceWeapon=shillelaghAttack&&shillelaghForce;
+        if(shillelaghAttack&&!trueStrike&&shillelaghUseCasting){abilityModifier=AcidSplash.Modifier(attributes[shillelagh.Ability]);abilityLabel=PlayerAttributes.Names[shillelagh.Ability]+"修正（橡棍术）";}
         proficiencyBonus+=combat.PlayerRevivalPenalty;
         int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing-bane;
         int targetArmor=combat.MonsterArmorClass;
@@ -133,14 +136,16 @@ public sealed partial class TrainingGame : MonoBehaviour
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
         int damageModifier=attackWeapon.DiceCount==0&&!trueStrike?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
-        int[] damageRolls=attackWeapon.RollDamageDice(critical);
+        int damageSides=shillelaghAttack?ShillelaghEffect.Sides(classes.TotalLevel):attackWeapon.DiceSides;
+        int damageCount=shillelaghAttack?ShillelaghEffect.Count(classes.TotalLevel,critical):attackWeapon.DiceCount*(critical?2:1);
+        int[] damageRolls=new int[damageCount];for(int i=0;i<damageCount;i++)damageRolls[i]=Random.Range(1,damageSides+1);
         if(damageRolls.Length>0) {
-            dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+attackWeapon.DiceSides;
-            yield return PresentRoll(attackWeapon.DiceSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+damageModifier+" + 魔法 "+magicBonus+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+damageModifier+magicBonus));
+            dice=hitLabel+" · 投掷 "+damageRolls.Length+"d"+damageSides;
+            yield return PresentRoll(damageSides,damageRolls,"骰值 + 固定 "+attackWeapon.FixedDamage+" + 属性 "+damageModifier+" + 魔法 "+magicBonus+"，伤害 "+Mathf.Max(0,System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+damageModifier+magicBonus));
         }
         int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+magicBonus;
-        string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+attackWeapon.DiceSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
-        int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
+        string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+damageSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
+        int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
         if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
@@ -260,11 +265,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             foreach(var weapon in Weapon.Available) {
                 if(GUILayout.Button((selectedWeapon==weapon?"✓ ":"")+weapon.Name+" · "+weapon.DamageDice+" · "+weapon.Traits,button)) {
                     selectedWeapon=weapon;
+                    RefreshShillelagh();
                     if(!rolling) dice=weapon.DamageDice+" · 待投掷";
                 }
             }
             GUILayout.EndScrollView();
             GUILayout.Label("本次按攻击开始时的武器结算；切换从下次攻击生效。",label);
+            if(shillelagh.Active){bool previous=GUI.enabled;GUI.enabled=!rolling;DrawShillelaghOptions();GUI.enabled=previous;}
         } else if(panel=="classes") {
             GUILayout.Label("玩家职业 · 选择初始职业",heading);
             classScroll=GUILayout.BeginScrollView(classScroll,GUILayout.Height(230));

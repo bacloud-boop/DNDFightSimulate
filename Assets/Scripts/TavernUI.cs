@@ -67,6 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
+        RefreshShillelagh();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();SyncTimedBuffs();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath)knownFormReplacement=false;
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
