@@ -75,6 +75,8 @@ public sealed partial class TrainingGame
     IEnumerator ResolveAcidSplash(bool hitsMonster,bool hitsPlayer,int dc,int count){long token=senses.Token(true,worldRounds);yield return ResolveAcidSplashCore(hitsMonster,hitsPlayer,dc,count);BreakOrdinaryInvisibility(true,"施法",token);}
     IEnumerator ResolveAcidSplashCore(bool hitsMonster,bool hitsPlayer,int dc,int count)
     {
+        var interruption=new SpellInterruption();yield return TryInterruptSpell(true,"Acid Splash",interruption);
+        if(interruption.Cancelled){rolling=false;yield break;}
         rolling=true;logScroll=Vector2.zero;
         bool[] hit={hitsMonster,hitsPlayer},failed=new bool[2];
         if(!hitsMonster&&!hitsPlayer){dice="酸液飞溅：无目标，已消耗动作。";history.Insert(0,dice);rolling=false;yield break;}

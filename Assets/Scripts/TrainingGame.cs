@@ -179,6 +179,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
             rolling=true;
         }
+        if(endTurn&&combat.MonsterCanAct){
+            var spellTurn=new MonsterSpellTurn();yield return TryMonsterTurnSpell(spellTurn);
+            if(spellTurn.Attempted&&!spellTurn.Cast){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
+            if(spellTurn.Cast&&(!spellTurn.Bonus||combat.PlayerDead||combat.Hp==0||combat.BattleFinished)){
+                yield return FinishMonsterSpellTurn();yield break;
+            }
+        }
         if(endTurn&&!combat.MonsterCanAct){
             history.Insert(0,"木桩麻痹，跳过移动与攻击。");yield return RepeatHoldPersonSave();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
         }
@@ -239,6 +246,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="monsterSpells"){DrawMonsterSpells();return;}
         if(panel=="originalMonster"){DrawOriginalMonster();return;}
         if(panel=="aftermath"){DrawAftermath();return;}
         if(panel=="spells"){DrawSpellPanel();return;}

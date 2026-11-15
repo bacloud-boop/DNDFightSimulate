@@ -5,9 +5,10 @@ public sealed partial class TrainingGame
 {
     bool monsterMoving;
     Vector2 monsterVisualCell;
-    IEnumerator ChasePlayer()
+    IEnumerator ChasePlayer(int? reachOverride=null)
     {
-        if(!combat.MonsterCanAct||map.DistanceFeet<=MonsterAttackReach)yield break;
+        int reach=reachOverride??MonsterTurnReach;
+        if(!combat.MonsterCanAct||map.DistanceFeet<=reach)yield break;
         Vector2Int from=map.Monster,best=from;
         int bestDistance=map.DistanceFeet,bestCost=0;
         bool foundInRange=false;
@@ -17,7 +18,7 @@ public sealed partial class TrainingGame
             int cost=BattleMap.FeetBetween(from,cell);
             if(cost>map.MonsterMovementRemaining)continue;
             int distance=BattleMap.BodyDistance(cell,map.MonsterSpaces,map.Player,map.PlayerSpaces);
-            bool inRange=distance<=MonsterAttackReach;
+            bool inRange=distance<=reach;
             if(inRange && (!foundInRange || cost<bestCost || (cost==bestCost && distance<bestDistance)) ||
                 !inRange && !foundInRange && (distance<bestDistance || (distance==bestDistance && cost<bestCost))) {
                 best=cell;bestDistance=distance;bestCost=cost;foundInRange=inRange;

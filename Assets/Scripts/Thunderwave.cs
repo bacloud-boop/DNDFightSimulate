@@ -28,6 +28,8 @@ public sealed partial class TrainingGame
     IEnumerator ResolveThunderwave(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces){long token=senses.Token(true,worldRounds);yield return ResolveThunderwaveCore(monster,player,dc,slot,origin,originSpaces);BreakOrdinaryInvisibility(true,"施法",token);}
     IEnumerator ResolveThunderwaveCore(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces)
     {
+        var interruption=new SpellInterruption();yield return TryInterruptSpell(true,"Thunderwave",interruption);
+        if(interruption.Cancelled){rolling=false;yield break;}
         rolling=true;bool[] targets={monster,player},failed=new bool[2];
         if(!monster&&!player){history.Insert(0,"雷鸣波：范围无生物，已消耗动作。声响可传至300尺，当前无听觉警戒系统。");rolling=false;yield break;}
         for(int i=0;i<2;i++)if(targets[i]){

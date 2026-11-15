@@ -1,7 +1,7 @@
 import json,re
 from pathlib import Path
 from collections import Counter
-runtime=set(re.findall(r'new DirectSpell\("([^"\n]+)"',Path('Assets/Scripts/DirectSpell.cs').read_text(encoding='utf-8-sig')))|{'Acid Splash','Shield'}
+runtime=set(re.findall(r'new DirectSpell\("([^"\n]+)"',Path('Assets/Scripts/DirectSpell.cs').read_text(encoding='utf-8-sig')))|{'Acid Splash','Shield','Counterspell'}
 files=['Assets/Resources/Rules2024/Spells.json','Docs/FreeSpellInventory.json']
 data=[json.loads(Path(p).read_text(encoding='utf-8-sig')) for p in files]
 assert data[0]==data[1], 'Runtime and documented inventory differ'
