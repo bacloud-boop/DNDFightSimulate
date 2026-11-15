@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     sealed class MonsterSpellTurn {public bool Attempted,Cast,Bonus;}
     int MonsterTurnReach
     {
-        get{var entry=monsterSpells.Next;var spell=entry==null?null:DirectSpell.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?spell.Range:MonsterAttackReach;}
+        get{var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?Mathf.Max(spell.Range,spell.EmanationRadius):MonsterAttackReach;}
     }
     bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)=>id==0&&MonsterSeesPlayer;
@@ -19,21 +19,24 @@ public sealed partial class TrainingGame
         if(!combat.MonsterCanAct)yield break;
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
-        var spell=DirectSpell.Find(entry.Name);int target=spell==null?-2:MonsterSpellTarget(spell);
+        var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell);Vector2Int areaCenter=default(Vector2Int);
+        int target=spell==null?-2:area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
         result.Cast=true;result.Bonus=spell.Bonus;
         combat.MarkBattleStarted();
         history.Insert(0,"木桩施放"+spell.Chinese+"（"+(entry.Slot==0?"戏法":entry.Slot+"环")+"），消耗"+(spell.Bonus?"附赠动作":"动作")+"。");
+        if(area){ShowMonsterArea(spell,areaCenter);monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
-            if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
+            if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
+            else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
             else if(spell.Name=="Scorching Ray")for(int n=0;n<spell.DiceCount(monsterSpells.CasterLevel,entry.Slot);n++){
                 int victim=MonsterSpellTarget(spell);if(victim==-2)break;
                 yield return MonsterNumericSpell(spell,entry.Slot,victim,2);
             }
             else yield return MonsterNumericSpell(spell,entry.Slot,target);
         }
-        BreakOrdinaryInvisibility(false,"施法");CheckBattleOutcome();
+        monsterAreaPreview=false;BreakOrdinaryInvisibility(false,"施法");CheckBattleOutcome();
     }
     IEnumerator MonsterMagicMissile(DirectSpell spell,int slot,int target)
     {

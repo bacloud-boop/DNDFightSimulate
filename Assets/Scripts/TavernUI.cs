@@ -146,7 +146,7 @@ public sealed partial class TrainingGame
         DrawMap(new Rect(600,110,400,400),(combat.PlayerCanAct||(combat.Aftermath&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed))&&!spellTargeting&&!rolling&&panel=="");DrawWildShapePreview(new Rect(600,110,400,400));DrawPolymorphPreview(new Rect(600,110,400,400));DrawEmanationPreview(new Rect(600,110,400,400));DrawTeleportPreview(new Rect(600,110,400,400));DrawPointBurstPreview(new Rect(600,110,400,400));DrawIceKnifePreview(new Rect(600,110,400,400));DrawOriginalFormPreview(new Rect(600,110,400,400));DrawDashActions();
         GUI.Label(new Rect(1015,125,205,240),"普通 "+map.MovementRemaining+" / "+map.MovementMaximum+" 尺\n战术 "+map.TacticalMovementRemaining+" 尺\n"+(draggingToken==0?movementMessage:"距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,map.Player)+" 尺\n"+movementMessage),new GUIStyle(lightTitle){fontSize=18});
         GUI.Label(new Rect(380,120,205,205),BattleMap.Names[map.Selected]+" · "+map.Size+"×"+map.Size+"\n每格 5 尺\n双方距离 "+map.DistanceFeet+" 尺\n基础："+new[]{"明亮","微光","黑暗"}[vision.BaseLight]+"\n你"+(PlayerSeesMonster?"能":"不能")+"看见木桩\n木桩"+(MonsterSeesPlayer?"能":"不能")+"看见你",new GUIStyle(lightTitle){fontSize=16});
-        if(rolling && !reactionPending && !monsterMoving) {
+        if(rolling && !reactionPending && !monsterMoving && !monsterAreaChoosing) {
             Fill(new Rect(365,105,870,405),new Color(.1f,.045f,.02f,.8f));
             if(!simpleDice)GUI.DrawTexture(new Rect(480,155,640,330),diceStage.Texture,ScaleMode.ScaleToFit);
             else GUI.Label(new Rect(490,170,620,170),rollResultText,new GUIStyle(lightTitle){fontSize=36});
