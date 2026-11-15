@@ -17,6 +17,7 @@ public sealed partial class TrainingGame
         return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetSize);
     }
     int VisibilityBetween(bool viewerPlayer,double fromX,double fromY,int fromSize,double targetX,double targetY,int targetSize,bool invisible=false){
+        if(mindSpike.IgnoresInvisibility(viewerPlayer,!viewerPlayer,worldRounds))invisible=false;
         int range=viewerPlayer?PlayerDarkvision:MonsterPolymorphed?Mathf.Max(vision.SpellRange(false,worldRounds),polymorph.Darkvision):vision.Range(false,worldRounds),best=2,blind=viewerPlayer?PlayerBlindsight:MonsterPolymorphed?polymorph.Blindsight:0;
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){
             double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
@@ -74,5 +75,5 @@ public sealed partial class TrainingGame
             history.Insert(0,spell.Chinese+"源点("+(cell.x+1)+","+(cell.y+1)+")，"+(dark?"15尺半径魔法黑暗，专注10分钟":"60尺明亮阳光，外围再60尺微光，持续1小时")+"。");
         }dice=spell.Chinese+" · 已生效";
     }
-    static bool SpellRequiresSight(string name)=>name=="Polymorph"||name=="Bane"||name=="Blight"||name=="Healing Word"||name=="Mass Healing Word"||name=="Hold Monster"||name=="Hold Person"||name=="Hex"||name=="Hunter's Mark"||name=="Magic Missile"||name=="Power Word Kill"||name=="Power Word Fortify"||name=="Sacred Flame"||name=="Mind Sliver"||name=="Toll the Dead";
+    static bool SpellRequiresSight(string name)=>name=="Mind Spike"||name=="Harm"||name=="Polymorph"||name=="Bane"||name=="Blight"||name=="Healing Word"||name=="Mass Healing Word"||name=="Hold Monster"||name=="Hold Person"||name=="Hex"||name=="Hunter's Mark"||name=="Magic Missile"||name=="Power Word Kill"||name=="Power Word Fortify"||name=="Sacred Flame"||name=="Mind Sliver"||name=="Toll the Dead";
 }

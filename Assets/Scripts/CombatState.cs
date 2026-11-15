@@ -6,7 +6,7 @@ public sealed class CombatState
     public int PlayerRevivalPenalty {get;private set;}
     public int MonsterRevivalPenalty {get;private set;}
     public int RevivalPenalty(bool player)=>player?PlayerRevivalPenalty:MonsterRevivalPenalty;
-    public void CompleteLongRest(bool player){if(player)PlayerRevivalPenalty=Math.Min(0,PlayerRevivalPenalty+1);else MonsterRevivalPenalty=Math.Min(0,MonsterRevivalPenalty+1);}
+    public void CompleteLongRest(bool player){if(player)PlayerMaxHpReduction=0;else MonsterMaxHpReduction=0;if(player)PlayerRevivalPenalty=Math.Min(0,PlayerRevivalPenalty+1);else MonsterRevivalPenalty=Math.Min(0,MonsterRevivalPenalty+1);}
     public void ClearPoison(bool player){if(player)playerPoisonUntil=0;else monsterPoisonUntil=0;}
     public bool Revive(bool player,int hp,bool ordeal){
         if(hp<1)return false;
@@ -126,8 +126,18 @@ public sealed class CombatState
     public int PlayerAidBonus {get;private set;}
     public int MonsterAidBonus {get;private set;}
     readonly bool[] playerAidCredits=new bool[40],monsterAidCredits=new bool[40];
-    public int MaxHp => (int)Math.Min(int.MaxValue,(long)monsterBaseMaxHp+MonsterAidBonus);
-    public int PlayerMaxHp => (int)Math.Min(int.MaxValue,(long)playerBaseMaxHp+PlayerAidBonus);
+    public int MonsterMaxHpReduction {get;private set;}
+    public int PlayerMaxHpReduction {get;private set;}
+    public int MaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)monsterBaseMaxHp+MonsterAidBonus)-MonsterMaxHpReduction);
+    public int PlayerMaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)playerBaseMaxHp+PlayerAidBonus)-PlayerMaxHpReduction);
+    public int ReduceMaxHp(bool player,int amount)
+    {
+        if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));
+        int reduction=Math.Min(amount,(player?PlayerMaxHp:MaxHp)-1);
+        if(player){PlayerMaxHpReduction=(int)Math.Min(int.MaxValue,(long)PlayerMaxHpReduction+reduction);PlayerHp=Math.Min(PlayerHp,PlayerMaxHp);}
+        else{MonsterMaxHpReduction=(int)Math.Min(int.MaxValue,(long)MonsterMaxHpReduction+reduction);Hp=Math.Min(Hp,MaxHp);}
+        return reduction;
+    }
     public int Hp { get; private set; } = 1000;
     public int PlayerHp { get; private set; } = 10;
     public int Round { get; private set; } = 1;
@@ -176,7 +186,7 @@ public sealed class CombatState
         }
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ResetBattle() {PlayerMaxHpReduction=MonsterMaxHpReduction=0;PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage,bool sourcePlayer=true) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageDealt?.Invoke(sourcePlayer); }
     public void ApplyPlayerDamage(int damage,bool critical=false,bool sourcePlayer=false) {
         if(damage<=0||PlayerDead)return;

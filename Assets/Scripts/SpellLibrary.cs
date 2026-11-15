@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
         if(definition.Name=="Polymorph")DrawPolymorphChoices();
+        if(definition.Name=="Sorcerous Burst")DrawSorcerousBurstChoices();
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -161,7 +162,9 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
+        if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
+        string damageType=spell.Name=="Sorcerous Burst"?BurstTypes[burstType]:spell.DamageType;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
         if(spell.Name=="Polymorph"){yield return ResolvePolymorph(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}
@@ -227,6 +230,7 @@ public sealed partial class TrainingGame
             saveSucceeded=!automatic&&value+targetModifier>=dc;
             if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");if(!embedded)rolling=false;yield break;}
         }
+        if(spell.Name=="Mind Spike"&&!saveSucceeded){mindSpike.Cast(targetPlayer,worldRounds);concentrationSpell=spell.Chinese;concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+600;history.Insert(0,"心灵尖刺：持续知晓"+(targetPlayer?"玩家":"木桩")+"位置，目标的隐形对施法者失去效果；黑暗与云雾仍会遮挡视觉。");}
         int damageSides=spell.Name=="Toll the Dead"&&(targetPlayer?combat.PlayerHp<combat.PlayerMaxHp:combat.Hp<combat.MaxHp)?12:spell.Sides;
         int count=spell.DiceCount(classes.TotalLevel,slotLevel)*(critical?2:1),amount=0;
         int[] rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=UnityEngine.Random.Range(1,damageSides+1);amount+=rolls[i];}
@@ -235,20 +239,22 @@ public sealed partial class TrainingGame
         if(saveSucceeded&&spell.HalfSave)amount/=2;
         dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+damageSides;
         yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
+        if(spell.Name=="Sorcerous Burst"){var burst=new BurstDamage();yield return RollSorcerousBurstExtra(rolls,modifier,critical,burst);amount+=burst.Extra;}
         if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Sickness"){combat.ApplyPoison(targetPlayer);history.Insert(0,target+"中毒，至施法者下一回合结束；攻击与属性检定具有劣势。");}
         if(spell.Name=="Mind Sliver"){combat.ApplySliver(targetPlayer);history.Insert(0,target+"下一次豁免减1d4，至玩家下一回合结束失效。");}
-        if(!spell.Healing)amount=combat.AdjustTypedDamage(targetPlayer,amount,DamageTypes.Index(spell.DamageType));
+        if(!spell.Healing)amount=combat.AdjustTypedDamage(targetPlayer,amount,DamageTypes.Index(damageType));
         if(spell.Attack){var extra=new ExtraMarkDamage();yield return RollMarkDamage(targetPlayer,critical,extra);amount+=extra.Value;}
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
+        if(spell.Name=="Harm"&&!saveSucceeded){int reduced=combat.ReduceMaxHp(targetPlayer,amount);history.Insert(0,"伤害术："+target+"生命上限减少 "+reduced+"，上限最低1；不恢复生命。");}
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}
         if(spell.Name=="Ray of Frost"){combat.ApplyFrostSlow(targetPlayer);history.Insert(0,target+"速度降低10尺，至玩家下一回合开始。");}
         if(spell.Name=="Shocking Grasp"){combat.BlockOpportunity(targetPlayer);history.Insert(0,target+"不能借机攻击，至其下一回合开始；其他反应不受影响。");}
         if(spell.Name=="Vicious Mockery"){combat.ApplyMockery(targetPlayer);history.Insert(0,target+"下次攻击具有劣势，最迟在其下一回合结束时失效。");}
         if(spell.Name=="Chill Touch"){combat.BlockHealing(targetPlayer);history.Insert(0,target+"不能恢复生命，持续至玩家下一回合结束。");}
-        history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+spell.DamageType+"伤害 ")+amount+"。");
+        history.Insert(0,spell.Chinese+"对"+target+(spell.Healing?"实际治疗 ":"造成"+damageType+"伤害 ")+amount+"。");
         dice=spell.Chinese+" · "+amount;CheckBattleOutcome();if(!embedded)rolling=false;
     }
 }
