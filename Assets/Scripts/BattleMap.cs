@@ -141,15 +141,21 @@ public sealed partial class BattleMap
         if(player){PlayerSpaces=spaces;Player=best;}else {MonsterSpaces=spaces;Monster=best;}return true;
     }
     public int ForceMoveAway(bool player,Vector2Int origin,int originSpaces,int feet)
+        => ForceMoveOnLine(player,origin,originSpaces,feet,false);
+    public int ForceMoveToward(bool player,Vector2Int origin,int originSpaces,int feet)
+        => ForceMoveOnLine(player,origin,originSpaces,feet,true);
+    int ForceMoveOnLine(bool player,Vector2Int origin,int originSpaces,int feet,bool toward)
     {
         var start=player?Player:Monster;int spaces=player?PlayerSpaces:MonsterSpaces;
         double dx=start.x+spaces*.5-origin.x-originSpaces*.5,dy=start.y+spaces*.5-origin.y-originSpaces*.5,length=System.Math.Sqrt(dx*dx+dy*dy);
         if(IsContained(player)||length==0||feet<=0)return 0;
+        if(toward){dx=-dx;dy=-dy;}
         var last=start;var obstacle=player?Monster:Player;int obstacleSpaces=OccupiedSpaces(!player);
         for(int distance=1;distance<=feet;distance++){
             var candidate=new Vector2Int(start.x+Mathf.RoundToInt((float)(dx/length*distance/5)),start.y+Mathf.RoundToInt((float)(dy/length*distance/5)));
             if(candidate==last)continue;
             if(FeetBetween(start,candidate)>feet)continue;
+            if(toward&&BodyDistance(candidate,spaces,origin,originSpaces)>=BodyDistance(last,spaces,origin,originSpaces))continue;
             if(!CanPlace(player,candidate)||!RecoveryPathSafe(player,last,candidate)||SegmentCrossesBody(last,candidate,spaces,obstacle,obstacleSpaces))break;
             last=candidate;
         }
