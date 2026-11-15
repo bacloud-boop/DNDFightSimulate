@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
             if(spellSearch!=""&&(spell.name+chinese).IndexOf(spellSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
             bool available=direct!=null||spell.name=="Acid Splash";
             bool reactionSpell=spell.name=="Shield";
-            string status=reactionSpell?"反应触发时选择施放":available?"战斗结算已接入":IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
+            string status=reactionSpell?"反应触发时选择施放":available?(spell.name=="Polymorph"?"战斗结算已接入 · 10种地面形态":"战斗结算已接入"):IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
             string text=(chinese==""?spell.name:chinese+" · "+spell.name)+"\n"+(spell.level==0?"戏法":spell.level+"环")+" · "+SchoolChinese(spell.school)+" · "+status;
             string tooltip=reactionSpell?"护盾术｜Shield\n一环防护 · 反应 · 声音、姿势\n被攻击命中或成为魔法飞弹目标时选择施放。AC+5，免疫魔法飞弹，至下一玩家回合开始。选择前隐藏命中骰值与总值。":direct!=null?direct.Summary:spell.name=="Acid Splash"?AcidSplash.Summary:spell.name=="Alarm"?AlarmSpell.Summary:spell.name+"\n施法时间："+spell.castingTime+"\n距离："+spell.range+"\n成分："+string.Join("、",spell.components)+"\n持续："+spell.duration+"\n"+(IsLearningOnly(spell.name)?"仅开放学习，不能施放或带入预先生成的效果。":"效果待接入。");
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
@@ -99,6 +99,7 @@ public sealed partial class TrainingGame
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
+        if(definition.Name=="Polymorph")DrawPolymorphChoices();
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -116,10 +117,11 @@ public sealed partial class TrainingGame
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
-        if(!CanCastInCurrentForm)return "荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
+        if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if((spell.Name=="Blur"||spell.Name=="See Invisibility")&&!directTargetPlayer)return "此法术只能作用于自身。";
         if(spell.Name=="True Seeing"&&!directTargetPlayer&&!trueSeeingWilling)return "真知术需要自愿目标。";
+        if(spell.Name=="Polymorph"){string error=PolymorphError();if(error!="")return error;}
         if(IsPointBurst(spell))return PointBurstError(spell);
         if(spell.Name=="Mirror Image"&&!directTargetPlayer)return "镜像术只能作用于自身。";
         if(spell.Name=="Armor of Agathys"&&!directTargetPlayer)return "黯冰狱铠只能作用于自身。";
@@ -155,11 +157,13 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        if(spell.Name=="Polymorph"){yield return ResolvePolymorph(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Remove Curse"){bool removed=mark.RemoveCurse(targetPlayer);if(removed)EndConcentration("移除诅咒解除脆弱诅咒");history.Insert(0,"移除诅咒："+(removed?"已解除目标的脆弱诅咒。":"目标当前没有已接入的诅咒效果；物件诅咒与同调系统暂缓。"));if(!embedded)rolling=false;yield break;}
         if(IsSenseSpell(spell.Name)){ApplySenseSpell(spell,targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Knife"){yield return ResolveIceKnife(targetPlayer,caster,slotLevel);if(!embedded)rolling=false;yield break;}
@@ -193,7 +197,7 @@ public sealed partial class TrainingGame
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=combat.ConsumeGuidingLight(targetPlayer)||advantage;
-            disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;

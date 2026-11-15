@@ -34,12 +34,13 @@ public sealed partial class TrainingGame
         DrawVisionMap(board);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
-        if(draggingToken!=0)Token(playerRect,true);
-        if(draggingToken!=1)Token(monsterRect,false);
+        if(draggingToken!=0&&!map.IsContained(true))Token(playerRect,true);
+        if(draggingToken!=1&&!map.IsContained(false))Token(monsterRect,false);
+        if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
         if(!allowDrag || (map.Locked&&!moving))return;
         int id=GUIUtility.GetControlID(23891,FocusType.Passive);
         var e=Event.current;Vector2 point=BoardPointer();
-        bool playerCanDrag=playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
+        bool playerCanDrag=!map.IsContained(true)&&playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
         if(e.type==EventType.MouseDown && e.button==0 && (playerCanDrag||(!moving&&monsterRect.Contains(point)))) {
             draggingToken=playerCanDrag?0:1;var grabbed=playerCanDrag?playerRect:monsterRect;dragOffset=new Vector2((point.x-grabbed.x)/size,(point.y-grabbed.y)/size);dragControl=id;GUIUtility.hotControl=id;e.Use();
         }
@@ -51,7 +52,7 @@ public sealed partial class TrainingGame
             if(inside)Fill(BodyRect(board,cell,spaces),legal?new Color(.1f,.55f,.2f,.4f):new Color(.8f,.05f,.02f,.4f));
             Token(new Rect(point.x-dragOffset.x*size,point.y-dragOffset.y*size,size*spaces,size*spaces),draggingToken==0,true);
             if(moving) {
-                int cost=BattleMap.FeetBetween(map.Player,cell);
+                int cost=map.PlayerMovementCost(cell);
                 movementMessage="本次 "+cost+" 尺\n距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,cell)+" 尺\n移动后剩余 "+(map.MovementBudget(tacticalMovement)-cost)+" 尺\n"+(legal?"松手对齐占地网格":"不可移动到此位置");
             }
             if(e.type==EventType.MouseDrag)e.Use();

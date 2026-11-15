@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
     bool CanUseFeature => combat.PlayerCanAct && !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0;
     void SecondWind()
     {
-        if(!CanUseFeature || fighter.WindRemaining(classes[0])<=0 || !combat.TryUseBonusAction())return;
+        if(PlayerPolymorphed || !CanUseFeature || fighter.WindRemaining(classes[0])<=0 || !combat.TryUseBonusAction())return;
         fighter.UseWind();StartCoroutine(HealWithSecondWind(classes[0]));
     }
     IEnumerator HealWithSecondWind(int fighterLevel)
@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
     }
     void ActionSurge()
     {
-        if(!CanUseFeature || !fighter.CanSurge(classes[0]))return;
+        if(PlayerPolymorphed || !CanUseFeature || !fighter.CanSurge(classes[0]))return;
         fighter.UseSurge();combat.AddSurgeAction();
         dice="动作如潮 · 本回合额外获得 1 个动作";
         history.Insert(0,dice+"，本回合不能再次使用。");logScroll=Vector2.zero;

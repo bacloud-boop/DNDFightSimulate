@@ -10,7 +10,7 @@ public sealed partial class TrainingGame {
   bool[] targets={combat.Hp>0&&BattleMap.BodyDistance(origin,spaces,map.Monster,map.MonsterSpaces)<=5,!combat.PlayerDead&&BattleMap.BodyDistance(origin,spaces,map.Player,map.PlayerSpaces)<=5};bool[] failed=new bool[2];int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
   for(int i=0;i<2;i++)if(targets[i]){
    bool player=i==1,automatic=player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterParalyzed;
-   int value=Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(1):AcidSplash.Modifier(monsterAttributes[1]);dice="冰刃爆炸 · "+(player?"玩家":"木桩")+"敏捷豁免";var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment);modifier+=adjustment.Value;
+   int value=Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(1):MonsterSavingThrowModifier(1);dice="冰刃爆炸 · "+(player?"玩家":"木桩")+"敏捷豁免";var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment);modifier+=adjustment.Value;
    if(!automatic)yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
   }
   if(!failed[0]&&!failed[1]){history.Insert(0,"冰刃爆炸：范围内生物均豁免成功或没有目标，寒冷伤害0。");yield break;}

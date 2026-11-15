@@ -25,9 +25,9 @@ public sealed partial class TrainingGame
         combat.MarkBattleStarted();rolling=true;
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=defenderPlayer?!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked;
-        int reach=defenderPlayer?5:combat.MonsterAttackRange;
+        int reach=defenderPlayer?5:MonsterAttackReach;
         int opportunityPlayerSight,opportunityMonsterSight;
-        if(OpportunitySight(movingPlayer,from,target,reach,out opportunityPlayerSight,out opportunityMonsterSight) && !tactical && !(movingPlayer&&IsWildShaped&&BeastAttack.Find(wildForm.name).Agile) && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
+        if(OpportunitySight(movingPlayer,from,target,reach,out opportunityPlayerSight,out opportunityMonsterSight) && !tactical && !(movingPlayer&&PlayerInBeastForm&&BeastAttack.Find(PlayerBeast.name).Agile) && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
             reactionForPlayer=defenderPlayer;reactionRange=reach;reactionDecision=0;reactionPending=true;
             dice="移动将离开 "+reach+" 尺范围，等待借机攻击选择。";
             while(reactionDecision==0)yield return null;
@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
                 // At the reach boundary, the nearest occupied-cell distance equals the trigger reach (up to rounding).
                 opportunitySenseDistance=reach;playerSightOverride=opportunityPlayerSight;monsterSightOverride=opportunityMonsterSight;
                 if(defenderPlayer) {
-                    if(IsWildShaped)yield return RollNaturalAttack(true);
+                    if(PlayerInBeastForm)yield return RollNaturalAttack(true);
                     else {var weapon=selectedWeapon;bool advantage=fighter.ConsumeAdvantage(classes[0]);
                     yield return Roll(weapon,weapon.AttackModifier(attributes),classes.ProficiencyBonus,weapon.UsesDexterity(attributes)?"敏捷修正":"力量修正",advantage,"玩家借机攻击",true);}
                 } else yield return Counterattack(false);

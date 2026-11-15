@@ -13,7 +13,7 @@ public sealed partial class TrainingGame {
   int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
   for(int i=0;i<2;i++)if(targets[i]&&!spell.Healing){
    bool player=i==1,automatic=spell.SaveAbility==1&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterParalyzed),disadvantage=spell.Name=="Shatter"&&!player&&monsterProfile.TypeIndex==3;
-   int first=Random.Range(1,21),second=disadvantage?Random.Range(1,21):0,value=disadvantage?Mathf.Min(first,second):first,modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):AcidSplash.Modifier(monsterAttributes[spell.SaveAbility]);
+   int first=Random.Range(1,21),second=disadvantage?Random.Range(1,21):0,value=disadvantage?Mathf.Min(first,second):first,modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):MonsterSavingThrowModifier(spell.SaveAbility);
    dice=spell.Chinese+" · "+(player?"玩家":"木桩")+PlayerAttributes.Names[spell.SaveAbility]+"豁免";var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment);modifier+=adjustment.Value;
    if(!automatic)yield return PresentRoll(20,disadvantage?new[]{first,second}:new[]{first},(disadvantage?"构装生物劣势，采用 ":"采用 ")+value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
   }

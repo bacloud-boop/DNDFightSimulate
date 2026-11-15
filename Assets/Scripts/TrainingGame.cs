@@ -12,7 +12,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly FighterFeatures fighter = new FighterFeatures();
     Weapon actionWeapon;
     readonly HashSet<Weapon> lightAttacksThisTurn=new HashSet<Weapon>();
-    bool CanLightBonusAttack => !IsWildShaped && selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
+    bool CanLightBonusAttack => !PlayerInBeastForm && selectedWeapon.HasLight && System.Linq.Enumerable.Any(lightAttacksThisTurn,w=>w!=selectedWeapon);
     string panel="";
     readonly MonsterDamage monster = new MonsterDamage();
     readonly int[] damageTypeInputs=new int[6];
@@ -72,7 +72,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     public void Attack()
     {
         if(!combat.PlayerCanAct || spellTargeting || rolling || panel!="" || page!="battle" || draggingToken>=0)return;
-        if(IsWildShaped){NaturalAttack();return;}
+        if(PlayerInBeastForm){NaturalAttack();return;}
         Weapon weapon=fighter.AttacksRemaining>0?actionWeapon:selectedWeapon;
         if(!CheckWeaponRange(weapon))return;
         if(fighter.AttacksRemaining==0) {
@@ -106,7 +106,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
-        disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||disadvantage;
+        disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -177,8 +177,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(endTurn&&!combat.MonsterCanAct){
             history.Insert(0,"木桩麻痹，跳过移动与攻击。");yield return RepeatHoldPersonSave();combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
         }
-        if(endTurn && map.DistanceFeet>combat.MonsterAttackRange) {
-            dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+combat.MonsterAttackRange+" 尺。";
+        if(endTurn && map.DistanceFeet>MonsterAttackReach) {
+            dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+MonsterAttackReach+" 尺。";
             history.Insert(0,dice);
             combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
             movementMessage="拖动玩家棋子移动。";
@@ -186,11 +186,11 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         mirrorIntercepted=false;int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed,monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(!combat.MonsterAttackIsMelee&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
+        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         BreakOrdinaryInvisibility(false,"进行攻击检定");
-        long proficiency=combat.MonsterHitBonus;
+        long proficiency=MonsterPolymorphed?BeastAttack.Find(polymorph.Form).HitBonus+combat.MonsterRevivalPenalty:combat.MonsterHitBonus;
         int targetArmor=combat.PlayerArmorClass;
         int blessing=combat.MonsterBlessed?Random.Range(1,5):0,bane=combat.MonsterBaned?Random.Range(1,5):0;
         int wardPenalty=combat.PlayerBladeWard?Random.Range(1,5):0;
@@ -205,19 +205,21 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(mirrorIntercepted){dice="镜像术拦截 · 本体伤害0";history.Insert(0,hitDetails+"，攻击转移至镜像，本体伤害0。");}
         else if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
-            int frostRetaliation=AgathysRetaliation(combat.MonsterAttackIsMelee);
+            int frostRetaliation=AgathysRetaliation(MonsterMeleeAttack);
             string details;
             var sides=new List<int>();var results=new List<int[]>();var counts=new List<int>();
-            int damage=monster.Roll(out details,critical,(s,v,c)=>{sides.Add(s);results.Add(v);counts.Add(c);});
+            var damagePacket=CurrentMonsterDamage();
+            int damage=damagePacket.Roll(out details,critical,(s,v,c)=>{sides.Add(s);results.Add(v);counts.Add(c);});
             dice=critical?"木桩暴击 · 伤害骰数量翻倍":"木桩命中";
             yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
             for(int i=0;i<sides.Count;i++) {
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
                 yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
-            int rawDamage=damage;damage=combat.AdjustPlayerPacket(monster.LastRawTypedDamage);
+            int rawDamage=damage;damage=combat.AdjustPlayerPacket(damagePacket.LastRawTypedDamage);
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
+            if(MonsterPolymorphed&&BeastAttack.Find(polymorph.Form).KnockProne&&map.PlayerSpaces==1&&combat.PlayerHp>0)combat.PlayerProne=true;
             ApplyAgathysRetaliation(frostRetaliation,false);
             yield return MaintainConcentration(damage);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
@@ -248,9 +250,9 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(Btn(new Rect(x+370,125,90,46),"关闭")) {panel=""; return;}
         GUILayout.BeginArea(new Rect(x+20,185,440,640));
         if(combat.BattleStarted && panel!="weapons")GUILayout.Label("战斗已开始，重置战斗后才能修改配置。",label);
-        if(panel=="weapons"&&IsWildShaped)GUILayout.Label("武器已融入荒野形态，恢复原形后可切换。",label);
+        if(panel=="weapons"&&PlayerInBeastForm)GUILayout.Label("武器已融入荒野形态，恢复原形后可切换。",label);
         if(panel=="weapons" && (rolling||fighter.AttacksRemaining>0))GUILayout.Label("本次攻击动作尚未完成，暂时不能切换武器。",label);
-        GUI.enabled=panel=="weapons"?(!rolling&&fighter.AttacksRemaining==0&&!IsWildShaped):!combat.BattleStarted;
+        GUI.enabled=panel=="weapons"?(!rolling&&fighter.AttacksRemaining==0&&!PlayerInBeastForm):!combat.BattleStarted;
         panelScroll=GUILayout.BeginScrollView(panelScroll);
         if(panel=="weapons") {
             GUILayout.Label("玩家武器",heading);

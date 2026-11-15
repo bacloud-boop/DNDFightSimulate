@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
         EndConcentration("开始新的专注法术");concentrationSpell="灾祸术";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+10;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);bool[] targets={both||!player,both||player};
         for(int i=0;i<2;i++)if(targets[i]){
-            int die=Random.Range(1,21),modifier=i==0?AcidSplash.Modifier(monsterAttributes[5]):PlayerSavingThrowModifier(5);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,false,adjustment);modifier+=adjustment.Value;
+            int die=Random.Range(1,21),modifier=i==0?MonsterSavingThrowModifier(5):PlayerSavingThrowModifier(5);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,false,adjustment);modifier+=adjustment.Value;
             dice="灾祸术 · "+(i==0?"木桩":"玩家")+"魅力豁免";yield return PresentRoll(20,new[]{die},die+" + "+modifier+" / DC "+dc);
             if(die+modifier<dc){if(i==0)combat.MonsterBaned=true;else combat.PlayerBaned=true;history.Insert(0,(i==0?"木桩":"玩家")+"灾祸术豁免失败，攻击与豁免每次减1d4。");}
             else history.Insert(0,(i==0?"木桩":"玩家")+"灾祸术豁免成功。");

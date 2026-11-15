@@ -16,8 +16,8 @@ public sealed partial class TrainingGame
     Vector2Int wildNormalOffset;
     Vector2Int FormReferenceCell => IsWildShaped?map.Player+wildNormalOffset:map.Player;
     bool IsWildShaped => wildForm!=null;
-    bool CanCastInCurrentForm => !IsWildShaped||classes[11]>=18;
-    int EffectivePlayerAbility(int index) => IsWildShaped&&index<3?wildForm.abilities[index]:attributes[index];
+    bool CanCastInCurrentForm => !PlayerPolymorphed&&(!IsWildShaped||classes[11]>=18);
+    int EffectivePlayerAbility(int index) => PlayerPolymorphed?polymorph.Ability(index): IsWildShaped&&index<3?wildForm.abilities[index]:attributes[index];
     BeastRecord FindBeast(string name)
     {
         if(beastRecords==null)beastRecords=JsonUtility.FromJson<BeastRecords>(Resources.Load<TextAsset>("Rules2024/Beasts").text);
@@ -34,6 +34,7 @@ public sealed partial class TrainingGame
     void RefreshWildShape()
     {
         if(!IsWildShaped)return;
+        if(PlayerPolymorphed){if(worldRounds>=wildShapeEndsAt||combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed){wildForm=null;map.TrySetRecoverySize(true,1);}return;}
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndWildShape("失能或死亡");
         else if(worldRounds>=wildShapeEndsAt)EndWildShape("持续时间结束");
     }
@@ -41,12 +42,14 @@ public sealed partial class TrainingGame
     {
         if(!IsWildShaped)return;
         string name=wildForm.name;var reference=FormReferenceCell;wildForm=null;
+        if(PlayerPolymorphed){map.TrySetRecoverySize(true,1);history.Insert(0,"底层荒野形态结束（"+reason+"），变形术仍保留。");return;}
         map.TryResizePlayerAt(1,reference);
         map.SetPlayerSpeed(30);combat.SetPlayerArmorOverride(null);fighter.CancelAttackAction();actionWeapon=null;
         history.Insert(0,"荒野形态结束（"+reason+"）："+name+"，恢复原形与融入的武器；临时生命按通常规则保留。");
     }
     string WildShapeInvalidReason(BeastRecord form)
     {
+        if(PlayerPolymorphed)return "变形术形态不能使用职业特性。";
         if(classes[11]<2)return "德鲁伊2级解锁荒野形态。";
         if(form==null||!form.EligibleForBaseWildShape(classes[11]))return "形态超出当前基础荒野形态限制，或属于暂缓的飞行形态。";
         if(BeastAttack.Find(form.name)==null)return "该野兽完整战斗效果待接入，目前仅供查看资料。";
@@ -80,7 +83,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("保留原生命与心智属性；使用野兽力量、敏捷、体质、护甲与步行速度。武器统一融入。当前平面地图没有攀爬、游泳、洞穴、黑暗、跳跃或技能检定场景。月亮结社等额外特性待接入。",small);
         if(IsWildShaped)GUILayout.Label("力量 "+EffectivePlayerAbility(0)+" · 敏捷 "+EffectivePlayerAbility(1)+" · 体质 "+EffectivePlayerAbility(2),label);
         GUILayout.Label(IsWildShaped?"当前："+wildForm.name+" · 剩余约"+Math.Max(0,wildShapeEndsAt-worldRounds)+"回合":"当前：原形",label);
-        if(IsWildShaped){bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.PlayerCanAct&&combat.BonusActionAvailable&&fighter.AttacksRemaining==0;
+        if(IsWildShaped){bool previous=GUI.enabled;GUI.enabled=!PlayerPolymorphed&&page=="battle"&&map.Locked&&!rolling&&combat.PlayerCanAct&&combat.BonusActionAvailable&&fighter.AttacksRemaining==0;
             if(GUILayout.Button("恢复原形（附赠动作，不消耗次数）",button)&&combat.TryUseBonusAction())EndWildShape("主动恢复");GUI.enabled=previous;}
         GUILayout.Label("已知形态 "+knownBeastForms.Count+" / "+DruidFeatures.KnownFormLimit(classes[11])+"。首次战斗操作前可配置；长休后可替换1种。",small);
         foreach(var attack in BeastAttack.Supported){
@@ -118,15 +121,15 @@ public sealed partial class TrainingGame
     }
     void NaturalAttack()
     {
-        if(!IsWildShaped||!CanUseFeature||map.DistanceFeet>5)return;
-        if(fighter.AttacksRemaining==0){if(!combat.TryUseAction())return;fighter.BeginAttackAction(classes[0]);}
+        if(!PlayerInBeastForm||!CanUseFeature||map.DistanceFeet>5)return;
+        if(fighter.AttacksRemaining==0){if(!combat.TryUseAction())return;fighter.BeginAttackAction(PlayerPolymorphed?0:classes[0]);}
         fighter.ConsumeAttack();StartCoroutine(RollNaturalAttack());
     }
     IEnumerator RollNaturalAttack(bool opportunity=false)
     {
-        var attack=BeastAttack.Find(wildForm.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+combat.PlayerRevivalPenalty;
-        bool advantage=fighter.ConsumeAdvantage(classes[0])||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+combat.PlayerRevivalPenalty;
+        bool advantage=(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
+        bool disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
@@ -135,13 +138,13 @@ public sealed partial class TrainingGame
         yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+combat.MonsterArmorClass);
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次自然攻击 +"+blessing);
         if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次自然攻击 -"+bane);
-        if(value==1||(value!=20&&value+hitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");fighter.RecordMiss(classes[0]);rolling=false;yield break;}
+        if(value==1||(value!=20&&value+hitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");if(!PlayerPolymorphed)fighter.RecordMiss(classes[0]);rolling=false;yield break;}
         bool critical=value==20||(combat.MonsterParalyzed&&map.DistanceFeet<=5);int damage=attack.Fixed;
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
-        int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);damage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
-        damage=Math.Max(0,damage);var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;combat.ApplyDamage(damage);
-        if(attack.KnockProne&&combat.Hp>0&&monsterProfile.SizeIndex<=2){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
+        int poisonDamage=0;int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);poisonDamage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
+        damage=combat.AdjustTypedDamage(false,Math.Max(0,damage),DamageTypes.Index(attack.DamageType))+combat.AdjustTypedDamage(false,poisonDamage,DamageTypes.Index("毒素"));var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;combat.ApplyDamage(damage);
+        if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:monsterProfile.SizeIndex<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;
     }

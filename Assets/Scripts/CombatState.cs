@@ -1,6 +1,7 @@
 using System;
 public sealed class CombatState
 {
+    public bool PlayerProne {get;set;}
     public bool Aftermath {get;set;}
     public int PlayerRevivalPenalty {get;private set;}
     public int MonsterRevivalPenalty {get;private set;}
@@ -50,7 +51,9 @@ public sealed class CombatState
         if(hp<1||armor<5||armor>30||range<0||speed<0)throw new ArgumentException("Invalid monster form");
         monsterBaseMaxHp=hp;monsterBaseArmor=armor;MonsterProficiencyBonus=proficiency;MonsterAttackRange=range;MonsterBaseSpeed=speed;MonsterAttackIsMelee=melee;
     }
-    public int MonsterSpeed => (int)Math.Min(int.MaxValue,Math.Max(0,(long)MonsterBaseSpeed+MonsterSpeedBonus-(MonsterSlowed?10:0)));
+    public int? MonsterFormSpeed {get;set;}
+    public int? MonsterFormArmor {get;set;}
+    public int MonsterSpeed => (int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
     public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}
@@ -91,6 +94,13 @@ public sealed class CombatState
     public int PlayerTemporaryHp {get;private set;}
     public void GrantPlayerTemporaryHp(int amount){PlayerTemporaryHp=Math.Max(PlayerTemporaryHp,Math.Max(0,amount));}
     public void ClearPlayerTemporaryHp(){PlayerTemporaryHp=0;}
+    // A choice replaces the single pool; it never adds the two grants together.
+    public void ChooseTemporaryHp(bool player,int amount,bool takeNew)
+    {
+        if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));
+        if(player){if(takeNew)PlayerTemporaryHp=amount;}
+        else if(takeNew&&Hp>0)MonsterTemporaryHp=amount;
+    }
     int? playerArmorOverride;
     public bool ShieldActive {get;private set;}
     public void ActivateShield(){ShieldActive=true;}
@@ -107,7 +117,7 @@ public sealed class CombatState
         MonsterAttackRange=rangeFeet;
     }
     int monsterBaseArmor=10;
-    public int MonsterArmorClass => Math.Max(MonsterArmorFloor,monsterBaseArmor+MonsterArmorBonus);
+    public int MonsterArmorClass => Math.Max(MonsterArmorFloor,(MonsterFormArmor??monsterBaseArmor)+MonsterArmorBonus);
     public void UpdateMonsterArmorClass(int armorClass) {
         if(armorClass < 5 || armorClass > 30) throw new ArgumentOutOfRangeException(nameof(armorClass));
         monsterBaseArmor = armorClass;
@@ -166,7 +176,7 @@ public sealed class CombatState
         }
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ResetBattle() {PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
     public void ApplyDamage(int damage,bool sourcePlayer=true) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageDealt?.Invoke(sourcePlayer); }
     public void ApplyPlayerDamage(int damage,bool critical=false,bool sourcePlayer=false) {
         if(damage<=0||PlayerDead)return;

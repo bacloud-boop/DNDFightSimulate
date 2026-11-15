@@ -12,6 +12,7 @@ public sealed partial class TrainingGame
     void EndConcentration(string reason)
     {
         if(!IsConcentrating)return;
+        EndPolymorph();
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");
         senses.EndConcentration();expeditiousRetreat=false;vision.EndFog();vision.EndDarkness();concentrationSpell="";concentrationExpiresWorld=-1;checkBuff.Clear();mark.Clear();combat.PlayerBaned=combat.MonsterBaned=false;combat.PlayerBlessed=combat.MonsterBlessed=false;combat.PlayerArmorBonus=combat.MonsterArmorBonus=0;combat.PlayerBladeWard=false;combat.PlayerEnergyResistance=combat.MonsterEnergyResistance=-1;combat.PlayerParalyzed=false;combat.MonsterParalyzed=false;
     }
@@ -25,6 +26,7 @@ public sealed partial class TrainingGame
     }
     int PlayerSavingThrowModifier(int ability)
     {
+        if(PlayerPolymorphed)return polymorph.Save(ability);
         int modifier=AcidSplash.Modifier(EffectivePlayerAbility(ability));
         bool beastProficient=IsWildShaped&&wildForm.saves[ability]>AcidSplash.Modifier(wildForm.abilities[ability]);
         int result=modifier+((classes.SavingThrowProficient(ability)||beastProficient)?classes.ProficiencyBonus:0);
@@ -43,7 +45,7 @@ public sealed partial class TrainingGame
     IEnumerator RepeatHoldPersonSave()
     {
         if(!combat.MonsterParalyzed||(concentrationSpell!="人类定身术"&&concentrationSpell!="怪物定身术")||combat.Hp==0)yield break;
-        int value=Random.Range(1,21),modifier=AcidSplash.Modifier(monsterAttributes[3]);
+        int value=Random.Range(1,21),modifier=MonsterSavingThrowModifier(3);
         dice="木桩回合结束 · "+concentrationSpell+"感知豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
@@ -61,7 +63,7 @@ public sealed partial class TrainingGame
             if(!targetPlayer&&(!spell.AllowsCreatureType(monsterProfile.TypeIndex)||combat.Hp==0))continue;
             if(targetPlayer&&combat.PlayerDead)continue;
             string target=targetPlayer?"玩家":"木桩";
-            int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(3):AcidSplash.Modifier(monsterAttributes[3]);
+            int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);
             dice=spell.Chinese+" · "+target+"感知豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);

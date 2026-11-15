@@ -58,7 +58,7 @@ public sealed partial class TrainingGame
         if(checkKind==1&&checkSkill==12)checkVisual=GUILayout.Toggle(checkVisual,"此察觉检定依赖视觉，观察木桩",label);
         GUILayout.Label("本次DC（整数）",label);checkDc=IntegerField(checkDc,true);
         int dc;bool validDc=int.TryParse(checkDc,out dc);
-        bool canRoll=SkillProfileReady&&page=="battle"&&map.Locked&&!rolling&&!spellTargeting&&!reactionPending&&!shieldPending&&draggingToken<0&&combat.ActionAvailable&&validDc&&(!tool||checkToolAvailable);
+        bool canRoll=(SkillProfileReady||PlayerPolymorphed)&&page=="battle"&&map.Locked&&!rolling&&!spellTargeting&&!reactionPending&&!shieldPending&&draggingToken<0&&combat.ActionAvailable&&validDc&&(!tool||checkToolAvailable&&!PlayerPolymorphed);
         GUI.enabled=canRoll;if(GUILayout.Button("进行检定（消耗动作）",button)){panel="";StartCoroutine(RollSkillCheck(dc));}GUI.enabled=previous;
         if(!validDc)GUILayout.Label("DC必须为有效整数。",small);
         GUILayout.EndScrollView();GUILayout.EndArea();
@@ -84,24 +84,26 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollSkillCheck(int dc)
     {
-        if(!SkillProfileReady||!combat.TryUseAction())yield break;
+        if((!SkillProfileReady&&!PlayerPolymorphed)||!combat.TryUseAction())yield break;
         rolling=true;
         if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
         int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];
         int tier=skill>=0?playerSkillTiers[skill]:0;bool toolProf=tool>=0&&playerSkillTiers[18+tool]>0;
+        if(PlayerPolymorphed){tier=0;toolProf=false;}
         int effectiveTier=Math.Max(tier,toolProf?1:0),score=EffectivePlayerAbility(ability);
-        int modifier=SkillCheckRules.Modifier(score,effectiveTier,classes.ProficiencyBonus,skill>=0,classes[5]>=2);
+        int modifier=SkillCheckRules.Modifier(score,effectiveTier,classes.ProficiencyBonus,skill>=0,!PlayerPolymorphed&&classes[5]>=2);
         bool beastProficient=false;
-        if(IsWildShaped&&skill>=0&&wildForm.skillModifiers!=null&&wildForm.skillModifiers.Length==18&&wildForm.skillModifiers[skill]>-999){
+        if(!PlayerPolymorphed&&IsWildShaped&&skill>=0&&wildForm.skillModifiers!=null&&wildForm.skillModifiers.Length==18&&wildForm.skillModifiers[skill]>-999){
             int beast=wildForm.skillModifiers[skill],baseModifier=AcidSplash.Modifier(wildForm.abilities[ability]);beastProficient=beast>baseModifier;
             if(beastProficient){int beastTier=Math.Min(2,Math.Max(1,(beast-baseModifier)/2));modifier=Math.Max(modifier,Math.Max(beast,AcidSplash.Modifier(score)+classes.ProficiencyBonus*beastTier));}
         }
+        if(PlayerPolymorphed)modifier=skill>=0?polymorph.Skill(skill,ability):AcidSplash.Modifier(score);
         modifier+=combat.PlayerRevivalPenalty;
         bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
         bool disadvantage=combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
-        int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,classes[7]>=7,effectiveTier>0||beastProficient?1:0);
+        int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,!PlayerPolymorphed&&classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];
         int guidanceBonus=0;
         if(checkBuff.Guided(true,skill,worldRounds)){guidanceBonus=UnityEngine.Random.Range(1,5);yield return PresentRoll(4,new[]{guidanceBonus},"指引术：本次"+name+"检定 +"+guidanceBonus);modifier+=guidanceBonus;}
@@ -109,7 +111,7 @@ public sealed partial class TrainingGame
         dice=name+"检定 · "+(advantage&&disadvantage?"优势劣势抵消":advantage?"优势":disadvantage?"劣势":"正常");
         yield return PresentRoll(20,two?new[]{first,second}:new[]{first},"采用 "+raw+(effective!=raw?"，可靠才能按10":"")+" + 调整 "+modifier+" = "+total+" / DC "+dc+"，"+(success?"成功":"失败"));
         int tacticalBonus=0;
-        if(!success&&classes[0]>=2&&fighter.WindRemaining(classes[0])>0){
+        if(!PlayerPolymorphed&&!success&&classes[0]>=2&&fighter.WindRemaining(classes[0])>0){
             tacticalMindDecision=0;tacticalMindPending=true;while(tacticalMindDecision==0)yield return null;tacticalMindPending=false;
             if(tacticalMindDecision==1){int extra=UnityEngine.Random.Range(1,11);yield return PresentRoll(10,new[]{extra},"战术头脑：原总值 "+total+" + "+extra+" / DC "+dc);bool turned=fighter.TacticalMind(classes[0],total,dc,extra);total+=extra;tacticalBonus=extra;success=turned;history.Insert(0,"战术头脑："+(turned?"检定成功，消耗1次回气":"仍失败，不消耗回气")+"；不治疗、不消耗额外动作或附赠动作。");}
         }
