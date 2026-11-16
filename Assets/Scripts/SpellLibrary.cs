@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Jump"||direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Protection from Poison"||direct.Name=="Jump"||direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -133,6 +133,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Protection from Poison")return PoisonProtectionError(directTargetPlayer);
         if(spell.Name=="Jump")return JumpSpellError(directTargetPlayer,directSlotLevel,directBothTargets);
         if(spell.Name=="Blindness/Deafness")return BlindnessDeafnessError(directTargetPlayer,directSlotLevel,directBothTargets);
         if(spell.Name=="Lesser Restoration")return LesserRestorationError(directTargetPlayer,lesserRestorationCondition);
@@ -184,6 +185,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Protection from Poison"&&PoisonProtectionError(targetPlayer)!="")yield break;
         if(spell.Name=="Jump"&&JumpSpellError(targetPlayer,slotLevel,jumpBoth)!="")yield break;
         if(spell.Name=="Blindness/Deafness"&&BlindnessDeafnessError(targetPlayer,slotLevel,blindnessBoth)!="")yield break;
         if(spell.Name=="Lesser Restoration"&&LesserRestorationError(targetPlayer,restorationCondition)!="")yield break;
@@ -199,6 +201,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Protection from Poison"){ApplyPoisonProtection(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Lesser Restoration"){ApplyLesserRestoration(targetPlayer,restorationCondition);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Blindness/Deafness"){yield return ResolveBlindnessDeafness(targetPlayer,caster,slotLevel,blindnessBoth,blindnessPlayer,blindnessMonster);if(!embedded)rolling=false;yield break;}

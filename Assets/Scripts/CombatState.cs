@@ -15,13 +15,17 @@ public sealed class CombatState
     }
     public Action<bool> DamageDealt {get;set;}
     public Func<bool,int,bool> DamageImmunity {get;set;}
+    public Func<bool,int,bool> DamageResistance {get;set;}
+    public Func<bool,bool> PoisonConditionSaveAdvantage {get;set;}
+    public bool HasPoisonConditionSaveAdvantage(bool player)=>PoisonConditionSaveAdvantage!=null&&PoisonConditionSaveAdvantage(player);
     public Func<bool,bool> DeathWardGuard {get;set;}
     bool PreventDeath(bool player)=>DeathWardGuard!=null&&DeathWardGuard(player);
     public bool PlayerBladeWard {get;set;}
     public int PlayerEnergyResistance {get;set;}=-1;
     public int MonsterEnergyResistance {get;set;}=-1;
-    public int AdjustTypedDamage(bool player,int amount,int type){if(DamageImmunity!=null&&DamageImmunity(player,type))return 0;return type>=0&&(player?PlayerEnergyResistance:MonsterEnergyResistance)==type?amount/2:amount;}
-    public int AdjustPlayerPacket(long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(true,i))total+=Math.Min(int.MaxValue,PlayerEnergyResistance==i?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
+    bool ResistsDamage(bool player,int type)=>type>=0&&((player?PlayerEnergyResistance:MonsterEnergyResistance)==type||(DamageResistance!=null&&DamageResistance(player,type)));
+    public int AdjustTypedDamage(bool player,int amount,int type){if(DamageImmunity!=null&&DamageImmunity(player,type))return 0;return ResistsDamage(player,type)?amount/2:amount;}
+    public int AdjustPlayerPacket(long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(true,i))total+=Math.Min(int.MaxValue,ResistsDamage(true,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
     public bool PlayerBaned {get;set;}
     public bool MonsterBaned {get;set;}
     public bool PlayerBlessed {get;set;}
