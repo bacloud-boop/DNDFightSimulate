@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Jump"||direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -96,7 +96,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Name=="Blindness/Deafness"&&directSlotLevel>=3)||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Name=="Jump"&&directSlotLevel>=2)||(definition.Name=="Blindness/Deafness"&&directSlotLevel>=3)||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
@@ -107,6 +107,7 @@ public sealed partial class TrainingGame
         if(definition.Name=="Arcane Vigor")DrawArcaneVigorChoices();
         if(definition.Name=="Blindness/Deafness")DrawBlindnessDeafnessChoices();
         if(definition.Name=="Lesser Restoration")DrawLesserRestorationChoices();
+        if(definition.Name=="Jump")DrawJumpChoices();
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -132,6 +133,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Jump")return JumpSpellError(directTargetPlayer,directSlotLevel,directBothTargets);
         if(spell.Name=="Blindness/Deafness")return BlindnessDeafnessError(directTargetPlayer,directSlotLevel,directBothTargets);
         if(spell.Name=="Lesser Restoration")return LesserRestorationError(directTargetPlayer,lesserRestorationCondition);
         if((spell.Name=="Blur"||spell.Name=="See Invisibility")&&!directTargetPlayer)return "此法术只能作用于自身。";
@@ -174,6 +176,7 @@ public sealed partial class TrainingGame
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
         bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
         int restorationCondition=lesserRestorationCondition;
+        bool jumpBoth=directBothTargets;
         if(!SpellVoiceAllowed(true,spell.Name))yield break;
         if(MockeryTargetError(spell,targetPlayer)!="")yield break;
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
@@ -181,6 +184,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Jump"&&JumpSpellError(targetPlayer,slotLevel,jumpBoth)!="")yield break;
         if(spell.Name=="Blindness/Deafness"&&BlindnessDeafnessError(targetPlayer,slotLevel,blindnessBoth)!="")yield break;
         if(spell.Name=="Lesser Restoration"&&LesserRestorationError(targetPlayer,restorationCondition)!="")yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
@@ -195,6 +199,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Lesser Restoration"){ApplyLesserRestoration(targetPlayer,restorationCondition);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Blindness/Deafness"){yield return ResolveBlindnessDeafness(targetPlayer,caster,slotLevel,blindnessBoth,blindnessPlayer,blindnessMonster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Arcane Vigor"){yield return ResolveArcaneVigor(caster,slotLevel);if(!embedded)rolling=false;yield break;}

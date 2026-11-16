@@ -18,10 +18,10 @@ public sealed partial class TrainingGame
         if(rolling || panel!="" || page!="battle" || !map.CanMoveMonsterTo(target))return;
         StartCoroutine(ResolveMovement(false,target,false));
     }
-    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false)
+    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false,bool jumping=false)
     {
         Vector2Int from=movingPlayer?map.Player:map.Monster;
-        if(from==target)yield break;
+        if(from==target||jumping&&!CanUseJump(movingPlayer,target))yield break;
         combat.MarkBattleStarted();rolling=true;
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=defenderPlayer?!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked;
@@ -47,9 +47,10 @@ public sealed partial class TrainingGame
             if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerCanAct) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
         }
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
-        bool moved=movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
+        bool moved=jumping?CanUseJump(movingPlayer,target)&&map.Jump(movingPlayer,target):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
         if(moved) {
-            string mode=tactical?"战术转进（不引发借机攻击）":"普通移动";
+            if(jumping)jumpEffect.Use(movingPlayer,worldRounds,combat.Round);
+            string mode=jumping?"跳跃（消耗10尺移动力）":tactical?"战术转进（不引发借机攻击）":"普通移动";
             movementMessage=mode+"完成"+(movingPlayer?"，剩余 "+map.MovementBudget(tactical)+" 尺。":"。");
             history.Insert(0,(movingPlayer?"玩家":"木桩")+mode+" "+BattleMap.FeetBetween(from,target)+" 尺至("+(target.x+1)+","+(target.y+1)+")。");
         }

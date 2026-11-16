@@ -11,22 +11,23 @@ public sealed partial class TrainingGame
         if(!combat.MonsterCanAct||map.DistanceFeet<=reach)yield break;
         Vector2Int from=map.Monster,best=from;
         int bestDistance=map.DistanceFeet,bestCost=0;
-        bool foundInRange=false;
+        bool foundInRange=false,bestJump=false;
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++) {
             var cell=new Vector2Int(x,y);
-            if(!map.CanMoveMonsterTo(cell))continue;
-            int cost=BattleMap.FeetBetween(from,cell);
+            bool walking=map.CanMoveMonsterTo(cell),leaping=CanUseJump(false,cell);if(!walking&&!leaping)continue;
+            bool useJump=leaping&&(!walking||BattleMap.FeetBetween(from,cell)>10);int cost=useJump?10:BattleMap.FeetBetween(from,cell);
             if(cost>map.MonsterMovementRemaining)continue;
             int distance=BattleMap.BodyDistance(cell,map.MonsterSpaces,map.Player,map.PlayerSpaces);
             bool inRange=distance<=reach;
             if(inRange && (!foundInRange || cost<bestCost || (cost==bestCost && distance<bestDistance)) ||
                 !inRange && !foundInRange && (distance<bestDistance || (distance==bestDistance && cost<bestCost))) {
-                best=cell;bestDistance=distance;bestCost=cost;foundInRange=inRange;
+                best=cell;bestDistance=distance;bestCost=cost;foundInRange=inRange;bestJump=useJump;
             }
         }
         if(best!=from) {
             dice="木桩向玩家移动 "+bestCost+" 尺";
-            yield return ResolveMovement(false,best,false,true);
+            yield return ResolveMovement(false,best,false,true,bestJump);
+            if(bestJump&&map.Monster!=from&&!combat.BattleFinished&&combat.MonsterCanAct)yield return ChasePlayer(reach);
         }
     }
     IEnumerator AnimateMonsterMovement(Vector2Int from,Vector2Int to)
