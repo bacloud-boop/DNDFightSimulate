@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Lesser Restoration","次级复原术","附赠动作 · 接触（5尺） · 声音、姿势。解除目标一种状态：目盲、耳聋、麻痹或中毒。清除该状态全部施法来源（含暂被压制的旧施法），保留其他状态。持续区域条件仍按所在位置重新判定；不恢复HP。",2,5,0,bonus:true),
         new DirectSpell("Blindness/Deafness","目盲／耳聋","1动作 · 120尺 · 声音。可见生物体质豁免失败，施法者选择使其目盲或耳聋。目标每回合结束重复豁免，成功结束本次施法；每升一环增加一个目标。非专注至多1分钟；同名效果最高DC优先、同DC取最新，所有施法独立计时与豁免。",2,120,0),
         new DirectSpell("Silence","沉默术","1动作 · 120尺 · 声音、姿势 · 专注至多10分钟。指定点20尺半径内不能产生声音，声音不能穿过。按单位中心禁止声音施法；完整占地在内时失聪且免疫雷鸣伤害。固定范围，不随生物移动。",2,120,0),
         new DirectSpell("Arcane Vigor","活力奥法","附赠动作 · 自身 · 声音、姿势。消耗并投掷1～2颗未使用的生命骰，恢复骰值之和加一次施法属性调整值的HP，不加体质调整值。每升一环可多用1颗生命骰；多职业可自行分配，和短休共用同一资源。",2,0,0,bonus:true),

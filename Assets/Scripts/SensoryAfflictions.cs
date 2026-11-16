@@ -28,6 +28,7 @@ public sealed class SensoryAfflictions
     public bool Deafened(bool player,long now){var effect=Current(player,now);return effect!=null&&!effect.Blind;}
     public List<SensoryAffliction> Pending(bool player,long now){Prune(now);return effects.FindAll(effect=>effect.Player==player&&effect.Active(now));}
     public bool End(long id)=>effects.RemoveAll(effect=>effect.Id==id)>0;
+    public int EndCondition(bool player,bool blind,long now){Prune(now);return effects.RemoveAll(effect=>effect.Player==player&&effect.Blind==blind&&effect.Active(now));}
     public void Clear(){effects.Clear();sequence=0;}
     public static bool BlocksSight(bool blinded,int blindsight,double distance)=>blinded&&!(blindsight>0&&Math.Round(distance)<=blindsight);
 }
