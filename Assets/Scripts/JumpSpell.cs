@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
     readonly JumpEffect jumpEffect=new JumpEffect();
     string jumpColumn="1",jumpRow="1";
     bool jumpWilling;
-    bool JumpEnvironmentAllowed(bool player)=>true;
+    bool JumpEnvironmentAllowed(bool player)=>JumpEffect.EnvironmentAllowed(false,false,true,player?combat.PlayerProne:combat.MonsterProne);
     bool CanUseJump(bool player,Vector2Int cell)=>JumpEnvironmentAllowed(player)&&jumpEffect.Available(player,worldRounds,combat.Round)&&map.CanJump(player,cell);
     string JumpSpellError(bool player,int slot,bool both)
     {
@@ -25,6 +25,6 @@ public sealed partial class TrainingGame
         jumpColumn=GUI.TextField(new Rect(380,485,98,34),jumpColumn,fieldStyle);jumpRow=GUI.TextField(new Rect(487,485,98,34),jumpRow,fieldStyle);
         int x=0,y=0;var valid=int.TryParse(jumpColumn,out x)&&int.TryParse(jumpRow,out y);var cell=new Vector2Int(x-1,y-1);
         bool ready=valid&&page=="battle"&&panel==""&&!rolling&&!spellTargeting&&draggingToken<0&&combat.PlayerCanAct&&CanUseJump(true,cell);
-        if(Btn(new Rect(380,530,205,48),"跳跃（10尺移动）",ready))StartCoroutine(ResolveMovement(true,cell,false,false,true));
+        if(Btn(new Rect(380,530,205,48),combat.PlayerProne?"请先起身":"跳跃（10尺移动）",ready))StartCoroutine(ResolveMovement(true,cell,false,false,true));
     }
 }

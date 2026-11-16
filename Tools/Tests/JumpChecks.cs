@@ -9,6 +9,7 @@ class JumpChecks
   Check(effect.Use(true,10,1)&&!effect.Use(true,10,1),"once per actor turn");Check(effect.Grant(true,11)&&!effect.Available(true,11,1),"recast cannot reset turn use");Check(effect.Available(true,11,2),"new turn");
   Check(effect.Grant(false,11)&&effect.Available(false,11,1),"independent actors");Check(!effect.Grant(false,long.MaxValue),"overflow");
   Check(!JumpEffect.EnvironmentAllowed(true,false,true)&&!JumpEffect.EnvironmentAllowed(false,true,true)&&!JumpEffect.EnvironmentAllowed(false,false,false)&&JumpEffect.EnvironmentAllowed(false,false,true),"surface, dragging and carried load restrictions");
+  Check(!JumpEffect.EnvironmentAllowed(false,false,true,true),"prone actor must stand before jumping");
   var map=new BattleMap();map.Place(false,V(2,0));map.Lock();Check(!map.CanMoveTo(V(5,0))&&map.CanJump(true,V(5,0)),"jump crosses occupied path");
   Check(map.Jump(true,V(5,0))&&map.MovementRemaining==20,"fixed ten foot cost");
   int remaining=map.MovementRemaining;Check(!map.Jump(true,map.Monster)&&map.MovementRemaining==remaining,"occupied destination atomic");

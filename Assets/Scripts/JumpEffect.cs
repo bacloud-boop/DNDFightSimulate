@@ -6,5 +6,5 @@ public sealed class JumpEffect
     public bool Available(bool player,long now,int round)=>Active(player,now)&&usedTurn[player?0:1]!=round;
     public bool Use(bool player,long now,int round){if(!Available(player,now,round))return false;usedTurn[player?0:1]=round;return true;}
     public void Clear(){expires[0]=expires[1]=usedTurn[0]=usedTurn[1]=-1;}
-    public static bool EnvironmentAllowed(bool submerged,bool dragging,bool loadFits)=>!submerged&&!dragging&&loadFits;
+    public static bool EnvironmentAllowed(bool submerged,bool dragging,bool loadFits,bool prone=false)=>!submerged&&!dragging&&loadFits&&!prone;
 }
