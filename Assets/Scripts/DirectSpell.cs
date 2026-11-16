@@ -18,7 +18,7 @@ public sealed class DirectSpell
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
         new DirectSpell("Protection from Poison","防护毒素","1动作 · 接触（5尺） · 声音、姿势。解除目标中毒状态，持续1小时获得毒素抗性，对避免或结束中毒状态的豁免具有优势；不会免疫中毒，重复抗性不叠加。",2,5,0),
-        new DirectSpell("Jump","跳跃术","附赠动作 · 接触（5尺） · 声音、姿势。自愿目标每回合一次，可花10尺移动力跳至30尺内合法落点。平面跳跃可越过生物及水域，离开近战范围仍引发借机。潜水须先切换水面，拖行须先放下或改为肩扛。",1,5,0,bonus:true),
+        new DirectSpell("Jump","跳跃术","附赠动作 · 接触（5尺） · 声音、姿势。自愿目标每回合一次，可花10尺移动力跳至30尺内合法落点。平面跳跃可越过生物及水域；普通跳跃仍引发借机，战术跳跃继承免借机，两种移动池共用次数。潜水须先切换水面，拖行须先放下或改为肩扛。",1,5,0,bonus:true),
         new DirectSpell("Lesser Restoration","次级复原术","附赠动作 · 接触（5尺） · 声音、姿势。解除目标一种状态：目盲、耳聋、麻痹或中毒。清除该状态全部施法来源（含暂被压制的旧施法），保留其他状态。持续区域条件仍按所在位置重新判定；不恢复HP。",2,5,0,bonus:true),
         new DirectSpell("Blindness/Deafness","目盲／耳聋","1动作 · 120尺 · 声音。可见生物体质豁免失败，施法者选择使其目盲或耳聋。目标每回合结束重复豁免，成功结束本次施法；每升一环增加一个目标。非专注至多1分钟；同名效果最高DC优先、同DC取最新，所有施法独立计时与豁免。",2,120,0),
         new DirectSpell("Silence","沉默术","1动作 · 120尺 · 声音、姿势 · 专注至多10分钟。指定点20尺半径内不能产生声音，声音不能穿过。按单位中心禁止声音施法；完整占地在内时失聪且免疫雷鸣伤害。固定范围，不随生物移动。",2,120,0),

@@ -15,6 +15,9 @@ class JumpChecks
   int remaining=map.MovementRemaining;Check(!map.Jump(true,map.Monster)&&map.MovementRemaining==remaining,"occupied destination atomic");
   Check(!map.CanJump(true,V(9,9)),"range");Check(BattleMap.LeavesReach(V(1,0),V(5,0),V(0,0),5,1,1),"leaving reach still triggers");
   map.SpendPlayerMovement(15);Check(!map.CanJump(true,V(4,0)),"requires ten movement even for short jump");
+  map.GrantTacticalMovement();int ordinary=map.MovementRemaining;
+  Check(map.Jump(true,V(4,0),true)&&map.TacticalMovementRemaining==5&&map.MovementRemaining==ordinary,"tactical jump spends only tactical pool");
+  Check(!effect.Available(true,11,1),"tactical and ordinary jump share one turn use");
   effect.Clear();Check(!effect.Active(true,11)&&!effect.Active(false,11),"battle reset");
   Console.WriteLine("PASS: jump duration, recast, turns, actors, path crossing, landing, cost, range and opportunity reach");
  }
