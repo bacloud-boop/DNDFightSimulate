@@ -13,4 +13,5 @@ public sealed class RouteCostMeter
   int next=Scale(walked)*(crawling?2:1)+Scale(swum)+Scale(rough),cost=next-paid;paid=next;return cost;
  }
  public int Paid=>paid;
+ public int Travelled=>Scale(walked);
 }

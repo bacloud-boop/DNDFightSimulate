@@ -35,7 +35,7 @@ public sealed partial class TrainingGame
         DrawDetectionMap(board);
         DrawMonsterArea(board);
         DrawSilenceMap(board);
-        DrawEntangleArea(board);DrawGreaseArea(board);
+        DrawSpikeGrowthArea(board);DrawEntangleArea(board);DrawGreaseArea(board);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
         if(draggingToken!=0&&!map.IsContained(true))Token(playerRect,true);

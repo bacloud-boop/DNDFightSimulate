@@ -92,6 +92,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Spike Growth")GUILayout.Label("指定地面区域中心，所有生物均受影响。",small);
         else if(definition.Name=="Grease")GUILayout.Label("指定10尺方形地面区域，初始影响其中所有生物。",small);
         else if(definition.Name=="Entangle")GUILayout.Label("指定地面方形区域，初始影响除施法者外的范围内生物。",small);
         else {
@@ -102,6 +103,7 @@ public sealed partial class TrainingGame
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
+        if(definition.Name=="Spike Growth")DrawSpikeGrowthChoices();
         if(definition.Name=="Grease")DrawGreaseChoices();
         if(definition.Name=="Entangle")DrawEntangleChoices();
         if(definition.Name=="Enlarge/Reduce")DrawSizeChangeChoices();
@@ -138,6 +140,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Spike Growth")return SpikeGrowthError();
         if(spell.Name=="Grease")return GreaseError();
         if(spell.Name=="Entangle")return EntangleError();
         if(spell.Name=="Enlarge/Reduce")return SizeChangeError(directTargetPlayer);
@@ -179,7 +182,7 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpell(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded=false){
         long token=senses.Token(true,worldRounds);int sequence=spellCastSequence;
         yield return ResolveDirectSpellCore(spell,targetPlayer,caster,slotLevel,embedded);
-        if(greaseEntries.Count>0){bool restoreBusy=embedded||rolling;rolling=true;yield return DrainGreaseEntries();rolling=restoreBusy;}
+        if(PendingTerrainCount>0){bool restoreBusy=embedded||rolling;rolling=true;yield return DrainGreaseEntries();rolling=restoreBusy;}
         if(!embedded&&sequence!=spellCastSequence)BreakOrdinaryInvisibility(true,"施法",token);
     }
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
@@ -197,6 +200,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Spike Growth"&&SpikeGrowthError()!="")yield break;
         if(spell.Name=="Grease"&&GreaseError()!="")yield break;
         if(spell.Name=="Entangle"&&EntangleError()!="")yield break;
         if(spell.Name=="Enlarge/Reduce"&&SizeChangeError(targetPlayer)!="")yield break;
@@ -208,7 +212,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -218,6 +222,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Spike Growth"){ResolveSpikeGrowth(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Grease"){yield return ResolveGrease(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Entangle"){yield return ResolveEntangle(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Enlarge/Reduce"){yield return ResolveSizeChange(targetPlayer,caster,sizeDelta,sizeConsent,chosenSizeAnchor);if(!embedded)rolling=false;yield break;}

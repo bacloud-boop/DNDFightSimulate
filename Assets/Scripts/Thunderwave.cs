@@ -25,7 +25,7 @@ public sealed partial class TrainingGame
         GUI.enabled=previous;if(GUILayout.Button("取消",button)){spellTargeting=false;thunderwaveTargeting=false;}
         GUILayout.EndArea();
     }
-    IEnumerator ResolveThunderwave(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces){long token=senses.Token(true,worldRounds);yield return ResolveThunderwaveCore(monster,player,dc,slot,origin,originSpaces);if(greaseEntries.Count>0){rolling=true;yield return DrainGreaseEntries();rolling=false;}BreakOrdinaryInvisibility(true,"施法",token);}
+    IEnumerator ResolveThunderwave(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces){long token=senses.Token(true,worldRounds);yield return ResolveThunderwaveCore(monster,player,dc,slot,origin,originSpaces);if(PendingTerrainCount>0){rolling=true;yield return DrainGreaseEntries();rolling=false;}BreakOrdinaryInvisibility(true,"施法",token);}
     IEnumerator ResolveThunderwaveCore(bool monster,bool player,int dc,int slot,Vector2Int origin,int originSpaces)
     {
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,"Thunderwave",interruption);

@@ -62,12 +62,12 @@ public sealed partial class TrainingGame
     void Fill(Rect rect,Color color){Color old=GUI.color;GUI.color=color;GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=old;}
     bool Btn(Rect rect,string text,bool enabled=true)
     {
-        bool previous=GUI.enabled;GUI.enabled=previous&&enabled&&!greaseResolving&&greaseEntries.Count==0;
+        bool previous=GUI.enabled;GUI.enabled=previous&&enabled&&!greaseResolving&&PendingTerrainCount==0;
         bool clicked=GUI.Button(rect,text,button);GUI.enabled=previous;return clicked;
     }
     void Update()
     {
-        if(!greaseResolving&&!rolling&&greaseEntries.Count>0)StartCoroutine(DrainGreaseEntries());
+        if(!greaseResolving&&!rolling&&PendingTerrainCount>0)StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();SyncTimedBuffs();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath)knownFormReplacement=false;

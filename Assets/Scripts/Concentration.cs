@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     void EndConcentration(string reason)
     {
         if(!IsConcentrating)return;
-        EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();
+        spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();
         enfeeblement.Clear();detectEvilGood.Clear();
         silence.Clear();
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");

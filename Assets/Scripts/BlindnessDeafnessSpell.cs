@@ -57,7 +57,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator RepeatSensorySaves(bool player)
     {
-        if(greaseEntries.Count>0)yield return DrainGreaseEntries();
+        if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         if(player?combat.PlayerDead:combat.Hp==0)yield break;
         var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);var greasePending=ActorGrease(player?0:-1);
         while(pending.Count>0||rayPending||greasePending!=null){
