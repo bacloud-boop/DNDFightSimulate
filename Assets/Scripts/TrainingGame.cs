@@ -309,6 +309,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             DrawVisionConfiguration(false);
             GUILayout.Label("攻击类型（当前 "+(combat.MonsterAttackIsMelee?"近战":"远程")+"）",label);
             GUILayout.Label("自定义攻击属性（只增加命中调整，不增加伤害）",label);monsterAttackAbilityDraft=GUILayout.SelectionGrid(monsterAttackAbilityDraft,MonsterAttackAbility.Names,3,button);
+            GUILayout.Label("基础武器伤害类型（额外武器伤害骰沿用此类型）",label);monsterBaseWeaponTypeDraft=GUILayout.SelectionGrid(monsterBaseWeaponTypeDraft,DamageTypes.Names,4,new GUIStyle(button){fontSize=15,fixedHeight=32});
             monsterAttackKindDraft=GUILayout.SelectionGrid(monsterAttackKindDraft,new[]{"近战攻击","远程攻击"},2,new GUIStyle(button){fontSize=17,fixedHeight=36});
             GUILayout.Label("生物类型（当前 "+CreatureProfile.TypeNames[monsterProfile.TypeIndex]+"）",label);
             monsterTypeDraft=GUILayout.SelectionGrid(monsterTypeDraft,CreatureProfile.TypeNames,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
@@ -345,7 +346,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {

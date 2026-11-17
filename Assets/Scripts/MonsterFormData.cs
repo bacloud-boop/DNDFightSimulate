@@ -3,10 +3,12 @@ public sealed class MonsterFormData {
  public int SpellAbility=4,SpellLevel=1;public bool CanCounterspell;public MonsterSpellEntry[] Spells=new MonsterSpellEntry[0];
  public int ChallengeIndex;
  public int AttackAbility;
+ public int BaseWeaponDamageType;
  public int Type=9,Size=2,MaxHp=1000,Armor=10,Proficiency,AttackRange=5,Speed=30,Darkvision,Bonus;public bool Melee=true;
  public int[] Abilities={10,10,10,10,10,10},Skills=new int[18],Dice=new int[5],DamageTypes=new int[6];
  public MonsterFormData Copy(){var copy=(MonsterFormData)MemberwiseClone();copy.Abilities=(int[])Abilities.Clone();copy.Skills=(int[])Skills.Clone();copy.Dice=(int[])Dice.Clone();copy.DamageTypes=(int[])DamageTypes.Clone();copy.Spells=Spells==null?null:(MonsterSpellEntry[])Spells.Clone();return copy;}
  public bool Valid(out string error){
+  error="基础武器伤害类型无效。";if(BaseWeaponDamageType<0||BaseWeaponDamageType>=global::DamageTypes.Names.Length)return false;
   error="攻击属性无效。";if(!MonsterAttackAbility.Valid(AttackAbility))return false;
   error="生前法术配置无效。";if(!new MonsterSpellSequence().Configure(SpellAbility,SpellLevel,CanCounterspell,Spells))return false;
   error="生前类型须为非亡灵，体型与所有数字须符合怪物配置规则。";
