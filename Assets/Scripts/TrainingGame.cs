@@ -22,6 +22,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly string[] attributeInputs = {"10","10","10","10","10","10"};
     string attributeError="";
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
+    bool monsterHeldWeaponDraft;
     readonly CreatureProfile monsterProfile=new CreatureProfile();
     int monsterChallengeDraft;
     int monsterTypeDraft=9,monsterSizeDraft=2,monsterAttackKindDraft,monsterAttackNatureDraft;
@@ -322,6 +323,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             monsterAttackNatureDraft=GUILayout.SelectionGrid(monsterAttackNatureDraft,new[]{"武器攻击","法术攻击"},2,button);
             GUILayout.Label("基础武器伤害类型（额外武器伤害骰沿用此类型）",label);monsterBaseWeaponTypeDraft=GUILayout.SelectionGrid(monsterBaseWeaponTypeDraft,DamageTypes.Names,4,new GUIStyle(button){fontSize=15,fixedHeight=32});
             monsterAttackKindDraft=GUILayout.SelectionGrid(monsterAttackKindDraft,new[]{"近战攻击","远程攻击"},2,new GUIStyle(button){fontSize=17,fixedHeight=36});
+            GUILayout.Label("自定义武器来源",label);monsterHeldWeaponDraft=GUILayout.SelectionGrid(monsterHeldWeaponDraft?1:0,new[]{"自然武器","手持武器"},2,button)==1;
             GUILayout.Label("生物类型（当前 "+CreatureProfile.TypeNames[monsterProfile.TypeIndex]+"）",label);
             monsterTypeDraft=GUILayout.SelectionGrid(monsterTypeDraft,CreatureProfile.TypeNames,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
             GUILayout.Label("体型（当前 "+CreatureProfile.SizeNames[monsterProfile.SizeIndex]+"）",label);
@@ -358,7 +360,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!ConfiguredLoadAllowed(false,monsterAttributeInputs,monsterSizeDraft))monsterAttributeError="力量或体型不足以携带现有装备。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;ApplySleepTraitConfiguration(false);monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;ApplySleepTraitConfiguration(false);monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0;combat.MonsterWeaponIsHeld=monsterHeldWeaponDraft; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {

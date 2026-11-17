@@ -41,6 +41,7 @@ public sealed class CombatState
     public bool MonsterAttackIsMelee {get;set;}=true;
     public bool MonsterRestrained {get;set;}
     public bool MonsterAttackIsWeapon {get;set;}=true;
+    public bool MonsterWeaponIsHeld {get;set;}
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
     public bool MonsterSlowed {get;private set;}
