@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
-        EndEntangle();poisonProtection.Clear();
+        grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();
         sensory.Clear();enfeeblement.Clear();
         monsterSpells.Reset();

@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
 {
     readonly EntangleEffect entangle=new EntangleEffect();
     bool Entangled(bool player)=>entangle.Restrained(player?0:-1,worldRounds);
-    void InitializeEntangle(){map.DifficultTerrain=(x,y,s)=>entangle.FullFootprint(x,y,s,worldRounds);map.RestrainedActor=Entangled;}
+    void InitializeEntangle(){map.DifficultTerrain=FullDifficultTerrain;map.RestrainedActor=Entangled;}
     void SyncEntangleActors(){combat.MonsterRestrained=Entangled(false);}
     void EndEntangle(){entangle.Clear();SyncEntangleActors();}
     string EntangleError(){Vector2Int cell;if(!VisionPoint(out cell))return "纠缠区域左上格必须位于地图内。";if(map.DistanceToCell(true,cell)>90)return "纠缠区域起点超出90尺。";return worldRounds<0||worldRounds>long.MaxValue-10?"世界时间超出范围。":"";}

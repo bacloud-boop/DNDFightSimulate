@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
     int reactionRange=5;
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
-        if(combat.Aftermath){if(!rolling&&panel==""&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&map.MovePlayer(target,tactical))history.Insert(0,"战后移动：接近尸体；本段不触发借机攻击。");return;}
+        if(combat.Aftermath){if(!rolling&&greaseEntries.Count==0&&panel==""&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&map.CanMoveTo(target,tactical))StartCoroutine(ResolveMovement(true,target,tactical));return;}
         if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
         StartCoroutine(ResolveMovement(true,target,tactical));
     }
@@ -18,13 +18,14 @@ public sealed partial class TrainingGame
         if(rolling || panel!="" || page!="battle" || !map.CanMoveMonsterTo(target))return;
         StartCoroutine(ResolveMovement(false,target,false));
     }
-    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false,bool jumping=false)
+    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false,bool jumping=false,bool greaseStep=false,int? prepaid=null,int? expectedSpaces=null)
     {
+        if(!greaseStep&&!jumping&&GreasePathNeeded(movingPlayer,target)){yield return MoveThroughGrease(movingPlayer,target,tactical,preserveBusy);yield break;}
         Vector2Int from=movingPlayer?map.Player:map.Monster;
         if(from==target||jumping&&!CanUseJump(movingPlayer,target,tactical))yield break;
-        combat.MarkBattleStarted();rolling=true;
+        bool proneAtStart=movingPlayer?combat.PlayerProne:combat.MonsterProne;combat.MarkBattleStarted();rolling=true;
         bool defenderPlayer=!movingPlayer;
-        bool reactionAvailable=defenderPlayer?!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked;
+        bool reactionAvailable=!combat.Aftermath&&(defenderPlayer?!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked);
         int reach=defenderPlayer?5:MonsterAttackReach;
         int opportunityPlayerSight,opportunityMonsterSight;
         if(OpportunitySight(movingPlayer,from,target,reach,out opportunityPlayerSight,out opportunityMonsterSight) && !tactical && !(movingPlayer&&PlayerInBeastForm&&BeastAttack.Find(PlayerBeast.name).Agile) && reactionAvailable && BattleMap.LeavesReach(from,target,movingPlayer?map.Monster:map.Player,reach,movingPlayer?map.PlayerSpaces:map.MonsterSpaces,movingPlayer?map.MonsterSpaces:map.PlayerSpaces)) {
@@ -46,14 +47,17 @@ public sealed partial class TrainingGame
             rolling=true;
             if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerCanAct) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
         }
+        if(expectedSpaces.HasValue&&((movingPlayer?map.PlayerSpaces:map.MonsterSpaces)!=expectedSpaces.Value||(movingPlayer?combat.PlayerProne:combat.MonsterProne)!=proneAtStart)){if(greaseEntries.Count>0)yield return DrainGreaseEntries();if(!preserveBusy)rolling=false;yield break;}
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
-        bool moved=jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
+        int paidMovement=prepaid.HasValue?prepaid.Value:jumping?10:movingPlayer?map.PlayerMovementCost(target):map.MonsterMovementCost(target);
+        bool moved=jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target)):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
         if(moved) {
             if(jumping)jumpEffect.Use(movingPlayer,worldRounds,combat.Round);
-            string mode=jumping?(tactical?"战术跳跃（免借机，消耗10尺战术移动）":"跳跃（消耗10尺普通移动）"):tactical?"战术转进（不引发借机攻击）":"普通移动";
+            string mode=jumping?(tactical?"战术跳跃（免借机）":"跳跃"):tactical?"战术转进（不引发借机攻击）":"普通移动";
             movementMessage=mode+"完成"+(movingPlayer?"，剩余 "+map.MovementBudget(tactical)+" 尺。":"。");
-            history.Insert(0,(movingPlayer?"玩家":"木桩")+mode+" "+BattleMap.FeetBetween(from,target)+" 尺至("+(target.x+1)+","+(target.y+1)+")。");
+            history.Insert(0,(movingPlayer?"玩家":"木桩")+mode+" "+BattleMap.FeetBetween(from,target)+" 尺（消耗 "+paidMovement+" 尺移动力）至("+(target.x+1)+","+(target.y+1)+")。");
         }
+        if(greaseEntries.Count>0)yield return DrainGreaseEntries();
         if(!preserveBusy)rolling=false;logScroll=Vector2.zero;
     }
     void DrawReactionPrompt()

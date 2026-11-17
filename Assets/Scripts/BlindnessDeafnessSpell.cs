@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
 {
     readonly SensoryAfflictions sensory=new SensoryAfflictions();
     int blindnessPlayerMode,blindnessMonsterMode;
-    bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption;
+    bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption;
     long sensorySaveChoice;
     System.Collections.Generic.List<SensoryAffliction> sensorySaveOptions;
     Vector2 sensorySaveScroll;
@@ -50,17 +50,20 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(495,180,610,570));GUILayout.Label((sensorySavePlayer?"玩家":"木桩")+"回合末 · 选择豁免顺序",heading);
         GUILayout.Label("各次施法独立豁免；首次豁免会消耗心灵之楔等一次性调整。请选择接下来结算哪一次。",small);
         sensorySaveScroll=GUILayout.BeginScrollView(sensorySaveScroll);
+        if(sensoryGreaseOption&&GUILayout.Button("油腻术 · 敏捷豁免 · DC "+(ActorGrease(sensorySavePlayer?0:-1)==null?"—":ActorGrease(sensorySavePlayer?0:-1).Dc.ToString()),button))sensorySaveChoice=-2;
         if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
         foreach(var effect in sensorySaveOptions)if(GUILayout.Button("#"+effect.Id+" · "+(effect.Blind?"目盲":"耳聋")+" · DC "+effect.Dc+" · 剩余"+(effect.Expires-worldRounds)+"回合",button))sensorySaveChoice=effect.Id;
         GUILayout.EndScrollView();GUILayout.EndArea();
     }
     IEnumerator RepeatSensorySaves(bool player)
     {
+        if(greaseEntries.Count>0)yield return DrainGreaseEntries();
         if(player?combat.PlayerDead:combat.Hp==0)yield break;
-        var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);
-        while(pending.Count>0||rayPending){
-            long choice=pending.Count>0?pending[0].Id:-1;
-            if(pending.Count+(rayPending?1:0)>1){sensorySaveOptions=pending;sensoryRayOption=rayPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+        var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);var greasePending=ActorGrease(player?0:-1);
+        while(pending.Count>0||rayPending||greasePending!=null){
+            long choice=pending.Count>0?pending[0].Id:rayPending?-1:-2;
+            if(pending.Count+(rayPending?1:0)+(greasePending!=null?1:0)>1){sensorySaveOptions=pending;sensoryRayOption=rayPending;sensoryGreaseOption=greasePending!=null;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+            if(choice==-2){var field=greasePending;greasePending=null;yield return ResolveGreaseSave(player?0:-1,field,"回合末油脂");continue;}
             if(choice==-1){rayPending=false;yield return RepeatEnfeeblementSave(player);continue;}
             var effect=pending.Find(item=>item.Id==choice);pending.Remove(effect);
             int value=Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);

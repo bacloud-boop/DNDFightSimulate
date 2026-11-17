@@ -53,6 +53,6 @@ public sealed partial class TrainingGame {
    history.Insert(0,(external?"外部救援：":"战后施法：")+chinese+"对"+(player?"玩家":"木桩")+"生效，耗时 "+RevivalRules.Duration(name)*6+" 秒。"+(name=="Raise Dead"?"复活者d20检定减4，每次完成长休减轻1。":""));dice=chinese+" · 已完成";
   }else {history.Insert(0,chinese+"失败："+error);dice=chinese+" · 失败";}if(!external)BreakOrdinaryInvisibility(true,"施法",invisibilityToken);rolling=false;
  }
- IEnumerator AftermathTick(){rolling=true;AdvanceAftermathTime(1);combat.EndRound();combat.ExpirePlayerTurnEffects();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();yield return PlayerDeathSave();rolling=false;}
+ IEnumerator AftermathTick(){rolling=true;yield return RepeatSensorySaves(true);AdvanceAftermathTime(1);combat.EndRound();combat.ExpirePlayerTurnEffects();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();yield return PlayerDeathSave();rolling=false;}
  void ResumeAftermath(){if(combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0)return;AdvanceAftermathTime(1);if(combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0){aftermathMessage="时间推进后有人倒地或死亡，继续保持战后阶段。";return;}combat.Aftermath=false;combat.StartMonsterTurn();combat.EndRound();combat.ExpirePlayerTurnEffects();fighter.EndRound();lightAttacksThisTurn.Clear();actionWeapon=null;map.RefreshMovement();map.StartMonsterMovementTurn(combat.MonsterSpeed);tacticalMovement=false;outcomeRecorded=false;history.Insert(0,"继续战斗：新回合已开始，仅刷新回合资源，保留HP、职业消耗和持续法术。");}
 }

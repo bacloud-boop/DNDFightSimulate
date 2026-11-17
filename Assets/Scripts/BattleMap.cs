@@ -18,7 +18,7 @@ public sealed partial class BattleMap
     public int DashesThisTurn {get;private set;}
     public int MovementMaximum=>PlayerSpeed*(1+DashesThisTurn);
     public bool PlayerCrawling {get;set;}
-    public int PlayerMovementCost(Vector2Int to)=>FeetBetween(Player,to)*(PlayerCrawling?2:1)+DifficultTerrainCost(Player,to,PlayerSpaces);
+    public int PlayerMovementCost(Vector2Int to)=>MovementCostOverride(to)??(FeetBetween(Player,to)*(PlayerCrawling?2:1)+DifficultTerrainCost(Player,to,PlayerSpaces));
     public bool SpendPlayerMovement(int feet){if(feet<0||MovementRemaining<feet)return false;MovementSpent+=feet;MovementRemaining-=feet;return true;}
     public void Dash(){DashesThisTurn++;MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
     public int MovementRemaining {get;private set;} = MovementPerRound;
@@ -100,13 +100,16 @@ public sealed partial class BattleMap
     }
     public bool TransformAt(bool player,int spaces,Vector2Int anchor,int recoverySpaces)
     {
+        var body=player?Player:Monster;int oldSpaces=player?PlayerSpaces:MonsterSpaces;
         if(!CanTransformAt(player,spaces,anchor,recoverySpaces))return false;
         if(player){Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=recoverySpaces;}
         else {Monster=anchor;MonsterSpaces=spaces;monsterRecoverySpaces=recoverySpaces;}
+        MovementObserved?.Invoke(player?0:-1,body,anchor,oldSpaces,spaces,true);
         return true;
     }
     public bool RestoreForm(bool player)
     {
+        var observedFrom=player?Player:Monster;int observedSpaces=player?PlayerSpaces:MonsterSpaces;
         if(HasContainedCreature)return false;
         int spaces=player?playerRecoverySpaces:monsterRecoverySpaces;if(spaces==0)return false;
         Vector2Int anchor;if(!FindRecoveryPlacement(player,out anchor))return false;
@@ -114,18 +117,18 @@ public sealed partial class BattleMap
         if(!FindRecovery(other,otherSpaces,player?monsterRecoverySpaces:playerRecoverySpaces,anchor,spaces,out ignored))return false;
         if(player){Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=0;}
         else {Monster=anchor;MonsterSpaces=spaces;monsterRecoverySpaces=0;}
-        return true;
+        MovementObserved?.Invoke(player?0:-1,observedFrom,anchor,observedSpaces,spaces,true);return true;
     }
     public bool CanMoveTo(Vector2Int cell,bool tactical=false) => Locked&&!ActorRestrained(true)&&!IsContained(true)&&cell!=Player&&MovementBudget(tactical)>0&&CanPlace(true,cell)&&RecoveryPathSafe(true,Player,cell)&&PlayerMovementCost(cell)<=MovementBudget(tactical)&&!SegmentCrossesBody(Player,cell,PlayerSpaces,Monster,OccupiedSpaces(false));
     public bool MovePlayer(Vector2Int cell,bool tactical=false) {
         if(!CanMoveTo(cell,tactical))return false;
         if(tactical)TacticalMovementRemaining-=PlayerMovementCost(cell);else {int cost=PlayerMovementCost(cell);MovementSpent+=cost;MovementRemaining-=cost;}
-        Player=cell;SyncContainedPosition();return true;
+        var observedFrom=Player;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,false);return true;
     }
     public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&!IsContained(true)&&CanPlace(true,cell)&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
-    public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;Player=cell;SyncContainedPosition();return true;}
+    public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,true);return true;}
     public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanPlace(false,cell)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&!SegmentCrossesBody(Monster,cell,MonsterSpaces,Player,OccupiedSpaces(true));
-    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);Monster=cell;SyncContainedPosition();return true;}
+    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
     public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)
@@ -157,7 +160,7 @@ public sealed partial class BattleMap
             if(FeetBetween(start,candidate)>feet)continue;
             if(toward&&BodyDistance(candidate,spaces,origin,originSpaces)>=BodyDistance(last,spaces,origin,originSpaces))continue;
             if(!CanPlace(player,candidate)||!RecoveryPathSafe(player,last,candidate)||SegmentCrossesBody(last,candidate,spaces,obstacle,obstacleSpaces))break;
-            last=candidate;
+            MovementObserved?.Invoke(player?0:-1,last,candidate,spaces,spaces,false);last=candidate;
         }
         if(player)Player=last;else Monster=last;SyncContainedPosition();return FeetBetween(start,last);
     }
@@ -169,7 +172,7 @@ public sealed partial class BattleMap
         if(spaces>=PlayerSpaces)return anchor.x<=Player.x&&anchor.y<=Player.y&&anchor.x+spaces>=Player.x+PlayerSpaces&&anchor.y+spaces>=Player.y+PlayerSpaces;
         return anchor.x>=Player.x&&anchor.y>=Player.y&&anchor.x+spaces<=Player.x+PlayerSpaces&&anchor.y+spaces<=Player.y+PlayerSpaces;
     }
-    public bool TryResizePlayerAt(int spaces,Vector2Int anchor){if(!CanResizePlayerAt(spaces,anchor))return false;PlayerSpaces=spaces;Player=anchor;return true;}
+    public bool TryResizePlayerAt(int spaces,Vector2Int anchor){if(!CanResizePlayerAt(spaces,anchor))return false;var from=Player;int old=PlayerSpaces;PlayerSpaces=spaces;Player=anchor;MovementObserved?.Invoke(0,from,anchor,old,spaces,true);return true;}
     public bool FindPlayerResizePlacement(int spaces,out Vector2Int result,Vector2Int? referenceCell=null)
     {
         result=Player;double best=double.MaxValue;
