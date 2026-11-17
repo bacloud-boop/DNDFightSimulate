@@ -19,6 +19,12 @@ class RescueCarrierChecks
   Check(r.Configure(10,2,30,150,0,20)&&r.DexteritySaveModifier==5,"dexterity upper bound");
   Check(r.Configure(10,2,30,150,0)&&r.Dexterity==10&&r.DexteritySaveModifier==0,"default dexterity is ten without proficiency");
   r.BeginTurn(3);r.Prone=true;Check(r.Stand()&&r.MovementRemaining==15&&!r.Prone,"standing spends only half rescue speed");
+  r.EndTurn();Check(!r.Configure(10,2,30,150,0,10,0)&&r.Hp==10&&r.MaxHp==10,"invalid maximum HP rejected without changing state");
+  Check(r.Configure(10,2,30,150,0,10,25)&&r.Hp==25&&r.MaxHp==25,"deployment applies and fills configured maximum HP");
+  r.BeginTurn(4);Check(r.TakeDamage(7)==7&&r.Hp==18&&r.TurnActive,"nonfatal damage preserves turn");
+  Check(r.TakeDamage(-1)==0&&r.Hp==18,"negative damage cannot heal");
+  Check(r.TakeDamage(long.MaxValue)==18&&r.Hp==0&&r.Prone&&!r.TurnActive,"large damage clamps to zero and ends active turn");
+  Check(!r.BeginTurn(5)&&!r.Move(1)&&!r.Dash()&&!r.Stand(),"zero HP cannot act or refresh resources");
   Console.WriteLine("PASS: rescue configuration, pickup action, heavy drag, dash and cumulative movement");
  }
 }

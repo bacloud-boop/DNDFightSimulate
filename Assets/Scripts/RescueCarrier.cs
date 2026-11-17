@@ -4,6 +4,10 @@ public sealed class RescueCarrier
 {
     public int Strength {get;private set;}=10;
     public int Dexterity {get;private set;}=10;
+    public int MaxHp {get;private set;}=10;
+    public int Hp {get;private set;}=10;
+    public bool Conscious=>Hp>0;
+    public int TakeDamage(long amount){if(amount<=0)return 0;int lost=(int)Math.Min((long)Hp,amount);Hp-=lost;if(Hp==0){Prone=true;EndTurn();}return lost;}
     public bool Prone {get;set;}
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;MovementSpent+=cost;Prone=false;return true;}
     public int DexteritySaveModifier=>(int)Math.Floor((Dexterity-10)/2.0);
@@ -18,15 +22,15 @@ public sealed class RescueCarrier
     long lastTurn=-1;
     public int EffectiveSpeed=>Load.AllowedSpeed(Strength,Size,Weight.EquipmentPounds,Speed);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
-    public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10)
+    public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {
-        if(dexterity<3||dexterity>20||TurnActive||Load.Loaded||strength<3||strength>20||size<0||size>5||speed<0||bodyPounds<1||equipmentPounds<0)return false;
+        if(maxHp<1||dexterity<3||dexterity>20||TurnActive||Load.Loaded||strength<3||strength>20||size<0||size>5||speed<0||bodyPounds<1||equipmentPounds<0)return false;
         if(!CarryingRules.CanCarry(strength,size,equipmentPounds,0))return false;
-        Reset();Strength=strength;Dexterity=dexterity;Size=size;Speed=speed;Weight.TryApply(bodyPounds.ToString(),equipmentPounds.ToString());return true;
+        Reset();MaxHp=Hp=maxHp;Strength=strength;Dexterity=dexterity;Size=size;Speed=speed;Weight.TryApply(bodyPounds.ToString(),equipmentPounds.ToString());return true;
     }
     public bool BeginTurn(long sequence)
     {
-        if(TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ActionsRemaining=1;MovementSpent=0;Dashes=0;return true;
+        if(!Conscious||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ActionsRemaining=1;MovementSpent=0;Dashes=0;return true;
     }
     public void EndTurn(){TurnActive=false;ActionsRemaining=0;}
     bool UseAction(){if(!TurnActive||ActionsRemaining<1)return false;ActionsRemaining--;return true;}
