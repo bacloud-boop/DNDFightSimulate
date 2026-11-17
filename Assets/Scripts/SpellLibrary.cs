@@ -92,6 +92,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Entangle")GUILayout.Label("指定地面方形区域，初始影响除施法者外的范围内生物。",small);
         else {
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
@@ -100,6 +101,7 @@ public sealed partial class TrainingGame
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
+        if(definition.Name=="Entangle")DrawEntangleChoices();
         if(definition.Name=="Enlarge/Reduce")DrawSizeChangeChoices();
         if(definition.Name=="Polymorph")DrawPolymorphChoices();
         if(definition.Name=="Sorcerous Burst")DrawSorcerousBurstChoices();
@@ -134,6 +136,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Entangle")return EntangleError();
         if(spell.Name=="Enlarge/Reduce")return SizeChangeError(directTargetPlayer);
         if(spell.Name=="Ray of Enfeeblement")return EnfeeblementError(directTargetPlayer);
         if(spell.Name=="Protection from Poison")return PoisonProtectionError(directTargetPlayer);
@@ -178,6 +181,7 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        Vector2Int entangleAnchor;VisionPoint(out entangleAnchor);
         int sizeDelta=sizeEnlarge?1:-1;bool sizeConsent=sizeWilling;var chosenSizeAnchor=sizeAnchor;
         bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
         int restorationCondition=lesserRestorationCondition;
@@ -189,6 +193,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Entangle"&&EntangleError()!="")yield break;
         if(spell.Name=="Enlarge/Reduce"&&SizeChangeError(targetPlayer)!="")yield break;
         if(spell.Name=="Ray of Enfeeblement"&&EnfeeblementError(targetPlayer)!="")yield break;
         if(spell.Name=="Protection from Poison"&&PoisonProtectionError(targetPlayer)!="")yield break;
@@ -198,7 +203,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -208,6 +213,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Entangle"){yield return ResolveEntangle(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Enlarge/Reduce"){yield return ResolveSizeChange(targetPlayer,caster,sizeDelta,sizeConsent,chosenSizeAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Enfeeblement"){yield return ResolveEnfeeblement(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Protection from Poison"){ApplyPoisonProtection(targetPlayer);if(!embedded)rolling=false;yield break;}
@@ -248,8 +254,8 @@ public sealed partial class TrainingGame
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
-            advantage=combat.ConsumeGuidingLight(targetPlayer)||advantage;
-            disadvantage=RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            advantage=Entangled(targetPlayer)|combat.ConsumeGuidingLight(targetPlayer)||advantage;
+            disadvantage=Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;

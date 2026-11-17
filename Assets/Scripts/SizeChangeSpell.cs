@@ -88,6 +88,7 @@ public sealed partial class TrainingGame
     }
     int SizeLoadSpeed(bool player,int speed)
     {
+        if(Entangled(player))return 0;
         if(!sizeChange.Applies(player))return speed;
         long gear=player?PlayerEquipmentWeight:MonsterEquipmentWeight;
         return CarryingRules.DragSpeed(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),EffectiveCreatureSize(player),gear,speed);

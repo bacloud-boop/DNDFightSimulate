@@ -130,8 +130,8 @@ public sealed partial class TrainingGame
     IEnumerator RollNaturalAttack(bool opportunity=false)
     {
         var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+combat.PlayerRevivalPenalty;
-        bool advantage=(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=RayAttackDisadvantage(true,attack.Ability)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        bool advantage=Entangled(false)|(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
+        bool disadvantage=Entangled(true)|RayAttackDisadvantage(true,attack.Ability)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;

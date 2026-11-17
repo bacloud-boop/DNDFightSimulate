@@ -39,6 +39,7 @@ public sealed class CombatState
     public void ApplySliver(bool player){if(player)playerSliverUntil=Round+1;else monsterSliverUntil=Round+1;}
     public bool ConsumeSliver(bool player){bool active=player?playerSliverUntil>0:monsterSliverUntil>0;if(player)playerSliverUntil=0;else monsterSliverUntil=0;return active;}
     public bool MonsterAttackIsMelee {get;set;}=true;
+    public bool MonsterRestrained {get;set;}
     public bool MonsterAttackIsWeapon {get;set;}=true;
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
@@ -60,7 +61,7 @@ public sealed class CombatState
     }
     public int? MonsterFormSpeed {get;set;}
     public int? MonsterFormArmor {get;set;}
-    public int MonsterSpeed => (int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
+    public int MonsterSpeed => MonsterRestrained?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
     public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}

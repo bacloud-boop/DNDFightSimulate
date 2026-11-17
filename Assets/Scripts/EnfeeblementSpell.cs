@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     readonly EnfeeblementEffect enfeeblement=new EnfeeblementEffect();
     sealed class EnfeeblementSaveRoll {public int Value;public int[] Dice;}
     EnfeeblementSaveRoll RollEnfeeblementSave(bool player,int ability,bool disadvantage=false){
-        disadvantage|=SizeStrengthDisadvantage(player,ability)||RayStrengthDisadvantage(player,ability);bool advantage=SizeStrengthAdvantage(player,ability);int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
+        disadvantage|=ability==1&&Entangled(player);disadvantage|=SizeStrengthDisadvantage(player,ability)||RayStrengthDisadvantage(player,ability);bool advantage=SizeStrengthAdvantage(player,ability);int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
         return new EnfeeblementSaveRoll{Value=second>0?(advantage?Mathf.Max(first,second):Mathf.Min(first,second)):first,Dice=second>0?new[]{first,second}:new[]{first}};
     }
     bool RayWeakened(bool player)=>enfeeblement.Weakened(player,worldRounds,combat.Round);

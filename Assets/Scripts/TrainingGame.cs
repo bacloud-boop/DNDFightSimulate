@@ -43,7 +43,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
-        InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
+        InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat("MusicVolume", .35f));
@@ -107,9 +107,9 @@ public sealed partial class TrainingGame : MonoBehaviour
         proficiencyBonus+=combat.PlayerRevivalPenalty;
         int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing-bane;
         int targetArmor=combat.MonsterArmorClass;
-        advantage=combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
+        advantage=Entangled(false)|combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
-        disadvantage=RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
+        disadvantage=Entangled(true)|RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -179,7 +179,12 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
-            if(combat.MonsterProne&&combat.MonsterCanAct){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
+            if(Entangled(false)&&combat.MonsterCanAct){
+                yield return EscapeMonsterEntangle();
+                if(!Entangled(false)){if(combat.MonsterProne&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);}yield return ChasePlayer();}
+                yield return FinishMonsterSpellTurn();yield break;
+            }
+            if(combat.MonsterProne&&combat.MonsterCanAct&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
             yield return ChasePlayer();
             if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
             rolling=true;
@@ -203,7 +208,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         mirrorIntercepted=false;int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=RayAttackDisadvantage(false,MonsterCustomAttackAbility)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
+        bool monsterAdvantage=Entangled(true)|combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=Entangled(false)|RayAttackDisadvantage(false,MonsterCustomAttackAbility)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         BreakOrdinaryInvisibility(false,"进行攻击检定");

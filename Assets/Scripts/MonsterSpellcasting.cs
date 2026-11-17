@@ -59,8 +59,8 @@ public sealed partial class TrainingGame
         bool critical=false,half=false;
         if(spell.Attack){
             bool sees=MonsterCanSeeTarget(target),targetSees=PlayerSeesMonster;
-            bool advantage=!targetSees||player&&(combat.PlayerHp==0||combat.PlayerParalyzed||combat.PlayerProne&&distance<=5);
-            bool disadvantage=RayAttackDisadvantage(false,monsterSpells.Ability)||!sees||combat.MonsterPoisoned||combat.MonsterProne||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5;
+            bool advantage=Entangled(true)||!targetSees||player&&(combat.PlayerHp==0||combat.PlayerParalyzed||combat.PlayerProne&&distance<=5);
+            bool disadvantage=Entangled(false)|RayAttackDisadvantage(false,monsterSpells.Ability)||!sees||combat.MonsterPoisoned||combat.MonsterProne||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5;
             if(player)advantage=combat.ConsumeGuidingLight(true)||advantage;
             if(!spell.Melee){
                 if(combat.PlayerCanAct&&map.DistanceFeet<=5&&PlayerSeesMonster)disadvantage=true;
