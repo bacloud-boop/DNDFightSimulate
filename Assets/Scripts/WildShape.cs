@@ -43,7 +43,7 @@ public sealed partial class TrainingGame
         if(!IsWildShaped)return;
         string name=wildForm.name;var reference=FormReferenceCell;wildForm=null;
         if(PlayerPolymorphed){map.TrySetRecoverySize(true,1);history.Insert(0,"底层荒野形态结束（"+reason+"），变形术仍保留。");return;}
-        map.TryResizePlayerAt(1,reference);
+        RestoreSizedPlayerForm(reference);
         map.SetPlayerSpeed(30);combat.SetPlayerArmorOverride(null);fighter.CancelAttackAction();actionWeapon=null;
         history.Insert(0,"荒野形态结束（"+reason+"）："+name+"，恢复原形与融入的武器；临时生命按通常规则保留。");
     }
@@ -53,6 +53,7 @@ public sealed partial class TrainingGame
         if(classes[11]<2)return "德鲁伊2级解锁荒野形态。";
         if(form==null||!form.EligibleForBaseWildShape(classes[11]))return "形态超出当前基础荒野形态限制，或属于暂缓的飞行形态。";
         if(BeastAttack.Find(form.name)==null)return "该野兽完整战斗效果待接入，目前仅供查看资料。";
+        if(sizeChange.Applies(true)&&SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)<0)return "当前体型法术会使该形态越界，不消耗资源。";
         if(!knownBeastForms.Contains(form.name))return "尚未学习此形态。";
         if(knownBeastForms.Count!=DruidFeatures.KnownFormLimit(classes[11]))return "请先选满当前等级的已知形态数量。";
         if(page!="battle"||!map.Locked)return "部署完成后可变身。";
@@ -60,13 +61,13 @@ public sealed partial class TrainingGame
         if(fighter.AttacksRemaining>0)return "请先完成当前攻击动作，不能在连击中更换攻击形式。";
         if(!combat.BonusActionAvailable)return "本回合附赠动作已使用。";
         if(druid.Remaining(classes[11])==0)return "荒野形态次数已用完。";
-        Vector2Int anchor;if(!map.FindPlayerResizePlacement(BeastSpaces(form),out anchor,FormReferenceCell))return "周围空间不足：不能变身，不消耗附赠动作或次数。";
+        Vector2Int anchor;if(!FindSizedWildPlacement(form,out anchor))return "周围空间不足：不能变身，不消耗附赠动作或次数。";
         return "";
     }
     void TryWildShape(BeastRecord form)
     {
         if(WildShapeInvalidReason(form)!="")return;
-        var reference=FormReferenceCell;Vector2Int anchor;if(!druid.TryBeginWildShape(classes[11],combat,map,BeastSpaces(form),out anchor,reference))return;
+        var reference=FormReferenceCell;Vector2Int anchor;if(!BeginSizedWildShape(form,out anchor,reference))return;
         wildNormalOffset=reference-anchor;wildForm=form;wildShapeEndsAt=worldRounds+DruidFeatures.DurationRounds(classes[11]);
         RefreshShillelagh();
         combat.SetPlayerArmorOverride(form.armor);map.SetPlayerSpeed(form.walk);combat.GrantPlayerTemporaryHp(classes[11]);
@@ -117,8 +118,8 @@ public sealed partial class TrainingGame
     {
         if(panel!="druid")return;
         var form=FindBeast(selectedBeastForm);if(form==null)return;
-        Vector2Int anchor;bool valid=map.FindPlayerResizePlacement(BeastSpaces(form),out anchor,FormReferenceCell);
-        if(valid)Fill(BodyRect(board,anchor,BeastSpaces(form)),new Color(.3f,.75f,.3f,.35f));
+        Vector2Int anchor;bool valid=FindSizedWildPlacement(form,out anchor);
+        if(valid)Fill(BodyRect(board,anchor,sizeChange.Applies(true)?CreatureProfile.SpacesForSize(SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)):BeastSpaces(form)),new Color(.3f,.75f,.3f,.35f));
     }
     void NaturalAttack()
     {
@@ -145,9 +146,9 @@ public sealed partial class TrainingGame
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
         int poisonDamage=0;int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);poisonDamage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
-        var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(attack.DamageType)]=Math.Max(0,damage);raw[DamageTypes.Index("毒素")]+=poisonDamage;if(markDamage.Raw>0)raw[mark.DamageType]+=markDamage.Raw;
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||markDamage.Rolled,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
-        if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:monsterProfile.SizeIndex<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
+        var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(attack.DamageType)]=Math.Max(0,damage);raw[DamageTypes.Index("毒素")]+=poisonDamage;var sized=new RayDamage();yield return ApplySizeWeaponDamage(true,raw,DamageTypes.Index(attack.DamageType),critical,sized);raw=sized.Raw;if(markDamage.Raw>0)raw[mark.DamageType]+=markDamage.Raw;
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||markDamage.Rolled||sizeChange.Applies(true)&&sizeChange.Delta>0,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
+        if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:EffectiveCreatureSize(false)<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;
     }

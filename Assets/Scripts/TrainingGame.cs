@@ -24,7 +24,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     readonly PlayerAttributes monsterAttributes = new PlayerAttributes();
     readonly CreatureProfile monsterProfile=new CreatureProfile();
     int monsterChallengeDraft;
-    int monsterTypeDraft=9,monsterSizeDraft=2,monsterAttackKindDraft;
+    int monsterTypeDraft=9,monsterSizeDraft=2,monsterAttackKindDraft,monsterAttackNatureDraft;
     readonly string[] monsterAttributeInputs = {"10","10","10","10","10","10"};
     string monsterSpeedInput="30";
     string monsterHpInput="1000", monsterArmorInput="10", monsterProficiencyInput="0", monsterRangeInput="5", monsterAttributeError="";
@@ -146,12 +146,15 @@ public sealed partial class TrainingGame : MonoBehaviour
         int result=System.Linq.Enumerable.Sum(damageRolls)+attackWeapon.FixedDamage+magicBonus;
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+damageSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
         int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
+        var sizedWeapon=new RayDamage();var rawWeapon=new long[weaponDamageByType.Length];for(int i=0;i<rawWeapon.Length;i++)rawWeapon[i]=weaponDamageByType[i];
+        yield return ApplySizeWeaponDamage(true,rawWeapon,DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType),critical,sizedWeapon);
+        for(int i=0;i<weaponDamageByType.Length;i++)weaponDamageByType[i]=(int)sizedWeapon.Raw[i];
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
         if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
         var rawPacket=new long[DamageTypes.Names.Length];for(int i=0;i<rawPacket.Length;i++)rawPacket[i]=weaponDamageByType[i];if(markDamage.Raw>0)rawPacket[mark.DamageType]+=markDamage.Raw;
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
         int damage=ResolveRayPacket(false,reduced.Raw);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
@@ -230,7 +233,9 @@ public sealed partial class TrainingGame : MonoBehaviour
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
                 yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
-            var reduced=new RayDamage();yield return ReduceRayPacket(false,damagePacket.LastRawTypedDamage,sides.Count>0,"木桩攻击",reduced);
+            var sized=new RayDamage();sized.Raw=damagePacket.LastRawTypedDamage;
+            if(MonsterPolymorphed||combat.MonsterAttackIsWeapon)yield return ApplySizeWeaponDamage(false,sized.Raw,MonsterBaseWeaponDamageType,critical,sized);
+            var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击",reduced);
             int rawDamage=damage;damage=ResolveRayPacket(true,reduced.Raw);
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
@@ -303,12 +308,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label(classError,label);
             GUI.enabled=true;if(GUILayout.Button("查看职业特性目录 / 接入状态",button)){catalogClassIndex=selectedClass;panel="features";}
         } else if(panel=="monsterAttributes") {
-            GUILayout.Label("怪物属性",heading);
+            GUILayout.Label("怪物属性",heading);DrawWeightInputs(monsterWeight);
             GUILayout.Label("挑战等级CR（当前 "+ChallengeRatings.Names[monsterProfile.ChallengeIndex]+"）",small);monsterChallengeDraft=GUILayout.SelectionGrid(monsterChallengeDraft,ChallengeRatings.Names,6,new GUIStyle(button){fontSize=15,fixedHeight=30});
             GUILayout.Label("基础移动力（尺，当前 "+combat.MonsterBaseSpeed+"）",small);monsterSpeedInput=IntegerField(monsterSpeedInput,false);
             DrawVisionConfiguration(false);
             GUILayout.Label("攻击类型（当前 "+(combat.MonsterAttackIsMelee?"近战":"远程")+"）",label);
             GUILayout.Label("自定义攻击属性（只增加命中调整，不增加伤害）",label);monsterAttackAbilityDraft=GUILayout.SelectionGrid(monsterAttackAbilityDraft,MonsterAttackAbility.Names,3,button);
+            monsterAttackNatureDraft=GUILayout.SelectionGrid(monsterAttackNatureDraft,new[]{"武器攻击","法术攻击"},2,button);
             GUILayout.Label("基础武器伤害类型（额外武器伤害骰沿用此类型）",label);monsterBaseWeaponTypeDraft=GUILayout.SelectionGrid(monsterBaseWeaponTypeDraft,DamageTypes.Names,4,new GUIStyle(button){fontSize=15,fixedHeight=32});
             monsterAttackKindDraft=GUILayout.SelectionGrid(monsterAttackKindDraft,new[]{"近战攻击","远程攻击"},2,new GUIStyle(button){fontSize=17,fixedHeight=36});
             GUILayout.Label("生物类型（当前 "+CreatureProfile.TypeNames[monsterProfile.TypeIndex]+"）",label);
@@ -345,12 +351,13 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterArmorInput,out armorClass) || armorClass<5 || armorClass>30) monsterAttributeError="护甲等级必须为 5～30 的整数。";
                 else if(!int.TryParse(monsterProficiencyInput,out proficiency)) monsterAttributeError="熟练加值必须为整数，允许负数。";
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
+                else if(!ConfiguredLoadAllowed(false,monsterAttributeInputs,monsterSizeDraft))monsterAttributeError="力量或体型不足以携带现有装备。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
-            GUILayout.Label("玩家属性",heading);
+            GUILayout.Label("玩家属性",heading);DrawWeightInputs(playerWeight);
             DrawVisionConfiguration(true);
             for(int i=0;i<6;i++) {
                 GUILayout.BeginHorizontal();
@@ -362,7 +369,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             if(GUILayout.Button("应用",button)) {
                 int visionRange;
                 if(!VisionInputValid(true,out visionRange))attributeError="黑暗视觉距离必须为非负整数。";
-                else if(attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
+                else if(ConfiguredLoadAllowed(true,attributeInputs,2)&&attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
                 else attributeError="每项必须为 3～20 的整数，未保存本次修改。";
             }
             GUILayout.Label(attributeError,label);

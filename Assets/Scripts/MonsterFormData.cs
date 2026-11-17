@@ -4,7 +4,8 @@ public sealed class MonsterFormData {
  public int ChallengeIndex;
  public int AttackAbility;
  public int BaseWeaponDamageType;
- public int Type=9,Size=2,MaxHp=1000,Armor=10,Proficiency,AttackRange=5,Speed=30,Darkvision,Bonus;public bool Melee=true;
+ public int BodyPounds=150,EquipmentPounds;
+ public int Type=9,Size=2,MaxHp=1000,Armor=10,Proficiency,AttackRange=5,Speed=30,Darkvision,Bonus;public bool Melee=true,Weapon=true;
  public int[] Abilities={10,10,10,10,10,10},Skills=new int[18],Dice=new int[5],DamageTypes=new int[6];
  public MonsterFormData Copy(){var copy=(MonsterFormData)MemberwiseClone();copy.Abilities=(int[])Abilities.Clone();copy.Skills=(int[])Skills.Clone();copy.Dice=(int[])Dice.Clone();copy.DamageTypes=(int[])DamageTypes.Clone();copy.Spells=Spells==null?null:(MonsterSpellEntry[])Spells.Clone();return copy;}
  public bool Valid(out string error){
@@ -12,7 +13,8 @@ public sealed class MonsterFormData {
   error="攻击属性无效。";if(!MonsterAttackAbility.Valid(AttackAbility))return false;
   error="生前法术配置无效。";if(!new MonsterSpellSequence().Configure(SpellAbility,SpellLevel,CanCounterspell,Spells))return false;
   error="生前类型须为非亡灵，体型与所有数字须符合怪物配置规则。";
-  if(!ChallengeRatings.Valid(ChallengeIndex)||Type<0||Type>=13||Size<0||Size>5||MaxHp<1||Armor<5||Armor>30||AttackRange<0||Speed<0||Darkvision<0)return false;
+  if(Abilities!=null&&Abilities.Length==6&&!EquipmentLoadRules.Allowed(Abilities[0],Size,EquipmentPounds,0)){error="生前装备总重超过该力量／体型的携带上限。";return false;}
+  if(BodyPounds<1||EquipmentPounds<0||!ChallengeRatings.Valid(ChallengeIndex)||Type<0||Type>=13||Size<0||Size>5||MaxHp<1||Armor<5||Armor>30||AttackRange<0||Speed<0||Darkvision<0)return false;
   if(Abilities==null||Abilities.Length!=6||Skills==null||Skills.Length!=18||Dice==null||Dice.Length!=5||DamageTypes==null||DamageTypes.Length!=6)return false;
   foreach(int value in Abilities)if(value<3||value>20)return false;foreach(int value in Skills)if(value<0||value>2)return false;long total=0;foreach(int value in Dice){if(value<0)return false;total+=value;}if(total>10000){error="伤害骰总数不能超过10000。";return false;}foreach(int value in DamageTypes)if(value<0||value>=13)return false;error="";return true;
  }

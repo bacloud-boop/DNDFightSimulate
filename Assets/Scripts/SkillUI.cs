@@ -102,8 +102,8 @@ public sealed partial class TrainingGame
         }
         if(PlayerPolymorphed)modifier=skill>=0?polymorph.Skill(skill,ability):AcidSplash.Modifier(score);
         modifier+=combat.PlayerRevivalPenalty;
-        bool advantage=checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
-        bool disadvantage=RayStrengthDisadvantage(true,ability)||combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
+        bool advantage=SizeStrengthAdvantage(true,ability)||checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
+        bool disadvantage=SizeStrengthDisadvantage(true,ability)||RayStrengthDisadvantage(true,ability)||combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
         int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,!PlayerPolymorphed&&classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];

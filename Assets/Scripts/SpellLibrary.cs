@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
+        if(definition.Name=="Enlarge/Reduce")DrawSizeChangeChoices();
         if(definition.Name=="Polymorph")DrawPolymorphChoices();
         if(definition.Name=="Sorcerous Burst")DrawSorcerousBurstChoices();
         if(definition.Name=="Shillelagh")DrawShillelaghOptions();
@@ -133,6 +134,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Enlarge/Reduce")return SizeChangeError(directTargetPlayer);
         if(spell.Name=="Ray of Enfeeblement")return EnfeeblementError(directTargetPlayer);
         if(spell.Name=="Protection from Poison")return PoisonProtectionError(directTargetPlayer);
         if(spell.Name=="Jump")return JumpSpellError(directTargetPlayer,directSlotLevel,directBothTargets);
@@ -176,6 +178,7 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        int sizeDelta=sizeEnlarge?1:-1;bool sizeConsent=sizeWilling;var chosenSizeAnchor=sizeAnchor;
         bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
         int restorationCondition=lesserRestorationCondition;
         bool jumpBoth=directBothTargets;
@@ -186,6 +189,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Enlarge/Reduce"&&SizeChangeError(targetPlayer)!="")yield break;
         if(spell.Name=="Ray of Enfeeblement"&&EnfeeblementError(targetPlayer)!="")yield break;
         if(spell.Name=="Protection from Poison"&&PoisonProtectionError(targetPlayer)!="")yield break;
         if(spell.Name=="Jump"&&JumpSpellError(targetPlayer,slotLevel,jumpBoth)!="")yield break;
@@ -194,7 +198,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -204,6 +208,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Enlarge/Reduce"){yield return ResolveSizeChange(targetPlayer,caster,sizeDelta,sizeConsent,chosenSizeAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Enfeeblement"){yield return ResolveEnfeeblement(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Protection from Poison"){ApplyPoisonProtection(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}

@@ -39,6 +39,7 @@ public sealed class CombatState
     public void ApplySliver(bool player){if(player)playerSliverUntil=Round+1;else monsterSliverUntil=Round+1;}
     public bool ConsumeSliver(bool player){bool active=player?playerSliverUntil>0:monsterSliverUntil>0;if(player)playerSliverUntil=0;else monsterSliverUntil=0;return active;}
     public bool MonsterAttackIsMelee {get;set;}=true;
+    public bool MonsterAttackIsWeapon {get;set;}=true;
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
     public bool MonsterSlowed {get;private set;}

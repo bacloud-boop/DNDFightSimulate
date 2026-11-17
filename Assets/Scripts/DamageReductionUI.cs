@@ -8,9 +8,9 @@ public sealed partial class TrainingGame
     string damageAllocationContext;
     bool damageAllocationConfirmed;
     Vector2 damageAllocationScroll;
-    IEnumerator AllocateDamageReduction(long[] raw,int penalty,string context,DamageReductionResult result)
+    IEnumerator AllocateDamageReduction(long[] raw,int penalty,string context,DamageReductionResult result,int minimumTotal=0)
     {
-        var allocation=new DamageReductionAllocation(raw,penalty);
+        var allocation=new DamageReductionAllocation(raw,penalty,minimumTotal);
         if(allocation.Complete){allocation.TryCommit(out result.Raw);yield break;}
         damageAllocation=allocation;damageAllocationContext=context;damageAllocationInputs=new string[DamageTypes.Names.Length];
         for(int i=0;i<damageAllocationInputs.Length;i++)damageAllocationInputs[i]="0";

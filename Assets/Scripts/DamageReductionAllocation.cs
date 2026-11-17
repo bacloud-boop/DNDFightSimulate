@@ -6,12 +6,12 @@ public sealed class DamageReductionAllocation
     public int Required {get;}
     public int Assigned {get;private set;}
     public bool Complete=>Assigned==Required;
-    public DamageReductionAllocation(long[] values,int penalty)
+    public DamageReductionAllocation(long[] values,int penalty,int minimumTotal=0)
     {
-        if(values==null||values.Length!=DamageTypes.Names.Length||penalty<0)throw new ArgumentException("Invalid damage allocation");
+        if(values==null||values.Length!=DamageTypes.Names.Length||penalty<0||minimumTotal<0)throw new ArgumentException("Invalid damage allocation");
         raw=new long[values.Length];assigned=new int[values.Length];long total=0;
         for(int i=0;i<values.Length;i++){raw[i]=Math.Max(0,values[i]);total=raw[i]>long.MaxValue-total?long.MaxValue:total+raw[i];}
-        Required=(int)Math.Min(penalty,total);
+        Required=(int)Math.Min(penalty,Math.Max(0,total-minimumTotal));
     }
     public long Damage(int type)=>raw[type];
     public bool TryAssign(int[] values)

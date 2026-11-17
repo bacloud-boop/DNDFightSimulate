@@ -3,7 +3,7 @@ public sealed partial class TrainingGame
 {
     readonly TimedSpellBuffs timedBuffs=new TimedSpellBuffs();
     static bool IsTimedBuff(string name)=>name=="Divine Favor"||name=="Magic Weapon"||name=="Longstrider"||name=="Barkskin";
-    void SyncTimedBuffs(){map.PlayerCrawling=combat.PlayerProne;combat.MonsterFormSpeed=MonsterPolymorphed?(int?)polymorph.Speed:null;combat.PlayerArmorFloor=timedBuffs.ArmorFloor(true,worldRounds);combat.MonsterArmorFloor=timedBuffs.ArmorFloor(false,worldRounds);combat.MonsterSpeedBonus=timedBuffs.SpeedBonus(false,worldRounds);map.SetPlayerSpeed(Mathf.Max(0,(PlayerPolymorphed?polymorph.Speed:IsWildShaped?wildForm.walk:30)+timedBuffs.SpeedBonus(true,worldRounds)-(combat.PlayerSlowed?10:0)));}
+    void SyncTimedBuffs(){map.PlayerCrawling=combat.PlayerProne;combat.MonsterFormSpeed=MonsterPolymorphed?(int?)polymorph.Speed:null;combat.PlayerArmorFloor=timedBuffs.ArmorFloor(true,worldRounds);combat.MonsterArmorFloor=timedBuffs.ArmorFloor(false,worldRounds);combat.MonsterSpeedBonus=timedBuffs.SpeedBonus(false,worldRounds);combat.MonsterSpeedBonus-=combat.MonsterSpeed-SizeLoadSpeed(false,combat.MonsterSpeed);map.SetPlayerSpeed(SizeLoadSpeed(true,Mathf.Max(0,(PlayerPolymorphed?polymorph.Speed:IsWildShaped?wildForm.walk:30)+timedBuffs.SpeedBonus(true,worldRounds)-(combat.PlayerSlowed?10:0))));}
     void ApplyTimedBuff(DirectSpell spell,bool player,int slot)
     {
         if(spell.Name=="Divine Favor"){timedBuffs.DivineFavor(worldRounds);history.Insert(0,"神恩：武器命中额外1d4光耀，持续1分钟，无需专注。");}

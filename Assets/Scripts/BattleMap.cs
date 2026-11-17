@@ -28,7 +28,7 @@ public sealed partial class BattleMap
     public void StartMonsterMovementTurn(int speed=30) {MonsterMovementRemaining=System.Math.Max(0,speed);}
     public int TacticalMovementRemaining {get;private set;}
     public void GrantTacticalMovement() {TacticalMovementRemaining+=PlayerSpeed/2;}
-    public int MovementBudget(bool tactical) => tactical?TacticalMovementRemaining:MovementRemaining;
+    public int MovementBudget(bool tactical) => PlayerSpeed<=0?0:tactical?TacticalMovementRemaining:MovementRemaining;
     public Vector2Int RoundStartPlayer {get;private set;}
     public static int FeetBetween(Vector2Int a,Vector2Int b) => Mathf.RoundToInt(Vector2Int.Distance(a,b)*5);
     public static bool Overlap(Vector2Int a,int aSize,Vector2Int b,int bSize) => aSize>0&&bSize>0&&a.x<b.x+bSize&&a.x+aSize>b.x&&a.y<b.y+bSize&&a.y+aSize>b.y;

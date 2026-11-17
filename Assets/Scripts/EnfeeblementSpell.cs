@@ -1,12 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly EnfeeblementEffect enfeeblement=new EnfeeblementEffect();
     sealed class EnfeeblementSaveRoll {public int Value;public int[] Dice;}
     EnfeeblementSaveRoll RollEnfeeblementSave(bool player,int ability,bool disadvantage=false){
-        disadvantage|=RayStrengthDisadvantage(player,ability);int first=Random.Range(1,21),second=disadvantage?Random.Range(1,21):0;
-        return new EnfeeblementSaveRoll{Value=second>0?Mathf.Min(first,second):first,Dice=second>0?new[]{first,second}:new[]{first}};
+        disadvantage|=SizeStrengthDisadvantage(player,ability)||RayStrengthDisadvantage(player,ability);bool advantage=SizeStrengthAdvantage(player,ability);int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
+        return new EnfeeblementSaveRoll{Value=second>0?(advantage?Mathf.Max(first,second):Mathf.Min(first,second)):first,Dice=second>0?new[]{first,second}:new[]{first}};
     }
     bool RayWeakened(bool player)=>enfeeblement.Weakened(player,worldRounds,combat.Round);
     bool RayStrengthDisadvantage(bool player,int ability)=>enfeeblement.StrengthDisadvantage(player,ability,worldRounds,combat.Round);
