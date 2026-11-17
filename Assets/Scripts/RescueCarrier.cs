@@ -15,6 +15,7 @@ public sealed class RescueCarrier
     long lastDeathSave=-1;
     public readonly CorpseClock Corpse=new CorpseClock();
     public bool Conscious=>Hp>0&&!Dead;
+    public bool CanDepart=>Conscious&&!Load.Loaded;
     public bool NeedsDeathSave=>Hp==0&&!Dead&&!Stable;
     public string LifeLabel=>Dead?"死亡":Hp>0?"清醒":Stable?"稳定 / 昏迷":"倒地 / 昏迷";
     public int TakeDamage(long amount,bool critical=false){

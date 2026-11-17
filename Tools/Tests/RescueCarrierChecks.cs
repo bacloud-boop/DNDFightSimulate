@@ -6,6 +6,7 @@ class RescueCarrierChecks
   var r=new RescueCarrier();Check(r.Configure(10,2,30,150,0)&&r.BeginTurn(1),"rescue profile and independent turn");
   Check(!r.Configure(20,2,60,150,0)&&!r.BeginTurn(1),"cannot reconfigure or refill an active turn");
   Check(r.Move(10)&&r.PickUp(0,true,new BodyWeight(151),true)&&r.ActionsRemaining==0,"pickup consumes rescue action rather than player action");
+  Check(!r.CanDepart,"loaded carrier cannot depart before dropping body");
   Check(r.EffectiveSpeed==5&&r.MovementRemaining==0&&!r.Move(1),"picking up heavy drag load cannot refund spent movement");
   r.EndTurn();Check(!r.BeginTurn(1)&&r.BeginTurn(2)&&r.MovementRemaining==5,"only new rescue turn refreshes heavy dragging allowance");
   Check(r.Dash()&&r.MovementRemaining==10&&r.Move(5),"dash uses capped speed");
@@ -24,6 +25,7 @@ class RescueCarrierChecks
   r.BeginTurn(4);Check(r.TakeDamage(7)==7&&r.Hp==18&&r.TurnActive,"nonfatal damage preserves turn");
   Check(r.TakeDamage(-1)==0&&r.Hp==18,"negative damage cannot heal");
   Check(r.TakeDamage(long.MaxValue)==18&&r.Hp==0&&r.Prone&&!r.TurnActive,"large damage clamps to zero and ends active turn");
+  Check(!r.CanDepart,"unconscious carrier cannot depart");
   Check(!r.BeginTurn(5)&&!r.Move(1)&&!r.Dash()&&!r.Stand(),"zero HP cannot act or refresh resources");
   Check(r.Dead&&!r.Revive(0,false)&&r.Heal(10)==0,"massive damage kills; healing cannot replace resurrection");
   Check(r.Revive(1,true)&&r.Hp==1&&r.RevivalPenalty==-4&&!r.Dead,"Raise Dead restores one HP and revival penalty");
@@ -38,7 +40,7 @@ class RescueCarrierChecks
   r.TakeDamage(1);r.ResolveDeathSave(10,4);r.ResolveDeathSave(10,5);r.ResolveDeathSave(10,6);r.ScheduleRecovery(604,2);r.TakeDamage(1,true);
   Check(!r.Stable&&r.DeathFailures==2&&r.RecoveryAt==-1,"critical damage breaks stability, adds two failures and cancels recovery");
   r.TakeDamage(1);r.ObserveLife(700);Check(r.Corpse.Dead&&r.Corpse.Age(702)==2,"death records independent rescue corpse clock");
-  Check(r.Revive(r.MaxHp,false)&&!r.Corpse.Dead&&r.Hp==10,"full revival clears corpse data and restores configured maximum");
+  Check(r.Revive(r.MaxHp,false)&&r.CanDepart&&!r.Corpse.Dead&&r.Hp==10,"full revival clears corpse data and restores configured maximum");
   Console.WriteLine("PASS: rescue configuration, pickup action, heavy drag, dash and cumulative movement");
  }
 }
