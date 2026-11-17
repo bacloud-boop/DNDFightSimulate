@@ -4,7 +4,12 @@ public sealed class BodyWeight
     public int? BodyPounds {get;private set;}
     public int EquipmentPounds {get;private set;}
     public int ArmorPounds {get;private set;}
-    public long GearPounds=>(long)EquipmentPounds+ArmorPounds;
+    public int WeaponOunces {get;private set;}
+    public long GearOunces=>((long)EquipmentPounds+ArmorPounds)*16+WeaponOunces;
+    public long TotalOunces=>Known?(long)BodyPounds.Value*16+GearOunces:-1;
+    // Legacy whole-pound consumers round up; exact encumbrance uses the ounce properties.
+    public long GearPounds=>WeightUnits.WholePoundsCeiling(GearOunces);
+    public void SetWeaponWeight(int ounces){if(ounces<0)throw new ArgumentOutOfRangeException(nameof(ounces));WeaponOunces=ounces;}
     public void SetArmorWeight(int pounds){if(pounds<0)throw new ArgumentOutOfRangeException(nameof(pounds));ArmorPounds=pounds;}
     public bool Known=>BodyPounds.HasValue;
     public long TotalPounds=>Known?(long)BodyPounds.Value+GearPounds:-1;

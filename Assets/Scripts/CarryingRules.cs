@@ -9,6 +9,10 @@ public static class CarryingRules
         int multiplier=size==0?15:size<=2?30:size==3?60:size==4?120:240;
         return (long)strength*multiplier;
     }
+    public static long CapacityOunces(int strength,int size)=>CapacityHalfPounds(strength,size)*8;
+    public static bool CanCarryOunces(int strength,int size,long equipmentOunces,long bodyOunces){if(equipmentOunces<0||bodyOunces<0)return false;long cap=CapacityOunces(strength,size);return equipmentOunces<=cap&&bodyOunces<=cap-equipmentOunces;}
+    public static bool CanDragOunces(int strength,int size,long bodyOunces)=>bodyOunces>=0&&bodyOunces<=CapacityOunces(strength,size)*2;
+    public static int DragSpeedOunces(int strength,int size,long loadOunces,int speed){if(speed<0||!CanDragOunces(strength,size,loadOunces))return 0;return loadOunces>CapacityOunces(strength,size)?Math.Min(5,speed):speed;}
     public static bool CanCarry(int strength,int size,long equipmentPounds,long bodyPounds)
     {
         if(equipmentPounds<0||bodyPounds<0)return false;

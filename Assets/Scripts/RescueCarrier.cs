@@ -52,7 +52,7 @@ public sealed class RescueCarrier
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;
-    public int EffectiveSpeed=>Load.AllowedSpeed(Strength,Size,Weight.EquipmentPounds,Speed);
+    public int EffectiveSpeed=>Load.AllowedSpeedOunces(Strength,Size,Weight.GearOunces,Speed);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
     public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {
@@ -66,7 +66,7 @@ public sealed class RescueCarrier
     }
     public void EndTurn(){TurnActive=false;ActionsRemaining=0;}
     bool UseAction(){if(!TurnActive||ActionsRemaining<1)return false;ActionsRemaining--;return true;}
-    public bool PickUp(int id,bool dead,BodyWeight corpse,bool drag)=>TurnActive&&Load.PickUp(id,dead,corpse,Strength,Size,Weight.EquipmentPounds,drag,UseAction);
+    public bool PickUp(int id,bool dead,BodyWeight corpse,bool drag)=>TurnActive&&Load.PickUpOunces(id,dead,corpse,Strength,Size,Weight.GearOunces,drag,UseAction);
     public bool Drop(Func<bool> place)=>TurnActive&&Load.Drop(place);
     public bool Move(int feet){if(!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
     public bool Dash(){if(!UseAction())return false;Dashes++;return true;}

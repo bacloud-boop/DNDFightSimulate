@@ -1,6 +1,8 @@
 public sealed class Weapon
 {
     public string Name { get; }
+    public string InventoryKey=>WeaponWeights.Key(Name);
+    public int WeightOunces=>WeaponWeights.Ounces(Name);
     public int DiceSides { get; }
     public int DiceCount { get; }
     public int FixedDamage { get; }

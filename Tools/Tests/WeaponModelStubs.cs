@@ -1,0 +1,1 @@
+namespace UnityEngine { public static class Random { public static int Range(int min,int max){throw new System.NotSupportedException("No dice required by inventory checks");} } }
