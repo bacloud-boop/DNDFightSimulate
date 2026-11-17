@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable] public sealed class BeastRecord
 {
     public string name,size,challengeLabel,source;
+    public bool noSleep,exhaustionImmune;
     public float challenge;
     public int armor,hp,walk,climb,swim,fly,burrow,darkvision,blindsight;
     // Same order as player attributes: Str, Dex, Con, Wis, Int, Cha.

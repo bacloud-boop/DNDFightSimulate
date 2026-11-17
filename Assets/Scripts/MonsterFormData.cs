@@ -2,6 +2,7 @@ using System;
 public sealed class MonsterFormData {
  public int SpellAbility=4,SpellLevel=1;public bool CanCounterspell;public MonsterSpellEntry[] Spells=new MonsterSpellEntry[0];
  public int ChallengeIndex;
+ public bool NoSleep,ExhaustionImmune;
  public int AttackAbility;
  public int BaseWeaponDamageType;
  public int BodyPounds=150,EquipmentPounds;

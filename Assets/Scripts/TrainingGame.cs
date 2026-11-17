@@ -316,7 +316,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label("怪物属性",heading);DrawWeightInputs(monsterWeight);
             GUILayout.Label("挑战等级CR（当前 "+ChallengeRatings.Names[monsterProfile.ChallengeIndex]+"）",small);monsterChallengeDraft=GUILayout.SelectionGrid(monsterChallengeDraft,ChallengeRatings.Names,6,new GUIStyle(button){fontSize=15,fixedHeight=30});
             GUILayout.Label("基础移动力（尺，当前 "+combat.MonsterBaseSpeed+"）",small);monsterSpeedInput=IntegerField(monsterSpeedInput,false);
-            DrawVisionConfiguration(false);
+            DrawVisionConfiguration(false);DrawSleepTraitConfiguration(false);
             GUILayout.Label("攻击类型（当前 "+(combat.MonsterAttackIsMelee?"近战":"远程")+"）",label);
             GUILayout.Label("自定义攻击属性（只增加命中调整，不增加伤害）",label);monsterAttackAbilityDraft=GUILayout.SelectionGrid(monsterAttackAbilityDraft,MonsterAttackAbility.Names,3,button);
             monsterAttackNatureDraft=GUILayout.SelectionGrid(monsterAttackNatureDraft,new[]{"武器攻击","法术攻击"},2,button);
@@ -358,12 +358,12 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!ConfiguredLoadAllowed(false,monsterAttributeInputs,monsterSizeDraft))monsterAttributeError="力量或体型不足以携带现有装备。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;ApplySleepTraitConfiguration(false);monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
             GUILayout.Label("玩家属性",heading);DrawWeightInputs(playerWeight);
-            DrawVisionConfiguration(true);
+            DrawVisionConfiguration(true);DrawSleepTraitConfiguration(true);
             for(int i=0;i<6;i++) {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(PlayerAttributes.Names[i]+"（当前 "+attributes[i]+"）",label,GUILayout.Width(230));
@@ -374,7 +374,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             if(GUILayout.Button("应用",button)) {
                 int visionRange;
                 if(!VisionInputValid(true,out visionRange))attributeError="黑暗视觉距离必须为非负整数。";
-                else if(ConfiguredLoadAllowed(true,attributeInputs,2)&&attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
+                else if(ConfiguredLoadAllowed(true,attributeInputs,2)&&attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;ApplySleepTraitConfiguration(true);vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
                 else attributeError="每项必须为 3～20 的整数，未保存本次修改。";
             }
             GUILayout.Label(attributeError,label);
