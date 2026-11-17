@@ -25,6 +25,20 @@ class RescueCarrierChecks
   Check(r.TakeDamage(-1)==0&&r.Hp==18,"negative damage cannot heal");
   Check(r.TakeDamage(long.MaxValue)==18&&r.Hp==0&&r.Prone&&!r.TurnActive,"large damage clamps to zero and ends active turn");
   Check(!r.BeginTurn(5)&&!r.Move(1)&&!r.Dash()&&!r.Stand(),"zero HP cannot act or refresh resources");
+  Check(r.Dead&&!r.Revive(0,false)&&r.Heal(10)==0,"massive damage kills; healing cannot replace resurrection");
+  Check(r.Revive(1,true)&&r.Hp==1&&r.RevivalPenalty==-4&&!r.Dead,"Raise Dead restores one HP and revival penalty");
+  r.TakeDamage(1);Check(r.NeedsDeathSave&&r.ResolveDeathSave(20,5)&&r.Hp==1,"natural twenty heals even with revival penalty");
+  r.Configure(10,2,30,150,0);r.TakeDamage(10);
+  Check(!r.Dead&&r.NeedsDeathSave&&r.ResolveDeathSave(1,1)&&r.DeathFailures==2,"ordinary zero HP starts saves, natural one counts twice");
+  Check(!r.ResolveDeathSave(10,1)&&r.DeathFailures==2,"one save per turn sequence");
+  r.TakeDamage(1);Check(r.Dead,"damage while unconscious adds a failure and can kill");
+  r.Configure(10,2,30,150,0);r.TakeDamage(10);r.ResolveDeathSave(10,1);r.ResolveDeathSave(10,2);r.ResolveDeathSave(10,3);
+  Check(r.Stable&&!r.NeedsDeathSave&&r.DeathSuccesses==0&&r.DeathFailures==0,"three successes stabilize and reset counters");
+  Check(r.ScheduleRecovery(3,1),"stable recovery time scheduled once");r.ObserveLife(602);Check(r.Hp==0,"no recovery before rolled hour");r.ObserveLife(603);Check(r.Hp==1&&!r.Stable,"stable recovery restores one HP");
+  r.TakeDamage(1);r.ResolveDeathSave(10,4);r.ResolveDeathSave(10,5);r.ResolveDeathSave(10,6);r.ScheduleRecovery(604,2);r.TakeDamage(1,true);
+  Check(!r.Stable&&r.DeathFailures==2&&r.RecoveryAt==-1,"critical damage breaks stability, adds two failures and cancels recovery");
+  r.TakeDamage(1);r.ObserveLife(700);Check(r.Corpse.Dead&&r.Corpse.Age(702)==2,"death records independent rescue corpse clock");
+  Check(r.Revive(r.MaxHp,false)&&!r.Corpse.Dead&&r.Hp==10,"full revival clears corpse data and restores configured maximum");
   Console.WriteLine("PASS: rescue configuration, pickup action, heavy drag, dash and cumulative movement");
  }
 }
