@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 // Aftermath-only manual carrier. Casting qualification remains in the external rescue flow.
 public sealed class RescueCarrier
 {
@@ -22,7 +22,7 @@ public sealed class RescueCarrier
     {
         if(dexterity<3||dexterity>20||TurnActive||Load.Loaded||strength<3||strength>20||size<0||size>5||speed<0||bodyPounds<1||equipmentPounds<0)return false;
         if(!CarryingRules.CanCarry(strength,size,equipmentPounds,0))return false;
-        Strength=strength;Dexterity=dexterity;Size=size;Speed=speed;Weight.TryApply(bodyPounds.ToString(),equipmentPounds.ToString());return true;
+        Reset();Strength=strength;Dexterity=dexterity;Size=size;Speed=speed;Weight.TryApply(bodyPounds.ToString(),equipmentPounds.ToString());return true;
     }
     public bool BeginTurn(long sequence)
     {
