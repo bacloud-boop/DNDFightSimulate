@@ -42,7 +42,8 @@ public sealed partial class TrainingGame
     {
         if(target==0){yield return OfferShield(false);if(combat.ShieldActive){history.Insert(0,"护盾术阻挡木桩的魔法飞弹，伤害0。");yield break;}}
         int amount=0;for(int n=0;n<spell.DiceCount(monsterSpells.CasterLevel,slot);n++){
-            int value=Random.Range(1,5);amount+=value+1;dice="木桩魔法飞弹 · 第"+(n+1)+"枚";yield return PresentRoll(4,new[]{value},value+" + 1，累计 "+amount);
+            int value=Random.Range(1,5);dice="木桩魔法飞弹 · 第"+(n+1)+"枚";yield return PresentRoll(4,new[]{value},value+" + 1");
+            var reduced=new RayDamage();yield return ReduceRayDamage(false,value+1,"力场","木桩魔法飞弹第"+(n+1)+"枚",reduced);amount+=reduced.Amount;
         }
         yield return ApplyMonsterSpellDamage(target,amount,spell.DamageType,false);
     }
@@ -59,7 +60,7 @@ public sealed partial class TrainingGame
         if(spell.Attack){
             bool sees=MonsterCanSeeTarget(target),targetSees=PlayerSeesMonster;
             bool advantage=!targetSees||player&&(combat.PlayerHp==0||combat.PlayerParalyzed||combat.PlayerProne&&distance<=5);
-            bool disadvantage=!sees||combat.MonsterPoisoned||combat.MonsterProne||combat.ConsumeMockery(false)||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5;
+            bool disadvantage=RayAttackDisadvantage(false,monsterSpells.Ability)||!sees||combat.MonsterPoisoned||combat.MonsterProne||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5;
             if(player)advantage=combat.ConsumeGuidingLight(true)||advantage;
             if(!spell.Melee){
                 if(combat.PlayerCanAct&&map.DistanceFeet<=5&&PlayerSeesMonster)disadvantage=true;
@@ -93,8 +94,10 @@ public sealed partial class TrainingGame
         int count=(fixedCount>0?fixedCount:spell.DiceCount(monsterSpells.CasterLevel,slot))*(critical?2:1),amount=0;int[] rolls=new int[count];
         for(int i=0;i<count;i++){rolls[i]=Random.Range(1,sides+1);amount+=rolls[i];}
         if(spell.Healing)amount=Mathf.Max(0,amount+AcidSplash.Modifier(EffectiveMonsterAbility(monsterSpells.Ability)));
-        if(half)amount/=2;dice="木桩"+spell.Chinese+(critical?" · 暴击":"");yield return PresentRoll(sides,rolls,"结算 "+amount+(spell.Healing?" 治疗":" "+spell.DamageType));
+        dice="木桩"+spell.Chinese+(critical?" · 暴击":"");yield return PresentRoll(sides,rolls,"结算 "+amount+(spell.Healing?" 治疗":" "+spell.DamageType));
         if(spell.Healing){history.Insert(0,"木桩"+spell.Chinese+"实际恢复 "+combat.HealMonster(amount)+" HP。");yield break;}
+        var rayDamage=new RayDamage();yield return ReduceRayDamage(false,amount,spell.DamageType,"木桩法术",rayDamage);amount=rayDamage.Amount;
+        if(half)amount/=2;
         int frost=player&&spell.Melee?AgathysRetaliation(true):0;
         yield return ApplyMonsterSpellDamage(target,amount,spell.DamageType,critical);
         if(frost>0)ApplyAgathysRetaliation(frost,false);

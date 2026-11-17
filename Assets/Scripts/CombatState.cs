@@ -25,7 +25,8 @@ public sealed class CombatState
     public int MonsterEnergyResistance {get;set;}=-1;
     bool ResistsDamage(bool player,int type)=>type>=0&&((player?PlayerEnergyResistance:MonsterEnergyResistance)==type||(DamageResistance!=null&&DamageResistance(player,type)));
     public int AdjustTypedDamage(bool player,int amount,int type){if(DamageImmunity!=null&&DamageImmunity(player,type))return 0;return ResistsDamage(player,type)?amount/2:amount;}
-    public int AdjustPlayerPacket(long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(true,i))total+=Math.Min(int.MaxValue,ResistsDamage(true,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
+    public int AdjustPlayerPacket(long[] packet)=>AdjustDamagePacket(true,packet);
+    public int AdjustDamagePacket(bool player,long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(player,i))total+=Math.Min(int.MaxValue,ResistsDamage(player,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
     public bool PlayerBaned {get;set;}
     public bool MonsterBaned {get;set;}
     public bool PlayerBlessed {get;set;}

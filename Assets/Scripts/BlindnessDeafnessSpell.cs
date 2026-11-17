@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
 {
     readonly SensoryAfflictions sensory=new SensoryAfflictions();
     int blindnessPlayerMode,blindnessMonsterMode;
-    bool sensoryOrderPending,sensorySavePlayer;
+    bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption;
     long sensorySaveChoice;
     System.Collections.Generic.List<SensoryAffliction> sensorySaveOptions;
     Vector2 sensorySaveScroll;
@@ -50,17 +50,19 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(495,180,610,570));GUILayout.Label((sensorySavePlayer?"玩家":"木桩")+"回合末 · 选择豁免顺序",heading);
         GUILayout.Label("各次施法独立豁免；首次豁免会消耗心灵之楔等一次性调整。请选择接下来结算哪一次。",small);
         sensorySaveScroll=GUILayout.BeginScrollView(sensorySaveScroll);
+        if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
         foreach(var effect in sensorySaveOptions)if(GUILayout.Button("#"+effect.Id+" · "+(effect.Blind?"目盲":"耳聋")+" · DC "+effect.Dc+" · 剩余"+(effect.Expires-worldRounds)+"回合",button))sensorySaveChoice=effect.Id;
         GUILayout.EndScrollView();GUILayout.EndArea();
     }
     IEnumerator RepeatSensorySaves(bool player)
     {
         if(player?combat.PlayerDead:combat.Hp==0)yield break;
-        var pending=sensory.Pending(player,worldRounds);
-        while(pending.Count>0){
-            var effect=pending[0];
-            if(pending.Count>1){sensorySaveOptions=pending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;effect=pending.Find(item=>item.Id==sensorySaveChoice);}
-            pending.Remove(effect);
+        var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);
+        while(pending.Count>0||rayPending){
+            long choice=pending.Count>0?pending[0].Id:-1;
+            if(pending.Count+(rayPending?1:0)>1){sensorySaveOptions=pending;sensoryRayOption=rayPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+            if(choice==-1){rayPending=false;yield return RepeatEnfeeblementSave(player);continue;}
+            var effect=pending.Find(item=>item.Id==choice);pending.Remove(effect);
             int value=Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
             dice="回合末 · "+(player?"玩家":"木桩")+"目盲／耳聋 #"+effect.Id+" 体质豁免";

@@ -130,7 +130,7 @@ public sealed partial class TrainingGame
     {
         var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+combat.PlayerRevivalPenalty;
         bool advantage=(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        bool disadvantage=RayAttackDisadvantage(true,attack.Ability)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
@@ -144,7 +144,9 @@ public sealed partial class TrainingGame
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
         int poisonDamage=0;int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);poisonDamage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
-        damage=combat.AdjustTypedDamage(false,Math.Max(0,damage),DamageTypes.Index(attack.DamageType))+combat.AdjustTypedDamage(false,poisonDamage,DamageTypes.Index("毒素"));var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;combat.ApplyDamage(damage);
+        var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
+        var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(attack.DamageType)]=Math.Max(0,damage);raw[DamageTypes.Index("毒素")]+=poisonDamage;if(markDamage.Raw>0)raw[mark.DamageType]+=markDamage.Raw;
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||markDamage.Rolled,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
         if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:monsterProfile.SizeIndex<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;

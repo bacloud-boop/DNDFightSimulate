@@ -133,6 +133,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Ray of Enfeeblement")return EnfeeblementError(directTargetPlayer);
         if(spell.Name=="Protection from Poison")return PoisonProtectionError(directTargetPlayer);
         if(spell.Name=="Jump")return JumpSpellError(directTargetPlayer,directSlotLevel,directBothTargets);
         if(spell.Name=="Blindness/Deafness")return BlindnessDeafnessError(directTargetPlayer,directSlotLevel,directBothTargets);
@@ -185,6 +186,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Ray of Enfeeblement"&&EnfeeblementError(targetPlayer)!="")yield break;
         if(spell.Name=="Protection from Poison"&&PoisonProtectionError(targetPlayer)!="")yield break;
         if(spell.Name=="Jump"&&JumpSpellError(targetPlayer,slotLevel,jumpBoth)!="")yield break;
         if(spell.Name=="Blindness/Deafness"&&BlindnessDeafnessError(targetPlayer,slotLevel,blindnessBoth)!="")yield break;
@@ -192,6 +194,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded)spellCastSequence++;
         rolling=true;logScroll=Vector2.zero;
+        if(spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -201,6 +204,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Ray of Enfeeblement"){yield return ResolveEnfeeblement(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Protection from Poison"){ApplyPoisonProtection(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Lesser Restoration"){ApplyLesserRestoration(targetPlayer,restorationCondition);if(!embedded)rolling=false;yield break;}
@@ -240,7 +244,7 @@ public sealed partial class TrainingGame
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=combat.ConsumeGuidingLight(targetPlayer)||advantage;
-            disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            disadvantage=RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
@@ -262,11 +266,11 @@ public sealed partial class TrainingGame
         if(spell.SaveAbility>=0){
             int targetModifier=AcidSplash.Modifier((targetPlayer?attributes:monsterAttributes)[spell.SaveAbility]);
             if(targetPlayer)targetModifier=PlayerSavingThrowModifier(spell.SaveAbility);
-            int value=UnityEngine.Random.Range(1,21),dc=8+bonus;bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(targetPlayer?(combat.PlayerHp==0||combat.PlayerParalyzed):combat.MonsterParalyzed);
+            var raySave=RollEnfeeblementSave(targetPlayer,spell.SaveAbility);int value=raySave.Value,dc=8+bonus;bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(targetPlayer?(combat.PlayerHp==0||combat.PlayerParalyzed):combat.MonsterParalyzed);
             automatic=automatic||(spell.Name=="Blight"&&!targetPlayer&&monsterProfile.TypeIndex==12);
             dice=spell.Chinese+" · "+target+"豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,automatic,adjustment);targetModifier+=adjustment.Value;
-            if(!automatic)yield return PresentRoll(20,new[]{value},value+" + "+targetModifier+" / DC "+dc);
+            if(!automatic)yield return PresentRoll(20,raySave.Dice,value+" + "+targetModifier+" / DC "+dc);
             saveSucceeded=!automatic&&value+targetModifier>=dc;
             if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");if(!embedded)rolling=false;yield break;}
         }
@@ -276,7 +280,7 @@ public sealed partial class TrainingGame
         int[] rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=UnityEngine.Random.Range(1,damageSides+1);amount+=rolls[i];}
         if(spell.Healing)amount=Math.Max(0,amount+modifier);
         if(spell.Name=="False Life")amount+=4+5*(slotLevel-1);
-        if(saveSucceeded&&spell.HalfSave)amount/=2;
+
         dice=spell.Chinese+(critical?" · 暴击":"")+" · "+count+"d"+damageSides;
         yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
         if(spell.Name=="Sorcerous Burst"){var burst=new BurstDamage();yield return RollSorcerousBurstExtra(rolls,modifier,critical,burst);amount+=burst.Extra;}
@@ -284,8 +288,13 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Sickness"){combat.ApplyPoison(targetPlayer);history.Insert(0,target+"中毒，至施法者下一回合结束；攻击与属性检定具有劣势。");}
         if(spell.Name=="Mind Sliver"){combat.ApplySliver(targetPlayer);history.Insert(0,target+"下一次豁免减1d4，至玩家下一回合结束失效。");}
-        if(!spell.Healing)amount=combat.AdjustTypedDamage(targetPlayer,amount,DamageTypes.Index(damageType));
-        if(spell.Attack){var extra=new ExtraMarkDamage();yield return RollMarkDamage(targetPlayer,critical,extra);amount+=extra.Value;}
+        if(!spell.Healing){
+            var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(damageType)]=amount;
+            if(spell.Attack){var extra=new ExtraMarkDamage();yield return RollMarkDamage(targetPlayer,critical,extra);if(extra.Raw>0)raw[mark.DamageType]+=extra.Raw;}
+            var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,true,spell.Chinese,reduced);
+            if(saveSucceeded&&spell.HalfSave)for(int i=0;i<reduced.Raw.Length;i++)reduced.Raw[i]/=2;
+            amount=ResolveRayPacket(targetPlayer,reduced.Raw);
+        }
         if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
         if(spell.Name=="Harm"&&!saveSucceeded){int reduced=combat.ReduceMaxHp(targetPlayer,amount);history.Insert(0,"伤害术："+target+"生命上限减少 "+reduced+"，上限最低1；不恢复生命。");}

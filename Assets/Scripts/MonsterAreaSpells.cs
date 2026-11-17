@@ -50,6 +50,7 @@ public sealed partial class TrainingGame
         int count=spell.DiceCount(monsterSpells.CasterLevel,slot),damage=0;var rolls=new int[count];
         for(int i=0;i<count;i++){rolls[i]=Random.Range(1,spell.Sides+1);damage+=rolls[i];}
         dice="木桩"+spell.Chinese+" · 共享范围伤害";yield return PresentRoll(spell.Sides,rolls,"失败 "+damage+"；成功 "+(spell.HalfSave?damage/2:0)+" "+spell.DamageType);
+        var rayDamage=new RayDamage();yield return ReduceRayDamage(false,damage,spell.DamageType,"木桩范围法术共享伤害",rayDamage);damage=rayDamage.Amount;
         // Resolve simultaneous area damage before concentration can dismiss units.
         int playerDamage=0;
         foreach(int id in targets){

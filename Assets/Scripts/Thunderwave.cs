@@ -39,6 +39,7 @@ public sealed partial class TrainingGame
         }
         int[] rolls=new int[slot+1];int amount=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);amount+=rolls[i];}
         dice="雷鸣波 · 共享雷鸣伤害骰";yield return PresentRoll(8,rolls,"合计 "+amount+"，成功豁免者减半向下取整");
+        var rayDamage=new RayDamage();yield return ReduceRayDamage(true,amount,"雷鸣","雷鸣波共享伤害",rayDamage);amount=rayDamage.Amount;
         int playerDamage=0;
         for(int i=0;i<2;i++)if(targets[i]){
             int damage=combat.AdjustTypedDamage(i==1,failed[i]?amount:amount/2,12);if(i==1)playerDamage=damage;

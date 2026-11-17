@@ -20,7 +20,8 @@ public sealed partial class TrainingGame {
   int[] rolls=new int[spell.DiceCount(classes.TotalLevel,slot)];int damage=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,spell.Sides+1);damage+=rolls[i];}
   if(spell.Healing){int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);damage=Mathf.Max(0,damage+modifier);dice=spell.Chinese+" · 共享治疗骰";yield return PresentRoll(spell.Sides,rolls,"骰值 + 施法调整值 "+modifier+" = "+damage+" 治疗");int playerHeal=targets[1]?combat.HealPlayer(damage):0,monsterHeal=targets[0]?combat.HealMonster(damage):0;history.Insert(0,spell.Chinese+"：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；不能恢复生命的目标仍受原有限制。");yield break;}
   dice=spell.Chinese+" · 共享范围伤害";yield return PresentRoll(spell.Sides,rolls,"失败伤害 "+damage+"，成功 "+damage/2+"，类型："+spell.DamageType);
-  int monsterDamage=targets[0]?combat.AdjustTypedDamage(false,failed[0]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustTypedDamage(true,failed[1]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0;
+  var rayDamage=new RayDamage();yield return ReduceRayDamage(true,damage,spell.DamageType,"范围法术共享伤害",rayDamage);damage=rayDamage.Amount;
+        int monsterDamage=targets[0]?combat.AdjustTypedDamage(false,failed[0]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustTypedDamage(true,failed[1]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0;
   if(targets[0])combat.ApplyDamage(monsterDamage);if(targets[1])combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);
   history.Insert(0,spell.Chinese+"：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 点"+spell.DamageType+"伤害。");if(targets[1])yield return MaintainConcentration(playerDamage);CheckBattleOutcome();
  }

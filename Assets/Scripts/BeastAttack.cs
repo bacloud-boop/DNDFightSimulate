@@ -3,6 +3,7 @@ public sealed class BeastAttack
     public readonly string Form,Chinese,AttackName,DamageType;
     public readonly int HitBonus,Count,Sides,Fixed,ExtraCount,ExtraSides;
     public readonly bool Agile,KnockProne;
+    public int Ability=>Form=="Rat"||Form=="Spider"||Form=="Cat"||Form=="Weasel"?1:0;
     public BeastAttack(string form,string chinese,string attack,int hit,int count,int sides,int fixedValue,string damage,bool agile=false,bool prone=false,int extraCount=0,int extraSides=0)
     {Form=form;Chinese=chinese;AttackName=attack;HitBonus=hit;Count=count;Sides=sides;Fixed=fixedValue;DamageType=damage;Agile=agile;KnockProne=prone;ExtraCount=extraCount;ExtraSides=extraSides;}
     public static readonly BeastAttack[] Supported={

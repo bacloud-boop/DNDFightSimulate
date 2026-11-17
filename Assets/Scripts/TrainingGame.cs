@@ -109,7 +109,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         int targetArmor=combat.MonsterArmorClass;
         advantage=combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
-        disadvantage=combat.ConsumeMockery(true)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
+        disadvantage=RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;
@@ -149,8 +149,10 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
         if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
-        int damage=0;for(int i=0;i<weaponDamageByType.Length;i++)damage+=combat.AdjustTypedDamage(false,weaponDamageByType[i],i);
-        var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);damage+=markDamage.Value;
+        var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
+        var rawPacket=new long[DamageTypes.Names.Length];for(int i=0;i<rawPacket.Length;i++)rawPacket[i]=weaponDamageByType[i];if(markDamage.Raw>0)rawPacket[mark.DamageType]+=markDamage.Raw;
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
+        int damage=ResolveRayPacket(false,reduced.Raw);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
@@ -198,7 +200,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         mirrorIntercepted=false;int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=combat.ConsumeMockery(false)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
+        bool monsterAdvantage=combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=RayAttackDisadvantage(false,MonsterCustomAttackAbility)||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         BreakOrdinaryInvisibility(false,"进行攻击检定");
@@ -228,7 +230,8 @@ public sealed partial class TrainingGame : MonoBehaviour
                 dice="木桩伤害 · "+counts[i]+"d"+sides[i]+(counts[i]>2?"（立体展示前两骰，完整合计见卷轴）":"");
                 yield return PresentRoll(sides[i],results[i],i==sides.Count-1?details:"本组 "+counts[i]+"d"+sides[i]+"；完整伤害见最终结算");
             }
-            int rawDamage=damage;damage=combat.AdjustPlayerPacket(damagePacket.LastRawTypedDamage);
+            var reduced=new RayDamage();yield return ReduceRayPacket(false,damagePacket.LastRawTypedDamage,sides.Count>0,"木桩攻击",reduced);
+            int rawDamage=damage;damage=ResolveRayPacket(true,reduced.Raw);
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
             if(MonsterPolymorphed&&BeastAttack.Find(polymorph.Form).KnockProne&&map.PlayerSpaces==1&&combat.PlayerHp>0)combat.PlayerProne=true;

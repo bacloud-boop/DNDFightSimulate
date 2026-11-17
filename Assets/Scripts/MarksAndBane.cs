@@ -3,12 +3,12 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly MarkEffect mark=new MarkEffect();int hexAbility;
-    sealed class ExtraMarkDamage {public int Value;}
+    sealed class ExtraMarkDamage {public int Value,Raw;public bool Rolled;}
     IEnumerator RollMarkDamage(bool targetPlayer,bool critical,ExtraMarkDamage result)
     {
         if(!mark.Applies(targetPlayer))yield break;
         int[] rolls=new int[critical?2:1];int amount=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,7);amount+=rolls[i];}
-        result.Value=combat.AdjustTypedDamage(targetPlayer,amount,mark.DamageType);
+        result.Raw=amount;result.Rolled=true;result.Value=combat.AdjustTypedDamage(targetPlayer,amount,mark.DamageType);
         yield return PresentRoll(6,rolls,(mark.Hex?"脆弱诅咒":"猎人印记")+"额外 "+result.Value+" "+DamageTypes.Names[mark.DamageType]+(critical?"（暴击：2d6）":""));
     }
     IEnumerator ResolveBane(bool player,int caster,bool both)

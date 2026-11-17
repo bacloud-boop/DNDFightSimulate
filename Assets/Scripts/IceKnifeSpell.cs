@@ -16,7 +16,8 @@ public sealed partial class TrainingGame {
   if(!failed[0]&&!failed[1]){history.Insert(0,"冰刃爆炸：范围内生物均豁免成功或没有目标，寒冷伤害0。");yield break;}
   int[] rolls=new int[DirectSpell.Find("Ice Knife").DiceCount(classes.TotalLevel,slot)];int damage=0;for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,7);damage+=rolls[i];}
   dice="冰刃 · 5尺爆炸";yield return PresentRoll(6,rolls,"豁免失败 "+damage+" 寒冷，成功0；不因前段攻击暴击翻倍");
-  int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,DamageTypes.Index("寒冷")):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,DamageTypes.Index("寒冷")):0;
+  var rayDamage=new RayDamage();yield return ReduceRayDamage(true,damage,"寒冷","冰刃爆炸共享伤害",rayDamage);damage=rayDamage.Amount;
+        int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,DamageTypes.Index("寒冷")):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,DamageTypes.Index("寒冷")):0;
   if(failed[0])combat.ApplyDamage(monsterDamage);if(failed[1])combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);history.Insert(0,"冰刃爆炸：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 寒冷伤害（无论前段命中与否均爆炸）。");if(failed[1])yield return MaintainConcentration(playerDamage);CheckBattleOutcome();
   }finally{outcomeDeferDepth--;CheckBattleOutcome();}
  }

@@ -22,14 +22,15 @@ public sealed partial class TrainingGame
         bool[] failed=new bool[2];int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         if(!targets[0]&&!targets[1]){history.Insert(0,spell.Chinese+"：未选中范围内生物，已消耗动作。");yield break;}
         for(int i=0;i<2;i++)if(targets[i]){
-            int ability=spell.SaveAbility,value=Random.Range(1,21),modifier=i==0?MonsterSavingThrowModifier(ability):PlayerSavingThrowModifier(ability);bool automatic=(ability==0||ability==1)&&(i==0?combat.MonsterParalyzed:combat.PlayerParalyzed||combat.PlayerHp==0);dice=spell.Chinese+" · "+(i==0?"木桩":"玩家")+PlayerAttributes.Names[ability]+"豁免";
+            int ability=spell.SaveAbility;var raySave=RollEnfeeblementSave(i==1,ability);int value=raySave.Value,modifier=i==0?MonsterSavingThrowModifier(ability):PlayerSavingThrowModifier(ability);bool automatic=(ability==0||ability==1)&&(i==0?combat.MonsterParalyzed:combat.PlayerParalyzed||combat.PlayerHp==0);dice=spell.Chinese+" · "+(i==0?"木桩":"玩家")+PlayerAttributes.Names[ability]+"豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,automatic,adjustment);modifier+=adjustment.Value;
-            if(!automatic)yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
+            if(!automatic)yield return PresentRoll(20,raySave.Dice,value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
             if(failed[i]&&spell.Name=="Arms of Hadar")combat.BlockReactions(i==1);
         }
         if(!failed[0]&&!failed[1]&&!spell.HalfSave){history.Insert(0,spell.Chinese+"：目标均通过体质豁免，伤害0。");yield break;}
         int[] values=new int[spell.DiceCount(classes.TotalLevel,slot)];int damage=0;for(int i=0;i<values.Length;i++){values[i]=Random.Range(1,7);damage+=values[i];}
         dice=spell.Chinese+" · 共享伤害骰";yield return PresentRoll(6,values,"豁免失败者受到 "+damage+" 点"+spell.DamageType+"伤害，成功者"+(spell.HalfSave?"减半向下取整":"0"));
+        var rayDamage=new RayDamage();yield return ReduceRayDamage(true,damage,spell.DamageType,"法术光环共享伤害",rayDamage);damage=rayDamage.Amount;
         int monsterDamage=targets[0]?combat.AdjustTypedDamage(false,failed[0]?damage:spell.HalfSave?damage/2:0,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustTypedDamage(true,failed[1]?damage:spell.HalfSave?damage/2:0,DamageTypes.Index(spell.DamageType)):0;
         if(targets[0])combat.ApplyDamage(monsterDamage);if(targets[1])combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);
         history.Insert(0,spell.Chinese+"：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 点"+spell.DamageType+"伤害。");
