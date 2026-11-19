@@ -4,7 +4,7 @@ using UnityEngine;
 public sealed partial class BattleMap
 {
     readonly List<SummonedUnit> summons=new List<SummonedUnit>();
-    public IReadOnlyList<SummonedUnit> Summons=>summons.AsReadOnly();
+    public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
     public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0)
     {
         if(exceptId!=RescueId&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
@@ -12,7 +12,7 @@ public sealed partial class BattleMap
         return true;
     }
     public bool CanPlaceSummon(Vector2Int anchor,int spaces,int exceptId=0)=>spaces>=1&&spaces<=4&&Inside(anchor,spaces)&&SummonFootprintClear(anchor,spaces,exceptId)
-        &&!Overlap(anchor,spaces,Player,OccupiedSpaces(true))&&!Overlap(anchor,spaces,Monster,OccupiedSpaces(false));
+        &&(riderMountId!=0&&exceptId==riderMountId||!Overlap(anchor,spaces,Player,OccupiedSpaces(true)))&&!Overlap(anchor,spaces,Monster,OccupiedSpaces(false));
     public bool AddSummon(SummonedUnit unit,Vector2Int anchor)
     {
         if(!Locked||unit==null||!unit.Alive||!CanPlaceSummon(anchor,unit.Spaces))return false;
@@ -38,7 +38,7 @@ public sealed partial class BattleMap
     }
     public bool CanMoveSummon(int id,Vector2Int cell)
     {
-        if(!Locked)return false;
+        if(!Locked||!VoluntaryMovementAllowed(id,cell))return false;
         foreach(var unit in summons)if(unit.Id==id&&unit.Alive){
             var from=new Vector2Int(unit.X,unit.Y);
             if(!CanPlaceSummon(cell,unit.Spaces,id)||SegmentCrossesBody(from,cell,unit.Spaces,Monster,OccupiedSpaces(false))||!unit.CanSpendMovement(WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone)))return false;
@@ -47,11 +47,11 @@ public sealed partial class BattleMap
             try{
                 for(int i=0;i<=steps;i++){
                     float t=steps==0?0:(float)i/steps;
-                    unit.X=Mathf.RoundToInt(from.x+(cell.x-from.x)*t);unit.Y=Mathf.RoundToInt(from.y+(cell.y-from.y)*t);
+                    unit.X=Mathf.RoundToInt(from.x+(cell.x-from.x)*t);unit.Y=Mathf.RoundToInt(from.y+(cell.y-from.y)*t);SyncRiderToMount(unit);
                     if(!RecoverySafe(Player,Monster))return false;
                 }
                 return true;
-            }finally{unit.X=from.x;unit.Y=from.y;}
+            }finally{unit.X=from.x;unit.Y=from.y;SyncRiderToMount(unit);}
         }
         return false;
     }
@@ -73,8 +73,8 @@ public sealed partial class BattleMap
         }
         return false;
     }
-    public void RemoveSummon(int id){foreach(var unit in summons)if(unit.Id==id)unit.Dismiss();summons.RemoveAll(unit=>unit.Id==id);}
-    public void ClearSummons(){foreach(var unit in summons)unit.Dismiss();summons.Clear();}
+    public void RemoveSummon(int id){if(id==riderMountId)DismountRider();foreach(var unit in summons)if(unit.Id==id)unit.Dismiss();summons.RemoveAll(unit=>unit.Id==id);}
+    public void ClearSummons(){if(Riding)DismountRider();riderMountId=0;foreach(var unit in summons)unit.Dismiss();summons.Clear();}
     // A pure target selector: null means no living candidate is currently in reach.
     // Callers may evaluate it again after movement; ties remain stable (player first).
     public int NearestEnemyInReach(bool playerAlive,int reachFeet)

@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
         if(spell.Attack){
             bool sees=MonsterCanSeeTarget(target),targetSees=player?PlayerSeesMonster:SpiritSees(unit,-1,map.Monster,map.MonsterSpaces);
             bool advantage=unit!=null&&unit.Prone&&distance<=5||player&&Entangled(true)||unit!=null&&unit.Restrained||!targetSees||player&&(combat.PlayerHp==0||combat.PlayerParalyzed||combat.PlayerProne&&distance<=5);
-            bool disadvantage=Entangled(false)|RayAttackDisadvantage(false,monsterSpells.Ability)||unit!=null&&unit.Prone&&distance>5||!sees||combat.MonsterPoisoned||combat.MonsterProne||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5||unit!=null&&unit.Dodging&&targetSees&&unit.EffectiveSpeed>0;
+            bool disadvantage=FearDisadvantage(false)||Entangled(false)|RayAttackDisadvantage(false,monsterSpells.Ability)||unit!=null&&unit.Prone&&distance>5||!sees||combat.MonsterPoisoned||combat.MonsterProne||player&&BlurDisadvantage(false,true)||player&&combat.PlayerProne&&distance>5||unit!=null&&unit.Dodging&&targetSees&&unit.EffectiveSpeed>0;
             if(player)advantage=combat.ConsumeGuidingLight(true)||advantage;
             if(!spell.Melee){
                 if(combat.PlayerCanAct&&map.DistanceFeet<=5&&PlayerSeesMonster)disadvantage=true;
@@ -95,7 +95,7 @@ public sealed partial class TrainingGame
         }
         if(spell.SaveAbility>=0){
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
-            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):AcidSplash.Modifier(bestialSpirit.Rules.Ability(spell.SaveAbility))+unit.Breathing.D20Penalty;
+            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
             bool dodge=!player&&spell.SaveAbility==1&&unit.Dodging&&unit.EffectiveSpeed>0;
             var roll=player?RollArmorSave(true,spell.SaveAbility):new ArmorSaveRoll{Value=Random.Range(1,21)};
             int value=roll.Value;int[] shown=player?roll.Dice:new[]{value};

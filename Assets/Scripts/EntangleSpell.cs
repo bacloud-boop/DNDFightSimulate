@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
     {
         int tier=MonsterPolymorphed?0:monsterSkillTiers[0];long modifier=AcidSplash.Modifier(EffectiveMonsterAbility(0))+(long)tier*combat.MonsterProficiencyBonus+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
         if(MonsterPolymorphed)modifier=polymorph.Skill(0,0)+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
-        bool advantage=SizeStrengthAdvantage(false,0)||checkBuff.Advantage(false,0,worldRounds),disadvantage=SizeStrengthDisadvantage(false,0)||RayStrengthDisadvantage(false,0)||ArmorD20Disadvantage(false,0)||combat.MonsterPoisoned||mark.CheckDisadvantage(false,0);
+        bool advantage=SizeStrengthAdvantage(false,0)||checkBuff.Advantage(false,0,worldRounds),disadvantage=FearDisadvantage(false)||SizeStrengthDisadvantage(false,0)||RayStrengthDisadvantage(false,0)||ArmorD20Disadvantage(false,0)||combat.MonsterPoisoned||mark.CheckDisadvantage(false,0);
         int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
         yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"木桩脱困 · 力量（运动）：采用 "+value+" + "+modifier+" / DC "+entangle.Dc);
         if((long)value+modifier>=entangle.Dc){entangle.Release(-1);SyncEntangleActors();SyncTimedBuffs();map.StartMonsterMovementTurn(combat.MonsterSpeed);history.Insert(0,"木桩脱困成功，动作已消耗；可继续移动，本回合不再攻击。");}
@@ -46,7 +46,7 @@ public sealed partial class TrainingGame
     {
         if(unit==null||!entangle.Restrained(unit.Id,worldRounds)||!unit.TryUseAction())yield break;
         summonActing=true;try{
-            int value=Random.Range(1,21),modifier=AcidSplash.Modifier(bestialSpirit.Rules.Ability(0))+unit.Breathing.D20Penalty;
+            int first=Random.Range(1,21),second=FearDisadvantage(unit.Id)?Random.Range(1,21):first,value=Mathf.Min(first,second),modifier=AcidSplash.Modifier(SummonAbility(unit,0))+unit.Breathing.D20Penalty;
             yield return PresentRoll(20,new[]{value},unit.Name+"脱困 · 力量（运动）："+value+" + "+modifier+" / DC "+entangle.Dc);
             if((long)value+modifier>=entangle.Dc){entangle.Release(unit.Id);SyncEntangleActors();history.Insert(0,unit.Name+"脱困成功，已消耗其自身动作。");}else history.Insert(0,unit.Name+"脱困失败，已消耗其自身动作。");
         }finally{summonActing=false;}

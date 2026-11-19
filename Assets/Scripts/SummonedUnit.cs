@@ -38,13 +38,18 @@ public sealed class SummonedUnit
     public bool Prone {get;set;}
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
-    public int EffectiveSpeed=>Restrained||SleepStage==2?0:Math.Max(0,Speed-Breathing.SpeedPenalty);
+    public int LoadSpeedLimit {get;set;}=int.MaxValue;
+    public int EffectiveSpeed=>Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}
     bool actionAvailable;
     public bool ActionAvailable=>actionAvailable&&SleepStage==0;
     public bool Dodging {get;private set;}
+    public bool Disengaged {get;private set;}
+    public bool BonusAvailable {get;private set;}
+    public bool TryUseBonus(){if(!Alive||!TurnActive||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
+    public bool Disengage(){if(!TryUseAction())return false;Disengaged=true;return true;}
     public SummonCommand Orders {get;private set;}
     public bool HasVerbalOrders=>Orders.Kind!=SummonCommandKind.None;
     public bool ReceiveVerbalOrders(SummonCommand command,out bool changed)
@@ -70,8 +75,8 @@ public sealed class SummonedUnit
         ReactionAvailable=true;Id=id;Name=name;MaxHp=Hp=hp;Armor=armor;Speed=speed;Size=size;AttacksPerAction=attacks;
     }
     long lastTurn=-1;
-    public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=false;return true;}
-    public void EndTurn(){TurnActive=false;actionAvailable=false;AttacksRemaining=0;}
+    public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;return true;}
+    public void EndTurn(){BonusAvailable=false;TurnActive=false;actionAvailable=false;AttacksRemaining=0;}
     public bool CanSpendMovement(int cost)=>Alive&&TurnActive&&cost>0&&cost<=MovementRemaining;
     public bool SpendMovement(int cost){if(!CanSpendMovement(cost))return false;movementSpent+=cost;return true;}
     public bool SwitchWaterState(bool submerged,int waterCells)=>Aquatic.TrySwitch(submerged,waterCells,Spaces*Spaces,SpendMovement);

@@ -20,8 +20,9 @@ public sealed partial class TrainingGame
         if(unit.SleepStage==2)return false;
         bool invisible=(id==0||id==-1)&&senses.Invisible(id==0,worldRounds);
         if(invisible)return false;
+        for(int dy=0;dy<unit.Spaces;dy++)for(int dx=0;dx<unit.Spaces;dx++)
         for(int y=0;y<targetSpaces;y++)for(int x=0;x<targetSpaces;x++)
-            if(vision.Quality(fromX*5,fromY*5,(targetX+x)*5,(targetY+y)*5,BestialSpiritRules.Darkvision,worldRounds,0,false)<2)return true;
+            if(vision.Quality((fromX+dx)*5,(fromY+dy)*5,(targetX+x)*5,(targetY+y)*5,IsSteed(unit)?0:BestialSpiritRules.Darkvision,worldRounds,0,false)<2)return true;
         return false;
     }
     bool TargetSeesSpirit(int target,SummonedUnit attacker)
@@ -39,20 +40,20 @@ public sealed partial class TrainingGame
     IEnumerator ResolveSpiritAttack(SummonedUnit unit,int targetId,bool opportunity=false,CreatureCover.Body? targetAt=null)
     {
         Vector2Int cell;int spaces;string target;
-        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive||unit!=bestialSpirit.Unit||targetId==unit.Id||!SummonTarget(targetId,out cell,out spaces,out target))yield break;
+        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive||(unit!=bestialSpirit.Unit&&unit!=steed)||(IsSteed(unit)&&ControlledSteed)||targetId==unit.Id||!SummonTarget(targetId,out cell,out spaces,out target))yield break;
         if(!opportunity&&BattleMap.BodyDistance(new Vector2Int(unit.X,unit.Y),unit.Spaces,cell,spaces)>5)yield break;
         if(!opportunity&&(!unit.TurnActive||unit.Orders.Kind!=SummonCommandKind.AssistCombat||!unit.Attack()))yield break;
         bool previousBusy=summonActing;summonActing=true;
         try{
             bool sees=targetAt.HasValue?SpiritSeesAt(unit,targetId,unit.X,unit.Y,targetAt.Value.X,targetAt.Value.Y,spaces):SpiritSees(unit,targetId,cell,spaces),targetSees=TargetSeesSpirit(targetId,unit);
             if(targetAt.HasValue&&targetId==-1)targetSees=VisibilityBetween(false,targetAt.Value.X,targetAt.Value.Y,spaces,unit.X,unit.Y,unit.Spaces)<2;
-            bool advantage=(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||SpiritPackTactics(unit,targetId,cell,spaces,targetAt)||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
-            bool disadvantage=unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,unit.SwimSpeed,false);
+            bool advantage=(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||(!IsSteed(unit)&&SpiritPackTactics(unit,targetId,cell,spaces,targetAt))||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
+            bool disadvantage=FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,unit.SwimSpeed,false);
             if(targetId==0)disadvantage|=senses.Blurred(worldRounds);
             var other=FindSummon(targetId);if(other!=null&&other.Dodging&&other.Speed>other.Breathing.SpeedPenalty&&targetSees)disadvantage=true;
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
             int value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
-            int bonus=bestialSpirit.Rules.AttackBonus+unit.Breathing.D20Penalty;
+            int bonus=SummonAttackBonus(unit)+unit.Breathing.D20Penalty;
             int cover=targetAt.HasValue?map.CreatureCoverAt(unit.Id,targetId,new CreatureCover.Body(unit.X,unit.Y,unit.Spaces),targetAt.Value):map.CreatureCoverBonus(unit.Id,targetId),armor=(targetId==0?combat.PlayerArmorClass:targetId==-1?combat.MonsterArmorClass:other.Armor)+cover;
             mirrorIntercepted=false;
             if(targetId==0&&value!=1&&(value==20||(long)value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,(long)value+bonus,sees,false,cover);armor=combat.PlayerArmorClass+cover;}
@@ -60,20 +61,28 @@ public sealed partial class TrainingGame
             bool hit=value!=1&&(value==20||(long)value+bonus>=armor);
             if(!hit||mirrorIntercepted){history.Insert(0,unit.Name+"攻击"+target+"："+(mirrorIntercepted?"镜像拦截":"未命中")+"，伤害0。");yield break;}
             bool critical=value==20||(other!=null&&other.SleepStage==2)||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
-            int[] rolls=new int[critical?2:1];int damage=bestialSpirit.Rules.FixedDamage;
+            int[] rolls=new int[critical?2:1];int damage=SummonDamageBonus(unit),type=SummonDamageType(unit);string damageName=DamageTypes.Names[type];
             for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);damage+=rolls[i];}
-            yield return PresentRoll(8,rolls,"撕裂"+(critical?"暴击":"")+"：骰值 + "+bestialSpirit.Rules.FixedDamage+" = "+damage+" 挥砍");
-            if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,DamageTypes.Index("挥砍"));combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null);unit.Damage(frost);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
-            else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,DamageTypes.Index("挥砍"));combat.ApplyDamage(damage,sourcePlayer:null);}
-            else other.Damage(damage,2);
-            history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" 挥砍伤害。");RefreshBestialSpirit();CheckBattleOutcome();
+            yield return PresentRoll(8,rolls,(IsSteed(unit)?"异界猛击":"撕裂")+(critical?"暴击":"")+"：骰值 + "+SummonDamageBonus(unit)+" = "+damage+" "+damageName);
+            if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,type);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null);unit.Damage(frost);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
+            else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,type);combat.ApplyDamage(damage,sourcePlayer:null);}
+            else other.Damage(damage,type);
+            history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" "+damageName+"伤害。");RefreshBestialSpirit();CheckBattleOutcome();
         }finally{summonActing=previousBusy;}
     }
     IEnumerator CompletePlayerTurnWithSummons()
     {
         rolling=true;
         try{
-            summonTurns.Begin(map.Summons,combat.Round,combat.Aftermath);
+            EndSteedFearsAtPlayerTurnEnd();
+            if(ControlledSteed&&steed.TurnActive){
+                yield return RepeatSummonSleep(steed);if(steed!=null&&steed.Alive)yield return ResolveGreaseSave(steed.Id,ActorGrease(steed.Id),"坐骑回合末油脂");
+                if(steed!=null&&steed.Alive){ObserveWaterBreathing();if(steed.Breathing.EndTurn(combat.Round,worldRounds+1)&&steed.Breathing.Fatal)steed.Dismiss();}
+            }
+            int continuing=steed!=null&&steed.TurnActive&&!ControlledSteed?steed.Id:0;
+            var followers=new System.Collections.Generic.List<SummonedUnit>();
+            foreach(var follower in map.Summons){if(follower==steed&&ControlledSteed){follower.EndTurn();continue;}followers.Add(follower);}
+            summonTurns.Begin(followers,combat.Round,combat.Aftermath,continuing);
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;summonEndRequested=false;
                 if(unit.SleepStage==2)summonEndRequested=true;

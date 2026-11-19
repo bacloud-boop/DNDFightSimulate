@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
             double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,map.Player.x,map.Player.y,map.PlayerSpaces,5);
             candidates.Add(new SummonOpportunity{Id=0,At=at,Target=MovingBodyAt(from,to,map.MonsterSpaces,at)});
         }
-        foreach(var unit in map.Summons)if(unit.Alive&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),5,map.MonsterSpaces,unit.Spaces)){
+        foreach(var unit in map.Summons)if(unit.Alive&&(!IsSteed(unit)||!ControlledSteed)&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),5,map.MonsterSpaces,unit.Spaces)){
             double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,unit.X,unit.Y,unit.Spaces,5);
             var target=MovingBodyAt(from,to,map.MonsterSpaces,at);
             if(at>=0&&SpiritSeesAt(unit,-1,unit.X,unit.Y,target.X,target.Y,map.MonsterSpaces))candidates.Add(new SummonOpportunity{Id=unit.Id,At=at,Target=target});
@@ -53,7 +53,7 @@ public sealed partial class TrainingGame
         bool previous=summonActing;summonActing=true;
         try{
             var from=new Vector2Int(unit.X,unit.Y);
-            if(MonsterCanCastAttack&&combat.MonsterCanAct&&combat.MonsterReactionAvailable&&!combat.MonsterReactionsBlocked&&!combat.MonsterOpportunityBlocked&&BattleMap.LeavesReach(from,target,map.Monster,MonsterAttackReach,unit.Spaces,map.MonsterSpaces)){
+            if(!unit.Disengaged&&MonsterCanCastAttack&&combat.MonsterCanAct&&combat.MonsterReactionAvailable&&!combat.MonsterReactionsBlocked&&!combat.MonsterOpportunityBlocked&&BattleMap.LeavesReach(from,target,map.Monster,MonsterAttackReach,unit.Spaces,map.MonsterSpaces)){
                 double at=VisionState.ReachExit(from.x,from.y,target.x,target.y,unit.Spaces,map.Monster.x,map.Monster.y,map.MonsterSpaces,MonsterAttackReach);
                 var body=MovingBodyAt(from,target,unit.Spaces,at);
                 if(at>=0&&VisibilityBetween(false,map.Monster.x,map.Monster.y,map.MonsterSpaces,body.X,body.Y,unit.Spaces)<2){

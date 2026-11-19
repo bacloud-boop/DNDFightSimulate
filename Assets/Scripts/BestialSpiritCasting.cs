@@ -9,7 +9,7 @@ public sealed partial class TrainingGame
     {
         if(!combat.Aftermath||summonActing)return;
         // Close the phase only; retain HP, orders, concentration and expiry.
-        summonTurns.Cancel();if(panel=="summons")panel="";
+        summonTurns.Cancel();if(steed!=null)steed.EndTurn();if(panel=="summons")panel="";
     }
     string BestialSpiritCastError(int caster,int slot,bool water,Vector2Int cell)
     {

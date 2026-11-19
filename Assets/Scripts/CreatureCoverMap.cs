@@ -16,10 +16,10 @@ public sealed partial class BattleMap
         var bodies=new List<CreatureCover.Body>();CreatureCover.Body body;
         // Primary bodies persist after death. Grounded and dragged corpses keep
         // their full footprint; CoverBody excludes bodies lifted by a carrier.
-        if(sourceId!=0&&targetId!=0&&CoverBody(0,out body))bodies.Add(body);
+        if(sourceId!=0&&targetId!=0&&sourceId!=riderMountId&&targetId!=riderMountId&&CoverBody(0,out body))bodies.Add(body);
         if(sourceId!=-1&&targetId!=-1&&CoverBody(-1,out body))bodies.Add(body);
         if(sourceId!=RescueId&&targetId!=RescueId&&CoverBody(RescueId,out body))bodies.Add(body);
-        foreach(var unit in summons)if(unit.Alive&&unit.Id!=sourceId&&unit.Id!=targetId)bodies.Add(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces));
+        foreach(var unit in summons)if(unit.Alive&&unit.Id!=sourceId&&unit.Id!=targetId&&!(unit.Id==riderMountId&&(sourceId==0||targetId==0)))bodies.Add(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces));
         return bodies;
     }
     public int CreatureCoverBonus(int sourceId,int targetId)

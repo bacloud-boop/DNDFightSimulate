@@ -4,12 +4,15 @@ public sealed partial class BattleMap
 {
     public static readonly string[] Names={"小地图","中地图","大地图"};
     public static readonly int[] Sizes={10,15,20};
+    public System.Func<int,Vector2Int,bool> VoluntaryMovement;
+    bool VoluntaryMovementAllowed(int id,Vector2Int cell)=>VoluntaryMovement==null||VoluntaryMovement(id,cell);
     public int Selected {get;private set;}
     public int Size => Sizes[Selected];
     // Positions identify the top-left occupied cell; footprint centers may lie on grid intersections.
     public Vector2Int Player {get;private set;} = Vector2Int.zero;
     public Vector2Int Monster {get;private set;} = new Vector2Int(9,9);
-    public int PlayerSpaces {get;private set;}=1;
+    int playerBodySpaces=1;
+    public int PlayerSpaces {get=>Riding?RiderMount.Spaces:playerBodySpaces;private set=>playerBodySpaces=value;}
     public int MonsterSpaces {get;private set;}=1;
     public bool Locked {get;private set;}
     public const int MovementPerRound=30;
@@ -55,7 +58,7 @@ public sealed partial class BattleMap
     }
     public int DistanceToCell(bool player,Vector2Int cell) => BodyDistance(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,cell,1);
     public bool Inside(Vector2Int cell,int spaces) => cell.x>=0&&cell.y>=0&&cell.x+spaces<=Size&&cell.y+spaces<=Size;
-    public bool CanPlace(bool player,Vector2Int cell) => !IsContained(player)&&!IsCarried(player)&&Inside(cell,player?PlayerSpaces:MonsterSpaces)&&SummonFootprintClear(cell,player?PlayerSpaces:MonsterSpaces)&&!Overlap(cell,player?PlayerSpaces:MonsterSpaces,player?Monster:Player,OccupiedSpaces(!player));
+    public bool CanPlace(bool player,Vector2Int cell) => !IsContained(player)&&!IsCarried(player)&&Inside(cell,player?PlayerSpaces:MonsterSpaces)&&SummonFootprintClear(cell,player?PlayerSpaces:MonsterSpaces,player?riderMountId:0)&&!Overlap(cell,player?PlayerSpaces:MonsterSpaces,player?Monster:Player,OccupiedSpaces(!player));
     // Open-rectangle intersection: touching a boundary is legal, crossing occupied space is not.
     static bool SegmentCrossesBody(Vector2Int from,Vector2Int to,int moverSize,Vector2Int obstacle,int obstacleSize)
     {
@@ -70,41 +73,42 @@ public sealed partial class BattleMap
         return t0<=t1;
     }
     int playerRecoverySpaces,monsterRecoverySpaces;
-    bool FindRecovery(Vector2Int body,int bodySpaces,int recovery,Vector2Int other,int otherSpaces,out Vector2Int result){
+    bool FindRecovery(Vector2Int body,int bodySpaces,int recovery,Vector2Int other,int otherSpaces,out Vector2Int result,int exceptId=0){
         result=body;if(recovery==0)return true;double best=double.MaxValue;
         for(int y=body.y-recovery+1;y<body.y+bodySpaces;y++)for(int x=body.x-recovery+1;x<body.x+bodySpaces;x++){
-            var cell=new Vector2Int(x,y);if(!Inside(cell,recovery)||!SummonFootprintClear(cell,recovery)||Overlap(cell,recovery,other,otherSpaces))continue;
+            var cell=new Vector2Int(x,y);if(!Inside(cell,recovery)||!SummonFootprintClear(cell,recovery,exceptId)||Overlap(cell,recovery,other,otherSpaces))continue;
             bool fits=recovery>=bodySpaces?x<=body.x&&y<=body.y&&x+recovery>=body.x+bodySpaces&&y+recovery>=body.y+bodySpaces:x>=body.x&&y>=body.y&&x+recovery<=body.x+bodySpaces&&y+recovery<=body.y+bodySpaces;if(!fits)continue;
             double dx=x+recovery*.5-body.x-bodySpaces*.5,dy=y+recovery*.5-body.y-bodySpaces*.5,d=dx*dx+dy*dy;if(d<best){best=d;result=cell;}
         }return best<double.MaxValue;
     }
-    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored))&&(IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
+    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored,riderMountId))&&(IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
     bool RecoveryPathSafe(bool player,Vector2Int from,Vector2Int to){
         if(playerRecoverySpaces==0&&monsterRecoverySpaces==0)return true;
         int steps=System.Math.Max(System.Math.Abs(to.x-from.x),System.Math.Abs(to.y-from.y))*2;
         for(int i=0;i<=steps;i++){double t=steps==0?0:(double)i/steps;var point=new Vector2Int(Mathf.RoundToInt((float)(from.x+(to.x-from.x)*t)),Mathf.RoundToInt((float)(from.y+(to.y-from.y)*t)));if(!RecoverySafe(player?point:Player,player?Monster:point))return false;}return true;
     }
     public bool TrySetRecoverySize(bool player,int spaces){if(spaces<0||spaces>4)return false;int old=player?playerRecoverySpaces:monsterRecoverySpaces;if(player)playerRecoverySpaces=spaces;else monsterRecoverySpaces=spaces;if(RecoverySafe(Player,Monster))return true;if(player)playerRecoverySpaces=old;else monsterRecoverySpaces=old;return false;}
-    public bool FindRecoveryPlacement(bool player,out Vector2Int result)=>FindRecovery(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,player?playerRecoverySpaces:monsterRecoverySpaces,player?Monster:Player,player?MonsterSpaces:PlayerSpaces,out result);
+    public bool FindRecoveryPlacement(bool player,out Vector2Int result)=>FindRecovery(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,player?playerRecoverySpaces:monsterRecoverySpaces,player?Monster:Player,player?MonsterSpaces:PlayerSpaces,out result,player?riderMountId:0);
     public void ClearRecoveryConstraints(){playerRecoverySpaces=monsterRecoverySpaces=0;}
     public bool CanTransformAt(bool player,int spaces,Vector2Int anchor,int recoverySpaces)
     {
         if(!Locked||spaces<1||spaces>4||recoverySpaces<1||recoverySpaces>4)return false;
         var body=player?Player:Monster;int oldSpaces=player?PlayerSpaces:MonsterSpaces;
         var other=player?Monster:Player;int otherSpaces=player?MonsterSpaces:PlayerSpaces;
-        if(HasContainedCreature||!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces)||!Overlap(anchor,spaces,body,oldSpaces)||Overlap(anchor,spaces,other,otherSpaces))return false;
+        Vector2Int mountedCell;if(player&&Riding&&spaces>=RiderMount.Spaces)return MountedSizeChange(spaces,out mountedCell);
+        if(HasContainedCreature||!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces,player?riderMountId:0)||!Overlap(anchor,spaces,body,oldSpaces)||Overlap(anchor,spaces,other,otherSpaces))return false;
         Vector2Int ignored;
         // Both the target and the other participant must remain able to revert.
-        return FindRecovery(anchor,spaces,recoverySpaces,other,otherSpaces,out ignored)
+        return FindRecovery(anchor,spaces,recoverySpaces,other,otherSpaces,out ignored,player?riderMountId:0)
             &&FindRecovery(other,otherSpaces,player?monsterRecoverySpaces:playerRecoverySpaces,anchor,spaces,out ignored);
     }
     public bool TransformAt(bool player,int spaces,Vector2Int anchor,int recoverySpaces)
     {
         var body=player?Player:Monster;int oldSpaces=player?PlayerSpaces:MonsterSpaces;
         if(!CanTransformAt(player,spaces,anchor,recoverySpaces))return false;
-        if(player){Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=recoverySpaces;}
+        if(player){CommitMountedBody(spaces,ref anchor);Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=recoverySpaces;}
         else {Monster=anchor;MonsterSpaces=spaces;monsterRecoverySpaces=recoverySpaces;}
-        SyncWaterPositions();MovementObserved?.Invoke(player?0:-1,body,anchor,oldSpaces,spaces,true);
+        SyncWaterPositions();MovementObserved?.Invoke(player?0:-1,body,anchor,oldSpaces,player?PlayerSpaces:MonsterSpaces,true);
         return true;
     }
     public bool RestoreForm(bool player)
@@ -115,20 +119,20 @@ public sealed partial class BattleMap
         Vector2Int anchor;if(!FindRecoveryPlacement(player,out anchor))return false;
         var other=player?Monster:Player;int otherSpaces=player?MonsterSpaces:PlayerSpaces;Vector2Int ignored;
         if(!FindRecovery(other,otherSpaces,player?monsterRecoverySpaces:playerRecoverySpaces,anchor,spaces,out ignored))return false;
-        if(player){Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=0;}
+        if(player){CommitMountedBody(spaces,ref anchor);Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=0;}
         else {Monster=anchor;MonsterSpaces=spaces;monsterRecoverySpaces=0;}
         SyncWaterPositions();
-        MovementObserved?.Invoke(player?0:-1,observedFrom,anchor,observedSpaces,spaces,true);return true;
+        MovementObserved?.Invoke(player?0:-1,observedFrom,anchor,observedSpaces,player?PlayerSpaces:MonsterSpaces,true);return true;
     }
-    public bool CanMoveTo(Vector2Int cell,bool tactical=false) => Locked&&!ActorRestrained(true)&&!IsContained(true)&&cell!=Player&&MovementBudget(tactical)>0&&CanPlace(true,cell)&&RecoveryPathSafe(true,Player,cell)&&PlayerMovementCost(cell)<=MovementBudget(tactical)&&!SegmentCrossesBody(Player,cell,PlayerSpaces,Monster,OccupiedSpaces(false));
+    public bool CanMoveTo(Vector2Int cell,bool tactical=false) => Locked&&VoluntaryMovementAllowed(0,cell)&&!Riding&&!ActorRestrained(true)&&!IsContained(true)&&cell!=Player&&MovementBudget(tactical)>0&&CanPlace(true,cell)&&RecoveryPathSafe(true,Player,cell)&&PlayerMovementCost(cell)<=MovementBudget(tactical)&&!SegmentCrossesBody(Player,cell,PlayerSpaces,Monster,OccupiedSpaces(false));
     public bool MovePlayer(Vector2Int cell,bool tactical=false) {
         if(!CanMoveTo(cell,tactical))return false;
         if(tactical)TacticalMovementRemaining-=PlayerMovementCost(cell);else {int cost=PlayerMovementCost(cell);MovementSpent+=cost;MovementRemaining-=cost;}
         var observedFrom=Player;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,false);return true;
     }
-    public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&!IsContained(true)&&CanPlace(true,cell)&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
-    public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,true);return true;}
-    public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanPlace(false,cell)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&!SegmentCrossesBody(Monster,cell,MonsterSpaces,Player,OccupiedSpaces(true))&&!CrossesEnemySummon(Monster,cell,MonsterSpaces);
+    public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&VoluntaryMovementAllowed(0,cell)&&!IsContained(true)&&Inside(cell,playerBodySpaces)&&SummonFootprintClear(cell,playerBodySpaces)&&!Overlap(cell,playerBodySpaces,Monster,OccupiedSpaces(false))&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
+    public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;int old=PlayerSpaces;riderMountId=0;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,old,PlayerSpaces,true);return true;}
+    public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&VoluntaryMovementAllowed(-1,cell)&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanPlace(false,cell)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&!SegmentCrossesBody(Monster,cell,MonsterSpaces,Player,OccupiedSpaces(true))&&!CrossesEnemySummon(Monster,cell,MonsterSpaces);
     public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
     public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
@@ -150,6 +154,7 @@ public sealed partial class BattleMap
         => ForceMoveOnLine(player,origin,originSpaces,feet,true);
     int ForceMoveOnLine(bool player,Vector2Int origin,int originSpaces,int feet,bool toward)
     {
+        if(player&&Riding&&!DismountRider())return 0;
         var start=player?Player:Monster;int spaces=player?PlayerSpaces:MonsterSpaces;
         double dx=start.x+spaces*.5-origin.x-originSpaces*.5,dy=start.y+spaces*.5-origin.y-originSpaces*.5,length=System.Math.Sqrt(dx*dx+dy*dy);
         if(IsContained(player)||length==0||feet<=0)return 0;
@@ -169,11 +174,12 @@ public sealed partial class BattleMap
     public bool RestoreMonsterFootprint(int spaces){if(!CanRestoreMonsterFootprint(spaces))return false;MonsterSpaces=spaces;return true;}
     public bool CanResizePlayerAt(int spaces,Vector2Int anchor)
     {
-        if(HasContainedCreature||spaces<1||spaces>4||!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces)||Overlap(anchor,spaces,Monster,MonsterSpaces))return false;
+        Vector2Int mountedCell;if(Riding&&spaces>=RiderMount.Spaces)return MountedSizeChange(spaces,out mountedCell);
+        if(HasContainedCreature||spaces<1||spaces>4||!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces,riderMountId)||Overlap(anchor,spaces,Monster,MonsterSpaces))return false;
         if(spaces>=PlayerSpaces)return anchor.x<=Player.x&&anchor.y<=Player.y&&anchor.x+spaces>=Player.x+PlayerSpaces&&anchor.y+spaces>=Player.y+PlayerSpaces;
         return anchor.x>=Player.x&&anchor.y>=Player.y&&anchor.x+spaces<=Player.x+PlayerSpaces&&anchor.y+spaces<=Player.y+PlayerSpaces;
     }
-    public bool TryResizePlayerAt(int spaces,Vector2Int anchor){if(!CanResizePlayerAt(spaces,anchor))return false;var from=Player;int old=PlayerSpaces;PlayerSpaces=spaces;Player=anchor;SyncWaterPositions();MovementObserved?.Invoke(0,from,anchor,old,spaces,true);return true;}
+    public bool TryResizePlayerAt(int spaces,Vector2Int anchor){if(!CanResizePlayerAt(spaces,anchor))return false;var from=Player;int old=PlayerSpaces;CommitMountedBody(spaces,ref anchor);PlayerSpaces=spaces;Player=anchor;SyncWaterPositions();MovementObserved?.Invoke(0,from,anchor,old,PlayerSpaces,true);return true;}
     public bool FindPlayerResizePlacement(int spaces,out Vector2Int result,Vector2Int? referenceCell=null)
     {
         result=Player;double best=double.MaxValue;
@@ -191,5 +197,5 @@ public sealed partial class BattleMap
         if(player)Player=cell;else Monster=cell;return true;
     }
     public bool Lock() {if(!CanPlace(true,Player)||!CanPlace(false,Monster))return false;Locked=true;RefreshMovement();StartMonsterMovementTurn();return true;}
-    public void Unlock(){RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
+    public void Unlock(){riderMountId=0;RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
 }

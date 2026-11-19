@@ -56,7 +56,7 @@ public sealed partial class TrainingGame
         foreach(var unit in map.Summons)if(unit.Alive){
             int cells=map.WaterCells(new Vector2Int(unit.X,unit.Y),unit.Spaces);
             unit.Aquatic.ObservePosition(cells,unit.Spaces*unit.Spaces);unit.Breathing.ExhaustionImmune=unit.ExhaustionImmune;
-            unit.Breathing.Observe(unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater||worldRounds<unit.WaterBreathingExpires,cells),worldRounds,16);
+            unit.Breathing.Observe(unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater||worldRounds<unit.WaterBreathingExpires,cells),worldRounds,SummonAbility(unit,2));
         }
     }
     bool RestoreBreathingAfterRevival(bool player)

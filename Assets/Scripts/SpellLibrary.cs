@@ -93,6 +93,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Find Steed")DrawFindSteedChoices();
         else if(definition.Name=="Stoneskin")DrawStoneskinChoices();
         else if(definition.Name=="Water Breathing")DrawWaterBreathingChoices();
         else if(definition.Name=="Sleep")DrawSleepChoices();
@@ -148,6 +149,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Find Steed")return FindSteedError(directSlotLevel);
         if(spell.Name=="Stoneskin")return StoneskinError();
         if(spell.Name=="Sleep")return SleepError();
         if(spell.Name=="Water Breathing")return WaterBreathingError(directTargetPlayer,directBothTargets);
@@ -212,6 +214,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
+        if(spell.Name=="Find Steed"&&FindSteedError(slotLevel)!="")yield break;
         if(spell.Name=="Stoneskin"&&StoneskinError()!="")yield break;
         if(spell.Name=="Sleep"&&SleepError()!="")yield break;
         if(spell.Name=="Spike Growth"&&SpikeGrowthError()!="")yield break;
@@ -239,6 +242,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mage Armor"){ApplyMageArmor(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}
@@ -286,7 +290,7 @@ public sealed partial class TrainingGame
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=Entangled(targetPlayer)|combat.ConsumeGuidingLight(targetPlayer)||advantage;
-            disadvantage=Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            disadvantage=FearDisadvantage(true)||Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=AttackArmor(true,targetPlayer);
@@ -328,7 +332,7 @@ public sealed partial class TrainingGame
         yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
         if(spell.Name=="Sorcerous Burst"){var burst=new BurstDamage();yield return RollSorcerousBurstExtra(rolls,modifier,critical,burst);amount+=burst.Extra;}
         if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");if(!embedded)rolling=false;yield break;}
-        if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);ApplySteedLifeBond(playerHeal,spell.Level);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Sickness"){combat.ApplyPoison(targetPlayer);history.Insert(0,target+"中毒，至施法者下一回合结束；攻击与属性检定具有劣势。");}
         if(spell.Name=="Mind Sliver"){combat.ApplySliver(targetPlayer);history.Insert(0,target+"下一次豁免减1d4，至玩家下一回合结束失效。");}
         if(!spell.Healing){
@@ -338,7 +342,7 @@ public sealed partial class TrainingGame
             if(saveSucceeded&&spell.HalfSave)for(int i=0;i<reduced.Raw.Length;i++)reduced.Raw[i]/=2;
             amount=ResolveRayPacket(targetPlayer,reduced.Raw);
         }
-        if(spell.Healing)amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);
+        if(spell.Healing){amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);if(targetPlayer)ApplySteedLifeBond(amount,spell.Level);}
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
         if(spell.Name=="Harm"&&!saveSucceeded){int reduced=combat.ReduceMaxHp(targetPlayer,amount);history.Insert(0,"伤害术："+target+"生命上限减少 "+reduced+"，上限最低1；不恢复生命。");}
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}

@@ -15,6 +15,7 @@ public sealed partial class TrainingGame {
   GUILayout.BeginArea(new Rect(375,185,490,635));aftermathScroll=GUILayout.BeginScrollView(aftermathScroll);
   GUILayout.Label("战后施法与外部救援",heading);GUILayout.Label("外部救援仅针对玩家，不入场、视为合法且可接触目标，法术位不限。复活后手动继续，不重置HP和职业次数。",small);
   ObserveDeaths();GUILayout.Label("玩家："+combat.PlayerLifeLabel+(playerCorpse.Dead?" · 有效死亡 "+playerCorpse.Age(worldRounds)*6+"秒":"")+"\n木桩："+(combat.Hp==0?"死亡 · 有效死亡 "+monsterCorpse.Age(worldRounds)*6+"秒":"存活"),small);
+  if(steed!=null&&steed.Alive)GUILayout.Label("异界坐骑保留 · HP "+steed.Hp+" / "+steed.MaxHp+"；战后暂停操控，恢复战斗后再行动。",small);
   if(bestialSpirit.Active)GUILayout.Label("召唤物保留 · HP "+bestialSpirit.Unit.Hp+" / "+bestialSpirit.Unit.MaxHp+" · 最多剩余 "+System.Math.Max(0,bestialSpirit.Expires-worldRounds)*6+" 秒。战后暂停操控，时间照常流逝；恢复战斗后再行动。",small);
   if(GUILayout.Button("部署 / 操控救援搬运者",button)&&!rolling){panel="rescue";GUILayout.EndScrollView();GUILayout.EndArea();return;}
   revivalWilling=GUILayout.Toggle(revivalWilling,"确认目标灵魂愿意复活",label);

@@ -33,7 +33,7 @@ public sealed partial class BattleMap
             var from=new Vector2Int(unit.X,unit.Y);
             int cost=WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone);
             if(!unit.SpendMovement(cost))return false;
-            unit.X=cell.x;unit.Y=cell.y;SyncWaterPositions();MovementObserved?.Invoke(unit.Id,from,cell,unit.Spaces,unit.Spaces,false);return true;
+            unit.X=cell.x;unit.Y=cell.y;SyncRiderToMount(unit);SyncWaterPositions();MovementObserved?.Invoke(unit.Id,from,cell,unit.Spaces,unit.Spaces,false);if(unit.Id==riderMountId)MovementObserved?.Invoke(0,from,cell,unit.Spaces,unit.Spaces,false);return true;
         }
         return false;
     }

@@ -10,7 +10,7 @@ public sealed class DruidFeatures
         anchor=map.Player;
         if(!map.Locked||!combat.PlayerCanAct||!combat.BonusActionAvailable||Remaining(level)<=0||!map.FindPlayerResizePlacement(spaces,out anchor,referenceCell))return false;
         if(!combat.TryUseBonusAction())return false;
-        TryUse(level);map.TryResizePlayerAt(spaces,anchor);return true;
+        TryUse(level);map.TryResizePlayerAt(spaces,anchor);anchor=map.Player;return true;
     }
     public void ShortRest(){WildShapesUsed=System.Math.Max(0,WildShapesUsed-1);}
     public void LongRest(){WildShapesUsed=0;}

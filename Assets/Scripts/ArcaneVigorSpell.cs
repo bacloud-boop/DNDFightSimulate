@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
             yield return PresentRoll(sides,rolls,"累计骰值 "+amount+"；本次生命骰已消耗");
         }
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),healing=System.Math.Max(0,amount+modifier);
-        int actual=combat.HealPlayer(healing);
+        int actual=combat.HealPlayer(healing);ApplySteedLifeBond(actual,2);
         history.Insert(0,"活力奥法：生命骰合计 "+amount+" + 施法调整值 "+modifier+" = "+healing+"；实际恢复 "+actual+" HP。生命骰与短休共享，不因治疗受阻或满血返还。");
         System.Array.Clear(vigorDice,0,vigorDice.Length);
     }

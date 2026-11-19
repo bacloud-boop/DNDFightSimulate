@@ -11,6 +11,7 @@ public sealed partial class BattleMap
     public bool BeginContainment(bool targetPlayer)
     {
         if(!Locked||HasContainedCreature||DistanceFeet>5)return false;
+        if(targetPlayer&&Riding&&!DismountRider())return false;
         containedActor=targetPlayer?0:1;SyncContainedPosition();return true;
     }
     // This checks geometry only. Escape actions, movement costs and creature-size permissions

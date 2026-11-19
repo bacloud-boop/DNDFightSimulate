@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
         if(polymorph.Active)return "请先结束现有变形术。";
         if(map.HasContainedCreature)return "请先完成被吞目标的放出流程。";
         if(!polymorphAnchorChosen||polymorphTargetDraft!=directTargetPlayer)return "请选择合法变形占地。";
-        int original=directTargetPlayer?map.PlayerSpaces:map.MonsterSpaces;
+        int original=directTargetPlayer?map.RiderBodySpaces:map.MonsterSpaces;
         return map.CanTransformAt(directTargetPlayer,BeastSpaces(form),polymorphAnchor,original)?"":"该占地无法容纳形态及原形恢复。";
     }
     void DrawPolymorphChoices()
@@ -51,7 +51,7 @@ public sealed partial class TrainingGame
             if(GUILayout.Button((polymorphForm==form.name?"✓ ":"")+attack.Chinese+" · CR "+form.challengeLabel+" · 临时生命 "+form.hp,button)){polymorphForm=form.name;polymorphAnchorChosen=false;}
         }
         var selected=FindBeast(polymorphForm);if(selected==null)return;DrawBeastWeight(selected);
-        var body=directTargetPlayer?map.Player:map.Monster;int bodySpaces=directTargetPlayer?map.PlayerSpaces:map.MonsterSpaces;
+        var body=directTargetPlayer?map.Player:map.Monster;int bodySpaces=directTargetPlayer?map.RiderBodySpaces:map.MonsterSpaces;
         GUILayout.Label("变形占地（与当前占地重叠）",small);
         for(int y=body.y-BeastSpaces(selected)+1;y<body.y+bodySpaces;y++)for(int x=body.x-BeastSpaces(selected)+1;x<body.x+bodySpaces;x++){
             var cell=new Vector2Int(x,y);if(!map.CanTransformAt(directTargetPlayer,BeastSpaces(selected),cell,bodySpaces))continue;
@@ -60,7 +60,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolvePolymorph(bool player,int caster)
     {
-        var form=FindBeast(polymorphForm);int original=player?map.PlayerSpaces:map.MonsterSpaces;
+        var form=FindBeast(polymorphForm);int original=player?map.RiderBodySpaces:map.MonsterSpaces;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         EndConcentration("开始新的专注法术");
         int value=UnityEngine.Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(3):AcidSplash.Modifier(EffectiveMonsterAbility(3));

@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         sensory.Clear();enfeeblement.Clear();
         monsterSpells.Reset();
         rescueCarrier.Reset();playerCorpseLoad.Clear();monsterCorpseLoad.Clear();
-        summonTurns.Reset();summonActing=summonEndRequested=false;
+        DismissSteed();mountFallPending=false;steedFears.Clear();summonTurns.Reset();summonActing=summonEndRequested=false;
         shillelagh.Clear();
         weaponGrip.Reset();
         ammunition.Reset();

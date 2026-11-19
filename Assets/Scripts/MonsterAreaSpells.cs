@@ -45,7 +45,7 @@ public sealed partial class TrainingGame
                 modifier=PlayerSavingThrowModifier(spell.SaveAbility);
                 var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment,spell.SaveAbility,center);modifier+=adjustment.Value;
             }else{
-                modifier=AcidSplash.Modifier(bestialSpirit.Rules.Ability(spell.SaveAbility))+unit.Breathing.D20Penalty;
+                modifier=AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
                 if(spell.SaveAbility==1){modifier+=map.CreatureCoverFromPoint(center,id);if(unit.Dodging&&unit.EffectiveSpeed>0){second=Random.Range(1,21);value=Mathf.Max(first,second);}if(unit.Restrained){second=Random.Range(1,21);value=Mathf.Min(first,second);}}
             }
             dice="木桩"+spell.Chinese+" · "+(player?"玩家":unit.Name)+PlayerAttributes.Names[spell.SaveAbility]+"豁免";

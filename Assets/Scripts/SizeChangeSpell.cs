@@ -55,7 +55,8 @@ public sealed partial class TrainingGame
             yield return PresentRoll(20,roll.Dice,"变巨／缩小 · 体质豁免 "+roll.Value+" + "+modifier+" / DC "+dc);if((long)roll.Value+modifier>=dc){history.Insert(0,"变巨／缩小术：目标豁免成功，法术无效。");yield break;}}
         int baseSize=ProspectiveSize(player),changed=SizeChangeEffect.ChangedSize(baseSize,delta);if(changed<0)yield break;
         if(!map.CanTransformAt(player,CreatureProfile.SpacesForSize(changed),anchor,SizeRecovery(player,baseSize,delta))&&!FindSizePlacement(player,CreatureProfile.SpacesForSize(changed),SizeRecovery(player,baseSize,delta),out anchor))yield break;
-        var reference=FormReferenceCell;if(!map.TransformAt(player,CreatureProfile.SpacesForSize(changed),anchor,SizeRecovery(player,baseSize,delta))){history.Insert(0,"体型占地在结算时失效，未改变体型。");yield break;}
+        var reference=FormReferenceCell;bool wasRiding=map.Riding;if(!map.TransformAt(player,CreatureProfile.SpacesForSize(changed),anchor,SizeRecovery(player,baseSize,delta))){history.Insert(0,"体型占地在结算时失效，未改变体型。");yield break;}
+        if(wasRiding&&!map.Riding)reference=map.Player;
         sizeChange.Begin(player,delta,worldRounds);if(player&&IsWildShaped)wildNormalOffset=reference-map.Player;
         concentrationSpell="变巨／缩小术";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+10;fighter.CancelAttackAction();actionWeapon=null;SyncTimedBuffs();
         history.Insert(0,(player?"玩家":"木桩")+"体型变为"+CreatureProfile.SizeNames[changed]+"；力量检定与力量豁免"+(delta>0?"优势，武器或徒手命中额外1d4。":"劣势，武器或徒手命中减1d4，不能将伤害降至1以下。"));
@@ -78,7 +79,7 @@ public sealed partial class TrainingGame
     {
         if(!sizeChange.Applies(true))return druid.TryBeginWildShape(classes[11],combat,map,BeastSpaces(form),out anchor,reference);
         if(!FindSizedWildPlacement(form,out anchor)||!combat.TryUseBonusAction())return false;
-        druid.TryUse(classes[11]);return map.TransformAt(true,CreatureProfile.SpacesForSize(SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)),anchor,Math.Max(BeastSpaces(form),CreatureProfile.SpacesForSize(2+sizeChange.Delta)));
+        druid.TryUse(classes[11]);bool changed=map.TransformAt(true,CreatureProfile.SpacesForSize(SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)),anchor,Math.Max(BeastSpaces(form),CreatureProfile.SpacesForSize(2+sizeChange.Delta)));anchor=map.Player;return changed;
     }
     void RestoreSizedPlayerForm(Vector2Int reference)
     {
