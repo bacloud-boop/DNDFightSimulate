@@ -11,6 +11,7 @@ public sealed partial class TrainingGame
     {
         var targets=new List<int>();
         if(!combat.PlayerDead&&!map.IsContained(true)&&BattleMap.BodyDistance(center,spaces,map.Player,map.PlayerSpaces)<=radius&&(!sight||MonsterSeesPlayer))targets.Add(0);
+        foreach(var unit in map.Summons)if(unit.Alive&&BattleMap.BodyDistance(center,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius&&(!sight||MonsterCanSeeTarget(unit.Id)))targets.Add(unit.Id);
         return targets;
     }
     bool TryPlanMonsterArea(DirectSpell spell,out Vector2Int center)
@@ -35,15 +36,19 @@ public sealed partial class TrainingGame
     {
         int radius=MonsterSpellCatalog.Radius(spell);var targets=MonsterAreaTargets(center,radius,spell.EmanationRadius>0?map.MonsterSpaces:1,spell.Name=="Word of Radiance");var failed=new HashSet<int>();
         foreach(int id in targets){
-            bool player=id==0;
-            bool automatic=player&&spell.SaveAbility==1&&(combat.PlayerHp==0||combat.PlayerParalyzed);
+            bool player=id==0;var unit=player?null:FindSummon(id);
+            bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
             int first=Random.Range(1,21),second=0,value=first;
-            int modifier=PlayerSavingThrowModifier(spell.SaveAbility);
+            int modifier;
             if(player){
+                var save=RollArmorSave(true,spell.SaveAbility);value=save.Value;first=save.Dice[0];if(save.Dice.Length>1)second=save.Dice[1];
                 modifier=PlayerSavingThrowModifier(spell.SaveAbility);
-                var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment);modifier+=adjustment.Value;
+                var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment,spell.SaveAbility,center);modifier+=adjustment.Value;
+            }else{
+                modifier=AcidSplash.Modifier(bestialSpirit.Rules.Ability(spell.SaveAbility))+unit.Breathing.D20Penalty;
+                if(spell.SaveAbility==1){modifier+=map.CreatureCoverFromPoint(center,id);if(unit.Dodging&&unit.EffectiveSpeed>0){second=Random.Range(1,21);value=Mathf.Max(first,second);}if(unit.Restrained){second=Random.Range(1,21);value=Mathf.Min(first,second);}}
             }
-            dice="木桩"+spell.Chinese+" · "+"玩家"+PlayerAttributes.Names[spell.SaveAbility]+"豁免";
+            dice="木桩"+spell.Chinese+" · "+(player?"玩家":unit.Name)+PlayerAttributes.Names[spell.SaveAbility]+"豁免";
             if(!automatic)yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+modifier+" / DC "+MonsterSpellDc);
             if(automatic||(long)value+modifier<MonsterSpellDc)failed.Add(id);
         }
@@ -56,6 +61,7 @@ public sealed partial class TrainingGame
         foreach(int id in targets){
             int raw=failed.Contains(id)?damage:spell.HalfSave?damage/2:0;
             if(id==0){playerDamage=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(spell.DamageType));combat.ApplyPlayerDamage(playerDamage);history.Insert(0,"木桩"+spell.Chinese+"对玩家造成 "+playerDamage+" "+spell.DamageType+"伤害。");}
+            else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;int amount=SilenceUnitImmune(unit,spell.DamageType)?0:unit.Aquatic.Submerged&&spell.DamageType=="火焰"?raw/2:raw;unit.Damage(amount);history.Insert(0,"木桩"+spell.Chinese+"对"+unit.Name+"造成 "+amount+" "+spell.DamageType+"伤害。");}
         }
         if(targets.Contains(0))yield return MaintainConcentration(playerDamage);
     }

@@ -32,7 +32,8 @@ public sealed partial class TrainingGame
     {
         var form=FindBeast(polymorphForm);
         if(form==null||form.fly>0||BeastAttack.Find(form.name)==null)return "此野兽战斗动作尚未接入或属于暂缓的飞行形态。";
-        int target=directTargetPlayer?classes.TotalLevel*8:ChallengeRatings.Eighths(monsterProfile.ChallengeIndex);
+        if((directTargetPlayer||polymorphFailSave)&&!CanKeepCorpseInForm(directTargetPlayer,form))return "新形态无法继续搬运当前遗体，请先放下。";
+        int target=PolymorphEffect.TargetChallengeLimit(directTargetPlayer?(int?)null:ChallengeRatings.Eighths(monsterProfile.ChallengeIndex),directTargetPlayer?classes.TotalLevel:0);
         if(!PolymorphEffect.AllowedChallenge((int)Math.Round(form.challenge*8),target))return "野兽CR高于目标CR或职业总等级。";
         if(polymorph.Active)return "请先结束现有变形术。";
         if(map.HasContainedCreature)return "请先完成被吞目标的放出流程。";
@@ -44,11 +45,12 @@ public sealed partial class TrainingGame
     {
         if(polymorphTargetDraft!=directTargetPlayer){polymorphTargetDraft=directTargetPlayer;polymorphAnchorChosen=false;}
         GUILayout.Label("当前开放已有完整攻击数据的10种地面形态；其他野兽仍在接入。",small);
+        GUILayout.Label("无CR且无职业等级的召唤物暂不能成为变形术目标；不将其视为CR 0。",small);
         polymorphFailSave=GUILayout.Toggle(polymorphFailSave,"目标自愿放弃本次豁免",label);
         foreach(var attack in BeastAttack.Supported){var form=FindBeast(attack.Form);if(form==null||form.fly>0)continue;
             if(GUILayout.Button((polymorphForm==form.name?"✓ ":"")+attack.Chinese+" · CR "+form.challengeLabel+" · 临时生命 "+form.hp,button)){polymorphForm=form.name;polymorphAnchorChosen=false;}
         }
-        var selected=FindBeast(polymorphForm);if(selected==null)return;
+        var selected=FindBeast(polymorphForm);if(selected==null)return;DrawBeastWeight(selected);
         var body=directTargetPlayer?map.Player:map.Monster;int bodySpaces=directTargetPlayer?map.PlayerSpaces:map.MonsterSpaces;
         GUILayout.Label("变形占地（与当前占地重叠）",small);
         for(int y=body.y-BeastSpaces(selected)+1;y<body.y+bodySpaces;y++)for(int x=body.x-BeastSpaces(selected)+1;x<body.x+bodySpaces;x++){

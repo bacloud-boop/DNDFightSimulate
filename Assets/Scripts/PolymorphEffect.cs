@@ -13,6 +13,12 @@ public sealed class PolymorphEffect
     public int Darkvision {get;private set;}
     public int Blindsight {get;private set;}
     public int Spaces {get;private set;}
+    // Missing CR is distinct from CR 0. Do not infer a CR from a summon slot.
+    public static int TargetChallengeLimit(int? challengeEighths,int classLevels)
+    {
+        if(classLevels>0&&classLevels<=20)return classLevels*8;
+        return challengeEighths.HasValue&&challengeEighths.Value>=0&&challengeEighths.Value<=240?challengeEighths.Value:-1;
+    }
     public static bool AllowedChallenge(int beastEighths,int targetEighths)=>beastEighths>=0&&targetEighths>=0&&beastEighths<=targetEighths;
     public void Begin(bool player,string form,long now,int armor,int speed,int darkvision,int blindsight,int spaces,int[] scores,int[] saveModifiers,int[] skillModifiers)
     {

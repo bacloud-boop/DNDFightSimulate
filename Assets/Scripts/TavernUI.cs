@@ -67,7 +67,8 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        if(!greaseResolving&&!rolling&&PendingTerrainCount>0)StartCoroutine(DrainGreaseEntries());
+        SyncWeaponInventory();ObserveWaterBreathing();
+        if(!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();SyncTimedBuffs();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath)knownFormReplacement=false;
@@ -85,7 +86,8 @@ public sealed partial class TrainingGame
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
         if(page=="battle" && spellTargeting)DrawSpellTargeting(new Rect(600,110,400,400));
         DrawSpellTooltip();
-        DrawReactionPrompt();DrawShieldPrompt();DrawDefenseOrder();DrawTacticalMindPrompt();DrawTemporaryHpChoice();DrawContainmentRelease();DrawCounterspellPrompt();
+        DrawReactionPrompt();DrawShieldPrompt();DrawDefenseOrder();DrawTacticalMindPrompt();DrawTemporaryHpChoice();DrawContainmentRelease();DrawCounterspellPrompt();DrawSensorySaveOrder();
+        DrawSummonOpportunityOrder();
     }
     void DrawHome()
     {
@@ -161,8 +163,12 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1015,430,205,48),"战术转进 · "+map.TacticalMovementRemaining+"尺",!spellTargeting&&!rolling&&panel==""&&draggingToken<0&&!PlayerPolymorphed&&classes[0]>=5))tacticalMovement=true;
         GUI.Label(new Rect(1015,485,205,36),tacticalMovement?"当前：战术转进（免借机）":"当前：普通移动",new GUIStyle(lightTitle){fontSize=15});
         if(combat.Aftermath&&Btn(new Rect(380,459,205,48),"战后施法 / 外部救援",!rolling&&panel==""&&draggingToken<0))panel="aftermath";
+        if(!combat.Aftermath&&map.Summons.Count>0&&Btn(new Rect(380,459,205,48),"召唤物指令",!rolling&&panel==""&&draggingToken<0))panel="summons";
         bool canAct=!combat.Aftermath&&!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
+        if(combat.MonsterSleepStage>0&&Btn(new Rect(1015,450,205,32),"摇醒木桩 · 1动作",canAct&&map.DistanceFeet<=5&&combat.ActionAvailable))WakeMonster();
         if(combat.PlayerProne&&Btn(new Rect(1015,485,205,36),"起身 · 半速移动",canAct&&combat.PlayerCanAct&&map.PlayerSpeed>0&&map.MovementRemaining>=map.PlayerSpeed/2)&&map.SpendPlayerMovement(map.PlayerSpeed/2)){combat.PlayerProne=false;combat.MarkBattleStarted();history.Insert(0,"玩家花费半速移动起身。");}
+        bool canChangeWaterLayer=!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
+        if(map.WaterCells(map.Player,map.PlayerSpaces)>0&&Btn(new Rect(1015,520,205,30),map.PlayerAquatic.Submerged?"浮出水面 · 5尺":"潜入水下 · 5尺",canChangeWaterLayer&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&(map.PlayerAquatic.Submerged||AquaticState.FullyInWater(map.WaterCells(map.Player,map.PlayerSpaces),map.PlayerSpaces*map.PlayerSpaces))&&map.MovementRemaining>=AquaticState.SwitchCost)&&map.SwitchWaterState(true,!map.PlayerAquatic.Submerged)){combat.MarkBattleStarted();history.Insert(0,(map.PlayerAquatic.Submerged?"玩家潜入水下":"玩家浮出水面")+"，消耗5尺移动力，不消耗动作或附赠动作。");}
         bool attackInRange=PlayerInBeastForm?map.DistanceFeet<=5:(fighter.AttacksRemaining>0?actionWeapon:selectedWeapon).CanReach(map.DistanceFeet);
         bool bonusInRange=selectedWeapon.CanReach(map.DistanceFeet);
         if(Btn(new Rect(395,555,260,48),classes[0]>=1?"回气（附赠动作） · 剩余 "+fighter.WindRemaining(classes[0])+" / "+fighter.WindMaximum(classes[0]):"回气 · 战士 1 级解锁",canAct&&!PlayerPolymorphed&&fighter.WindRemaining(classes[0])>0&&combat.BonusActionAvailable))SecondWind();

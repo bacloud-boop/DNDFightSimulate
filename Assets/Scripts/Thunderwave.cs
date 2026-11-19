@@ -20,8 +20,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("沿源点所在面调整区域",small);thunderAlignment=GUILayout.SelectionGrid(thunderAlignment,new[]{"前端","居中","后端"},1,new GUIStyle(button){fontSize=16,fixedHeight=32});
         thunderwaveIncludeSelf=GUILayout.Toggle(thunderwaveIncludeSelf,"将源点自身纳入范围",label);
         GUILayout.Label("15尺立方（3×3格）\n目标："+(monster?"木桩":"无木桩")+(thunderwaveIncludeSelf?"、玩家":"")+"\n体质豁免；失败推离10尺。",small);
-        bool previous=GUI.enabled;GUI.enabled=!rolling&&combat.MagicActionAvailable&&CanCastInCurrentForm&&SpellVoiceAllowed(true,"Thunderwave");
-        if(GUILayout.Button("确认施法",button)){var origin=map.Player;int originSpaces=map.PlayerSpaces;int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(thunderCaster)]);if(SpellVoiceAllowed(true,"Thunderwave")&&combat.TryUseMagicAction()){spellTargeting=false;thunderwaveTargeting=false;StartCoroutine(ResolveThunderwave(monster,thunderwaveIncludeSelf,dc,thunderSlot,origin,originSpaces));}}
+        bool previous=GUI.enabled;GUI.enabled=!rolling&&combat.MagicActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed("Thunderwave");
+        if(GUILayout.Button("确认施法",button)){var origin=map.Player;int originSpaces=map.PlayerSpaces;int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(thunderCaster)]);if(SpellVoiceAllowed(true,"Thunderwave")&&combat.TryUseMagicAction()){PlayerCastWhileSubmerged("Thunderwave");spellTargeting=false;thunderwaveTargeting=false;StartCoroutine(ResolveThunderwave(monster,thunderwaveIncludeSelf,dc,thunderSlot,origin,originSpaces));}}
         GUI.enabled=previous;if(GUILayout.Button("取消",button)){spellTargeting=false;thunderwaveTargeting=false;}
         GUILayout.EndArea();
     }

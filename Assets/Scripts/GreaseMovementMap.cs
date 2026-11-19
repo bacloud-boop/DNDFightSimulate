@@ -4,7 +4,6 @@ using UnityEngine;
 public sealed partial class BattleMap
 {
  public Action<int,Vector2Int,Vector2Int,int,int,bool> MovementObserved;
- public bool MonsterCrawling;
  public Func<Vector2Int,int,bool> SwimmingTerrain;
  public RouteCostMeter RouteMeter(Vector2Int from,Vector2Int to,bool crawling){int total=0;var previous=from;foreach(var cell in MovementAnchors(from,to)){total+=FeetBetween(previous,cell);previous=cell;}return new RouteCostMeter(FeetBetween(from,to),total,crawling);}
  public int RouteStepCost(RouteCostMeter meter,Vector2Int from,Vector2Int to,int spaces,int swimSpeed)=>meter.Next(FeetBetween(from,to),swimSpeed<=0&&SwimmingTerrain!=null&&SwimmingTerrain(to,spaces),DifficultTerrain!=null&&DifficultTerrain(to.x,to.y,spaces));

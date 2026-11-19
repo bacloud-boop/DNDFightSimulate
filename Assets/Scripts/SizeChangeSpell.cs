@@ -51,7 +51,7 @@ public sealed partial class TrainingGame
     void DrawSizeChangePreview(Rect board){if(panel!="spells"||selectedSpellName!="Enlarge/Reduce"||!sizeAnchorChosen)return;int changed=SizeChangeEffect.ChangedSize(ProspectiveSize(directTargetPlayer),sizeEnlarge?1:-1);if(changed>=0)Fill(BodyRect(board,sizeAnchor,CreatureProfile.SpacesForSize(changed)),SizeChangeError(directTargetPlayer)==""?new Color(.3f,.7f,.3f,.4f):new Color(.8f,.1f,.1f,.4f));}
     IEnumerator ResolveSizeChange(bool player,int caster,int delta,bool willing,Vector2Int anchor)
     {
-        if(!willing){var roll=RollEnfeeblementSave(player,2);long dc=8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
+        if(!willing){var roll=RollArmorSave(player,2);long dc=8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,roll.Dice,"变巨／缩小 · 体质豁免 "+roll.Value+" + "+modifier+" / DC "+dc);if((long)roll.Value+modifier>=dc){history.Insert(0,"变巨／缩小术：目标豁免成功，法术无效。");yield break;}}
         int baseSize=ProspectiveSize(player),changed=SizeChangeEffect.ChangedSize(baseSize,delta);if(changed<0)yield break;
         if(!map.CanTransformAt(player,CreatureProfile.SpacesForSize(changed),anchor,SizeRecovery(player,baseSize,delta))&&!FindSizePlacement(player,CreatureProfile.SpacesForSize(changed),SizeRecovery(player,baseSize,delta),out anchor))yield break;
@@ -90,8 +90,8 @@ public sealed partial class TrainingGame
     {
         if(Entangled(player))return 0;
         if(!sizeChange.Applies(player))return speed;
-        long gear=player?PlayerEquipmentWeight:MonsterEquipmentWeight;
-        return CarryingRules.DragSpeed(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),EffectiveCreatureSize(player),gear,speed);
+        var load=player?playerCorpseLoad:monsterCorpseLoad;long gear=player?PlayerEquipmentWeight:MonsterEquipmentWeight;
+        return CarryingRules.DragSpeedOunces(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),EffectiveCreatureSize(player),gear+(load.Loaded?load.WeightOunces:0),speed);
     }
     IEnumerator ApplySizeWeaponDamage(bool player,long[] raw,int type,bool critical,RayDamage result)
     {

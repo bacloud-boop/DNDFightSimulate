@@ -13,7 +13,8 @@ public sealed partial class TrainingGame
     void EndConcentration(string reason)
     {
         if(!IsConcentrating)return;
-        spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();
+        ClearSleepEffects();
+        spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();
         silence.Clear();
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");
@@ -21,6 +22,7 @@ public sealed partial class TrainingGame
     }
     void RefreshConcentration()
     {
+        RefreshBestialSpirit();RefreshSleepConcentration();
         if(!IsConcentrating||resolvingHoldPerson)return;
         if(combat.Hp==0)combat.MonsterParalyzed=false;
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndConcentration("施法者失能或死亡");

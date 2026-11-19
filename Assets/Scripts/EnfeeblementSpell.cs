@@ -1,13 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly EnfeeblementEffect enfeeblement=new EnfeeblementEffect();
-    sealed class EnfeeblementSaveRoll {public int Value;public int[] Dice;}
-    EnfeeblementSaveRoll RollEnfeeblementSave(bool player,int ability,bool disadvantage=false){
-        disadvantage|=ability==1&&Entangled(player);disadvantage|=SizeStrengthDisadvantage(player,ability)||RayStrengthDisadvantage(player,ability);bool advantage=SizeStrengthAdvantage(player,ability);int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
-        return new EnfeeblementSaveRoll{Value=second>0?(advantage?Mathf.Max(first,second):Mathf.Min(first,second)):first,Dice=second>0?new[]{first,second}:new[]{first}};
-    }
     bool RayWeakened(bool player)=>enfeeblement.Weakened(player,worldRounds,combat.Round);
     bool RayStrengthDisadvantage(bool player,int ability)=>enfeeblement.StrengthDisadvantage(player,ability,worldRounds,combat.Round);
     bool RayAttackDisadvantage(bool player,int ability){
@@ -26,8 +21,8 @@ public sealed partial class TrainingGame
     IEnumerator ResolveEnfeeblement(bool player,int caster)
     {
         long dc=8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
-        var roll=RollEnfeeblementSave(player,2);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
-        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
+        var roll=RollArmorSave(player,2);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment,2);modifier+=adjustment.Value;
         dice="衰弱射线 · "+(player?"玩家":"木桩")+"体质豁免";
         yield return PresentRoll(20,roll.Dice,roll.Value+" + "+modifier+" / DC "+dc);
         bool failed=(long)roll.Value+modifier<dc;
@@ -38,8 +33,8 @@ public sealed partial class TrainingGame
     IEnumerator RepeatEnfeeblementSave(bool player)
     {
         if(!RayWeakened(player)||(player?combat.PlayerDead:combat.Hp==0))yield break;
-        var roll=RollEnfeeblementSave(player,2);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
-        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
+        var roll=RollArmorSave(player,2);int modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment,2);modifier+=adjustment.Value;
         dice="衰弱射线 · 回合末体质豁免";
         yield return PresentRoll(20,roll.Dice,roll.Value+" + "+modifier+" / DC "+enfeeblement.Dc);
         if((long)roll.Value+modifier>=enfeeblement.Dc)EndConcentration("目标通过衰弱射线重复豁免");

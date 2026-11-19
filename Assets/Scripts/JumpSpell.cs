@@ -4,7 +4,15 @@ public sealed partial class TrainingGame
     readonly JumpEffect jumpEffect=new JumpEffect();
     string jumpColumn="1",jumpRow="1";
     bool jumpWilling;
-    bool JumpEnvironmentAllowed(bool player)=>JumpEffect.EnvironmentAllowed(false,false,true,player?combat.PlayerProne:combat.MonsterProne);
+    bool JumpEnvironmentAllowed(bool player)
+    {
+        var load=player?playerCorpseLoad:monsterCorpseLoad;
+        bool melded=player?PlayerInBeastForm:MonsterPolymorphed;
+        int size=EffectiveCreatureSize(player);
+        long gear=player?PlayerEquipmentWeight:melded?0:monsterWeight.Weight.GearOunces;
+        bool fits=load.FitsFormOunces(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),size,gear,melded);
+        return JumpEffect.EnvironmentAllowed((player?map.PlayerAquatic:map.MonsterAquatic).Submerged,load.Dragging,fits,player?combat.PlayerProne:combat.MonsterProne);
+    }
     bool CanUseJump(bool player,Vector2Int cell,bool tactical=false)=>JumpEnvironmentAllowed(player)&&jumpEffect.Available(player,worldRounds,combat.Round)&&map.CanJump(player,cell,tactical);
     string JumpSpellError(bool player,int slot,bool both)
     {

@@ -17,6 +17,7 @@ public sealed partial class TrainingGame
         else GUI.Label(rect,player?"人":"桩",new GUIStyle(centered){fontSize=Mathf.Max(10,(int)(rect.width*.65f)),normal={textColor=Color.white}});
     }
     string movementMessage="拖动玩家棋子移动。";
+    int terrainBrush;
     void DrawMap(Rect board,bool allowDrag)
     {
         bool moving=page=="battle" && map.Locked;
@@ -25,6 +26,7 @@ public sealed partial class TrainingGame
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++) {
             var rect=new Rect(board.x+x*size,board.y+y*size,size,size);
             if((x+y)%2==0)Fill(rect,new Color(.32f,.21f,.09f,.10f));
+            if(map.IsWater(new Vector2Int(x,y)))Fill(rect,new Color(.06f,.38f,.62f,.58f));
             if(moving && allowDrag && map.CanMoveTo(new Vector2Int(x,y),tacticalMovement))Fill(rect,new Color(.12f,.40f,.26f,.16f));
         }
         for(int i=0;i<=map.Size;i++) {
@@ -35,16 +37,26 @@ public sealed partial class TrainingGame
         DrawDetectionMap(board);
         DrawMonsterArea(board);
         DrawSilenceMap(board);
+        if(page=="deployment"&&terrainBrush>0&&panel==""&&!rolling){
+            var paintEvent=Event.current;var pointer=BoardPointer();
+            if(board.Contains(pointer)&&(paintEvent.type==EventType.MouseDown||paintEvent.type==EventType.MouseDrag)&&paintEvent.button==0){
+                var cell=new Vector2Int((int)((pointer.x-board.x)/size),(int)((pointer.y-board.y)/size));
+                if(map.SetWater(cell,terrainBrush==1))deploymentMessage=terrainBrush==1?"已涂绘水域格。":"已恢复陆地格。";
+                paintEvent.Use();
+            }
+        }
         DrawSpikeGrowthArea(board);DrawEntangleArea(board);DrawGreaseArea(board);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
-        if(draggingToken!=0&&!map.IsContained(true))Token(playerRect,true);
-        if(draggingToken!=1&&!map.IsContained(false))Token(monsterRect,false);
+        if(draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
+        if(draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
         if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
-        if(!allowDrag || (map.Locked&&!moving))return;
+        DrawGroundWeapons(board);DrawRescueMarker(board);
+        DrawSummonMarkers(board);
+        if(!allowDrag || (map.Locked&&!moving)||(page=="deployment"&&terrainBrush>0))return;
         int id=GUIUtility.GetControlID(23891,FocusType.Passive);
         var e=Event.current;Vector2 point=BoardPointer();
-        bool playerCanDrag=!map.IsContained(true)&&playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
+        bool playerCanDrag=!map.IsContained(true)&&!map.IsCarried(true)&&playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
         if(e.type==EventType.MouseDown && e.button==0 && (playerCanDrag||(!moving&&monsterRect.Contains(point)))) {
             draggingToken=playerCanDrag?0:1;var grabbed=playerCanDrag?playerRect:monsterRect;dragOffset=new Vector2((point.x-grabbed.x)/size,(point.y-grabbed.y)/size);dragControl=id;GUIUtility.hotControl=id;e.Use();
         }
@@ -57,7 +69,7 @@ public sealed partial class TrainingGame
             Token(new Rect(point.x-dragOffset.x*size,point.y-dragOffset.y*size,size*spaces,size*spaces),draggingToken==0,true);
             if(moving) {
                 int cost=map.PlayerMovementCost(cell);
-                movementMessage="本次 "+cost+" 尺\n距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,cell)+" 尺\n移动后剩余 "+(map.MovementBudget(tacticalMovement)-cost)+" 尺\n"+(legal?"松手对齐占地网格":"不可移动到此位置");
+                movementMessage=cost==int.MaxValue?"不可移动：完整占地超出地图。":"本次消耗 "+cost+" 尺移动力\n距回合起点 "+BattleMap.FeetBetween(map.RoundStartPlayer,cell)+" 尺\n移动后剩余 "+(map.MovementBudget(tacticalMovement)-cost)+" 尺\n"+(legal?"松手对齐占地网格":"不可移动到此位置");
             }
             if(e.type==EventType.MouseDrag)e.Use();
             if(e.type==EventType.KeyDown && e.keyCode==KeyCode.Escape) {draggingToken=-1;GUIUtility.hotControl=0;movementMessage="已取消本次移动。";e.Use();return;}
@@ -80,6 +92,11 @@ public sealed partial class TrainingGame
         for(int i=0;i<3;i++)if(Btn(new Rect(390+i*275,125,255,46),(map.Selected==i?"✓ ":"")+BattleMap.Names[i]+" · "+BattleMap.Sizes[i]+"×"+BattleMap.Sizes[i],!rolling&&panel==""&&draggingToken<0))map.Select(i);
         GUI.Label(new Rect(390,180,820,40),"每格 5 尺 · 距离 "+map.DistanceFeet+" 尺 · 玩家占地 "+map.PlayerSpaces+"×"+map.PlayerSpaces+"，木桩 "+map.MonsterSpaces+"×"+map.MonsterSpaces+"格",centered);
         DrawMap(new Rect(550,225,500,500),!rolling&&panel=="");
+        bool editTerrain=!rolling&&panel==""&&draggingToken<0;
+        if(Btn(new Rect(390,245,140,48),(terrainBrush==0?"✓ ":"")+"移动棋子",editTerrain))terrainBrush=0;
+        if(Btn(new Rect(390,305,140,48),(terrainBrush==1?"✓ ":"")+"涂绘水域",editTerrain))terrainBrush=1;
+        if(Btn(new Rect(390,365,140,48),(terrainBrush==2?"✓ ":"")+"涂绘陆地",editTerrain))terrainBrush=2;
+        if(Btn(new Rect(390,425,140,48),"清空水域",editTerrain))map.ClearWater();
         GUI.Label(new Rect(390,735,820,35),deploymentMessage,centered);
         if(Btn(new Rect(590,787,420,48),"开始战斗 · 锁定位置",!rolling&&panel==""&&draggingToken<0)) {
             if(map.Lock()){map.StartMonsterMovementTurn(combat.MonsterSpeed);page="battle";history.Insert(0,"部署完成："+BattleMap.Names[map.Selected]+"，玩家占地左上格("+(map.Player.x+1)+","+(map.Player.y+1)+")，木桩占地左上格("+(map.Monster.x+1)+","+(map.Monster.y+1)+")，距离 "+map.DistanceFeet+" 尺。");}

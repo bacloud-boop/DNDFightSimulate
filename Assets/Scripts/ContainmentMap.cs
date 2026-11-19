@@ -6,8 +6,8 @@ public sealed partial class BattleMap
     int containedActor=-1;
     public bool HasContainedCreature=>containedActor>=0;
     public bool IsContained(bool player)=>containedActor==(player?0:1);
-    public int OccupiedSpaces(bool player)=>IsContained(player)?0:player?PlayerSpaces:MonsterSpaces;
-    void SyncContainedPosition(){if(IsContained(true))Player=Monster;else if(IsContained(false))Monster=Player;}
+    public int OccupiedSpaces(bool player)=>IsContained(player)||IsCarried(player)?0:player?PlayerSpaces:MonsterSpaces;
+    void SyncContainedPosition(){if(IsContained(true))Player=Monster;else if(IsContained(false))Monster=Player;SyncWaterPositions();}
     public bool BeginContainment(bool targetPlayer)
     {
         if(!Locked||HasContainedCreature||DistanceFeet>5)return false;
@@ -20,7 +20,7 @@ public sealed partial class BattleMap
         if(!HasContainedCreature||rangeFeet<0)return false;
         bool player=IsContained(true);int spaces=player?PlayerSpaces:MonsterSpaces;
         var host=player?Monster:Player;int hostSpaces=player?MonsterSpaces:PlayerSpaces;
-        if(!Inside(anchor,spaces)||Overlap(anchor,spaces,host,hostSpaces)||BodyDistance(anchor,spaces,host,hostSpaces)>rangeFeet)return false;
+        if(!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces)||Overlap(anchor,spaces,host,hostSpaces)||BodyDistance(anchor,spaces,host,hostSpaces)>rangeFeet)return false;
         int saved=containedActor;containedActor=-1;
         try{return RecoverySafe(player?anchor:Player,player?Monster:anchor);}
         finally{containedActor=saved;}
@@ -70,7 +70,7 @@ public sealed partial class BattleMap
         int bestMove=int.MaxValue,bestExit=int.MaxValue;
         try{
             for(int hy=0;hy<=Size-hostSpaces;hy++)for(int hx=0;hx<=Size-hostSpaces;hx++){
-                var host=new Vector2Int(hx,hy);int dx=hx-originalHost.x,dy=hy-originalHost.y,cost=dx*dx+dy*dy;
+                var host=new Vector2Int(hx,hy);if(!SummonFootprintClear(host,hostSpaces))continue;int dx=hx-originalHost.x,dy=hy-originalHost.y,cost=dx*dx+dy*dy;
                 if(cost>bestMove)continue;
                 if(player)Monster=host;else Player=host;SyncContainedPosition();
                 for(int ty=0;ty<=Size-targetSpaces;ty++)for(int tx=0;tx<=Size-targetSpaces;tx++){

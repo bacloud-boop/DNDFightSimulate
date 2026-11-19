@@ -3,7 +3,6 @@ using UnityEngine;
 public sealed partial class BattleMap
 {
     public Func<int,int,int,bool> DifficultTerrain;
-    public int MonsterMovementCost(Vector2Int cell)=>MovementCostOverride(cell)??(FeetBetween(Monster,cell)*(MonsterCrawling?2:1)+DifficultTerrainCost(Monster,cell,MonsterSpaces));
     public Func<bool,bool> RestrainedActor;
     bool ActorRestrained(bool player)=>RestrainedActor!=null&&RestrainedActor(player);
     public int DifficultTerrainCost(Vector2Int from,Vector2Int to,int spaces)

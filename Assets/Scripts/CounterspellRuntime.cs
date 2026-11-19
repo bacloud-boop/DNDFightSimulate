@@ -11,8 +11,8 @@ public sealed partial class TrainingGame
         if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);
         foreach(var entry in spellMetadata.spells)if(entry.name==name)return entry;return null;
     }
-    bool MonsterSpellReady=>combat.MonsterCanAct&&!MonsterPolymorphed;
-    bool CanPlayerCounterspell=>combat.PlayerCanAct&&!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&(classes[1]>0||classes[3]>0||classes[4]>0);
+    bool MonsterSpellReady=>combat.MonsterCanAct&&!MonsterPolymorphed&&!monsterArmor.Untrained(monsterArmorTraining);
+    bool CanPlayerCounterspell=>combat.PlayerCanAct&&!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed("Counterspell")&&(classes[1]>0||classes[3]>0||classes[4]>0);
     long MonsterSpellDc=>MonsterSpellSequence.SaveDc(combat.MonsterProficiencyBonus,EffectiveMonsterAbility(monsterSpells.Ability));
     IEnumerator TryInterruptSpell(bool casterPlayer,string name,SpellInterruption result)
     {
@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
         if(reply.Cancelled){history.Insert(0,"法术反制本身被打断，原法术继续。");yield break;}
         int value=UnityEngine.Random.Range(1,21);
         int modifier=casterPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
-        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(casterPlayer,false,adjustment);modifier+=adjustment.Value;
+        var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(casterPlayer,false,adjustment,2);modifier+=adjustment.Value;
         dice="法术反制 · "+(casterPlayer?"玩家":"木桩")+"体质豁免";
         yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);
         result.Cancelled=CounterspellRules.Interrupted(value,modifier,dc);

@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));
             if(GUILayout.Button(new GUIContent(text,tooltip),new GUIStyle(button){fixedHeight=76,fontSize=17})){
                 if(IsLearningOnly(spell.name)){learnedUtilitySpells.Add(spell.name);if(spell.name=="Alarm")alarmLearned=true;}
-                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Protection from Poison"||direct.Name=="Jump"||direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
+                else {selectedSpellName=spell.name;directSlotLevel=Math.Max(1,spell.level);directTargetPlayer=direct!=null&&(direct.Name=="Protection from Poison"||direct.Name=="Jump"||direct.Name=="Lesser Restoration"||direct.Name=="Arcane Vigor"||direct.Name=="Detect Evil and Good"||direct.Name=="Mage Armor"||direct.Name=="Shillelagh"||direct.Healing||direct.Stable||IsSenseSpell(direct.Name)||direct.Name=="Mirror Image"||direct.Name=="Death Ward"||direct.Name=="Darkvision"||direct.Name=="Guidance"||direct.Name=="Enhance Ability"||direct.Name=="False Life"||IsTimedBuff(direct.Name)||direct.Name=="Protection from Energy"||direct.Name=="Blade Ward"||direct.Name=="Shield of Faith"||direct.Name=="Aid"||direct.Name=="Armor of Agathys"||direct.Name=="Bless");directBothTargets=false;trueSeeingWilling=false;energyTargetWilling=false;visionWilling=false;}
             }
             GUI.enabled=previous;GUILayout.Space(6);
         }
@@ -75,11 +75,12 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(375,185,430,635));
         directSpellScroll=GUILayout.BeginScrollView(directSpellScroll);
         GUILayout.Label(definition.Chinese,heading);GUILayout.Label(definition.Summary,label);
+        if(map.PlayerAquatic.Submerged&&!WaterBreathingAllowed(true)&&Array.IndexOf(metadata.components,"声音")>=0)GUILayout.Label("水下声音施法会立即结束屏息并呛水，本回合末开始累积窒息力竭。",small);
         var casters=System.Linq.Enumerable.ToArray(EligibleCasters(metadata));
         if(Array.IndexOf(casters,directCastingClass)<0&&casters.Length>0)directCastingClass=casters[0];
         foreach(int caster in casters)if(GUILayout.Button((caster==directCastingClass?"✓ ":"")+PlayerClasses.Names[caster]+" · "+PlayerAttributes.Names[SpellAbilityIndex(caster)],button))directCastingClass=caster;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
-        GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+combat.PlayerRevivalPenalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
+        GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
         if(definition.Name=="Silence")DrawSilenceChoices();
         else if(IsPointBurst(definition))DrawPointBurstChoices(definition);
@@ -92,6 +93,8 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Water Breathing")DrawWaterBreathingChoices();
+        else if(definition.Name=="Sleep")DrawSleepChoices();
         else if(definition.Name=="Spike Growth")GUILayout.Label("指定地面区域中心，所有生物均受影响。",small);
         else if(definition.Name=="Grease")GUILayout.Label("指定10尺方形地面区域，初始影响其中所有生物。",small);
         else if(definition.Name=="Entangle")GUILayout.Label("指定地面方形区域，初始影响除施法者外的范围内生物。",small);
@@ -99,7 +102,7 @@ public sealed partial class TrainingGame
         if(GUILayout.Button((directTargetPlayer?"✓ ":"")+"目标：玩家（自身）",button))directTargetPlayer=true;
         if(GUILayout.Button((!directTargetPlayer?"✓ ":"")+"目标：木桩 · "+monsterProfile.Label,button))directTargetPlayer=false;
         }
-        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Name=="Jump"&&directSlotLevel>=2)||(definition.Name=="Blindness/Deafness"&&directSlotLevel>=3)||((definition.Control&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
+        if(definition.Name=="Bane"||definition.Name=="Bless"||definition.Name=="Aid"||definition.Name=="Mass Healing Word"||(definition.Name=="Jump"&&directSlotLevel>=2)||(definition.Name=="Blindness/Deafness"&&directSlotLevel>=3)||((definition.Control&&definition.Name!="Sleep"&&directSlotLevel>definition.Level)||(definition.Name=="Enhance Ability"&&directSlotLevel>=3))||(definition.Name=="Longstrider"&&directSlotLevel>=2)||(definition.Name=="Invisibility"&&directSlotLevel>=3))directBothTargets=GUILayout.Toggle(directBothTargets,definition.Name=="Bane"||definition.Name=="Aid"||definition.Name=="Bless"?"同时选择双方（至多3名目标）":definition.Name=="Mass Healing Word"?"同时选择双方（至多6名目标）":"同时选中玩家与木桩（升环额外目标）",label);
         else directBothTargets=false;
         if(definition.Name=="Darkvision")DrawVisionSpellChoices(definition);
         if(definition.Name=="True Seeing"&&!directTargetPlayer)trueSeeingWilling=GUILayout.Toggle(trueSeeingWilling,"确认木桩自愿接受真知术",label);
@@ -115,6 +118,7 @@ public sealed partial class TrainingGame
         if(definition.Name=="Blindness/Deafness")DrawBlindnessDeafnessChoices();
         if(definition.Name=="Lesser Restoration")DrawLesserRestorationChoices();
         if(definition.Name=="Jump")DrawJumpChoices();
+        if(definition.Name=="Mage Armor"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受法师护甲",label);
         DrawCheckBuffChoices(definition);
         if(definition.Name=="Hex")hexAbility=GUILayout.SelectionGrid(hexAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=34});
         if(definition.Name=="Barkskin"&&!directTargetPlayer)energyTargetWilling=GUILayout.Toggle(energyTargetWilling,"确认木桩自愿接受树肤术",label);
@@ -135,11 +139,16 @@ public sealed partial class TrainingGame
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
         if(MockeryTargetError(spell,directTargetPlayer)!="")return MockeryTargetError(spell,directTargetPlayer);
+        if(!ArmorSpellAllowed(spell.Name))return PlayerArmorUntrained?"未受训护甲使玩家不能施法。":"盾牌与武器占用双手，请先收起武器执行姿势成分。";
+        if(spell.Name=="True Strike"&&(weaponGrip.Stowed||WeaponHandError(selectedWeapon)!=""))return "克敌机先需要可使用的已持握武器。";
         if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Shillelagh")return !directTargetPlayer?"橡棍术只作用于自身持有的武器。":ShillelaghError();
+        if(spell.Name=="Mage Armor"&&MageArmorError(directTargetPlayer)!="")return MageArmorError(directTargetPlayer);
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Sleep")return SleepError();
+        if(spell.Name=="Water Breathing")return WaterBreathingError(directTargetPlayer,directBothTargets);
         if(spell.Name=="Spike Growth")return SpikeGrowthError();
         if(spell.Name=="Grease")return GreaseError();
         if(spell.Name=="Entangle")return EntangleError();
@@ -191,15 +200,17 @@ public sealed partial class TrainingGame
         Vector2Int entangleAnchor;VisionPoint(out entangleAnchor);
         int sizeDelta=sizeEnlarge?1:-1;bool sizeConsent=sizeWilling;var chosenSizeAnchor=sizeAnchor;
         bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
-        int restorationCondition=lesserRestorationCondition;
-        bool jumpBoth=directBothTargets;
+        int restorationCondition=lesserRestorationCondition;bool jumpBoth=directBothTargets;
         if(!SpellVoiceAllowed(true,spell.Name))yield break;
         if(MockeryTargetError(spell,targetPlayer)!="")yield break;
-        if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
-        if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
+        if(!ArmorSpellAllowed(spell.Name))yield break;
+        if(spell.Name=="True Strike"&&(weaponGrip.Stowed||WeaponHandError(selectedWeapon)!=""))yield break;
+        if(spell.Name=="Mage Armor"&&MageArmorError(targetPlayer)!="")yield break;
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
+        if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
+        if(spell.Name=="Sleep"&&SleepError()!="")yield break;
         if(spell.Name=="Spike Growth"&&SpikeGrowthError()!="")yield break;
         if(spell.Name=="Grease"&&GreaseError()!="")yield break;
         if(spell.Name=="Entangle"&&EntangleError()!="")yield break;
@@ -209,10 +220,12 @@ public sealed partial class TrainingGame
         if(spell.Name=="Jump"&&JumpSpellError(targetPlayer,slotLevel,jumpBoth)!="")yield break;
         if(spell.Name=="Blindness/Deafness"&&BlindnessDeafnessError(targetPlayer,slotLevel,blindnessBoth)!="")yield break;
         if(spell.Name=="Lesser Restoration"&&LesserRestorationError(targetPlayer,restorationCondition)!="")yield break;
+        if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
+        if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
-        if(!embedded)spellCastSequence++;
+        if(!embedded){spellCastSequence++;PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -220,15 +233,18 @@ public sealed partial class TrainingGame
         string damageType=spell.Name=="Sorcerous Burst"?BurstTypes[burstType]:spell.DamageType;
         string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Mage Armor"){ApplyMageArmor(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
-        if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Spike Growth"){ResolveSpikeGrowth(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Grease"){yield return ResolveGrease(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Entangle"){yield return ResolveEntangle(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Enlarge/Reduce"){yield return ResolveSizeChange(targetPlayer,caster,sizeDelta,sizeConsent,chosenSizeAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Enfeeblement"){yield return ResolveEnfeeblement(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Protection from Poison"){ApplyPoisonProtection(targetPlayer);if(!embedded)rolling=false;yield break;}
-        if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Silence"){ApplySilence();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Lesser Restoration"){ApplyLesserRestoration(targetPlayer,restorationCondition);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Blindness/Deafness"){yield return ResolveBlindnessDeafness(targetPlayer,caster,slotLevel,blindnessBoth,blindnessPlayer,blindnessMonster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Arcane Vigor"){yield return ResolveArcaneVigor(caster,slotLevel);if(!embedded)rolling=false;yield break;}
@@ -261,20 +277,21 @@ public sealed partial class TrainingGame
         if(spell.Control){yield return ResolveHoldPerson(spell,targetPlayer,caster,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Stable){combat.StabilizePlayer();history.Insert(0,"维生术："+target+"稳定。");if(!embedded)rolling=false;yield break;}
         if(spell.Attack){
-            bonus+=combat.PlayerRevivalPenalty;
+            bonus+=PlayerAquaticD20Penalty;
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
-            bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5)));
+            bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=Entangled(targetPlayer)|combat.ConsumeGuidingLight(targetPlayer)||advantage;
             disadvantage=Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
-            int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=targetPlayer?combat.PlayerArmorClass:combat.MonsterArmorClass;
+            int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=AttackArmor(true,targetPlayer);
+            LogAttackCover(true,targetPlayer);
             int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0;bonus+=blessing-bane;
             BreakOrdinaryInvisibility(true,"进行攻击检定");
             int wardPenalty=targetPlayer&&combat.PlayerBladeWard?UnityEngine.Random.Range(1,5):0;bonus-=wardPenalty;
             mirrorIntercepted=false;
-            if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,value+bonus,true,PerceivesWithSpecialSense(true,true));armor=combat.PlayerArmorClass;}
+            if(targetPlayer&&value!=1&&(value==20||value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,value+bonus,true,PerceivesWithSpecialSense(true,true),AttackCover(true,true));armor=AttackArmor(true,true);}
             critical=value==20;dice=spell.Chinese+(spell.Melee?" · 近战法术攻击":" · 远程法术攻击");
             yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},(rollHigh?"优势，采用 ":rollLow?"劣势，采用 ":"采用 ")+value+" + "+bonus+" / 护甲 "+armor);
             if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次攻击 +"+blessing);
@@ -284,15 +301,15 @@ public sealed partial class TrainingGame
             if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);if(!embedded)rolling=false;yield break;}
         }
         if(spell.Attack&&targetPlayer&&spell.Melee)selfFrostRetaliation=AgathysRetaliation(true);
-        if(spell.Attack&&!targetPlayer&&combat.MonsterParalyzed&&map.DistanceFeet<=5)critical=true;
+        if(spell.Attack&&!targetPlayer&&combat.MonsterHelpless&&map.DistanceFeet<=5)critical=true;
         if(spell.SaveAbility>=0){
             int targetModifier=AcidSplash.Modifier((targetPlayer?attributes:monsterAttributes)[spell.SaveAbility]);
             if(targetPlayer)targetModifier=PlayerSavingThrowModifier(spell.SaveAbility);
-            var raySave=RollEnfeeblementSave(targetPlayer,spell.SaveAbility);int value=raySave.Value,dc=8+bonus;bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(targetPlayer?(combat.PlayerHp==0||combat.PlayerParalyzed):combat.MonsterParalyzed);
+            var armorSave=RollArmorSave(targetPlayer,spell.SaveAbility);int value=armorSave.Value,dc=8+bonus;bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(targetPlayer?(combat.PlayerHp==0||combat.PlayerParalyzed):combat.MonsterHelpless);
             automatic=automatic||(spell.Name=="Blight"&&!targetPlayer&&monsterProfile.TypeIndex==12);
             dice=spell.Chinese+" · "+target+"豁免";
-            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,automatic,adjustment);targetModifier+=adjustment.Value;
-            if(!automatic)yield return PresentRoll(20,raySave.Dice,value+" + "+targetModifier+" / DC "+dc);
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,automatic,adjustment,spell.SaveAbility,ignoreCover:spell.Name=="Sacred Flame");targetModifier+=adjustment.Value;
+            if(!automatic)yield return PresentRoll(20,armorSave.Dice,value+" + "+targetModifier+" / DC "+dc);
             saveSucceeded=!automatic&&value+targetModifier>=dc;
             if(saveSucceeded&&!spell.HalfSave){history.Insert(0,spell.Chinese+"："+target+"豁免成功，伤害0。");if(!embedded)rolling=false;yield break;}
         }

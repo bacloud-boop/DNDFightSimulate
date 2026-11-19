@@ -1,4 +1,4 @@
-public sealed class BeastAttack
+﻿public sealed class BeastAttack
 {
     public readonly string Form,Chinese,AttackName,DamageType;
     public readonly int HitBonus,Count,Sides,Fixed,ExtraCount,ExtraSides;

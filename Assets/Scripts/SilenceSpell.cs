@@ -13,6 +13,8 @@ public sealed partial class TrainingGame
     }
     bool SilenceHearMonster()=>!sensory.Deafened(true,worldRounds)&&!silence.BlocksSound(map.Player.x+(map.PlayerSpaces-1)*.5,map.Player.y+(map.PlayerSpaces-1)*.5,map.Monster.x+(map.MonsterSpaces-1)*.5,map.Monster.y+(map.MonsterSpaces-1)*.5,worldRounds);
     string MockeryTargetError(DirectSpell spell,bool self)=>spell.Name=="Vicious Mockery"&&!self&&!PlayerSeesMonster&&!SilenceHearMonster()?"恶言相加需要看见或听见目标；当前目标不可见且无法听见。":"";
+    bool SilenceHearCommand(SummonedUnit unit)=>!silence.BlocksSound(map.Player.x+(map.PlayerSpaces-1)*.5,map.Player.y+(map.PlayerSpaces-1)*.5,unit.X+(unit.Spaces-1)*.5,unit.Y+(unit.Spaces-1)*.5,worldRounds);
+    bool SilenceUnitImmune(SummonedUnit unit,string type)=>type=="雷鸣"&&silence.WholeInside(unit.X,unit.Y,unit.Spaces,worldRounds);
     void DrawSilenceChoices()
     {
         GUILayout.Label("固定20尺半径球状范围，选择中心列、行（1～"+map.Size+"），射程120尺。",small);

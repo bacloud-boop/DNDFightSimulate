@@ -4,8 +4,8 @@ public sealed partial class TrainingGame
     readonly ShillelaghEffect shillelagh=new ShillelaghEffect();
     bool shillelaghUseCasting=true,shillelaghForce;
     string PlayerWeaponDamageDice=>shillelagh.Applies(selectedWeapon.Name,worldRounds)?ShillelaghEffect.Count(classes.TotalLevel)+"d"+ShillelaghEffect.Sides(classes.TotalLevel):selectedWeapon.DamageDice;
-    void RefreshShillelagh(){if(shillelagh.Refresh(selectedWeapon.Name,PlayerInBeastForm,worldRounds))history.Insert(0,"橡棍术结束：持续时间届满，或切换武器／装备融入形态而放手。");}
-    string ShillelaghError()=>PlayerInBeastForm?"武器已融入形态，不能持握施法。":!ShillelaghEffect.Eligible(selectedWeapon.Name)?"请先选择短棒或长棍。":worldRounds>long.MaxValue-10?"模拟时间超出范围。":"";
+    void RefreshShillelagh(){if(shillelagh.Refresh(selectedWeapon.Name,PlayerInBeastForm||weaponGrip.Stowed,worldRounds))history.Insert(0,"橡棍术结束：持续时间届满，或收起／切换武器／装备融入形态而放手。");}
+    string ShillelaghError()=>PlayerInBeastForm||weaponGrip.Stowed?"须先持握短棒或长棍。":!ShillelaghEffect.Eligible(selectedWeapon.Name)?"请先选择短棒或长棍。":worldRounds>long.MaxValue-10?"模拟时间超出范围。":"";
     void DrawShillelaghOptions()
     {
         GUILayout.Label("橡棍术：短棒／长棍，持续1分钟。切换武器或装备融入形态立即结束。",small);

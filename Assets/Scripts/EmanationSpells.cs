@@ -22,9 +22,9 @@ public sealed partial class TrainingGame
         bool[] failed=new bool[2];int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         if(!targets[0]&&!targets[1]){history.Insert(0,spell.Chinese+"：未选中范围内生物，已消耗动作。");yield break;}
         for(int i=0;i<2;i++)if(targets[i]){
-            int ability=spell.SaveAbility;var raySave=RollEnfeeblementSave(i==1,ability);int value=raySave.Value,modifier=i==0?MonsterSavingThrowModifier(ability):PlayerSavingThrowModifier(ability);bool automatic=(ability==0||ability==1)&&(i==0?combat.MonsterParalyzed:combat.PlayerParalyzed||combat.PlayerHp==0);dice=spell.Chinese+" · "+(i==0?"木桩":"玩家")+PlayerAttributes.Names[ability]+"豁免";
+            int ability=spell.SaveAbility;var armorSave=RollArmorSave(i==1,ability);int value=armorSave.Value,modifier=i==0?MonsterSavingThrowModifier(ability):PlayerSavingThrowModifier(ability);bool automatic=(ability==0||ability==1)&&(i==0?combat.MonsterHelpless:combat.PlayerParalyzed||combat.PlayerHp==0);dice=spell.Chinese+" · "+(i==0?"木桩":"玩家")+PlayerAttributes.Names[ability]+"豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(i==1,automatic,adjustment);modifier+=adjustment.Value;
-            if(!automatic)yield return PresentRoll(20,raySave.Dice,value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
+            if(!automatic)yield return PresentRoll(20,armorSave.Dice,value+" + "+modifier+" / DC "+dc);failed[i]=automatic||value+modifier<dc;
             if(failed[i]&&spell.Name=="Arms of Hadar")combat.BlockReactions(i==1);
         }
         if(!failed[0]&&!failed[1]&&!spell.HalfSave){history.Insert(0,spell.Chinese+"：目标均通过体质豁免，伤害0。");yield break;}

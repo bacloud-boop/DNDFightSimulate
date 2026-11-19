@@ -54,6 +54,7 @@ public sealed partial class TrainingGame
         if(form==null||!form.EligibleForBaseWildShape(classes[11]))return "形态超出当前基础荒野形态限制，或属于暂缓的飞行形态。";
         if(BeastAttack.Find(form.name)==null)return "该野兽完整战斗效果待接入，目前仅供查看资料。";
         if(sizeChange.Applies(true)&&SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)<0)return "当前体型法术会使该形态越界，不消耗资源。";
+        if(!CanKeepCorpseInForm(true,form,true))return "新形态无法继续搬运当前遗体，请先放下。";
         if(!knownBeastForms.Contains(form.name))return "尚未学习此形态。";
         if(knownBeastForms.Count!=DruidFeatures.KnownFormLimit(classes[11]))return "请先选满当前等级的已知形态数量。";
         if(page!="battle"||!map.Locked)return "部署完成后可变身。";
@@ -106,7 +107,7 @@ public sealed partial class TrainingGame
             if(GUILayout.Button((selectedBeastForm==beast.name?"✓ ":"")+attack.Chinese+" · 护甲"+beast.armor+" · 速度"+beast.walk+"尺",button))selectedBeastForm=beast.name;
             GUI.enabled=previous;
         }
-        var selected=FindBeast(selectedBeastForm);string reason=WildShapeInvalidReason(selected);
+        var selected=FindBeast(selectedBeastForm);DrawBeastWeight(selected);string reason=WildShapeInvalidReason(selected);
         GUILayout.Label(reason==""?"占地合法，可消耗附赠动作确认变身。":reason,small);
         bool enabled=GUI.enabled;GUI.enabled=reason=="";
         if(GUILayout.Button("确认变身",button))TryWildShape(selected);
@@ -129,19 +130,20 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollNaturalAttack(bool opportunity=false)
     {
-        var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+combat.PlayerRevivalPenalty;
-        bool advantage=Entangled(false)|(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterParalyzed||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=Entangled(true)|RayAttackDisadvantage(true,attack.Ability)||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+PlayerAquaticD20Penalty;
+        bool advantage=Entangled(false)|(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5);
+        bool disadvantage=Entangled(true)|RayAttackDisadvantage(true,attack.Ability)||UnderwaterCombatRules.Disadvantage(map.PlayerAquatic.Submerged,true,true,PlayerSwimSpeed,attack.DamageType=="穿刺")||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;
         BreakOrdinaryInvisibility(true,"进行攻击检定");
         dice=attack.Chinese+" · "+attack.AttackName+(opportunity?"借机攻击":"");
-        yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+combat.MonsterArmorClass);
+        LogAttackCover(true,false);
+        yield return PresentRoll(20,second>0?new[]{first,second}:new[]{first},value+" + 野兽命中/祝福 "+hitBonus+" / 护甲 "+AttackArmor(true,false));
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次自然攻击 +"+blessing);
         if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次自然攻击 -"+bane);
-        if(value==1||(value!=20&&value+hitBonus<combat.MonsterArmorClass)){history.Insert(0,dice+"，未命中。");if(!PlayerPolymorphed)fighter.RecordMiss(classes[0]);rolling=false;yield break;}
-        bool critical=value==20||(combat.MonsterParalyzed&&map.DistanceFeet<=5);int damage=attack.Fixed;
+        if(value==1||(value!=20&&value+hitBonus<AttackArmor(true,false))){history.Insert(0,dice+"，未命中。");if(!PlayerPolymorphed)fighter.RecordMiss(classes[0]);rolling=false;yield break;}
+        bool critical=value==20||(combat.MonsterHelpless&&map.DistanceFeet<=5);int damage=attack.Fixed;
         int count=attack.Count*(critical?2:1);int[] values=new int[count];for(int i=0;i<count;i++){values[i]=UnityEngine.Random.Range(1,attack.Sides+1);damage+=values[i];}
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
         int poisonDamage=0;int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);poisonDamage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}

@@ -10,6 +10,7 @@ public sealed class Weapon
     public string DamageDice => DiceCount==0?FixedDamage.ToString():DiceCount+"d"+DiceSides;
     public bool HasFinesse { get; }
     public bool HasLight { get; }
+    public bool RequiresTwoHands=>Name=="长剑（双手）"||Name=="巨棒"||Name=="长柄刀"||Name=="巨斧"||Name=="巨剑"||Name=="戟"||Name=="骑枪"||Name=="巨锤"||Name=="长矛"||Name=="轻弩"||Name=="短弓"||Name=="重弩"||Name=="长弓"||Name=="火铳";
     public bool IsMelee { get; }
     public int ReachFeet { get; }
     public int MaxRangeFeet { get; }

@@ -3,7 +3,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     bool shieldPending;int shieldDecision;bool shieldAttackTrigger;
-    bool CanOfferShield => !combat.ShieldActive&&!combat.PlayerReactionsBlocked&&combat.PlayerCanAct&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&SpellVoiceAllowed(true,"Shield")&&(classes[1]>0||classes[3]>0);
+    bool CanOfferShield => !combat.ShieldActive&&!combat.PlayerReactionsBlocked&&combat.PlayerCanAct&&combat.PlayerReactionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed("Shield")&&(classes[1]>0||classes[3]>0);
     IEnumerator OfferShield(bool attackTrigger)
     {
         if(!CanOfferShield)yield break;
@@ -12,7 +12,7 @@ public sealed partial class TrainingGame
         while(shieldDecision==0)yield return null;
         shieldPending=false;
         if(shieldDecision==1&&combat.TryUseReaction(true)){
-            var interruption=new SpellInterruption();yield return TryInterruptSpell(true,"Shield",interruption);
+            PlayerCastWhileSubmerged("Shield");var interruption=new SpellInterruption();yield return TryInterruptSpell(true,"Shield",interruption);
             if(!interruption.Cancelled){combat.ActivateShield();history.Insert(0,"玩家消耗反应施放护盾术：AC+5，免疫魔法飞弹，至下一玩家回合开始。");}
             BreakOrdinaryInvisibility(true,"施放护盾术");
         }

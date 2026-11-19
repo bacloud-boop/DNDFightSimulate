@@ -8,10 +8,10 @@ public sealed partial class TrainingGame {
   int[] rolls=new int[count];for(int i=0;i<count;i++)rolls[i]=Random.Range(1,7);
   mirrorIntercepted=mirrorImage.Intercept(worldRounds,rolls);dice="镜像术 · 替身判定";yield return PresentRoll(6,rolls,mirrorIntercepted?"替身承受本次攻击并消失；剩余 "+mirrorImage.Count(worldRounds):"所有骰值均低于3，本次未能拦截");history.Insert(0,mirrorIntercepted?"镜像术替身承受攻击，本体不受此次命中效果。":"镜像术未拦截攻击。");
  }
- IEnumerator ResolvePlayerHitDefense(int die,long total,bool attackerSees,bool bypass){
+ IEnumerator ResolvePlayerHitDefense(int die,long total,bool attackerSees,bool bypass,int cover=0){
   mirrorIntercepted=false;bool mirror=mirrorImage.Count(worldRounds)>0&&attackerSees&&!bypass;int order=1;
   if(mirror&&CanOfferShield){defenseOrder=0;defenseOrderPending=true;dice="攻击已命中 · 等待防御顺序选择";while(defenseOrder==0)yield return null;defenseOrderPending=false;order=defenseOrder;}
   if(order==1){yield return InterceptMirror(attackerSees,bypass);if(!mirrorIntercepted)yield return OfferShield(true);}
-  else {yield return OfferShield(true);if(die==20||total>=combat.PlayerArmorClass)yield return InterceptMirror(attackerSees,bypass);}
+  else {yield return OfferShield(true);if(die==20||total>=combat.PlayerArmorClass+cover)yield return InterceptMirror(attackerSees,bypass);}
  }
 }

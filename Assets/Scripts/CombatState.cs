@@ -23,8 +23,10 @@ public sealed class CombatState
     public bool PlayerBladeWard {get;set;}
     public int PlayerEnergyResistance {get;set;}=-1;
     public int MonsterEnergyResistance {get;set;}=-1;
-    bool ResistsDamage(bool player,int type)=>type>=0&&((player?PlayerEnergyResistance:MonsterEnergyResistance)==type||(DamageResistance!=null&&DamageResistance(player,type)));
-    public int AdjustTypedDamage(bool player,int amount,int type){if(DamageImmunity!=null&&DamageImmunity(player,type))return 0;return ResistsDamage(player,type)?amount/2:amount;}
+    public bool PlayerUnderwater {get;set;}
+    public bool MonsterUnderwater {get;set;}
+    bool ResistsDamage(bool player,int type)=>type>=0&&((player?PlayerEnergyResistance:MonsterEnergyResistance)==type||(DamageResistance!=null&&DamageResistance(player,type))||(type==5&&(player?PlayerUnderwater:MonsterUnderwater)));
+    public int AdjustTypedDamage(bool player,int amount,int type){return DamageImmunity!=null&&DamageImmunity(player,type)?0:ResistsDamage(player,type)?amount/2:amount;}
     public int AdjustPlayerPacket(long[] packet)=>AdjustDamagePacket(true,packet);
     public int AdjustDamagePacket(bool player,long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(player,i))total+=Math.Min(int.MaxValue,ResistsDamage(player,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
     public bool PlayerBaned {get;set;}
@@ -42,6 +44,7 @@ public sealed class CombatState
     public bool MonsterRestrained {get;set;}
     public bool MonsterAttackIsWeapon {get;set;}=true;
     public bool MonsterWeaponIsHeld {get;set;}
+    public int MonsterWeaponOunces {get;set;}=16;
     public bool PlayerParalyzed {get;set;}
     public bool PlayerSlowed {get;private set;}
     public bool MonsterSlowed {get;private set;}
@@ -62,12 +65,16 @@ public sealed class CombatState
     }
     public int? MonsterFormSpeed {get;set;}
     public int? MonsterFormArmor {get;set;}
-    public int MonsterSpeed => MonsterRestrained?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
+    public int MonsterSpeed => MonsterRestrained||MonsterSleepStage==2?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
     public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}
     public bool MonsterParalyzed {get;set;}
-    public bool MonsterCanAct => !Aftermath&&Hp>0&&!MonsterParalyzed;
+    public int MonsterSleepStage {get;set;}
+    public bool MonsterHelpless=>MonsterParalyzed||MonsterSleepStage==2;
+    public Action MonsterDamaged {get;set;}
+    public bool MonsterCanMove => !Aftermath&&Hp>0&&!MonsterParalyzed&&MonsterSleepStage<2;
+    public bool MonsterCanAct => MonsterSleepStage==0&& !Aftermath&&Hp>0&&!MonsterParalyzed;
     public bool PlayerDead {get;private set;}
     public bool PlayerStable {get;private set;}
     public int DeathSuccesses {get;private set;}
@@ -117,7 +124,9 @@ public sealed class CombatState
     public int PlayerArmorFloor {get;set;}
     public int MonsterArmorBonus {get;set;}
     public int MonsterArmorFloor {get;set;}
-    public int PlayerArmorClass => Math.Max(PlayerArmorFloor,(playerArmorOverride??10)+(ShieldActive?5:0)+PlayerArmorBonus);
+    public int? PlayerEquipmentArmor {get;set;}
+    public int? MonsterEquipmentArmor {get;set;}
+    public int PlayerArmorClass => Math.Max(PlayerArmorFloor,(PlayerEquipmentArmor??playerArmorOverride??10)+(ShieldActive?5:0)+PlayerArmorBonus);
     public void SetPlayerArmorOverride(int? armor){playerArmorOverride=armor;}
     public int MonsterProficiencyBonus { get; set; } = 0;
     public int MonsterAttackRange { get; private set; } = 5;
@@ -126,7 +135,7 @@ public sealed class CombatState
         MonsterAttackRange=rangeFeet;
     }
     int monsterBaseArmor=10;
-    public int MonsterArmorClass => Math.Max(MonsterArmorFloor,(MonsterFormArmor??monsterBaseArmor)+MonsterArmorBonus);
+    public int MonsterArmorClass => Math.Max(MonsterArmorFloor,(MonsterEquipmentArmor??MonsterFormArmor??monsterBaseArmor)+MonsterArmorBonus);
     public void UpdateMonsterArmorClass(int armorClass) {
         if(armorClass < 5 || armorClass > 30) throw new ArgumentOutOfRangeException(nameof(armorClass));
         monsterBaseArmor = armorClass;
@@ -171,6 +180,7 @@ public sealed class CombatState
         if(!ActionAvailable) return false;
         BattleStarted=true;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;return true;
     }
+    public bool TryUseObjectAction(){if(!Aftermath)return TryUseAction();if(PlayerHp<=0||PlayerDead||PlayerParalyzed||ActionsRemaining<1)return false;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;BattleStarted=true;return true;}
     public bool TryUseBonusAction() {
         if(!PlayerCanAct||!BonusActionAvailable) return false;
         BattleStarted=true;BonusActionAvailable=false;return true;
@@ -178,6 +188,15 @@ public sealed class CombatState
     public void AddSurgeAction() {if(!PlayerCanAct)return; BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
     public int HealPlayer(int amount) {if(PlayerDead||PlayerHealingBlocked)return 0;int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));if(PlayerHp>0){PlayerStable=false;DeathSuccesses=0;DeathFailures=0;}return PlayerHp-before;}
     public void KillMonster(){if(Hp>0&&PreventDeath(false))return;Hp=0;MonsterTemporaryHp=0;}
+    // Existing lethal exhaustion is a persistent condition, not a new increment
+    // for Death Ward to negate. Its protective check occurs before level six.
+    public bool ApplyFatalExhaustion(bool player,int level)
+    {
+        if(level<6)return false;
+        if(player){PlayerTemporaryHp=0;PlayerHp=0;PlayerDead=true;PlayerStable=false;PlayerReactionAvailable=false;}
+        else {Hp=0;MonsterTemporaryHp=0;}
+        return true;
+    }
     public void KillPlayer(){if(!PlayerDead&&PreventDeath(true))return;PlayerTemporaryHp=0;PlayerHp=0;PlayerDead=true;PlayerStable=false;PlayerReactionAvailable=false;}
     public int HealMonster(int amount){if(Hp==0||MonsterHealingBlocked)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+Math.Max(0,amount));return Hp-before;}
     public bool StabilizePlayer(){if(PlayerHp!=0||PlayerDead)return false;PlayerStable=true;DeathSuccesses=0;DeathFailures=0;return true;}
@@ -195,9 +214,9 @@ public sealed class CombatState
         }
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
-    public void ResetBattle() {PlayerMaxHpReduction=MonsterMaxHpReduction=0;PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
-    public void ApplyDamage(int damage,bool sourcePlayer=true) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageDealt?.Invoke(sourcePlayer); }
-    public void ApplyPlayerDamage(int damage,bool critical=false,bool sourcePlayer=false) {
+    public void ResetBattle() {MonsterSleepStage=0;PlayerUnderwater=MonsterUnderwater=false;PlayerMaxHpReduction=MonsterMaxHpReduction=0;PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
+    public void ApplyDamage(int damage,bool? sourcePlayer=true) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)MonsterDamaged?.Invoke();if(damage>0&&sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value); }
+    public void ApplyPlayerDamage(int damage,bool critical=false,bool? sourcePlayer=false) {
         if(damage<=0||PlayerDead)return;
         try{
         int originalDamage=damage,before=PlayerHp;
@@ -209,7 +228,7 @@ public sealed class CombatState
         if(overflow>=PlayerMaxHp){PlayerHp=0;PlayerDead=true;return;}
         PlayerHp=Math.Max(0,PlayerHp-damage);
         if(PlayerHp==0)PlayerReactionAvailable=false;
-        }finally{DamageDealt?.Invoke(sourcePlayer);}
+        }finally{if(sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value);}
     }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
 
