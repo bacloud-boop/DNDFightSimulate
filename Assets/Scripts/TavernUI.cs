@@ -71,7 +71,7 @@ public sealed partial class TrainingGame
         if(!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();SyncTimedBuffs();
-        if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath)knownFormReplacement=false;
+        if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath){knownFormReplacement=false;highElfCantripReplacement=false;}
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
     void OnGUI()

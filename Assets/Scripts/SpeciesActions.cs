@@ -70,6 +70,7 @@ public sealed partial class TrainingGame
             GUI.enabled=old;
             if(!SpeciesPhysicalActive(true))GUILayout.Label("当前兽形不具有原种族的身体特性。",small);
         }else GUILayout.Label("当前种族的主动特性仍在接入；已完成的被动效果照常结算。",label);
+        DrawSpeciesSpellSummary();
         GUILayout.EndScrollView();GUILayout.EndArea();
     }
 }

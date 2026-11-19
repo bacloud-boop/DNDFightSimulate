@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
-        playerSpeciesAbilities.Reset();monsterSpeciesAbilities.Reset();
+        playerSpeciesAbilities.Reset();monsterSpeciesAbilities.Reset();playerSpeciesSpellUses.LongRest();highElfCantripReplacement=false;
         spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();
         sensory.Clear();enfeeblement.Clear();

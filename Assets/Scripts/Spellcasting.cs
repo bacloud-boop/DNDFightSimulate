@@ -6,7 +6,8 @@ public sealed partial class TrainingGame
     bool spellTargeting,spellCenterChosen;
     int castingClass=1;
     Vector2Int spellCenter;
-    bool CanCastAcid => classes[1]>=1 || classes[3]>=1;
+    bool CanCastAcid => classes[1]>=1 || classes[3]>=1 || PlayerSpeciesSpell("Acid Splash")!=null;
+    bool AcidCastingSourceValid=>castingClass==SpeciesSpellRules.Caster?PlayerSpeciesSpell("Acid Splash")!=null:(castingClass==1||castingClass==3)&&classes[castingClass]>0;
     void DrawAcidSpellPanel()
     {
         const float x=350;
@@ -19,13 +20,14 @@ public sealed partial class TrainingGame
             if(GUI.Button(new Rect(x+20,615,440,55),new GUIContent(alarmLearned?"警报术 · 已学习（不可战斗施放）":"学习警报术（游侠 / 法师）",AlarmSpell.Summary),button))alarmLearned=true;
             GUI.enabled=enabled;
         }
-        if(!CanCastAcid){GUI.Label(new Rect(x+20,235,440,90),"法师或术士至少 1 级可使用酸液飞溅。",label);return;}
-        if(classes[castingClass]<1)castingClass=classes[1]>=1?1:3;
-        if(Btn(new Rect(x+20,235,205,48),(castingClass==1?"✓ ":"")+"法师 · 智力",classes[1]>=1))castingClass=1;
-        if(Btn(new Rect(x+235,235,205,48),(castingClass==3?"✓ ":"")+"术士 · 魅力",classes[3]>=1))castingClass=3;
-        int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
+        if(!CanCastAcid){GUI.Label(new Rect(x+20,235,440,90),"法师、术士或选中此戏法的高等精灵可使用酸液飞溅。",label);return;}
+        if(!AcidCastingSourceValid)castingClass=classes[1]>=1?1:classes[3]>=1?3:SpeciesSpellRules.Caster;
+        if(Btn(new Rect(x+20,235,135,48),(castingClass==1?"✓ ":"")+"法师 · 智力",classes[1]>=1))castingClass=1;
+        if(Btn(new Rect(x+165,235,135,48),(castingClass==3?"✓ ":"")+"术士 · 魅力",classes[3]>=1))castingClass=3;
+        if(Btn(new Rect(x+310,235,135,48),(castingClass==SpeciesSpellRules.Caster?"✓ ":"")+"血统法术",PlayerSpeciesSpell("Acid Splash")!=null))castingClass=SpeciesSpellRules.Caster;
+        int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(castingClass)]);
         GUI.Label(new Rect(x+20,305,440,70),"敏捷豁免 DC "+dc+" · "+AcidSplash.DiceCount(classes.TotalLevel)+"d6 强酸\n射程 60 尺 · 5 尺半径球状",label);
-        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed("Acid Splash");
+        bool previous=GUI.enabled;GUI.enabled=page=="battle"&&map.Locked&&!rolling&&combat.MagicActionAvailable&&playerResurrectionCaster.CanCast&&SpellVoiceAllowed(true,"Acid Splash")&&CanCastInCurrentForm&&ArmorSpellAllowed("Acid Splash");
         if(GUI.Button(new Rect(x+20,400,440,65),new GUIContent("酸液飞溅 · 选择施法位置",AcidSplash.Summary),button)){
             panel="";thunderwaveTargeting=false;spellTargeting=true;spellCenterChosen=false;
         }
@@ -57,11 +59,11 @@ public sealed partial class TrainingGame
     }
     void CastAcidSplash()
     {
-        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || !CanCastInCurrentForm || !ArmorSpellAllowed("Acid Splash") || rolling || map.DistanceToCell(true,spellCenter)>60 || !combat.TryUseMagicAction())return;
+        if(page!="battle" || !map.Locked || !spellTargeting || !spellCenterChosen || !CanCastAcid || !AcidCastingSourceValid || !playerResurrectionCaster.CanCast || !SpellVoiceAllowed(true,"Acid Splash") || !CanCastInCurrentForm || !ArmorSpellAllowed("Acid Splash") || rolling || map.DistanceToCell(true,spellCenter)>60 || !combat.TryUseMagicAction())return;
         PlayerCastWhileSubmerged("Acid Splash");
         bool hits=combat.Hp>0&&map.DistanceToCell(false,spellCenter)<=5;
         bool hitsPlayer=!combat.PlayerDead&&map.DistanceToCell(true,spellCenter)<=5;
-        int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[castingClass==1?4:5]);
+        int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(castingClass)]);
         int count=AcidSplash.DiceCount(classes.TotalLevel);
         spellTargeting=false;spellCenterChosen=false;
         StartCoroutine(ResolveAcidSplash(hits,hitsPlayer,dc,count));

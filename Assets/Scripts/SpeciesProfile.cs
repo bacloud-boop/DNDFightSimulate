@@ -8,6 +8,7 @@ public sealed class SpeciesProfile
     public Species2024 Kind=Species2024.None;
     public int Size=2,Lineage,SpellAbility=4,Level=1,ChosenSkill;
     public int OriginFeat=7;
+    public string HighElfCantrip="Prestidigitation";
     public int BonusPriority; // SpeciesTurnPolicy: before spells, after spells, disabled.
     public int[] SkilledChoices={4,5,6};
     public static SpeciesProfile Human()=>new SpeciesProfile{Kind=Species2024.Human};
@@ -39,6 +40,7 @@ public sealed class SpeciesProfile
     }
     public bool Valid()
     {
+        if(!SpeciesSpellRules.ValidHighElfCantrip(HighElfCantrip))return false;
         if(!SpeciesTurnPolicy.Valid(BonusPriority))return false;
         if((int)Kind< -1||(int)Kind>9||Level<1||Level>20||(SpellAbility!=3&&SpellAbility!=4&&SpellAbility!=5)||Lineage<0||Lineage>=Lineages.Length||(Size!=1&&Size!=2)||OriginFeat<0||OriginFeat>=OriginFeats.Length)return false;
         if(ChosenSkill<0||ChosenSkill>=18||Kind==Species2024.Elf&&ChosenSkill!=10&&ChosenSkill!=12&&ChosenSkill!=13)return false;

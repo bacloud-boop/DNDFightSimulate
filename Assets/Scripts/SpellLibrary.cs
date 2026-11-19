@@ -20,8 +20,9 @@ public sealed partial class TrainingGame
     IEnumerable<int> EligibleCasters(SpellMetadata spell)
     {
         for(int i=0;i<EnglishClassNames.Length;i++)if(classes[i]>0&&(Array.IndexOf(spell.classes,EnglishClassNames[i])>=0||(i==11&&classes[11]>=2&&spell.name=="Find Familiar")))yield return i;
+        if(PlayerSpeciesSpell(spell.name)!=null)yield return SpeciesSpellRules.Caster;
     }
-    int SpellAbilityIndex(int classIndex) => classIndex==1?4:classIndex==2||classIndex==6||classIndex==11?3:5;
+    int SpellAbilityIndex(int classIndex) => classIndex==SpeciesSpellRules.Caster?SpeciesSpellRules.Ability(playerSpecies):classIndex==1?4:classIndex==2||classIndex==6||classIndex==11?3:5;
     static string SchoolChinese(string school)
     {
         switch(school){case "Abjuration":return "防护";case "Conjuration":return "咒法";case "Divination":return "预言";case "Enchantment":return "惑控";case "Evocation":return "塑能";case "Illusion":return "幻术";case "Necromancy":return "死灵";case "Transmutation":return "变化";default:return school;}
@@ -38,7 +39,7 @@ public sealed partial class TrainingGame
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
         GUILayout.Label("法术位资源暂不扣除；学习数量限制暂不启用。未接入条目不能施法。飞行相关暂缓。",small);
         spellSearch=GUILayout.TextField(spellSearch,fieldStyle);
-        onlyClassSpells=GUILayout.Toggle(onlyClassSpells,"仅显示当前职业的法术",label);
+        onlyClassSpells=GUILayout.Toggle(onlyClassSpells,"仅显示当前职业与种族的法术",label);
         spellLibraryScroll=GUILayout.BeginScrollView(spellLibraryScroll);
         foreach(var spell in spellMetadata.spells){
             bool eligible=System.Linq.Enumerable.Any(EligibleCasters(spell));
@@ -78,10 +79,11 @@ public sealed partial class TrainingGame
         if(map.PlayerAquatic.Submerged&&!WaterBreathingAllowed(true)&&Array.IndexOf(metadata.components,"声音")>=0)GUILayout.Label("水下声音施法会立即结束屏息并呛水，本回合末开始累积窒息力竭。",small);
         var casters=System.Linq.Enumerable.ToArray(EligibleCasters(metadata));
         if(Array.IndexOf(casters,directCastingClass)<0&&casters.Length>0)directCastingClass=casters[0];
-        foreach(int caster in casters)if(GUILayout.Button((caster==directCastingClass?"✓ ":"")+PlayerClasses.Names[caster]+" · "+PlayerAttributes.Names[SpellAbilityIndex(caster)],button))directCastingClass=caster;
+        foreach(int caster in casters)if(GUILayout.Button((caster==directCastingClass?"✓ ":"")+CasterLabel(caster)+" · "+PlayerAttributes.Names[SpellAbilityIndex(caster)],button))directCastingClass=caster;
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(directCastingClass)]);
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
-        if(definition.Level>0){GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;}
+        DrawSpeciesSpellResource(definition);
+        if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
         if(definition.Name=="Silence")DrawSilenceChoices();
         else if(IsPointBurst(definition))DrawPointBurstChoices(definition);
         else if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
@@ -137,7 +139,8 @@ public sealed partial class TrainingGame
     }
     string DirectSpellInvalidReason(DirectSpell spell,bool eligible)
     {
-        if(!eligible)return "当前职业不可施放。";
+        if(!eligible)return "当前职业与种族不可施放。";
+        string speciesError=SpeciesSpellCastError(spell.Name,directCastingClass,directSlotLevel);if(speciesError!="")return speciesError;
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
@@ -210,6 +213,7 @@ public sealed partial class TrainingGame
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
+        if(SpeciesSpellCastError(spell.Name,caster,slotLevel)!="")yield break;
         Vector2Int entangleAnchor;VisionPoint(out entangleAnchor);
         int sizeDelta=sizeEnlarge?1:-1;bool sizeConsent=sizeWilling;var chosenSizeAnchor=sizeAnchor;
         bool blindnessBoth=directBothTargets,blindnessPlayer=blindnessPlayerMode==0,blindnessMonster=blindnessMonsterMode==0;
@@ -242,7 +246,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
         if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
-        if(!embedded){spellCastSequence++;PlayerCastWhileSubmerged(spell.Name);}
+        if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
