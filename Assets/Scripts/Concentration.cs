@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     void EndConcentration(string reason)
     {
         if(!IsConcentrating)return;
-        ClearSleepEffects();
+        ClearStoneskin();ClearSleepEffects();
         spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();
         silence.Clear();

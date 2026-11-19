@@ -93,6 +93,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Stoneskin")DrawStoneskinChoices();
         else if(definition.Name=="Water Breathing")DrawWaterBreathingChoices();
         else if(definition.Name=="Sleep")DrawSleepChoices();
         else if(definition.Name=="Spike Growth")GUILayout.Label("指定地面区域中心，所有生物均受影响。",small);
@@ -147,6 +148,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Stoneskin")return StoneskinError();
         if(spell.Name=="Sleep")return SleepError();
         if(spell.Name=="Water Breathing")return WaterBreathingError(directTargetPlayer,directBothTargets);
         if(spell.Name=="Spike Growth")return SpikeGrowthError();
@@ -210,6 +212,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
+        if(spell.Name=="Stoneskin"&&StoneskinError()!="")yield break;
         if(spell.Name=="Sleep"&&SleepError()!="")yield break;
         if(spell.Name=="Spike Growth"&&SpikeGrowthError()!="")yield break;
         if(spell.Name=="Grease"&&GreaseError()!="")yield break;
@@ -225,7 +228,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded){spellCastSequence++;PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -236,6 +239,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mage Armor"){ApplyMageArmor(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Spike Growth"){ResolveSpikeGrowth(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}

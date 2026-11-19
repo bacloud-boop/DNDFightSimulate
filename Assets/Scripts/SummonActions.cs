@@ -65,7 +65,7 @@ public sealed partial class TrainingGame
             yield return PresentRoll(8,rolls,"撕裂"+(critical?"暴击":"")+"：骰值 + "+bestialSpirit.Rules.FixedDamage+" = "+damage+" 挥砍");
             if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,DamageTypes.Index("挥砍"));combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null);unit.Damage(frost);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
             else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,DamageTypes.Index("挥砍"));combat.ApplyDamage(damage,sourcePlayer:null);}
-            else other.Damage(damage);
+            else other.Damage(damage,2);
             history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" 挥砍伤害。");RefreshBestialSpirit();CheckBattleOutcome();
         }finally{summonActing=previousBusy;}
     }

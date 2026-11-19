@@ -32,6 +32,7 @@ public sealed class SummonedUnit
     int dashes;
     public int SleepStage {get;set;}
     public int SleepRepeatRound {get;set;}
+    public bool Stoneskin {get;set;}
     public bool NoSleep {get;set;}
     public bool ExhaustionImmune {get;set;}
     public bool Prone {get;set;}
@@ -85,6 +86,6 @@ public sealed class SummonedUnit
     public bool TryUseAction(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
     public bool UseReaction(){if(!Alive||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-    public int Damage(int amount){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(amount>0)SleepStage=0;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}return before-Hp;}
+    public int Damage(int amount,int type=-1){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(Stoneskin&&type>=0&&type<=2)amount/=2;if(amount>0)SleepStage=0;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}return before-Hp;}
     public int Heal(int amount){if(!Alive||amount<=0)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+amount);return Hp-before;}
 }

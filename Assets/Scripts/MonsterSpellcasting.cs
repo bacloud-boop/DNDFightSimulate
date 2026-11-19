@@ -123,7 +123,7 @@ public sealed partial class TrainingGame
     IEnumerator ApplyMonsterSpellDamage(int target,int raw,string type,bool critical)
     {
         if(target==0){int amount=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(type));combat.ApplyPlayerDamage(amount,critical);history.Insert(0,"木桩法术对玩家造成 "+amount+" "+type+"伤害。");yield return MaintainConcentration(amount);}
-        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"?raw/2:raw;unit.Damage(amount);history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
+        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"?raw/2:raw;unit.Damage(amount,DamageTypes.Index(type));history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
     }
     IEnumerator FinishMonsterSpellTurn()
     {

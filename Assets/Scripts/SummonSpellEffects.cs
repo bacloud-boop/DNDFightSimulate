@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
     int ApplySummonSpellDamage(SummonedUnit unit,int raw,string type)
     {
         int damage=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"?raw/2:raw;
-        int actual=unit.Damage(damage);if(damage>0)BreakOrdinaryInvisibility(true,"造成伤害");
+        int actual=unit.Damage(damage,DamageTypes.Index(type));if(damage>0)BreakOrdinaryInvisibility(true,"造成伤害");
         history.Insert(0,unit.Name+"承受 "+damage+" "+type+"伤害（扣除HP "+actual+"）。");return actual;
     }
 }

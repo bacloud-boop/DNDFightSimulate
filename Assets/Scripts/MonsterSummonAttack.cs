@@ -27,7 +27,7 @@ public sealed partial class TrainingGame
         bool critical=value==20||unit.SleepStage==2&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=5;
         packet.Roll(out details,critical,(s,v,c)=>{sides.Add(s);rolls.Add(v);});
         for(int i=0;i<sides.Count;i++)yield return PresentRoll(sides[i],rolls[i],details);
-        bool[] resistance=new bool[DamageTypes.Names.Length];if(unit.Aquatic.Submerged)resistance[DamageTypes.Index("火焰")]=true;
+        bool[] resistance=new bool[DamageTypes.Names.Length];if(unit.Stoneskin)resistance[0]=resistance[1]=resistance[2]=true;if(unit.Aquatic.Submerged)resistance[DamageTypes.Index("火焰")]=true;
         bool[] immunity=new bool[DamageTypes.Names.Length];immunity[12]=SilenceUnitImmune(unit,"雷鸣");
         var sized=new RayDamage();sized.Raw=packet.LastRawTypedDamage;if(MonsterPolymorphed||combat.MonsterAttackIsWeapon)yield return ApplySizeWeaponDamage(false,sized.Raw,MonsterBaseWeaponDamageType,critical,sized);
         var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击召唤物",reduced);
