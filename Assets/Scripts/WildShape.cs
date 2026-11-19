@@ -133,7 +133,7 @@ public sealed partial class TrainingGame
     {
         var attack=BeastAttack.Find(PlayerBeast.name);rolling=true;int blessing=combat.PlayerBlessed?UnityEngine.Random.Range(1,5):0,bane=combat.PlayerBaned?UnityEngine.Random.Range(1,5):0,hitBonus=attack.HitBonus+blessing-bane+PlayerAquaticD20Penalty;
         bool advantage=Entangled(false)|(!PlayerPolymorphed&&fighter.ConsumeAdvantage(classes[0]))||!MonsterSeesPlayer||combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5);
-        bool disadvantage=FearDisadvantage(true)||Entangled(true)|RayAttackDisadvantage(true,attack.Ability)||UnderwaterCombatRules.Disadvantage(map.PlayerAquatic.Submerged,true,true,PlayerSwimSpeed,attack.DamageType=="穿刺")||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
+        bool disadvantage=ResurrectionD20Disadvantage(true)|FearDisadvantage(true)|Entangled(true)|RayAttackDisadvantage(true,attack.Ability)||UnderwaterCombatRules.Disadvantage(map.PlayerAquatic.Submerged,true,true,PlayerSwimSpeed,attack.DamageType=="穿刺")||combat.PlayerPoisoned||combat.PlayerProne||!PlayerSeesMonster;bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         advantage=combat.ConsumeGuidingLight(false)||advantage;rollHigh=advantage&&!disadvantage;rollLow=disadvantage&&!advantage;
         int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
         int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first;

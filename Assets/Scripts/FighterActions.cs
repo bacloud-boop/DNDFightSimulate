@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
         spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();
         sensory.Clear();enfeeblement.Clear();
-        monsterSpells.Reset();
+        monsterSpells.Reset();playerResurrectionCaster.Reset();externalResurrectionCaster.Reset();
         rescueCarrier.Reset();playerCorpseLoad.Clear();monsterCorpseLoad.Clear();
         DismissSteed();mountFallPending=false;steedFears.Clear();summonTurns.Reset();summonActing=summonEndRequested=false;
         shillelagh.Clear();

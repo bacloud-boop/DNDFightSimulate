@@ -16,6 +16,7 @@ public sealed partial class TrainingGame
         if(page!="battle"||!map.Locked)return "请先完成部署。";
         if(rolling||spellTargeting||reactionPending||draggingToken>=0)return "请等待当前操作结束。";
         if(!combat.PlayerCanAct||!combat.MagicActionAvailable)return "玩家没有可用的施法动作。";
+        if(!playerResurrectionCaster.CanCast)return "复生术疲惫：完成长休前不能施法。";
         if(!CanCastInCurrentForm)return "当前形态不能施法。";
         if(!ArmorSpellAllowed("Summon Beast"))return "未受训护甲禁止施法，或需先收起武器腾出空手。";
         if((caster!=2&&caster!=11)||classes[caster]<1)return "召唤野兽需要游侠或德鲁伊职业。";

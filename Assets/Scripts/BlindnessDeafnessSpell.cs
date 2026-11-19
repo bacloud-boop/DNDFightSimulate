@@ -33,10 +33,10 @@ public sealed partial class TrainingGame
     {
         long dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         foreach(bool targetPlayer in new[]{false,true})if(both||targetPlayer==player){
-            int value=Random.Range(1,21),modifier=targetPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+            var d20=RollD20Test(targetPlayer);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             dice="目盲／耳聋 · "+(targetPlayer?"玩家":"木桩")+"体质豁免";
-            yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);
+            yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+dc);
             if((long)value+modifier>=dc){history.Insert(0,(targetPlayer?"玩家":"木桩")+"通过豁免，不受本次目盲／耳聋影响。");continue;}
             bool blind=targetPlayer?playerBlind:monsterBlind;
             var added=sensory.Add(targetPlayer,blind,dc,worldRounds);
@@ -69,10 +69,10 @@ public sealed partial class TrainingGame
             if(choice==-2){var field=greasePending;greasePending=null;yield return ResolveGreaseSave(player?0:-1,field,"回合末油脂");continue;}
             if(choice==-1){rayPending=false;yield return RepeatEnfeeblementSave(player);continue;}
             var effect=pending.Find(item=>item.Id==choice);pending.Remove(effect);
-            int value=Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+            var d20=RollD20Test(player);int value=d20.Value,modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
             dice="回合末 · "+(player?"玩家":"木桩")+"目盲／耳聋 #"+effect.Id+" 体质豁免";
-            yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+effect.Dc);
+            yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+effect.Dc);
             if((long)value+modifier>=effect.Dc){sensory.End(effect.Id);history.Insert(0,"豁免成功，结束目盲／耳聋 #"+effect.Id+"，其他施法仍分别生效或计时。");}
             else history.Insert(0,"目盲／耳聋 #"+effect.Id+" 豁免失败，继续计时。");
         }

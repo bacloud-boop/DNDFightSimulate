@@ -36,11 +36,11 @@ public sealed partial class TrainingGame
         var reply=new SpellInterruption();yield return TryInterruptSpell(counterPlayer,"Counterspell",reply);
         BreakOrdinaryInvisibility(counterPlayer,"施放法术反制");
         if(reply.Cancelled){history.Insert(0,"法术反制本身被打断，原法术继续。");yield break;}
-        int value=UnityEngine.Random.Range(1,21);
+        var d20=RollD20Test(casterPlayer);int value=d20.Value;
         int modifier=casterPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(casterPlayer,false,adjustment,2);modifier+=adjustment.Value;
         dice="法术反制 · "+(casterPlayer?"玩家":"木桩")+"体质豁免";
-        yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+dc);
+        yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+dc);
         result.Cancelled=CounterspellRules.Interrupted(value,modifier,dc);
         history.Insert(0,result.Cancelled?"体质豁免失败："+metadata.chineseName+"被打断，施法所用动作／附赠动作／反应仍消耗，法术位不消耗。":"体质豁免成功：原法术继续生效。");
     }

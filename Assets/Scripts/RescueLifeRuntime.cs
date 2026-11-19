@@ -24,6 +24,7 @@ public sealed partial class TrainingGame
     {
         if(!combat.Aftermath||!map.RescuePosition.HasValue)return "救援者必须位于战后现场。";
         rescueCarrier.ObserveLife(worldRounds);
+        if(!(external?externalResurrectionCaster:playerResurrectionCaster).CanCast)return "施法者受复生术疲惫影响，须先完成长休。";
         if(!external){
             if(!CanPlayerAftermathCast)return "玩家当前不能施法。";
             if(!KnowsRevival(name))return "当前职业不能施放该法术。";
@@ -37,9 +38,10 @@ public sealed partial class TrainingGame
     {
         GUILayout.Label("生命状态："+rescueCarrier.LifeLabel,small);
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
+        DrawExternalCasterRest();
         if(!rescueCarrier.Dead)return;
         revivalWilling=GUILayout.Toggle(revivalWilling,"确认救援者灵魂愿意复活",label);
-        foreach(string name in new[]{"Revivify","Raise Dead","Gentle Repose","True Resurrection"})foreach(bool external in new[]{false,true}){
+        foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Gentle Repose","True Resurrection"})foreach(bool external in new[]{false,true}){
             string error=RescueRevivalError(name,external);bool old=GUI.enabled;GUI.enabled=!rolling&&error=="";
             if(GUILayout.Button((external?"外部施法者":"玩家")+" → 救援者："+DirectSpell.Find(name).Chinese,button))StartCoroutine(CastRescueRevival(name,external));
             GUI.enabled=old;
@@ -58,7 +60,7 @@ public sealed partial class TrainingGame
             if(!external&&!CanPlayerAftermathCast)error="施法者失能，复活失败。";
             if(error==""){
                 if(name=="Gentle Repose")rescueCarrier.Corpse.Preserve(worldRounds);
-                else rescueCarrier.Revive(name=="True Resurrection"?rescueCarrier.MaxHp:1,name=="Raise Dead");
+                else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if(rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name)))RecordResurrectionExertion(external,taxed);}
                 history.Insert(0,DirectSpell.Find(name).Chinese+"对救援者生效；保留战后状态，下一救援回合再行动。");
             }else history.Insert(0,"救援者复活失败："+error);
         }finally{if(!external)BreakOrdinaryInvisibility(true,"施法",invisibilityToken);rolling=busy;}

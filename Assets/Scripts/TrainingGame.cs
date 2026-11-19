@@ -119,7 +119,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         LogAttackCover(true,false);
         advantage=Entangled(false)|combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||combat.MonsterSleepStage==2||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=ArmorD20Disadvantage(true,trueStrike||shillelaghAttack&&shillelaghUseCasting?-1:attackWeapon.UsesDexterity(attributes)?1:0)||PlayerUnderwaterWeaponDisadvantage(attackWeapon)||!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
-        disadvantage=FearDisadvantage(true)||Entangled(true)|RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
+        disadvantage=ResurrectionD20Disadvantage(true)|FearDisadvantage(true)|Entangled(true)|RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
         bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
         bool twoDice=rollHigh||rollLow;

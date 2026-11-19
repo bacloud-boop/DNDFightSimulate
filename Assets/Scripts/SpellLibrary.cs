@@ -140,6 +140,7 @@ public sealed partial class TrainingGame
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         if(!combat.PlayerCanAct)return "玩家当前不能行动。";
+        if(!playerResurrectionCaster.CanCast)return "复生术疲惫：完成长休前不能施法。";
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
         if(MockeryTargetError(spell,directTargetPlayer)!="")return MockeryTargetError(spell,directTargetPlayer);
@@ -298,7 +299,7 @@ public sealed partial class TrainingGame
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
             bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=Entangled(targetPlayer)|combat.ConsumeGuidingLight(targetPlayer)||advantage;
-            disadvantage=FearDisadvantage(true)||Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
+            disadvantage=ResurrectionD20Disadvantage(true)|FearDisadvantage(true)|Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;
             int first=UnityEngine.Random.Range(1,21),second=rollHigh||rollLow?UnityEngine.Random.Range(1,21):0;
             int value=rollHigh?Math.Max(first,second):rollLow?Math.Min(first,second):first,armor=AttackArmor(true,targetPlayer);

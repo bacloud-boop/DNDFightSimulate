@@ -63,9 +63,9 @@ public sealed partial class TrainingGame
         var form=FindBeast(polymorphForm);int original=player?map.RiderBodySpaces:map.MonsterSpaces;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         EndConcentration("开始新的专注法术");
-        int value=UnityEngine.Random.Range(1,21),modifier=player?PlayerSavingThrowModifier(3):AcidSplash.Modifier(EffectiveMonsterAbility(3));
+        var d20=RollD20Test(player);int value=d20.Value,modifier=player?PlayerSavingThrowModifier(3):AcidSplash.Modifier(EffectiveMonsterAbility(3));
         if(!polymorphFailSave){var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
-        yield return PresentRoll(20,new[]{value},"变形术 · 感知豁免 "+value+" + "+modifier+" / DC "+dc);}
+        yield return PresentRoll(20,d20.Dice,"变形术 · 感知豁免 "+value+" + "+modifier+" / DC "+dc);}
         else history.Insert(0,"变形术：目标自愿放弃感知豁免。");
         if(!polymorphFailSave&&value+modifier>=dc){history.Insert(0,"变形术：目标豁免成功。");yield break;}
         if(!map.TransformAt(player,BeastSpaces(form),polymorphAnchor,original)){history.Insert(0,"变形术：占地失效，未替换形态。");yield break;}

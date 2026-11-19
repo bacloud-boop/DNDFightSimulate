@@ -19,7 +19,7 @@ public sealed partial class TrainingGame
     bool ArmorD20Disadvantage(bool player,int ability)=>(player?playerArmor:monsterArmor).D20Disadvantage(ability,player?PlayerArmorTraining:monsterArmorTraining,player?PlayerArmorMelded:MonsterPolymorphed);
     bool ArmorSpellAllowed(string spell)
     {
-        if(!SpellVoiceAllowed(true,spell))return false;
+        if(!playerResurrectionCaster.CanCast||!SpellVoiceAllowed(true,spell))return false;
         if(PlayerArmorUntrained)return false;
         if(!PlayerHasShield||weaponGrip.Stowed)return true;
         if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);
@@ -33,9 +33,8 @@ public sealed partial class TrainingGame
         disadvantage|=ability==1&&Entangled(player);
         disadvantage|=SizeStrengthDisadvantage(player,ability);
         disadvantage|=ArmorD20Disadvantage(player,ability)||RayStrengthDisadvantage(player,ability);
-        bool advantage=SizeStrengthAdvantage(player,ability)||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player),two=advantage!=disadvantage;
-        int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
-        return new ArmorSaveRoll{Value=PoisonProtectionEffect.SelectDie(first,second,advantage,disadvantage),Dice=two?new[]{first,second}:new[]{first}};
+        bool advantage=SizeStrengthAdvantage(player,ability)||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player);
+        return RollD20Test(player,advantage,disadvantage);
     }
     void SyncArmorEquipment()
     {
