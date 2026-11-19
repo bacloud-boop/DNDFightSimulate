@@ -93,6 +93,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Eldritch Blast")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,1),"魔能束","每束分别选择目标，独立攻击并造成1d10力场伤害。");
         else if(definition.Name=="Scorching Ray")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel),"射线","每道射线单独攻击与伤害；先分配所有目标。");
         else if(definition.Name=="Magic Missile")DrawMissileTargets(definition.DiceCount(classes.TotalLevel,directSlotLevel));
+        else if(definition.Name=="Chain Lightning")DrawChainLightningChoices();
         else if(definition.Name=="Mass Heal")DrawMassHealChoices();
         else if(definition.Name=="Heal")DrawHealChoices();
         else if(definition.Name=="Find Steed")DrawFindSteedChoices();
@@ -152,6 +153,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Silence")return SilenceError();
+        if(spell.Name=="Chain Lightning")return ChainLightningError(directSlotLevel);
         if(spell.Name=="Mass Heal")return MassHealError();
         if(spell.Name=="Heal")return HealSpellError();
         if(spell.Name=="Find Steed")return FindSteedError(directSlotLevel);
@@ -219,6 +221,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
+        if(spell.Name=="Chain Lightning"&&ChainLightningError(slotLevel)!="")yield break;
         if(spell.Name=="Mass Heal"&&MassHealError()!="")yield break;
         if(spell.Name=="Heal"&&HealSpellError()!="")yield break;
         if(spell.Name=="Find Steed"&&FindSteedError(slotLevel)!="")yield break;
@@ -249,6 +252,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mage Armor"){ApplyMageArmor(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Jump"){if(jumpBoth){ApplyJumpSpell(true);ApplyJumpSpell(false);}else ApplyJumpSpell(targetPlayer);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Chain Lightning"){yield return ResolveChainLightning(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mass Heal"){ApplyMassHeal();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heal"){ApplyHealSpell(slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}

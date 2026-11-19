@@ -8,11 +8,11 @@ public sealed partial class TrainingGame
         var found=new List<SummonedUnit>();foreach(var unit in map.Summons)if(unit.Alive&&BattleMap.BodyDistance(center,1,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius)found.Add(unit);return found;
     }
     sealed class SummonSave {public bool Failed;}
-    IEnumerator RollSummonSave(SummonedUnit unit,int ability,int dc,Vector2Int center,SummonSave result)
+    IEnumerator RollSummonSave(SummonedUnit unit,int ability,int dc,Vector2Int center,SummonSave result,int? sourceId=null)
     {
         if(unit.SleepStage==2&&(ability==0||ability==1)){result.Failed=true;yield break;}
         int modifier=AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
-        if(ability==1)modifier+=map.CreatureCoverFromPoint(center,unit.Id);
+        if(ability==1)modifier+=sourceId.HasValue?map.CreatureCoverBonus(sourceId.Value,unit.Id):map.CreatureCoverFromPoint(center,unit.Id);
         bool advantage=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0;
         bool disadvantage=ability==1&&unit.Restrained;
         int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
