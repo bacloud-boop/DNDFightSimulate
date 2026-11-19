@@ -4,8 +4,3 @@ public static class MonsterAttackAbility
  public static bool Valid(int selection)=>selection>=0&&selection<=6;
  public static int Modifier(int selection,int score)=>selection==0?0:AcidSplash.Modifier(score);
 }
-public sealed partial class TrainingGame
-{
- int monsterAttackAbility,monsterAttackAbilityDraft;
- long MonsterCustomHitBonus=>combat.MonsterHitBonus+MonsterAttackAbility.Modifier(monsterAttackAbility,monsterAttackAbility==0?10:EffectiveMonsterAbility(monsterAttackAbility-1));
-}

@@ -33,12 +33,12 @@ public sealed partial class TrainingGame
         GUILayout.Label("角色创建 · 背景与熟练",heading);
         int background=GUILayout.SelectionGrid(skillBackground,SkillSourceTables.BackgroundNames,4,new GUIStyle(button){fontSize=15,fixedHeight=32});if(background!=skillBackground){skillBackground=background;skillDirty=true;}
         foreach(var grant in SkillCreationRules.BaseGrants(classes,skillBackground))DrawGrant(grant);
-        List<SkillGrant> replacements;string previewError;int[] preview=SkillCreationRules.Preview(classes,skillBackground,skillChoices,out replacements,out previewError);
+        List<SkillGrant> replacements;string previewError;int[] preview=SkillCreationRules.Preview(classes,skillBackground,skillChoices,out replacements,out previewError);preview=SpeciesSkillRules.Merge(preview,playerSpecies);
         GUILayout.Label("重复熟练不额外补选；可选项须在原列表内避开已有熟练。",small);
         foreach(var grant in SkillCreationRules.ExpertiseGrants(classes,preview))DrawGrant(grant);
         GUILayout.Label("背景在此提供技能、工具及熟习/巧匠/音乐家的熟练选择；属性加点、物品制造、装备和其他专长增益按各自接入状态处理。",small);
         if(GUILayout.Button("应用角色技能资料",button)){
-            int[] built;string error;if(SkillCreationRules.TryBuild(classes,skillBackground,skillChoices,out built,out error)){playerSkillTiers=built;skillSignature=SkillCreationRules.Signature(classes);skillDirty=false;skillMessage="技能与工具熟练已应用。";}else skillMessage=error;
+            int[] built;HashSet<int> expertise;string error;if(SpeciesSkillRules.TryBuild(classes,skillBackground,skillChoices,playerSpecies,out built,out expertise,out error)){playerSkillTiers=built;playerExpertiseChoices.Clear();foreach(int id in expertise)playerExpertiseChoices.Add(id);skillSignature=SkillCreationRules.Signature(classes);skillDirty=false;skillMessage="技能与工具熟练已应用。";}else skillMessage=error;
         }
         GUI.enabled=previous;GUILayout.Label(skillMessage,small);
         if(!SkillProfileReady)GUILayout.Label("完成角色创建并应用后才能检定；职业改变后需重新确认。",small);
@@ -91,7 +91,7 @@ public sealed partial class TrainingGame
         if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
         int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];
-        int tier=skill>=0?playerSkillTiers[skill]:0;bool toolProf=tool>=0&&playerSkillTiers[18+tool]>0;
+        int tier=skill>=0?EffectivePlayerSkillTier(skill):0;bool toolProf=tool>=0&&EffectivePlayerSkillTier(18+tool)>0;
         if(PlayerPolymorphed){tier=0;toolProf=false;}
         int effectiveTier=Math.Max(tier,toolProf?1:0),score=EffectivePlayerAbility(ability);
         int modifier=SkillCheckRules.Modifier(score,effectiveTier,classes.ProficiencyBonus,skill>=0,!PlayerPolymorphed&&classes[5]>=2);

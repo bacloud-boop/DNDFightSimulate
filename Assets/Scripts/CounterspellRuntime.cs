@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         var reply=new SpellInterruption();yield return TryInterruptSpell(counterPlayer,"Counterspell",reply);
         BreakOrdinaryInvisibility(counterPlayer,"施放法术反制");
         if(reply.Cancelled){history.Insert(0,"法术反制本身被打断，原法术继续。");yield break;}
-        var d20=RollD20Test(casterPlayer);int value=d20.Value;
+        var d20=RollD20Test(casterPlayer,ability:2);int value=d20.Value;
         int modifier=casterPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(casterPlayer,false,adjustment,2);modifier+=adjustment.Value;
         dice="法术反制 · "+(casterPlayer?"玩家":"木桩")+"体质豁免";

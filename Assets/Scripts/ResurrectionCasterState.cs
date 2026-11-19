@@ -10,10 +10,10 @@ public sealed class ResurrectionCasterState
     public static bool RequiresExertion(string spell,CorpseClock corpse,long now)
         =>spell=="Resurrection"&&corpse!=null&&corpse.Dead&&now>=corpse.DeathAt&&now-corpse.DeathAt>=YearRounds;
     public void ApplyExertion(){Taxed=true;}
-    public bool CanLongRest(long now)=>now>=0&&now<=long.MaxValue-LongRestRounds&&(!LastLongRestStart.HasValue||now>=LastLongRestStart.Value&&now-LastLongRestStart.Value>=RestInterval);
-    public bool CompleteLongRest(long start,long finish)
+    public bool CanLongRest(long now,long required=LongRestRounds)=>(required==2400||required==LongRestRounds)&&now>=0&&now<=long.MaxValue-required&&(!LastLongRestStart.HasValue||now>=LastLongRestStart.Value&&now-LastLongRestStart.Value>=RestInterval);
+    public bool CompleteLongRest(long start,long finish,long required=LongRestRounds)
     {
-        if(!CanLongRest(start)||finish<start||finish-start<LongRestRounds)return false;
+        if(!CanLongRest(start,required)||finish<start||finish-start<required)return false;
         LastLongRestStart=start;Taxed=false;return true;
     }
     public void Reset(){Taxed=false;LastLongRestStart=null;}

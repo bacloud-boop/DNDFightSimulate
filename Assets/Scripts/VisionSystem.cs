@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     string playerVisionInput="0",monsterVisionInput="0",visionColumn="1",visionRow="1";
     int? playerSightOverride,monsterSightOverride;
     int lightDraft;bool visionWilling,checkVisual;
-    int PlayerDarkvision=>PlayerPolymorphed?Mathf.Max(vision.SpellRange(true,worldRounds),polymorph.Darkvision):IsWildShaped?Mathf.Max(vision.SpellRange(true,worldRounds),wildForm.darkvision):vision.Range(true,worldRounds);
+    int PlayerDarkvision=>PlayerPolymorphed?Mathf.Max(vision.SpellRange(true,worldRounds),polymorph.Darkvision):IsWildShaped?Mathf.Max(vision.SpellRange(true,worldRounds),wildForm.darkvision):Mathf.Max(vision.Range(true,worldRounds),playerSpecies.Darkvision);
     int PlayerBlindsight=>PlayerPolymorphed?polymorph.Blindsight:IsWildShaped?wildForm.blindsight:0;
     int Visibility(bool viewerPlayer,bool targetPlayer){
         if(viewerPlayer==targetPlayer)return 0;
@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
     }
     int VisibilityBetween(bool viewerPlayer,double fromX,double fromY,int fromSize,double targetX,double targetY,int targetSize,bool invisible=false){
         if(mindSpike.IgnoresInvisibility(viewerPlayer,!viewerPlayer,worldRounds))invisible=false;
-        int range=viewerPlayer?PlayerDarkvision:MonsterPolymorphed?Mathf.Max(vision.SpellRange(false,worldRounds),polymorph.Darkvision):vision.Range(false,worldRounds),best=2,blind=viewerPlayer?PlayerBlindsight:MonsterPolymorphed?polymorph.Blindsight:0;
+        int range=viewerPlayer?PlayerDarkvision:MonsterPolymorphed?Mathf.Max(vision.SpellRange(false,worldRounds),polymorph.Darkvision):Mathf.Max(vision.Range(false,worldRounds),monsterSpecies.Darkvision),best=2,blind=viewerPlayer?PlayerBlindsight:MonsterPolymorphed?polymorph.Blindsight:0;
         if(!viewerPlayer&&combat.MonsterSleepStage==2)return 2;
         bool viewerBlinded=sensory.Blinded(viewerPlayer,worldRounds);
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){

@@ -278,6 +278,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="species"||panel=="monsterSpecies"){DrawSpeciesPanel(panel=="species");return;}
         if(panel=="monsterSpells"){DrawMonsterSpells();return;}
         if(panel=="armor"||panel=="monsterArmor"){DrawArmorPanel(panel=="armor");return;}
         if(panel=="summons"){DrawSummonControl();return;}
@@ -332,13 +333,14 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.EndScrollView();
             GUILayout.Label("总等级 1～20，各职业 0～20，初始职业至少 1 级。当前总等级："+classes.TotalLevel,label);
             if(GUILayout.Button("应用",button)) {
-                if(ValidateSubclassDraft() && classes.TryApply(classInputs,selectedClass) && classes.TryApplySubclasses(subclassChoices)) { ResetRestResources();druid.LongRest();knownFormsLevel=-1; combat.UpdatePlayerMaxHp(attributes[2],classes); classError="职业等级已应用。"; }
+                if(ValidateSubclassDraft() && classes.TryApply(classInputs,selectedClass) && classes.TryApplySubclasses(subclassChoices)) { ResetRestResources();druid.LongRest();knownFormsLevel=-1; combat.UpdatePlayerMaxHp(attributes[2],classes);ApplySpeciesHp(true,true); classError="职业等级已应用。"; }
                 else classError="等级须合法，初始职业至少1级；每个达到3级的职业须选择子职业。";
             }
             GUILayout.Label(classError,label);
             GUI.enabled=true;if(GUILayout.Button("查看职业特性目录 / 接入状态",button)){catalogClassIndex=selectedClass;panel="features";}
         } else if(panel=="monsterAttributes") {
             GUILayout.Label("怪物属性",heading);
+            if(GUILayout.Button("怪物种族 · "+monsterSpecies.Name,button)){BeginSpeciesDraft(false);panel="monsterSpecies";}
             DrawWeightInputs(monsterWeight);
             GUILayout.Label("挑战等级CR（当前 "+ChallengeRatings.Names[monsterProfile.ChallengeIndex]+"）",small);monsterChallengeDraft=GUILayout.SelectionGrid(monsterChallengeDraft,ChallengeRatings.Names,6,new GUIStyle(button){fontSize=15,fixedHeight=30});
             GUILayout.Label("基础移动力（尺，当前 "+combat.MonsterBaseSpeed+"）",small);monsterSpeedInput=IntegerField(monsterSpeedInput,false);
@@ -361,7 +363,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 GUILayout.EndHorizontal();
             }
             GUILayout.BeginHorizontal();
-            GUILayout.Label("最大 HP（当前 "+combat.MaxHp+"）",label,GUILayout.Width(230));
+            GUILayout.Label("基础最大 HP（当前总上限 "+combat.MaxHp+"）",label,GUILayout.Width(230));
             monsterHpInput=IntegerField(monsterHpInput,false);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
@@ -392,6 +394,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
             GUILayout.Label("玩家属性",heading);
+            if(GUILayout.Button("玩家种族 · "+playerSpecies.Name,button)){BeginSpeciesDraft(true);panel="species";}
             DrawWeightInputs(playerWeight);
             DrawVisionConfiguration(true);DrawSleepTraitConfiguration(true);
             for(int i=0;i<6;i++) {
@@ -404,8 +407,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             if(GUILayout.Button("应用",button)) {
                 int visionRange;
                 if(!VisionInputValid(true,out visionRange))attributeError="黑暗视觉距离必须为非负整数。";
-                else if(!AttributeLoadFits(true,attributeInputs,2))attributeError="拒绝配置：力量不足以携带现有装备，或力量输入无效。";
-                else if(attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;ApplySleepTraitConfiguration(true);vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes); attributeError="属性已应用。"; }
+                else if(!AttributeLoadFits(true,attributeInputs,NaturalPlayerSize))attributeError="拒绝配置：力量不足以携带现有装备，或力量输入无效。";
+                else if(attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;ApplySleepTraitConfiguration(true);vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes);ApplySpeciesHp(true,true); attributeError="属性已应用。"; }
                 else attributeError="每项必须为 3～20 的整数，未保存本次修改。";
             }
             GUILayout.Label(attributeError,label);

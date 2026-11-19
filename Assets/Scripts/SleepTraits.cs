@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
   if(player){playerNoSleep=playerNoSleepDraft;playerExhaustionImmune=playerExhaustionImmuneDraft;}
   else {monsterNoSleep=monsterNoSleepDraft;monsterExhaustionImmune=monsterExhaustionImmuneDraft;}
  }
- bool EffectiveNoSleep(bool player){var beast=player?(PlayerInBeastForm?PlayerBeast:null):(MonsterPolymorphed?PolymorphBeast:null);return beast!=null?beast.noSleep:player?playerNoSleep:monsterNoSleep;}
+ bool EffectiveNoSleep(bool player){var beast=player?(PlayerInBeastForm?PlayerBeast:null):(MonsterPolymorphed?PolymorphBeast:null);return beast!=null?beast.noSleep:player?playerNoSleep||playerSpecies.NoSleep:monsterNoSleep||monsterSpecies.NoSleep;}
  bool EffectiveExhaustionImmune(bool player){var beast=player?(PlayerInBeastForm?PlayerBeast:null):(MonsterPolymorphed?PolymorphBeast:null);return beast!=null?beast.exhaustionImmune:player?playerExhaustionImmune:monsterExhaustionImmune;}
  bool AutomaticSleepSave(bool player)=>EffectiveNoSleep(player)||EffectiveExhaustionImmune(player);
 }

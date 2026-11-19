@@ -28,12 +28,12 @@ public sealed partial class TrainingGame
     }
     string WeaponHandError(Weapon weapon)=>!carriedWeapons.Carried(weapon.Name)?"武器未携带或已掉落。":PlayerHasShield&&weapon.RequiresTwoHands?"盾牌占用一只手，无法使用双手武器攻击。":!ammunition.CanFire(weapon.Name,!PlayerHasShield)?"武器未装填；盾牌占手，无法随攻击装填。":"";
     sealed class ArmorSaveRoll {public int Value;public int[] Dice;}
-    ArmorSaveRoll RollArmorSave(bool player,int ability,bool disadvantage=false,bool avoidsOrEndsPoisoned=false)
+    ArmorSaveRoll RollArmorSave(bool player,int ability,bool disadvantage=false,bool avoidsOrEndsPoisoned=false,bool avoidsOrEndsCharmed=false,bool avoidsOrEndsFrightened=false)
     {
         disadvantage|=ability==1&&Entangled(player);
         disadvantage|=SizeStrengthDisadvantage(player,ability);
         disadvantage|=ArmorD20Disadvantage(player,ability)||RayStrengthDisadvantage(player,ability);
-        bool advantage=SizeStrengthAdvantage(player,ability)||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player);
+        bool advantage=SpeciesSaveAdvantage(player,ability,avoidsOrEndsPoisoned,avoidsOrEndsCharmed,avoidsOrEndsFrightened)||SizeStrengthAdvantage(player,ability)||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player);
         return RollD20Test(player,advantage,disadvantage);
     }
     void SyncArmorEquipment()

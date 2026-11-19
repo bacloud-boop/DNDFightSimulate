@@ -47,7 +47,7 @@ public sealed partial class TrainingGame
                 yield return PresentRoll(8,rolls,"治疗之触：2d8 + "+steedRules.Slot+" = "+amount);
                 int healed=targetId==0?combat.HealPlayer(amount):targetId==-1?combat.HealMonster(amount):FindSummon(targetId).Heal(amount);history.Insert(0,"治疗之触："+target+"实际恢复 "+healed+" HP。");}
             else {int dc=8+SummonAttackBonus(unit);bool failed;
-                if(targetId==0||targetId==-1){bool player=targetId==0;var roll=RollArmorSave(player,3);int modifier=player?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment,3);modifier+=adjustment.Value;
+                if(targetId==0||targetId==-1){bool player=targetId==0;var roll=RollArmorSave(player,3,avoidsOrEndsFrightened:true);int modifier=player?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment,3);modifier+=adjustment.Value;
                     yield return PresentRoll(20,roll.Dice,"凶恶凝视 · "+target+"感知豁免 "+roll.Value+" + "+modifier+" / DC "+dc);failed=(long)roll.Value+modifier<dc;}
                 else {var save=new SummonSave();yield return RollSummonSave(FindSummon(targetId),3,dc,new Vector2Int(unit.X,unit.Y),save);failed=save.Failed;}
                 if(failed)steedFears[targetId]=combat.Round+1;history.Insert(0,"凶恶凝视："+target+(failed?"恐慌至玩家下个回合结束；看见坐骑时攻击与属性检定劣势，不能自愿靠近。":"豁免成功。"));}

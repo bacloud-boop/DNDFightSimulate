@@ -4,8 +4,9 @@ public sealed partial class TrainingGame
     readonly ResurrectionCasterState playerResurrectionCaster=new ResurrectionCasterState();
     readonly ResurrectionCasterState externalResurrectionCaster=new ResurrectionCasterState();
     bool ResurrectionD20Disadvantage(bool player)=>player&&playerResurrectionCaster.D20Disadvantage;
-    ArmorSaveRoll RollD20Test(bool player,bool advantage=false,bool disadvantage=false)
+    ArmorSaveRoll RollD20Test(bool player,bool advantage=false,bool disadvantage=false,int ability=-1)
     {
+        advantage|=SpeciesSaveAdvantage(player,ability);
         disadvantage|=ResurrectionD20Disadvantage(player);bool two=advantage!=disadvantage;
         int first=Random.Range(1,21),second=two?Random.Range(1,21):0;
         return new ArmorSaveRoll{Value=PoisonProtectionEffect.SelectDie(first,second,advantage,disadvantage),Dice=two?new[]{first,second}:new[]{first}};

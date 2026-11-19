@@ -146,8 +146,11 @@ public sealed class CombatState
     readonly bool[] playerAidCredits=new bool[40],monsterAidCredits=new bool[40];
     public int MonsterMaxHpReduction {get;private set;}
     public int PlayerMaxHpReduction {get;private set;}
-    public int MaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)monsterBaseMaxHp+MonsterAidBonus)-MonsterMaxHpReduction);
-    public int PlayerMaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)playerBaseMaxHp+PlayerAidBonus)-PlayerMaxHpReduction);
+    public int PlayerSpeciesHpBonus {get;private set;}
+    public int MonsterSpeciesHpBonus {get;private set;}
+    public void SetSpeciesHpBonus(bool player,int bonus,bool refill){if(bonus<0)throw new ArgumentOutOfRangeException(nameof(bonus));int old=player?PlayerMaxHp:MaxHp;if(player)PlayerSpeciesHpBonus=bonus;else MonsterSpeciesHpBonus=bonus;int current=player?PlayerMaxHp:MaxHp;if(old!=current){if(player)PlayerHp=refill?current:Math.Min(PlayerHp,current);else Hp=refill?current:Math.Min(Hp,current);}}
+    public int MaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)monsterBaseMaxHp+MonsterAidBonus+MonsterSpeciesHpBonus)-MonsterMaxHpReduction);
+    public int PlayerMaxHp => (int)Math.Max(1,Math.Min(int.MaxValue,(long)playerBaseMaxHp+PlayerAidBonus+PlayerSpeciesHpBonus)-PlayerMaxHpReduction);
     public int ReduceMaxHp(bool player,int amount)
     {
         if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));

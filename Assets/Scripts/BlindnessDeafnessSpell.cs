@@ -33,7 +33,7 @@ public sealed partial class TrainingGame
     {
         long dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         foreach(bool targetPlayer in new[]{false,true})if(both||targetPlayer==player){
-            var d20=RollD20Test(targetPlayer);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+            var d20=RollD20Test(targetPlayer,ability:2);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             dice="目盲／耳聋 · "+(targetPlayer?"玩家":"木桩")+"体质豁免";
             yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+dc);
@@ -69,7 +69,7 @@ public sealed partial class TrainingGame
             if(choice==-2){var field=greasePending;greasePending=null;yield return ResolveGreaseSave(player?0:-1,field,"回合末油脂");continue;}
             if(choice==-1){rayPending=false;yield return RepeatEnfeeblementSave(player);continue;}
             var effect=pending.Find(item=>item.Id==choice);pending.Remove(effect);
-            var d20=RollD20Test(player);int value=d20.Value,modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
+            var d20=RollD20Test(player,ability:2);int value=d20.Value,modifier=player?PlayerSavingThrowModifier(2):MonsterSavingThrowModifier(2);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
             dice="回合末 · "+(player?"玩家":"木桩")+"目盲／耳聋 #"+effect.Id+" 体质豁免";
             yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+effect.Dc);

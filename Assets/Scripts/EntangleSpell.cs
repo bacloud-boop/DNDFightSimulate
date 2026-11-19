@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator EscapeMonsterEntangle()
     {
-        int tier=MonsterPolymorphed?0:monsterSkillTiers[0];long modifier=AcidSplash.Modifier(EffectiveMonsterAbility(0))+(long)tier*combat.MonsterProficiencyBonus+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
+        int tier=MonsterPolymorphed?0:EffectiveMonsterSkillTier(0);long modifier=AcidSplash.Modifier(EffectiveMonsterAbility(0))+(long)tier*combat.MonsterProficiencyBonus+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
         if(MonsterPolymorphed)modifier=polymorph.Skill(0,0)+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
         bool advantage=SizeStrengthAdvantage(false,0)||checkBuff.Advantage(false,0,worldRounds),disadvantage=FearDisadvantage(false)||SizeStrengthDisadvantage(false,0)||RayStrengthDisadvantage(false,0)||ArmorD20Disadvantage(false,0)||combat.MonsterPoisoned||mark.CheckDisadvantage(false,0);
         int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);

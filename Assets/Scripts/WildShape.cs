@@ -44,7 +44,7 @@ public sealed partial class TrainingGame
         string name=wildForm.name;var reference=FormReferenceCell;wildForm=null;
         if(PlayerPolymorphed){map.TrySetRecoverySize(true,1);history.Insert(0,"底层荒野形态结束（"+reason+"），变形术仍保留。");return;}
         RestoreSizedPlayerForm(reference);
-        map.SetPlayerSpeed(30);combat.SetPlayerArmorOverride(null);fighter.CancelAttackAction();actionWeapon=null;
+        map.SetPlayerSpeed(NaturalPlayerSpeed);combat.SetPlayerArmorOverride(null);fighter.CancelAttackAction();actionWeapon=null;
         history.Insert(0,"荒野形态结束（"+reason+"）："+name+"，恢复原形与融入的武器；临时生命按通常规则保留。");
     }
     string WildShapeInvalidReason(BeastRecord form)

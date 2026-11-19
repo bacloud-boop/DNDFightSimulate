@@ -6,12 +6,12 @@ public sealed partial class TrainingGame
     readonly SizeChangeEffect sizeChange=new SizeChangeEffect();
     bool sizeEnlarge=true,sizeWilling,sizeAnchorChosen,sizeTargetDraft,sizeRestorePending;
     Vector2Int sizeAnchor;
-    int BaseCreatureSize(bool player)=>player?(PlayerInBeastForm?BeastSizeIndex(PlayerBeast):2):(MonsterPolymorphed?BeastSizeIndex(PolymorphBeast):monsterProfile.SizeIndex);
-    int ProspectiveSize(bool player)=>player?(IsWildShaped?BeastSizeIndex(wildForm):2):monsterProfile.SizeIndex;
+    int BaseCreatureSize(bool player)=>player?(PlayerInBeastForm?BeastSizeIndex(PlayerBeast):NaturalPlayerSize):(MonsterPolymorphed?BeastSizeIndex(PolymorphBeast):monsterProfile.SizeIndex);
+    int ProspectiveSize(bool player)=>player?(IsWildShaped?BeastSizeIndex(wildForm):NaturalPlayerSize):monsterProfile.SizeIndex;
     int EffectiveCreatureSize(bool player)=>sizeChange.Applies(player)?SizeChangeEffect.ChangedSize(BaseCreatureSize(player),sizeChange.Delta):BaseCreatureSize(player);
     bool SizeStrengthAdvantage(bool player,int ability)=>ability==0&&!sizeRestorePending&&sizeChange.Applies(player)&&sizeChange.Delta>0;
     bool SizeStrengthDisadvantage(bool player,int ability)=>ability==0&&!sizeRestorePending&&sizeChange.Applies(player)&&sizeChange.Delta<0;
-    int SizeRecovery(bool player,int baseSize,int delta)=>Math.Max(CreatureProfile.SpacesForSize(baseSize),player?CreatureProfile.SpacesForSize(2+delta):1);
+    int SizeRecovery(bool player,int baseSize,int delta)=>Math.Max(CreatureProfile.SpacesForSize(baseSize),player?CreatureProfile.SpacesForSize(NaturalPlayerSize+delta):1);
     bool FindSizePlacement(bool player,int spaces,int recovery,out Vector2Int result,Vector2Int? preferred=null)
     {
         var body=player?map.Player:map.Monster;int old=player?map.PlayerSpaces:map.MonsterSpaces;double best=double.MaxValue;result=body;
@@ -79,12 +79,12 @@ public sealed partial class TrainingGame
     {
         if(!sizeChange.Applies(true))return druid.TryBeginWildShape(classes[11],combat,map,BeastSpaces(form),out anchor,reference);
         if(!FindSizedWildPlacement(form,out anchor)||!combat.TryUseBonusAction())return false;
-        druid.TryUse(classes[11]);bool changed=map.TransformAt(true,CreatureProfile.SpacesForSize(SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)),anchor,Math.Max(BeastSpaces(form),CreatureProfile.SpacesForSize(2+sizeChange.Delta)));anchor=map.Player;return changed;
+        druid.TryUse(classes[11]);bool changed=map.TransformAt(true,CreatureProfile.SpacesForSize(SizeChangeEffect.ChangedSize(BeastSizeIndex(form),sizeChange.Delta)),anchor,Math.Max(BeastSpaces(form),CreatureProfile.SpacesForSize(NaturalPlayerSize+sizeChange.Delta)));anchor=map.Player;return changed;
     }
     void RestoreSizedPlayerForm(Vector2Int reference)
     {
         if(!sizeChange.Applies(true)){map.TryResizePlayerAt(1,reference);return;}
-        Vector2Int anchor;int spaces=CreatureProfile.SpacesForSize(2+sizeChange.Delta);
+        Vector2Int anchor;int spaces=CreatureProfile.SpacesForSize(NaturalPlayerSize+sizeChange.Delta);
         if(FindSizePlacement(true,spaces,1,out anchor,reference))map.TransformAt(true,spaces,anchor,1);
     }
     int SizeLoadSpeed(bool player,int speed)
@@ -92,7 +92,7 @@ public sealed partial class TrainingGame
         if(Entangled(player))return 0;
         if(!sizeChange.Applies(player))return speed;
         var load=player?playerCorpseLoad:monsterCorpseLoad;long gear=player?PlayerEquipmentWeight:MonsterEquipmentWeight;
-        return CarryingRules.DragSpeedOunces(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),EffectiveCreatureSize(player),gear+(load.Loaded?load.WeightOunces:0),speed);
+        return CarryingRules.DragSpeedOunces(player?EffectivePlayerAbility(0):EffectiveMonsterAbility(0),CarryingCreatureSize(player),gear+(load.Loaded?load.WeightOunces:0),speed);
     }
     IEnumerator ApplySizeWeaponDamage(bool player,long[] raw,int type,bool critical,RayDamage result)
     {

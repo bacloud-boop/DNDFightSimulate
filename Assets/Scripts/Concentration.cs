@@ -42,7 +42,7 @@ public sealed partial class TrainingGame
     {
         if(!IsConcentrating||damage<=0)yield break;
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed){EndConcentration("施法者失能或死亡");yield break;}
-        var concentrationRoll=RollD20Test(true);int dc=ConcentrationRules.DamageSaveDc(damage),value=concentrationRoll.Value,modifier=PlayerSavingThrowModifier(2);
+        var concentrationRoll=RollD20Test(true,ability:2);int dc=ConcentrationRules.DamageSaveDc(damage),value=concentrationRoll.Value,modifier=PlayerSavingThrowModifier(2);
         dice=concentrationSpell+" · 受伤专注豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,concentrationRoll.Dice,value+" + 体质豁免 "+modifier+" / DC "+dc);
@@ -51,10 +51,10 @@ public sealed partial class TrainingGame
     IEnumerator RepeatHoldPersonSave()
     {
         if(!combat.MonsterParalyzed||(concentrationSpell!="人类定身术"&&concentrationSpell!="怪物定身术")||combat.Hp==0)yield break;
-        int value=Random.Range(1,21),modifier=MonsterSavingThrowModifier(3);
+        var d20=RollD20Test(false,ability:3);int value=d20.Value,modifier=MonsterSavingThrowModifier(3);
         dice="木桩回合结束 · "+concentrationSpell+"感知豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,false,adjustment);modifier+=adjustment.Value;
-        yield return PresentRoll(20,new[]{value},value+" + "+modifier+" / DC "+holdPersonDc);
+        yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+holdPersonDc);
         if(value+modifier>=holdPersonDc){combat.MonsterParalyzed=false;history.Insert(0,"木桩通过感知豁免，摆脱麻痹。");RefreshConcentration();}
         else history.Insert(0,"木桩感知豁免失败，继续麻痹。");
     }
@@ -69,7 +69,7 @@ public sealed partial class TrainingGame
             if(!targetPlayer&&(!spell.AllowsCreatureType(monsterProfile.TypeIndex)||combat.Hp==0))continue;
             if(targetPlayer&&combat.PlayerDead)continue;
             string target=targetPlayer?"玩家":"木桩";
-            var d20=RollD20Test(targetPlayer);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);
+            var d20=RollD20Test(targetPlayer,ability:3);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);
             dice=spell.Chinese+" · "+target+"感知豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;
             yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+holdPersonDc);
