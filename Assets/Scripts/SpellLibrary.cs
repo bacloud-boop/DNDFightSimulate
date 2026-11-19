@@ -37,6 +37,7 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(375,185,430,635));
         GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
+        if(dancingLights.Active(worldRounds)&&GUILayout.Button("移动现存舞光（附赠动作）",button))OpenDancingLightsControl();
         GUILayout.Label("法术位资源暂不扣除；学习数量限制暂不启用。未接入条目不能施法。飞行相关暂缓。",small);
         spellSearch=GUILayout.TextField(spellSearch,fieldStyle);
         onlyClassSpells=GUILayout.Toggle(onlyClassSpells,"仅显示当前职业与种族的法术",label);
@@ -69,6 +70,7 @@ public sealed partial class TrainingGame
     void DrawDirectSpellPanel()
     {
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
+        if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
         Surface(new Rect(350,110,480,745),paperTexture);
@@ -158,6 +160,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Faerie Fire")return FaerieFireError();
+        if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Silence")return SilenceError();
         if(spell.Name=="Destructive Wave")return DestructiveWaveError();
         if(spell.Name=="Chain Lightning")return ChainLightningError(directSlotLevel);
@@ -228,6 +231,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
+        if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
         if(spell.Name=="Destructive Wave"&&DestructiveWaveError()!="")yield break;
@@ -251,7 +255,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -268,6 +272,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Heal"){ApplyHealSpell(slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}

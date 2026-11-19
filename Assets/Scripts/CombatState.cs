@@ -195,6 +195,7 @@ public sealed class CombatState
         if(!PlayerCanAct||!BonusActionAvailable) return false;
         BattleStarted=true;BonusActionAvailable=false;return true;
     }
+    public bool TryUseAftermathBonusAction(){if(!Aftermath)return TryUseBonusAction();if(PlayerHp<=0||PlayerDead||PlayerParalyzed||!BonusActionAvailable)return false;BonusActionAvailable=false;BattleStarted=true;return true;}
     public void AddSurgeAction() {if(!PlayerCanAct)return; BattleStarted=true;ActionsRemaining++;ActionsThisRound++;RestrictedActionsRemaining++; }
     public int HealPlayer(int amount) {if(PlayerDead||PlayerHealingBlocked)return 0;int before=PlayerHp;PlayerHp=(int)Math.Min(PlayerMaxHp,(long)PlayerHp+Math.Max(0,amount));if(PlayerHp>0){PlayerStable=false;DeathSuccesses=0;DeathFailures=0;}return PlayerHp-before;}
     public void KillMonster(){if(Hp>0&&PreventDeath(false))return;Hp=0;MonsterTemporaryHp=0;}

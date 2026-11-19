@@ -17,7 +17,7 @@ public sealed class VisionState
     public bool SetDimLightGroup(int group,IEnumerable<double[]> points,int radius,int slot,long end,long now)
     {
         Refresh(now);Zones.RemoveAll(z=>z.LightGroup==group);
-        if(group<1||radius<1||slot<1||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
+        if(group<1||radius<1||slot<0||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
         var added=new List<VisionZone>();
         foreach(var point in points){
             if(slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,point[0],point[1])<=z.Radius+radius))return false;
