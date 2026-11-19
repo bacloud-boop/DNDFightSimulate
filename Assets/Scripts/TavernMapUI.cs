@@ -46,6 +46,7 @@ public sealed partial class TrainingGame
             }
         }
         DrawSpikeGrowthArea(board);DrawEntangleArea(board);DrawGreaseArea(board);
+        if(breathResolving)DrawBreathArea(board,activeBreath,activeBreathCaster);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
         if(draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);

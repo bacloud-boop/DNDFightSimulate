@@ -59,6 +59,7 @@ public sealed partial class TrainingGame
     }
     void DrawSpeciesActions()
     {
+        if(playerSpecies.Kind==Species2024.Dragonborn){DrawBreathPanel(0);return;}
         Surface(new Rect(350,110,480,745),paperTexture);if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,630));speciesActionScroll=GUILayout.BeginScrollView(speciesActionScroll);
         GUILayout.Label("种族特性 · "+playerSpecies.Name,heading);

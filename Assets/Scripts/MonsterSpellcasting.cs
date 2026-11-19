@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     sealed class MonsterSpellTurn {public bool Attempted,Cast,Bonus;}
     int MonsterTurnReach
     {
-        get{var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?Mathf.Max(spell.Range,spell.EmanationRadius):MonsterAttackReach;}
+        get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?Mathf.Max(spell.Range,spell.EmanationRadius):MonsterAttackReach;}
     }
     bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)

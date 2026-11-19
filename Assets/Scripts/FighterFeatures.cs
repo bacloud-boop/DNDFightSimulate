@@ -6,6 +6,7 @@ public sealed class FighterFeatures
     int advantageTurnsRemaining;
     public bool NextAttackAdvantage { get; private set; }
     public int AttacksRemaining { get; private set; }
+    public bool BreathUsedThisAttackAction {get;private set;}
     public int AttacksPerAction(int level) => level>=20?4:level>=11?3:level>=5?2:1;
     public int WindMaximum(int level) => level>=10?4:level>=4?3:level>=1?2:0;
     public int WindRemaining(int level) => System.Math.Max(0,WindMaximum(level)-SecondWindUsed);
@@ -16,11 +17,12 @@ public sealed class FighterFeatures
     public bool TacticalMind(int level,int total,int dc,int roll){if(roll<1||roll>10)throw new System.ArgumentOutOfRangeException(nameof(roll));if(level<2||WindRemaining(level)<=0||(long)total+roll<dc)return false;UseWind();return true;}
     public void UseWind() { SecondWindUsed++; }
     public void UseSurge() { ActionSurgeUsed++; SurgedThisRound=true; }
-    public void BeginAttackAction(int level) { AttacksRemaining=AttacksPerAction(level); }
-    public void CancelAttackAction(){AttacksRemaining=0;}
+    public void BeginAttackAction(int level) { AttacksRemaining=AttacksPerAction(level);BreathUsedThisAttackAction=false; }
+    public void CancelAttackAction(){AttacksRemaining=0;BreathUsedThisAttackAction=false;}
+    public bool ReplaceAttackWithBreath(){if(AttacksRemaining<1||BreathUsedThisAttackAction)return false;AttacksRemaining--;BreathUsedThisAttackAction=true;return true;}
     public void ConsumeAttack() { if(AttacksRemaining>0)AttacksRemaining--; }
     public bool ConsumeAdvantage(int level) { bool value=level>=13 && NextAttackAdvantage;NextAttackAdvantage=false;advantageTurnsRemaining=0;return value; }
     public void RecordMiss(int level) { if(level>=13){NextAttackAdvantage=true;advantageTurnsRemaining=2;} }
-    public void EndRound() { if(advantageTurnsRemaining>0 && --advantageTurnsRemaining==0)NextAttackAdvantage=false;SurgedThisRound=false;AttacksRemaining=0; }
-    public void ResetBattle() {SecondWindUsed=0;ActionSurgeUsed=0;SurgedThisRound=false;NextAttackAdvantage=false;advantageTurnsRemaining=0;AttacksRemaining=0;}
+    public void EndRound() { if(advantageTurnsRemaining>0 && --advantageTurnsRemaining==0)NextAttackAdvantage=false;SurgedThisRound=false;CancelAttackAction(); }
+    public void ResetBattle() {SecondWindUsed=0;ActionSurgeUsed=0;SurgedThisRound=false;NextAttackAdvantage=false;advantageTurnsRemaining=0;CancelAttackAction();}
 }

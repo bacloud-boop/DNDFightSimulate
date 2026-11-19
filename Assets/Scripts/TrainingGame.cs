@@ -206,10 +206,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=true;
         }
         if(endTurn&&combat.MonsterCanAct){
+            yield return TryMonsterBreath(true);
+            if(combat.BattleFinished){yield return FinishMonsterSpellTurn();yield break;}
             var spellTurn=new MonsterSpellTurn();yield return TryMonsterTurnSpell(spellTurn);
             yield return TryMonsterSpeciesMagic(false);
+            yield return TryMonsterBreath(false);
             yield return TryMonsterSpeciesBonus(false);
-            if(!spellTurn.Cast||spellTurn.Bonus){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
+            if(combat.MonsterActionAvailable&&(!spellTurn.Cast||spellTurn.Bonus)){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
             if(spellTurn.Cast&&(!spellTurn.Bonus||combat.PlayerDead||combat.Hp==0||combat.BattleFinished)){
                 yield return FinishMonsterSpellTurn();yield break;
             }
@@ -293,6 +296,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="armor"||panel=="monsterArmor"){DrawArmorPanel(panel=="armor");return;}
         if(panel=="summons"){DrawSummonControl();return;}
         if(panel=="rescue"){DrawRescueControl();return;}
+        if(panel=="breathRescue"){DrawBreathPanel(BattleMap.RescueId);return;}
         if(panel=="originalMonster"){DrawOriginalMonster();return;}
         if(panel=="aftermath"){DrawAftermath();return;}
         if(panel=="spells"){DrawSpellPanel();return;}

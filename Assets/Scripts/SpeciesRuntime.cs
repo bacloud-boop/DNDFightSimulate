@@ -39,7 +39,7 @@ public sealed partial class TrainingGame
         if(!fixedKind){int index=GUILayout.SelectionGrid((int)p.Kind+1,new[]{"无种族特性"}.ConcatNames(SpeciesProfile.Names),3,new GUIStyle(button){fontSize=15,fixedHeight=34})-1;
         if(index!=(int)p.Kind){p.Kind=(Species2024)index;p.Lineage=0;p.ChosenSkill=p.Kind==Species2024.Elf?12:0;}}else GUILayout.Label("新种族："+p.Name,heading);
         if(!player&&editLevel){GUILayout.Label("种族特性等级（1～20，独立于施法等级）",small);string text;if(!speciesLevelText.TryGetValue(p,out text))text=p.Level.ToString();speciesLevelText[p]=IntegerField(text,false);}
-        if(!player&&showMonsterPriority){GUILayout.Label("种族特性优先级",small);p.BonusPriority=GUILayout.SelectionGrid(p.BonusPriority,SpeciesTurnPolicy.PriorityNames,1,new GUIStyle(button){fontSize=15,fixedHeight=32});GUILayout.Label("当前支持阿斯莫治愈之手、兽人疾走与矮人石中精妙；动作和附赠动作各自共用额度。",small);}
+        if(!player&&showMonsterPriority){GUILayout.Label("种族特性优先级",small);p.BonusPriority=GUILayout.SelectionGrid(p.BonusPriority,SpeciesTurnPolicy.PriorityNames,1,new GUIStyle(button){fontSize=15,fixedHeight=32});GUILayout.Label("当前支持龙裔吐息、阿斯莫治愈之手、兽人疾走与矮人石中精妙；动作和附赠动作各自共用额度。",small);}
         if(p.Kind==Species2024.None)return;
         if(p.SizeChoice)p.Size=GUILayout.SelectionGrid(p.Size-1,new[]{"小型","中型"},2,button)+1;
         if(p.Lineages.Length>1)p.Lineage=GUILayout.SelectionGrid(p.Lineage,p.Lineages,3,new GUIStyle(button){fontSize=15,fixedHeight=34});
