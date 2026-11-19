@@ -16,9 +16,11 @@ public sealed partial class TrainingGame
   if(combat.Hp==0&&!MonsterPolymorphed&&combat.MonsterWeaponIsHeld)monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces));
   playerWeight.Weight.SetWeaponWeight(checked((int)carriedWeapons.CarriedOunces));
   monsterWeight.Weight.SetWeaponWeight(combat.MonsterWeaponIsHeld&&!monsterGroundWeapon.Dropped?combat.MonsterWeaponOunces:0);
+  if(objectLight.ObjectId>0)RefreshLightSpell();
  }
  void DrawCarriedWeapons()
  {
+  if(GUILayout.Button("物件体型与遮盖／揭开",button)&&!rolling)OpenEquipmentObjects("weapons");
   GUILayout.Label("随身武器："+WeightUnits.Format(carriedWeapons.CarriedOunces)+"；场外武器不能在战斗中取用。",small);
   if(!combat.BattleStarted)foreach(var item in carriedWeapons.Items){bool current=item.Location==WeaponLocation.Carried;bool next=GUILayout.Toggle(current,item.Key+" · "+WeightUnits.Format(item.WeightOunces),label);if(next!=current&&!carriedWeapons.TrySetCarried(item.Key,next,PlayerWeaponLoadFits))dice="拒绝配置：携带武器后超过负重上限。";}
   foreach(var item in carriedWeapons.Items)if(item.Location==WeaponLocation.Ground){

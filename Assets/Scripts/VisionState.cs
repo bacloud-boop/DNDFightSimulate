@@ -14,14 +14,18 @@ public sealed class VisionState
     public readonly List<VisionZone> Zones=new List<VisionZone>();
     readonly HashSet<int> dispelledLightGroups=new HashSet<int>();
     public void ClearLightGroup(int group){Zones.RemoveAll(z=>z.LightGroup==group);dispelledLightGroups.Remove(group);}
+    public void HideLightGroup(int group){Zones.RemoveAll(z=>z.LightGroup==group);}
+    public bool ConsumeDispelledLightGroup(int group)=>dispelledLightGroups.Remove(group);
     public bool SetDimLightGroup(int group,IEnumerable<double[]> points,int radius,int slot,long end,long now)
+        =>SetLightGroup(group,points,0,radius,slot,end,now);
+    public bool SetLightGroup(int group,IEnumerable<double[]> points,int brightRadius,int radius,int slot,long end,long now)
     {
         Refresh(now);Zones.RemoveAll(z=>z.LightGroup==group);
-        if(group<1||radius<1||slot<0||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
+        if(group<1||brightRadius<0||brightRadius>radius||radius<1||slot<0||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
         var added=new List<VisionZone>();
         foreach(var point in points){
             if(slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,point[0],point[1])<=z.Radius+radius))return false;
-            added.Add(new VisionZone{X=point[0],Y=point[1],Level=slot,End=end,LightGroup=group,BrightRadius=0,DimRadius=radius});
+            added.Add(new VisionZone{X=point[0],Y=point[1],Level=slot,End=end,LightGroup=group,BrightRadius=brightRadius,DimRadius=radius});
         }
         Zones.AddRange(added);return true;
     }

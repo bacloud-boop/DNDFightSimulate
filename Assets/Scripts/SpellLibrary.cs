@@ -14,6 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -72,6 +73,7 @@ public sealed partial class TrainingGame
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
         if(selectedSpellName=="Burning Hands"){DrawBurningHandsPanel();return;}
+        if(selectedSpellName=="Light"){DrawLightSpellPanel();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
         Surface(new Rect(350,110,480,745),paperTexture);
@@ -148,14 +150,15 @@ public sealed partial class TrainingGame
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
-        if(!combat.PlayerCanAct)return "玩家当前不能行动。";
+        bool aftermathLight=combat.Aftermath&&AftermathLightSpell(spell.Name);
+        if(aftermathLight?combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed:!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!playerResurrectionCaster.CanCast)return "复生术疲惫：完成长休前不能施法。";
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
         if(MockeryTargetError(spell,directTargetPlayer)!="")return MockeryTargetError(spell,directTargetPlayer);
         if(!ArmorSpellAllowed(spell.Name))return PlayerArmorUntrained?"未受训护甲使玩家不能施法。":"盾牌与武器占用双手，请先收起武器执行姿势成分。";
         if(spell.Name=="True Strike"&&(weaponGrip.Stowed||WeaponHandError(selectedWeapon)!=""))return "克敌机先需要可使用的已持握武器。";
-        if(spell.Bonus?!combat.BonusActionAvailable:!combat.MagicActionAvailable)return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
+        if(spell.Bonus?!combat.BonusActionAvailable:!(aftermathLight?combat.AftermathMagicActionAvailable:combat.MagicActionAvailable))return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Shillelagh")return !directTargetPlayer?"橡棍术只作用于自身持有的武器。":ShillelaghError();
         if(spell.Name=="Mage Armor"&&MageArmorError(directTargetPlayer)!="")return MageArmorError(directTargetPlayer);
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
@@ -163,6 +166,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire")return FaerieFireError();
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
+        if(spell.Name=="Light")return LightSpellError();
         if(spell.Name=="Silence")return SilenceError();
         if(spell.Name=="Destructive Wave")return DestructiveWaveError();
         if(spell.Name=="Chain Lightning")return ChainLightningError(directSlotLevel);
@@ -235,6 +239,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
         BreathTemplate burningAim=default(BreathTemplate);if(spell.Name=="Burning Hands"&&!PlayerBurningTemplate(out burningAim))yield break;
+        int lightTarget=lightObjectId,lightR=0,lightG=0,lightB=0;if(spell.Name=="Light"&&(LightSpellError()!=""||!LightColors(out lightR,out lightG,out lightB)))yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
         if(spell.Name=="Destructive Wave"&&DestructiveWaveError()!="")yield break;
@@ -255,9 +260,10 @@ public sealed partial class TrainingGame
         if(spell.Name=="Lesser Restoration"&&LesserRestorationError(targetPlayer,restorationCondition)!="")yield break;
         if(spell.Name=="Polymorph"&&PolymorphError()!="")yield break;
         if(spell.Name=="Shillelagh"&&(!targetPlayer||ShillelaghError()!=""))yield break;
-        if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
+        if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():AftermathLightSpell(spell.Name)?combat.TryUseAftermathMagicAction():combat.TryUseMagicAction()))yield break;
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
+        if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
         if(spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
@@ -277,6 +283,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Light"){ApplyLightSpell(lightTarget,lightR,lightG,lightB);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}

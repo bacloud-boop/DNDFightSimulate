@@ -37,6 +37,7 @@ public sealed partial class TrainingGame
             }
         }
         GUI.enabled=enabled;
+        if(GUILayout.Button("物件体型与遮盖／揭开",button)&&!rolling)OpenEquipmentObjects(player?"armor":"monsterArmor");
         var current=player?playerArmor:monsterArmor;ArmorTraining training=player?PlayerArmorTraining:monsterArmorTraining;
         GUILayout.Label("当前："+(current.Custom?"自定义／天生护甲":current.Armor.Name)+(current.Shield?" + 盾牌":"")+"\nAC "+(player?combat.PlayerArmorClass:combat.MonsterArmorClass)+" · 自动装备重量 "+current.Weight+"磅",small);
         if(current.Untrained(training,player?PlayerArmorMelded:MonsterPolymorphed))GUILayout.Label("未受训护甲：涉及力量／敏捷的d20检定劣势，不能施法。",small);

@@ -297,6 +297,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="summons"){DrawSummonControl();return;}
         if(panel=="rescue"){DrawRescueControl();return;}
         if(panel=="dancingLights"){DrawDancingLightsPanel(true);return;}
+        if(panel=="equipmentObjects"){DrawEquipmentObjectsPanel();return;}
         if(panel=="breathRescue"){DrawBreathPanel(BattleMap.RescueId);return;}
         if(panel=="originalMonster"){DrawOriginalMonster();return;}
         if(panel=="aftermath"){DrawAftermath();return;}
