@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
     bool SpiritSeesAt(SummonedUnit unit,int id,double fromX,double fromY,double targetX,double targetY,int targetSpaces)
     {
         if(unit.SleepStage==2)return false;
-        bool invisible=(id==0||id==-1)&&senses.Invisible(id==0,worldRounds);
+        bool invisible=(id==0||id==-1)&&InvisibleWithFaerie(id==0);
         if(invisible)return false;
         for(int dy=0;dy<unit.Spaces;dy++)for(int dx=0;dx<unit.Spaces;dx++)
         for(int y=0;y<targetSpaces;y++)for(int x=0;x<targetSpaces;x++)
@@ -47,7 +47,7 @@ public sealed partial class TrainingGame
         try{
             bool sees=targetAt.HasValue?SpiritSeesAt(unit,targetId,unit.X,unit.Y,targetAt.Value.X,targetAt.Value.Y,spaces):SpiritSees(unit,targetId,cell,spaces),targetSees=TargetSeesSpirit(targetId,unit);
             if(targetAt.HasValue&&targetId==-1)targetSees=VisibilityBetween(false,targetAt.Value.X,targetAt.Value.Y,spaces,unit.X,unit.Y,unit.Spaces)<2;
-            bool advantage=(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||(!IsSteed(unit)&&SpiritPackTactics(unit,targetId,cell,spaces,targetAt))||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
+            bool advantage=FaerieAdvantage(targetId,sees)||(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||(!IsSteed(unit)&&SpiritPackTactics(unit,targetId,cell,spaces,targetAt))||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
             bool disadvantage=FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,unit.SwimSpeed,false);
             if(targetId==0)disadvantage|=senses.Blurred(worldRounds);
             var other=FindSummon(targetId);if(other!=null&&other.Dodging&&other.Speed>other.Breathing.SpeedPenalty&&targetSees)disadvantage=true;

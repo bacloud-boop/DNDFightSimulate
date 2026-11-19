@@ -3,7 +3,8 @@ using System.Collections.Generic;
 public sealed class VisionZone
 {
     public double X,Y;public int Level;public bool Dark,Fog;public int FogRadius;public long End;
-    public double Radius=>Fog?FogRadius:Dark?15:120;
+    public int LightGroup,BrightRadius=60,DimRadius=120;
+    public double Radius=>Fog?FogRadius:Dark?15:DimRadius;
 }
 public sealed class VisionState
 {
@@ -11,6 +12,19 @@ public sealed class VisionState
     public int BaseLight,PlayerRange,MonsterRange;
     readonly long[] darkvisionEnd={-1,-1};
     public readonly List<VisionZone> Zones=new List<VisionZone>();
+    readonly HashSet<int> dispelledLightGroups=new HashSet<int>();
+    public void ClearLightGroup(int group){Zones.RemoveAll(z=>z.LightGroup==group);dispelledLightGroups.Remove(group);}
+    public bool SetDimLightGroup(int group,IEnumerable<double[]> points,int radius,int slot,long end,long now)
+    {
+        Refresh(now);Zones.RemoveAll(z=>z.LightGroup==group);
+        if(group<1||radius<1||slot<1||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
+        var added=new List<VisionZone>();
+        foreach(var point in points){
+            if(slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,point[0],point[1])<=z.Radius+radius))return false;
+            added.Add(new VisionZone{X=point[0],Y=point[1],Level=slot,End=end,LightGroup=group,BrightRadius=0,DimRadius=radius});
+        }
+        Zones.AddRange(added);return true;
+    }
     public void GrantDarkvision(bool player,long now){darkvisionEnd[player?0:1]=now+4800;}
     public int SpellRange(bool player,long now)=>now<darkvisionEnd[player?0:1]?150:0;
     public int Range(bool player,long now)=>Math.Max(player?PlayerRange:MonsterRange,SpellRange(player,now));
@@ -24,16 +38,17 @@ public sealed class VisionState
     public bool HasDarkness(long now){Refresh(now);return Zones.Exists(z=>z.Dark);}
     public void AddZone(bool dark,double x,double y,int slot,long now){
         Refresh(now);var added=new VisionZone{Dark=dark,X=x,Y=y,Level=slot,End=now+(dark?100:600)};
-        // The outer dim-light region is part of Daylight's area.
-        Zones.RemoveAll(z=>!z.Fog&&z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3));
-        if(dark&&slot<=3&&Zones.Exists(z=>!z.Fog&&!z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
+        // Only Daylight dispels Darkness; another light-producing spell does not.
+        if(dark&&slot<=3&&Zones.Exists(z=>!z.Fog&&!z.Dark&&z.LightGroup==0&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
+        // The outer dim-light region is part of the light spell's area.
+        Zones.RemoveAll(z=>{bool remove=!z.Fog&&z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3);if(remove&&z.LightGroup>0)dispelledLightGroups.Add(z.LightGroup);return remove;});
         // Existing Darkness also dispels a newly overlapping light spell of level <=2.
         if(!dark&&slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
         Zones.Add(added);
     }
     public int Light(double x,double y,long now){
         Refresh(now);int magical=2;bool dark=false;
-        foreach(var z in Zones){if(z.Fog)continue;if(z.Dark){dark|=Contains(z,x,y,15);}else if(Contains(z,x,y,120))magical=Math.Min(magical,Contains(z,x,y,60)?0:1);}
+        foreach(var z in Zones){if(z.Fog)continue;if(z.Dark){dark|=Contains(z,x,y,15);}else if(Contains(z,x,y,z.Radius))magical=Math.Min(magical,z.BrightRadius>0&&Contains(z,x,y,z.BrightRadius)?0:1);}
         return dark?magical:Math.Min(BaseLight,magical);
     }
     // Exact interval of a line segment inside a circular area.
@@ -65,5 +80,5 @@ public sealed class VisionState
             double enter=(-b-Math.Sqrt(d))/(2*a),exit=(-b+Math.Sqrt(d))/(2*a);if(enter<=1&&exit>=0)best=Math.Max(best,Math.Min(1,exit));
         }return best;
     }
-    public void ClearEffects(){Zones.Clear();darkvisionEnd[0]=darkvisionEnd[1]=-1;}
+    public void ClearEffects(){Zones.Clear();dispelledLightGroups.Clear();darkvisionEnd[0]=darkvisionEnd[1]=-1;}
 }

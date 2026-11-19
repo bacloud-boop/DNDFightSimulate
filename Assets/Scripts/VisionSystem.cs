@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     int Visibility(bool viewerPlayer,bool targetPlayer){
         if(viewerPlayer==targetPlayer)return 0;
         int? snapshot=viewerPlayer?playerSightOverride:monsterSightOverride;if(snapshot.HasValue)return snapshot.Value;
-        var from=viewerPlayer?map.Player:map.Monster;var target=targetPlayer?map.Player:map.Monster;return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetPlayer?map.PlayerSpaces:map.MonsterSpaces,senses.Invisible(targetPlayer,worldRounds));
+        var from=viewerPlayer?map.Player:map.Monster;var target=targetPlayer?map.Player:map.Monster;return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetPlayer?map.PlayerSpaces:map.MonsterSpaces,InvisibleWithFaerie(targetPlayer));
     }
     int VisibilityAt(bool viewerPlayer,Vector2Int target,int targetSize){
         var from=viewerPlayer?map.Player:map.Monster;
@@ -29,8 +29,8 @@ public sealed partial class TrainingGame
         var defender=movingPlayer?map.Monster:map.Player;int movingSize=movingPlayer?map.PlayerSpaces:map.MonsterSpaces,defenderSize=movingPlayer?map.MonsterSpaces:map.PlayerSpaces;
         double t=VisionState.ReachExit(from.x,from.y,to.x,to.y,movingSize,defender.x,defender.y,defenderSize,reach);
         double x=from.x+(to.x-from.x)*t,y=from.y+(to.y-from.y)*t;
-        playerSight=movingPlayer?VisibilityBetween(true,x,y,movingSize,defender.x,defender.y,defenderSize,senses.Invisible(false,worldRounds)):VisibilityBetween(true,defender.x,defender.y,defenderSize,x,y,movingSize,senses.Invisible(false,worldRounds));
-        monsterSight=movingPlayer?VisibilityBetween(false,defender.x,defender.y,defenderSize,x,y,movingSize,senses.Invisible(true,worldRounds)):VisibilityBetween(false,x,y,movingSize,defender.x,defender.y,defenderSize,senses.Invisible(true,worldRounds));
+        playerSight=movingPlayer?VisibilityBetween(true,x,y,movingSize,defender.x,defender.y,defenderSize,InvisibleWithFaerie(false)):VisibilityBetween(true,defender.x,defender.y,defenderSize,x,y,movingSize,InvisibleWithFaerie(false));
+        monsterSight=movingPlayer?VisibilityBetween(false,defender.x,defender.y,defenderSize,x,y,movingSize,InvisibleWithFaerie(true)):VisibilityBetween(false,x,y,movingSize,defender.x,defender.y,defenderSize,InvisibleWithFaerie(true));
         return t>=0&&(movingPlayer?monsterSight:playerSight)<2;
     }
     bool PlayerSeesMonster=>Visibility(true,false)<2;

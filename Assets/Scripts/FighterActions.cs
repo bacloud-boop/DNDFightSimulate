@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
     {
         if(rolling || panel!="" || draggingToken>=0)return;
         playerSpeciesAbilities.Reset();monsterSpeciesAbilities.Reset();playerSpeciesSpellUses.LongRest();highElfCantripReplacement=false;
-        spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
+        EndFaerieFire();spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();
         sensory.Clear();enfeeblement.Clear();
         monsterSpells.Reset();playerResurrectionCaster.Reset();externalResurrectionCaster.Reset();

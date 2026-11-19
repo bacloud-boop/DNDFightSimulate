@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
  bool FullDifficultTerrain(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(!entangle.FullFootprint(x+i,y+j,1,worldRounds)&&!grease.Cell(x+i,y+j,worldRounds)&&!spikeGrowth.Cell(x+i,y+j,worldRounds))return false;return spaces>0;}
  void ObserveGreaseMovement(int actor,Vector2Int from,Vector2Int to,int oldSpaces,int spaces,bool landing)
  {
-  ObserveSpikeMovement(actor,from,to,spaces,landing);
+  RefreshFaerieFire();ObserveSpikeMovement(actor,from,to,spaces,landing);
   if(!map.Locked||!grease.Any(worldRounds))return;var path=landing?new List<Vector2Int>{to}:BattleMap.MovementAnchors(from,to);var previous=from;int previousSpaces=oldSpaces;
   foreach(var cell in path){var field=grease.Current(cell.x,cell.y,spaces,worldRounds);if(field!=null&&!field.Intersects(previous.x,previous.y,previousSpaces))greaseEntries.Enqueue(new GreaseEntry{Actor=actor,Field=field});previous=cell;previousSpaces=spaces;}
  }

@@ -84,7 +84,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Silence")DrawSilenceChoices();
+        if(definition.Name=="Faerie Fire")DrawFaerieFireChoices();
+        else if(definition.Name=="Silence")DrawSilenceChoices();
         else if(IsPointBurst(definition))DrawPointBurstChoices(definition);
         else if(definition.Name=="Power Word Fortify")DrawFortifyAllocation();
         else if(IsSimpleEmanation(definition.Name))DrawEmanationTargets(definition);
@@ -156,6 +157,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mage Armor"&&MageArmorError(directTargetPlayer)!="")return MageArmorError(directTargetPlayer);
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(directTargetPlayer)!="")return DetectEvilGoodError(directTargetPlayer);
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
+        if(spell.Name=="Faerie Fire")return FaerieFireError();
         if(spell.Name=="Silence")return SilenceError();
         if(spell.Name=="Destructive Wave")return DestructiveWaveError();
         if(spell.Name=="Chain Lightning")return ChainLightningError(directSlotLevel);
@@ -225,6 +227,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mage Armor"&&MageArmorError(targetPlayer)!="")yield break;
         if(spell.Name=="Detect Evil and Good"&&DetectEvilGoodError(targetPlayer)!="")yield break;
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
+        if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
         if(spell.Name=="Destructive Wave"&&DestructiveWaveError()!="")yield break;
@@ -248,7 +251,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():combat.TryUseMagicAction()))yield break;
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
-        if(spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -264,6 +267,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mass Heal"){ApplyMassHeal();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heal"){ApplyHealSpell(slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}
@@ -309,7 +313,7 @@ public sealed partial class TrainingGame
             bonus+=PlayerAquaticD20Penalty;
             // A hostile creature within 5 feet imposes ranged-attack disadvantage.
             bool disadvantage=BlurDisadvantage(true,targetPlayer)||Visibility(true,targetPlayer)==2||!spell.Melee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
-            bool advantage=fighter.ConsumeAdvantage(classes[0])||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5)));
+            bool advantage=fighter.ConsumeAdvantage(classes[0])||FaerieAdvantage(targetPlayer?0:-1,Visibility(true,targetPlayer)<2)||Visibility(targetPlayer,true)==2||(!targetPlayer&&(combat.MonsterHelpless||(combat.MonsterProne&&map.DistanceFeet<=5)));
             advantage=Entangled(targetPlayer)|combat.ConsumeGuidingLight(targetPlayer)||advantage;
             disadvantage=ResurrectionD20Disadvantage(true)|FearDisadvantage(true)|Entangled(true)|RayAttackDisadvantage(true,SpellAbilityIndex(caster))||combat.PlayerPoisoned||combat.PlayerProne||disadvantage||(!targetPlayer&&combat.MonsterProne&&map.DistanceFeet>5);
             bool rollHigh=advantage&&!disadvantage,rollLow=disadvantage&&!advantage;

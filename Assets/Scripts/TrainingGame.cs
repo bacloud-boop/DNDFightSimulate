@@ -117,7 +117,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool underwaterMiss=UnderwaterCombatRules.AutoMiss(map.PlayerAquatic.Submerged,true,attackWeapon.IsMelee,opportunity?(opportunitySenseDistance??map.DistanceFeet):map.DistanceFeet,attackWeapon.ReachFeet);
         int targetArmor=AttackArmor(true,false);
         LogAttackCover(true,false);
-        advantage=Entangled(false)|combat.ConsumeGuidingLight(false)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||combat.MonsterSleepStage==2||(combat.MonsterProne&&map.DistanceFeet<=5);
+        advantage=Entangled(false)|combat.ConsumeGuidingLight(false)||FaerieAdvantage(-1,PlayerSeesMonster)||advantage||!MonsterSeesPlayer||combat.MonsterParalyzed||combat.MonsterSleepStage==2||(combat.MonsterProne&&map.DistanceFeet<=5);
         bool disadvantage=ArmorD20Disadvantage(true,trueStrike||shillelaghAttack&&shillelaghUseCasting?-1:attackWeapon.UsesDexterity(attributes)?1:0)||PlayerUnderwaterWeaponDisadvantage(attackWeapon)||!PlayerSeesMonster||(!attackWeapon.IsMelee&&combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5)||(!opportunity && attackWeapon.HasRangeDisadvantage(map.DistanceFeet))||(combat.MonsterProne&&map.DistanceFeet>5);
         disadvantage=ResurrectionD20Disadvantage(true)|FearDisadvantage(true)|Entangled(true)|RayAttackDisadvantage(true,trueStrike?-1:shillelaghAttack&&shillelaghUseCasting?shillelagh.Ability:attackWeapon.UsesDexterity(attributes)?1:0)||combat.PlayerPoisoned||combat.PlayerProne||disadvantage;
         // Presence, not source count, determines advantage/disadvantage. Both cancel.
@@ -230,7 +230,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             rolling=false;logScroll=Vector2.zero;yield break;
         }
         mirrorIntercepted=false;int firstHit=Random.Range(1,21);
-        bool monsterAdvantage=Entangled(true)|combat.ConsumeGuidingLight(true)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=FearDisadvantage(false)||Entangled(false)|RayAttackDisadvantage(false,MonsterCustomAttackAbility)||MonsterArmorAttackDisadvantage||MonsterUnderwaterDisadvantage()||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
+        bool monsterAdvantage=Entangled(true)|combat.ConsumeGuidingLight(true)||FaerieAdvantage(0,MonsterSeesPlayer)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=FearDisadvantage(false)||Entangled(false)|RayAttackDisadvantage(false,MonsterCustomAttackAbility)||MonsterArmorAttackDisadvantage||MonsterUnderwaterDisadvantage()||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
         int secondHit=monsterAdvantage!=monsterDisadvantage?Random.Range(1,21):0;
         int hitRoll=secondHit>0?(monsterAdvantage?Mathf.Max(firstHit,secondHit):Mathf.Min(firstHit,secondHit)):firstHit;
         BreakOrdinaryInvisibility(false,"进行攻击检定");
