@@ -42,7 +42,7 @@ public sealed partial class TrainingGame
         if(!SummonTarget(targetId,out cell,out spaces,out target)||BattleMap.BodyDistance(new Vector2Int(unit.X,unit.Y),unit.Spaces,cell,spaces)>(steedRules.Kind==SteedKind.Celestial?5:60)){dice="坐骑能力：目标不合法或超出距离。";yield break;}
         if(steedRules.Kind==SteedKind.Fiend&&!SpiritSees(unit,targetId,cell,spaces)){dice="凶恶凝视必须能看见目标。";yield break;}
         if(!steedRules.TryUseSpecial(()=>unit.TryUseBonus()))yield break;
-        bool previous=summonActing;summonActing=true;
+        bool previous=summonActing,previousRolling=rolling;summonActing=true;rolling=true;
         try{if(steedRules.Kind==SteedKind.Celestial){int[] rolls={Random.Range(1,9),Random.Range(1,9)};int amount=rolls[0]+rolls[1]+steedRules.Slot;
                 yield return PresentRoll(8,rolls,"治疗之触：2d8 + "+steedRules.Slot+" = "+amount);
                 int healed=targetId==0?combat.HealPlayer(amount):targetId==-1?combat.HealMonster(amount):FindSummon(targetId).Heal(amount);history.Insert(0,"治疗之触："+target+"实际恢复 "+healed+" HP。");}
@@ -51,6 +51,6 @@ public sealed partial class TrainingGame
                     yield return PresentRoll(20,roll.Dice,"凶恶凝视 · "+target+"感知豁免 "+roll.Value+" + "+modifier+" / DC "+dc);failed=(long)roll.Value+modifier<dc;}
                 else {var save=new SummonSave();yield return RollSummonSave(FindSummon(targetId),3,dc,new Vector2Int(unit.X,unit.Y),save);failed=save.Failed;}
                 if(failed)steedFears[targetId]=combat.Round+1;history.Insert(0,"凶恶凝视："+target+(failed?"恐慌至玩家下个回合结束；看见坐骑时攻击与属性检定劣势，不能自愿靠近。":"豁免成功。"));}
-        }finally{summonActing=previous;}
+        }finally{summonActing=previous;rolling=previousRolling;}
     }
 }

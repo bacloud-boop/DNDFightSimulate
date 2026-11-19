@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Heal","医疗术","1动作 · 60尺 · 声音、姿势。一个可见生物恢复70生命，同时解除目盲、耳聋与中毒；每升一环治疗增加10。不加属性调整值，不复活死者。",6,60,0),
         new DirectSpell("Find Steed","寻获坐骑","1动作 · 30尺 · 声音、姿势。召唤大型天界／妖精／邪魔坐骑，AC=10+环阶、HP=5+10×环阶、步行60尺。无需专注，重施替换旧坐骑，归零或施法者死亡时消失。上／下马消耗半速移动；骑乘时双方按完整坐骑占地判定，体型不再合法时正常变化并强制下马。",2,30,8),
         new DirectSpell("Stoneskin","石肤术","动作 · 接触 · 声音、姿势 · 专注1小时。一个自愿生物获得钝击、穿刺和挥砍抗性。",4,5,0),
         new DirectSpell("Water Breathing","水下呼吸","动作 · 30尺 · 声音、姿势 · 24小时。自愿目标获得水下呼吸能力，保留原呼吸方式。",3,30,0),
