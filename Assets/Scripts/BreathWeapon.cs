@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
             Vector2Int cell;int spaces;string name;if(HealingHandsTarget(id,out cell,out spaces,out name)&&template.Intersects(cell.x,cell.y,spaces))ids.Add(id);
         }return ids;
     }
-    IEnumerator BreathSave(int target,int caster,long dc,HashSet<int> failed)
+    IEnumerator RollMappedDexteritySave(int target,int caster,long dc,HashSet<int> failed,string context)
     {
         bool automatic=false;long modifier;int value;int[] shown;
         if(target==0||target==-1){
@@ -50,7 +50,7 @@ public sealed partial class TrainingGame
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);shown=second==0?new[]{first}:new[]{first,second};
         }
         int cover=target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
-        dice="龙裔吐息 · "+TransitActorName(target)+"敏捷豁免";
+        dice=context+" · "+TransitActorName(target)+"敏捷豁免";
         if(!automatic)yield return PresentRoll(20,shown,"采用 "+value+" + "+modifier+" / DC "+dc+(cover>0?"（半掩护+2）":""));
         if(automatic||(long)value+modifier<dc)failed.Add(target);
     }
@@ -68,17 +68,14 @@ public sealed partial class TrainingGame
         int type=BreathWeaponRules.DamageType(BreathSpecies(caster).Lineage),count=BreathWeaponRules.DiceCount(BreathLevel(caster));long dc=BreathWeaponRules.SaveDc(BreathConstitution(caster),BreathProficiency(caster));
         outcomeDeferDepth++;try{
             history.Insert(0,TransitActorName(caster)+"以龙裔吐息替换攻击动作的一次攻击："+(template.Line?"30尺×5尺线形":"15尺锥形")+"，"+count+"d10 "+DamageTypes.Names[type]+"，敏捷DC "+dc+"。不是施法或攻击检定。"+(caster==0?"本动作剩余攻击 "+fighter.AttacksRemaining+"次。":""));
-            var failed=new HashSet<int>();foreach(int id in targets)yield return BreathSave(id,caster,dc,failed);
+            var failed=new HashSet<int>();foreach(int id in targets)yield return RollMappedDexteritySave(id,caster,dc,failed,"龙裔吐息");
             int damage=0;var rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=Random.Range(1,11);damage+=rolls[i];}
             dice="龙裔吐息 · 共享伤害";yield return PresentRoll(10,rolls,"失败 "+damage+" / 成功 "+damage/2+" "+DamageTypes.Names[type]);
             if(caster==0||caster==-1){var ray=new RayDamage();yield return ReduceRayDamage(caster==0,damage,DamageTypes.Names[type],"龙裔吐息共享伤害",ray);damage=ray.Amount;}
-            int playerDamage=0;bool? source=caster==0?(bool?)true:caster==-1?false:(bool?)null;
+            int playerDamage=0;
             foreach(int id in targets){
                 int amount=failed.Contains(id)?damage:damage/2;
-                if(id==0||id==-1){amount=combat.AdjustTypedDamage(id==0,amount,type);if(id==0){playerDamage=amount;combat.ApplyPlayerDamage(amount,sourcePlayer:source);}else combat.ApplyDamage(amount,source);}
-                else if(id==BattleMap.RescueId){if(rescueCarrier.Species.Resist(type)||map.RescueAquatic.Submerged&&type==5)amount/=2;rescueCarrier.TakeDamage(amount);if(amount>0&&source.HasValue)BreakOrdinaryInvisibility(source.Value,"造成伤害");}
-                else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;ApplySummonSpellDamage(unit,amount,DamageTypes.Names[type],source);continue;}
-                history.Insert(0,"龙裔吐息："+TransitActorName(id)+(failed.Contains(id)?"豁免失败":"豁免成功")+"，结算 "+amount+" "+DamageTypes.Names[type]+"伤害。");
+                int applied=ApplyMappedAreaDamage(id,caster,amount,type,"龙裔吐息",failed.Contains(id));if(id==0)playerDamage=applied;
             }
             if(playerDamage>0)yield return MaintainConcentration(playerDamage);
             RefreshBestialSpirit();ReconcileFallenRescue();dice="龙裔吐息 · "+targets.Count+"名目标结算完成";

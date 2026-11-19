@@ -36,11 +36,11 @@ public static class BreathWeaponRules
     public static long SaveDc(int constitution,int proficiency)=>8L+(int)Math.Floor((constitution-10)/2.0)+proficiency;
     public static int DamageType(int lineage){int[] types={3,7,5,7,3,5,9,5,4,4};if(lineage<0||lineage>=types.Length)throw new ArgumentOutOfRangeException(nameof(lineage));return types[lineage];}
     // Aim points include grid intersections, edge midpoints and cell centers.
-    public static bool Choose(int mapSize,int x,int y,int spaces,IReadOnlyList<BreathBody> enemies,out BreathTemplate best)
+    public static bool Choose(int mapSize,int x,int y,int spaces,IReadOnlyList<BreathBody> enemies,out BreathTemplate best,bool allowLine=true)
     {
         best=default(BreathTemplate);int most=0;
         if(enemies==null||enemies.Count==0)return false;
-        for(int shape=0;shape<2;shape++)for(int edge=0;edge<5;edge++)for(int offset=0;offset<=(edge==4?0:spaces*2);offset++)
+        for(int shape=0;shape<(allowLine?2:1);shape++)for(int edge=0;edge<5;edge++)for(int offset=0;offset<=(edge==4?0:spaces*2);offset++)
         for(int row=0;row<=mapSize*2;row++)for(int column=0;column<=mapSize*2;column++){
             BreathTemplate candidate;if(!BreathTemplate.TryCreate(x,y,spaces,edge,offset,column*.5,row*.5,shape==1,out candidate))continue;
             if(candidate.Intersects(x,y,spaces))continue;

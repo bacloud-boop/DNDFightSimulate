@@ -8,7 +8,7 @@ public sealed class MonsterSpellEntry
 }
 public sealed class MonsterSpellSequence
 {
-    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance"};
+    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance","Burning Hands"};
     readonly List<MonsterSpellEntry> entries=new List<MonsterSpellEntry>();
     public IReadOnlyList<MonsterSpellEntry> Entries=>entries.AsReadOnly();
     public int Ability {get;private set;}=4;
@@ -16,7 +16,7 @@ public sealed class MonsterSpellSequence
     public bool Counterspell {get;private set;}
     public int Cursor {get;private set;}
     public MonsterSpellEntry Next=>entries.Count==0?null:entries[Cursor];
-    public static int BaseLevel(string name)=>name=="Power Word Kill"?9:name=="Circle of Death"?6:name=="Blight"?4:name=="Fireball"?3:name=="Scorching Ray"||name=="Shatter"?2:name=="Inflict Wounds"||name=="Cure Wounds"||name=="Healing Word"||name=="Magic Missile"?1:Array.IndexOf(Supported,name)>=0?0:-1;
+    public static int BaseLevel(string name)=>name=="Power Word Kill"?9:name=="Circle of Death"?6:name=="Blight"?4:name=="Fireball"?3:name=="Scorching Ray"||name=="Shatter"?2:name=="Burning Hands"||name=="Inflict Wounds"||name=="Cure Wounds"||name=="Healing Word"||name=="Magic Missile"?1:Array.IndexOf(Supported,name)>=0?0:-1;
     public bool Configure(int ability,int level,bool counterspell,IEnumerable<MonsterSpellEntry> values)
     {
         if(ability<0||ability>5||level<1||level>20||values==null)return false;

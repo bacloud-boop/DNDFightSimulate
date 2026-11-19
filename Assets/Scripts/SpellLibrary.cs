@@ -71,6 +71,7 @@ public sealed partial class TrainingGame
     {
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
+        if(selectedSpellName=="Burning Hands"){DrawBurningHandsPanel();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
         Surface(new Rect(350,110,480,745),paperTexture);
@@ -161,6 +162,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Faerie Fire")return FaerieFireError();
         if(spell.Name=="Dancing Lights")return DancingLightsError();
+        if(spell.Name=="Burning Hands")return BurningHandsError();
         if(spell.Name=="Silence")return SilenceError();
         if(spell.Name=="Destructive Wave")return DestructiveWaveError();
         if(spell.Name=="Chain Lightning")return ChainLightningError(directSlotLevel);
@@ -232,6 +234,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
+        BreathTemplate burningAim=default(BreathTemplate);if(spell.Name=="Burning Hands"&&!PlayerBurningTemplate(out burningAim))yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
         if(spell.Name=="Water Breathing"&&WaterBreathingError(targetPlayer,directBothTargets)!="")yield break;
         if(spell.Name=="Destructive Wave"&&DestructiveWaveError()!="")yield break;
@@ -273,6 +276,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Breathing"){ApplyWaterBreathing(targetPlayer,directBothTargets);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Sleep"){yield return ResolveSleep(caster);if(!embedded)rolling=false;yield break;}

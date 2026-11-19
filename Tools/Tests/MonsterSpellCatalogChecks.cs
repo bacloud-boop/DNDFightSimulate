@@ -10,6 +10,7 @@ class MonsterSpellCatalogChecks
         Check(DirectSpell.Find("Magic Missile").DiceCount(1,1)==3&&DirectSpell.Find("Magic Missile").DiceCount(1,9)==11,"missiles");
         Check(DirectSpell.Find("Scorching Ray").DiceCount(1,2)==3&&DirectSpell.Find("Scorching Ray").DiceCount(1,9)==10,"rays");
         var blight=DirectSpell.Find("Blight");Check(blight.HalfSave&&blight.DiceCount(1,4)==8&&blight.DiceCount(1,9)==13,"Blight");
+        var fire=DirectSpell.Find("Burning Hands");Check(fire.Level==1&&fire.Sides==6&&fire.SaveAbility==1&&fire.HalfSave&&!fire.Attack&&fire.DiceCount(1,1)==3&&fire.DiceCount(20,9)==11&&MonsterSpellCatalog.IsCone(fire),"Burning Hands is a save-based upcast cone, not a level-scaling cantrip or attack");
         var kill=DirectSpell.Find("Power Word Kill");Check(kill.DiceCount(1,9)==12&&kill.Sides==12,"Power Word Kill fallback");
         foreach(string name in new[]{"Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance"})Check(MonsterSpellCatalog.IsArea(MonsterSpellCatalog.Find(name))&&MonsterSpellCatalog.Radius(MonsterSpellCatalog.Find(name))>0,name+" area definition");
         Check(MonsterSpellCatalog.Find("Acid Splash").DiceCount(17,0)==4&&!MonsterSpellCatalog.Find("Acid Splash").HalfSave,"acid scaling and successful save immunity");

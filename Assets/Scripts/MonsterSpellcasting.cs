@@ -28,14 +28,15 @@ public sealed partial class TrainingGame
         if(choice!=null&&!choice.Bonus&&!combat.MonsterActionAvailable)yield break;
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
-        var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell);Vector2Int areaCenter=default(Vector2Int);
-        int target=spell==null?-2:area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
+        var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell),cone=MonsterSpellCatalog.IsCone(spell);Vector2Int areaCenter=default(Vector2Int);BreathTemplate conePlan=default(BreathTemplate);
+        int target=spell==null?-2:cone?(TryPlanMonsterBurningHands(out conePlan)?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2||spell.Bonus&&!combat.MonsterBonusActionAvailable||!SpellVoiceAllowed(false,spell.Name)){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
         if(!(spell.Bonus?combat.TryUseMonsterBonusAction():combat.TryUseMonsterAction()))yield break;
         result.Cast=true;result.Bonus=spell.Bonus;
         combat.MarkBattleStarted();
         history.Insert(0,"木桩施放"+spell.Chinese+"（"+(entry.Slot==0?"戏法":entry.Slot+"环")+"），消耗"+(spell.Bonus?"附赠动作":"动作")+"。");
         if(area){ShowMonsterArea(spell,areaCenter);monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
+        if(cone){burningPreview=true;burningTemplate=conePlan;burningSource=-1;monsterAreaChoosing=true;history.Insert(0,"木桩燃烧之手：选择避开自身、覆盖最多敌人的15尺锥形。");yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         var info=SpellInfo(spell.Name);
         if(info!=null&&System.Array.IndexOf(info.components,"声音")>=0){
             ObserveWaterBreathing();
@@ -43,7 +44,8 @@ public sealed partial class TrainingGame
         }
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
-            if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
+            if(cone)yield return ResolveBurningHands(false,0,entry.Slot,conePlan);
+            else if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
             else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
             else if(spell.Name=="Scorching Ray")for(int n=0;n<spell.DiceCount(monsterSpells.CasterLevel,entry.Slot);n++){
                 int victim=MonsterSpellTarget(spell);if(victim==-2)break;
@@ -51,7 +53,7 @@ public sealed partial class TrainingGame
             }
             else yield return MonsterNumericSpell(spell,entry.Slot,target);
         }
-        monsterAreaPreview=false;BreakOrdinaryInvisibility(false,"施法");RefreshBestialSpirit();CheckBattleOutcome();
+        monsterAreaPreview=false;burningPreview=false;BreakOrdinaryInvisibility(false,"施法");RefreshBestialSpirit();CheckBattleOutcome();
     }
     IEnumerator MonsterMagicMissile(DirectSpell spell,int slot,int target)
     {
