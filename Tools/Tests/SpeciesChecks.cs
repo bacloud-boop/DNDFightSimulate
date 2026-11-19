@@ -40,6 +40,12 @@ class SpeciesChecks
   turns.StartMonsterTurn();C(turns.MonsterBonusActionAvailable&&turns.TryUseMonsterBonusAction(),"only the next monster turn refreshes its bonus action");
   turns.MonsterParalyzed=true;turns.StartMonsterTurn();C(!turns.TryUseMonsterBonusAction(),"incapacitated monster cannot activate a species bonus action");
   var speciesCopy=dwarf.Copy();speciesCopy.BonusPriority=2;C(dwarf.BonusPriority==0&&speciesCopy.Valid(),"turn policy is independently copied with species data");
+  var hands=new SpeciesAbilityState();C(hands.Remaining(Species2024.Aasimar,-2)==1&&hands.Use(Species2024.Aasimar,-2,0)&&!hands.Use(Species2024.Aasimar,2,1),"Healing Hands has one long-rest use independently of proficiency-based healing dice");
+  hands.ShortRest();C(hands.HealingHandsSpent,"short rest does not refresh Healing Hands");hands.LongRest();C(!hands.HealingHandsSpent,"long rest refreshes Healing Hands");
+  var budget=new CombatState();budget.StartMonsterTurn();C(budget.TryUseMonsterAction()&&!budget.TryUseMonsterAction()&&budget.TryUseMonsterBonusAction(),"monster racial Magic action, spells and custom attacks share one action while bonus action remains separate");
+  C(budget.MonsterReactionAvailable,"spending an action does not consume reaction");budget.StartMonsterTurn();C(budget.MonsterActionAvailable&&budget.MonsterBonusActionAvailable,"monster turn refreshes both action pools");
+  var surge=new CombatState();surge.AddSurgeAction();C(surge.TryUseMagicAction(),"ordinary action can use a Magic action");surge.Aftermath=true;C(!surge.TryUseAftermathMagicAction(),"Action Surge's restricted action cannot become a Magic action in aftermath");
+  var outside=new CombatState();outside.KillMonster();outside.Aftermath=true;C(outside.TryUseAftermathMagicAction()&&!outside.TryUseAftermathMagicAction(),"living player may use one Magic action after combat even while the dummy is dead");
   Console.WriteLine("PASS: species choices, separate proficiencies, per-level HP, resistance, save advantage, capacity, corpse HP and elven trance");
  }
 }

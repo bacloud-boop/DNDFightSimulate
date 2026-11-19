@@ -13,6 +13,7 @@ public sealed partial class TrainingGame
     {
         if(!map.Locked||!SpeciesPhysicalActive(player)||!(player?combat.PlayerCanAct:combat.MonsterCanAct)||!(player?combat.BonusActionAvailable:combat.MonsterBonusActionAvailable))return false;
         var kind=Species(player).Kind;
+        if(kind!=Species2024.Orc&&kind!=Species2024.Dwarf)return false;
         return SpeciesAbilities(player).CanUse(kind,SpeciesProficiency(player),worldRounds);
     }
     IEnumerator UseSpeciesBonus(bool player)
@@ -69,7 +70,8 @@ public sealed partial class TrainingGame
             if(GUILayout.Button(kind==Species2024.Orc?"使用肾上腺素激增（附赠动作）":"使用石中精妙（附赠动作）",button)){panel="";StartCoroutine(UseSpeciesBonus(true));}
             GUI.enabled=old;
             if(!SpeciesPhysicalActive(true))GUILayout.Label("当前兽形不具有原种族的身体特性。",small);
-        }else GUILayout.Label("当前种族的主动特性仍在接入；已完成的被动效果照常结算。",label);
+        }else if(kind==Species2024.Aasimar)DrawHealingHandsChoices(0);
+        else GUILayout.Label("当前种族的主动特性仍在接入；已完成的被动效果照常结算。",label);
         DrawSpeciesSpellSummary();
         GUILayout.EndScrollView();GUILayout.EndArea();
     }

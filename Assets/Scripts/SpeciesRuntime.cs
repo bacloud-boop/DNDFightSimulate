@@ -39,7 +39,7 @@ public sealed partial class TrainingGame
         if(!fixedKind){int index=GUILayout.SelectionGrid((int)p.Kind+1,new[]{"无种族特性"}.ConcatNames(SpeciesProfile.Names),3,new GUIStyle(button){fontSize=15,fixedHeight=34})-1;
         if(index!=(int)p.Kind){p.Kind=(Species2024)index;p.Lineage=0;p.ChosenSkill=p.Kind==Species2024.Elf?12:0;}}else GUILayout.Label("新种族："+p.Name,heading);
         if(!player&&editLevel){GUILayout.Label("种族特性等级（1～20，独立于施法等级）",small);string text;if(!speciesLevelText.TryGetValue(p,out text))text=p.Level.ToString();speciesLevelText[p]=IntegerField(text,false);}
-        if(!player&&showMonsterPriority){GUILayout.Label("种族附赠动作优先级",small);p.BonusPriority=GUILayout.SelectionGrid(p.BonusPriority,SpeciesTurnPolicy.PriorityNames,1,new GUIStyle(button){fontSize=15,fixedHeight=32});GUILayout.Label("当前支持兽人疾走、矮人石中精妙；优先项用掉附赠动作后，另一项不能再使用。",small);}
+        if(!player&&showMonsterPriority){GUILayout.Label("种族特性优先级",small);p.BonusPriority=GUILayout.SelectionGrid(p.BonusPriority,SpeciesTurnPolicy.PriorityNames,1,new GUIStyle(button){fontSize=15,fixedHeight=32});GUILayout.Label("当前支持阿斯莫治愈之手、兽人疾走与矮人石中精妙；动作和附赠动作各自共用额度。",small);}
         if(p.Kind==Species2024.None)return;
         if(p.SizeChoice)p.Size=GUILayout.SelectionGrid(p.Size-1,new[]{"小型","中型"},2,button)+1;
         if(p.Lineages.Length>1)p.Lineage=GUILayout.SelectionGrid(p.Lineage,p.Lineages,3,new GUIStyle(button){fontSize=15,fixedHeight=34});
@@ -59,7 +59,7 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(x+20,185,440,635));speciesScroll=GUILayout.BeginScrollView(speciesScroll);
         GUILayout.Label(player?"玩家种族":"怪物种族",heading);bool enabled=GUI.enabled;GUI.enabled=!combat.BattleStarted&&!rolling;
         DrawSpeciesConfiguration(draft,player);
-        GUILayout.Label("已接入被动数值及兽人疾走、矮人石中精妙；其他主动特性与部分专长仍在实现。首次操作后锁定配置。",small);
+        GUILayout.Label("已接入被动数值及治愈之手、兽人疾走、矮人石中精妙；其他主动特性与部分专长仍在实现。首次操作后锁定配置。",small);
         if(GUILayout.Button("应用种族资料",button)){
             if(!ValidateSpeciesDraft(draft))speciesMessage="种族选择无效，熟习选项不可重复。";
             else if(!SpeciesEquipmentFits(player,draft))speciesMessage="拒绝配置：所选体型／负重特性无法携带现有装备。";

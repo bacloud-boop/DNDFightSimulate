@@ -19,6 +19,8 @@ class RescueSpeciesChecks
         C(elf.SkillTier(12)==1&&elf.SpeciesAbilities.Remaining(Species2024.Orc,-2)==0,"racial proficiencies and zero-floor use counts");
         C(elf.FinishLongRest(0,2400)&&!elf.CanLongRest(2400)&&elf.CanLongRest(14400),"elf four-hour long rest respects daily benefit interval");
         var angel=new RescueCarrier();angel.ConfigureProfile(new[]{10,10,10,10,10,10},new SpeciesProfile{Kind=Species2024.Aasimar},0,2,30,150,0,10);C(angel.TakeDamage(8,damageType:11)==4&&angel.Hp==6,"rescue racial resistance applies before HP loss");
+        angel.BeginTurn(0);C(!angel.UseSpeciesBonus(0)&&angel.BonusActionAvailable&&angel.UseHealingHands(0)&&angel.ActionsRemaining==0&&angel.BonusActionAvailable,"Healing Hands is a Magic action rather than a bonus action for rescuers");
+        angel.ShortRest();C(angel.SpeciesAbilities.HealingHandsSpent,"rescue short rest leaves long-rest-only Healing Hands spent");angel.CompleteLongRest();C(!angel.SpeciesAbilities.HealingHandsSpent&&angel.Hp==angel.MaxHp,"rescue long rest restores Healing Hands and HP");
         Console.WriteLine("PASS: rescue six abilities, independent racial level/proficiency, actions, bonus actions, reactions, traits, HP, capacity, rests and reincarnation");
     }
 }

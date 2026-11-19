@@ -17,12 +17,14 @@ public sealed partial class TrainingGame
         GUILayout.Label("附赠动作 "+(rescueCarrier.BonusActionAvailable?1:0)+" / 1 · 反应 "+(rescueCarrier.ReactionAvailable?1:0)+" / 1 · 临时HP "+rescueCarrier.TemporaryHp,small);
         var species=rescueCarrier.Species;bool old=GUI.enabled;
         if(species.Kind==Species2024.Orc||species.Kind==Species2024.Dwarf){
-            GUI.enabled=old&&!rolling&&rescueCarrier.Conscious&&rescueCarrier.TurnActive&&rescueCarrier.BonusActionAvailable&&rescueCarrier.SpeciesAbilities.CanUse(species.Kind,rescueCarrier.ProficiencyBonus,worldRounds);
+            if(species.Kind==Species2024.Aasimar){GUI.enabled=old;DrawHealingHandsChoices(BattleMap.RescueId);}
+        GUI.enabled=old&&!rolling&&rescueCarrier.Conscious&&rescueCarrier.TurnActive&&rescueCarrier.BonusActionAvailable&&rescueCarrier.SpeciesAbilities.CanUse(species.Kind,rescueCarrier.ProficiencyBonus,worldRounds);
             if(GUILayout.Button((species.Kind==Species2024.Orc?"肾上腺素激增":"石中精妙")+"（附赠动作） · 剩 "+rescueCarrier.SpeciesAbilities.Remaining(species.Kind,rescueCarrier.ProficiencyBonus),button)){
                 if(rescueCarrier.UseSpeciesBonus(worldRounds))history.Insert(0,species.Kind==Species2024.Orc?"救援者附赠疾走并获得熟练加值数量的临时HP，均不与原临时HP叠加。":"救援者获得60尺震感，持续10分钟；须接触相连石面，不视为视觉。");
             }
             if(species.Kind==Species2024.Dwarf&&rescueCarrier.SpeciesAbilities.StoneActive(worldRounds))GUILayout.Label("石中精妙："+(!map.RescuePosition.HasValue||!map.StoneContact(map.RescuePosition.Value,map.RescueSpaces)?"当前未接触石面":"震感生效，不提供视觉"),small);
         }
+        if(species.Kind==Species2024.Aasimar){GUI.enabled=old;DrawHealingHandsChoices(BattleMap.RescueId);}
         GUI.enabled=old&&!rolling&&rescueCarrier.Conscious&&!rescueCarrier.Load.Loaded&&!combat.NeedsDeathSave;
         if(GUILayout.Button("救援者短休（1小时，恢复短休次数）",button)){rescueCarrier.EndTurn();AdvanceAftermathTime(600);rescueCarrier.ShortRest();if(rescueCarrier.Conscious)rescueCarrier.BeginTurn(worldRounds);}
         GUI.enabled=GUI.enabled&&rescueCarrier.CanLongRest(worldRounds);

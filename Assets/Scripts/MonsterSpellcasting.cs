@@ -24,12 +24,14 @@ public sealed partial class TrainingGame
     IEnumerator TryMonsterTurnSpell(MonsterSpellTurn result)
     {
         if(!combat.MonsterCanAct)yield break;
+        var upcoming=monsterSpells.Next;var choice=upcoming==null?null:MonsterSpellCatalog.Find(upcoming.Name);
+        if(choice!=null&&!choice.Bonus&&!combat.MonsterActionAvailable)yield break;
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
         var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell);Vector2Int areaCenter=default(Vector2Int);
         int target=spell==null?-2:area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2||spell.Bonus&&!combat.MonsterBonusActionAvailable||!SpellVoiceAllowed(false,spell.Name)){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
-        if(spell.Bonus&&!combat.TryUseMonsterBonusAction())yield break;
+        if(!(spell.Bonus?combat.TryUseMonsterBonusAction():combat.TryUseMonsterAction()))yield break;
         result.Cast=true;result.Bonus=spell.Bonus;
         combat.MarkBattleStarted();
         history.Insert(0,"木桩施放"+spell.Chinese+"（"+(entry.Slot==0?"戏法":entry.Slot+"环")+"），消耗"+(spell.Bonus?"附赠动作":"动作")+"。");

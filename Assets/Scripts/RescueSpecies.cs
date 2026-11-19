@@ -26,10 +26,11 @@ public sealed partial class RescueCarrier
     public bool TryUseReaction(){if(!Conscious||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public bool UseSpeciesBonus(long now)
     {
-        if(!Conscious||!TurnActive||!BonusActionAvailable||!SpeciesAbilities.CanUse(Species.Kind,ProficiencyBonus,now))return false;
+        if((Species.Kind!=Species2024.Orc&&Species.Kind!=Species2024.Dwarf)||!Conscious||!TurnActive||!BonusActionAvailable||!SpeciesAbilities.CanUse(Species.Kind,ProficiencyBonus,now))return false;
         if(!TryUseBonusAction()||!SpeciesAbilities.Use(Species.Kind,ProficiencyBonus,now))return false;
         if(Species.Kind==Species2024.Orc){Dashes++;TemporaryHp=Math.Max(TemporaryHp,Math.Max(0,ProficiencyBonus));}return true;
     }
+    public bool UseHealingHands(long now){if(Species.Kind!=Species2024.Aasimar||!SpeciesAbilities.CanUse(Species.Kind,ProficiencyBonus,now)||!UseAction())return false;return SpeciesAbilities.Use(Species.Kind,ProficiencyBonus,now);}
     public bool CanLongRest(long now)=>Conscious&&!Load.Loaded&&now>=0&&now<=long.MaxValue-Species.LongRestRounds&&(LastLongRestStart<0||now-LastLongRestStart>=14400);
     public bool FinishLongRest(long start,long finish){if(!CanLongRest(start)||finish-start<Species.LongRestRounds)return false;LastLongRestStart=start;CompleteLongRest();return true;}
     public void ShortRest(){if(Conscious)SpeciesAbilities.ShortRest();}

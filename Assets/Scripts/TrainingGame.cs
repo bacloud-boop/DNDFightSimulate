@@ -190,10 +190,11 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
+            yield return TryMonsterSpeciesMagic(true);
             yield return TryMonsterSpeciesBonus(true);
             var upcoming=monsterSpells.Next==null?null:MonsterSpellCatalog.Find(monsterSpells.Next.Name);
             if(upcoming==null||!upcoming.Bonus)yield return TryMonsterSpeciesBonus(false);
-            if(Entangled(false)&&combat.MonsterCanAct){
+            if(Entangled(false)&&combat.MonsterCanAct&&combat.MonsterActionAvailable){
                 yield return TryMonsterSpeciesBonus(false);
                 yield return EscapeMonsterEntangle();
                 if(!Entangled(false)){if(combat.MonsterProne&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);}yield return ChasePlayer();}
@@ -206,6 +207,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         }
         if(endTurn&&combat.MonsterCanAct){
             var spellTurn=new MonsterSpellTurn();yield return TryMonsterTurnSpell(spellTurn);
+            yield return TryMonsterSpeciesMagic(false);
             yield return TryMonsterSpeciesBonus(false);
             if(!spellTurn.Cast||spellTurn.Bonus){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
             if(spellTurn.Cast&&(!spellTurn.Bonus||combat.PlayerDead||combat.Hp==0||combat.BattleFinished)){
@@ -215,6 +217,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(endTurn&&(!combat.MonsterCanAct||!MonsterCanCastAttack)){
             history.Insert(0,"木桩失能或未受训护甲禁止法术攻击，跳过本次攻击。");yield return RepeatHoldPersonSave();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
         }
+        if(endTurn&&!combat.TryUseMonsterAction()){yield return FinishMonsterSpellTurn();yield break;}
         int summonVictim=endTurn?map.NearestEnemyInReach(!combat.PlayerDead,MonsterAttackReach):-1;
         if(summonVictim>0){
             yield return ResolveMonsterSpiritAttack(FindSummon(summonVictim));
