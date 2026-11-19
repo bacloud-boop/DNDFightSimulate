@@ -48,8 +48,10 @@ public sealed partial class TrainingGame
     }
     IEnumerator MoveSpiritWithReactions(SummonedUnit unit,Vector2Int target,bool greaseStep=false,int? prepaid=null,int? travelDistance=null)
     {
-        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive||!(prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target)))yield break;
-        if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
+        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive)yield break;
+        System.Func<bool> validate=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target);
+        if(!(greaseStep?map.WithCreatureTransitStep(unit.Id,validate):validate()))yield break;
+        if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds)||map.CreaturePathNeedsSteps(unit.Id,new Vector2Int(unit.X,unit.Y),target,unit.Spaces))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
         bool previous=summonActing;summonActing=true;
         try{
             var from=new Vector2Int(unit.X,unit.Y);
@@ -63,7 +65,8 @@ public sealed partial class TrainingGame
                 }
             }
             if(!unit.Alive||combat.BattleFinished||combat.Aftermath)yield break;
-            if(prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.MoveSummon(unit.Id,target),travelDistance):map.MoveSummon(unit.Id,target)){history.Insert(0,unit.Name+"移动至("+(target.x+1)+","+(target.y+1)+")，继续原指令，无需开口。");ObserveWaterBreathing();}
+            System.Func<bool> move=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.MoveSummon(unit.Id,target),travelDistance):map.MoveSummon(unit.Id,target);
+            if(greaseStep?map.WithCreatureTransitStep(unit.Id,move):move()){history.Insert(0,unit.Name+"移动至("+(target.x+1)+","+(target.y+1)+")，继续原指令，无需开口。");ObserveWaterBreathing();}
             if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         }finally{summonActing=previous;reactionActorLabel="";}
     }

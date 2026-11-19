@@ -45,7 +45,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     void Awake()
     {
         combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
-        map.VoluntaryMovement=FearAllowsMovement;
+        map.VoluntaryMovement=FearAllowsMovement;InitializeCreatureTransit();
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat("MusicVolume", .35f));
@@ -178,7 +178,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(!combat.Aftermath&&!combat.BattleFinished && !spellTargeting && !rolling && panel=="" && page=="battle" && draggingToken<0) {
             combat.MarkBattleStarted();
             FinishWaterBreathingTurn(true);if(combat.PlayerDead)return;
-            combat.ExpirePlayerTurnEffects();
+            ApplySharedTurnEnd(0);combat.ExpirePlayerTurnEffects();
             history.Insert(0,"结束第 "+combat.Round+" 回合：跳过剩余动作 "+combat.ActionsRemaining+"、附赠动作 "+(combat.BonusActionAvailable?1:0)+"。");
             StartCoroutine(EndPlayerTurnWithSensorySaves());
         }

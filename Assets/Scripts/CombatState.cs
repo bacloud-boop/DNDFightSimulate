@@ -97,7 +97,8 @@ public sealed class CombatState
     int playerMockeryUntil;bool monsterMockery;
     public void ApplyMockery(bool player){if(player)playerMockeryUntil=Round+1;else monsterMockery=true;}
     public bool ConsumeMockery(bool player){bool active=player?playerMockeryUntil>0:monsterMockery;if(player)playerMockeryUntil=0;else monsterMockery=false;return active;}
-    public void FinishMonsterTurnEffects(){monsterMockery=false;}
+    public Action<int> TurnEnded;
+    public void FinishMonsterTurnEffects(){monsterMockery=false;TurnEnded?.Invoke(-1);}
     int playerHealingBlockedUntil,monsterHealingBlockedUntil;
     public bool PlayerHealingBlocked => playerHealingBlockedUntil>0;
     public bool MonsterHealingBlocked => monsterHealingBlockedUntil>0;

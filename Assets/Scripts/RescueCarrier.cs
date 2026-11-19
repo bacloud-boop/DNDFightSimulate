@@ -65,12 +65,13 @@ public sealed partial class RescueCarrier
     {
         if(!Conscious||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ActionsRemaining=1;BonusActionAvailable=true;ReactionAvailable=true;MovementSpent=0;Dashes=0;return true;
     }
-    public void EndTurn(){TurnActive=false;ActionsRemaining=0;}
+    public Action TurnEnded;
+    public void EndTurn(bool notify=true){bool active=TurnActive;TurnActive=false;ActionsRemaining=0;if(active&&notify)TurnEnded?.Invoke();}
     public bool UseAction(){if(!Conscious||!TurnActive||ActionsRemaining<1)return false;ActionsRemaining--;return true;}
     public bool PickUp(int id,bool dead,BodyWeight corpse,bool drag)=>TurnActive&&Load.PickUpOunces(id,dead,corpse,Strength,Species.CapacitySize(Size),Weight.GearOunces,drag,UseAction);
     public bool Drop(Func<bool> place)=>TurnActive&&Load.Drop(place);
     public bool Move(int feet){if(!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
     public bool Dash(){if(!UseAction())return false;Dashes++;return true;}
     public bool CanMove(int feet)=>TurnActive&&feet>0&&feet<=MovementRemaining;
-    public void Reset(){SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn();Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
+    public void Reset(){SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
 }

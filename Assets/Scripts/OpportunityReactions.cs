@@ -53,7 +53,8 @@ public sealed partial class TrainingGame
         if(expectedSpaces.HasValue&&((movingPlayer?map.PlayerSpaces:map.MonsterSpaces)!=expectedSpaces.Value||(movingPlayer?combat.PlayerProne:combat.MonsterProne)!=proneAtStart)){if(PendingTerrainCount>0)yield return DrainGreaseEntries();if(!preserveBusy)rolling=false;yield break;}
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
         int paidMovement=prepaid.HasValue?prepaid.Value:jumping?10:movingPlayer?map.PlayerMovementCost(target):map.MonsterMovementCost(target);
-        bool moved=jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
+        System.Func<bool> groundMove=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
+        bool moved=jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):greaseStep?map.WithCreatureTransitStep(movingPlayer?0:-1,groundMove):groundMove();
         if(moved) {
             if(jumping)jumpEffect.Use(movingPlayer,worldRounds,combat.Round);
             string mode=jumping?(tactical?"战术跳跃（免借机）":"跳跃"):tactical?"战术转进（不引发借机攻击）":"普通移动";

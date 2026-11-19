@@ -38,8 +38,7 @@ public sealed partial class BattleMap
     }
     bool RescueDestinationClear(Vector2Int cell){
         int id=RescueCargoId??int.MaxValue;
-        if(!Inside(cell,RescueSpaces)||!SummonFootprintClear(cell,RescueSpaces,RescueId,id))return false;
-        if(id!=0&&Overlap(cell,RescueSpaces,Player,OccupiedSpaces(true))||id!=-1&&Overlap(cell,RescueSpaces,Monster,OccupiedSpaces(false)))return false;
+        if(!CanOccupyForMove(RescueId,RescuePosition.Value,cell,RescueSpaces))return false;
         if(!RescueCargoId.HasValue||!RescueCargoDragging)return true;
         Vector2Int from;int spaces;if(!CargoBody(id,out from,out spaces))return false;var dragged=new Vector2Int(cell.x+rescueCargoOffset.x,cell.y+rescueCargoOffset.y);
         if(!CargoPlacement(id,dragged,spaces,cell,true)||CrossesRemains(from,dragged,spaces,id))return false;

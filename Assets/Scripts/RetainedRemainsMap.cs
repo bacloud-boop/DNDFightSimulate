@@ -14,7 +14,7 @@ public sealed partial class BattleMap
     }
     bool CrossesRemains(Vector2Int from,Vector2Int to,int spaces,int exceptId=0)
     {
-        foreach(var body in AllRemains())if(body.Id!=exceptId&&SegmentCrossesBody(from,to,spaces,new Vector2Int(body.X,body.Y),RemainsSpaces(body)))return true;
+        foreach(var body in AllRemains())if(body.Id!=exceptId&&!Overlap(from,spaces,new Vector2Int(body.X,body.Y),RemainsSpaces(body))&&SegmentCrossesBody(from,to,spaces,new Vector2Int(body.X,body.Y),RemainsSpaces(body)))return true;
         return false;
     }
     void SetReincarnationBody(int actor,Vector2Int anchor,int spaces){if(actor==0){Player=anchor;PlayerSpaces=spaces;}else if(actor==-1){Monster=anchor;MonsterSpaces=spaces;}else{RescuePosition=anchor;RescueSpaces=spaces;}}

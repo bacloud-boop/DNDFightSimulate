@@ -6,7 +6,7 @@ public sealed partial class BattleMap
  public Action<int,Vector2Int,Vector2Int,int,int,bool> MovementObserved;
  public Func<Vector2Int,int,bool> SwimmingTerrain;
  public RouteCostMeter RouteMeter(Vector2Int from,Vector2Int to,bool crawling){int total=0;var previous=from;foreach(var cell in MovementAnchors(from,to)){total+=FeetBetween(previous,cell);previous=cell;}return new RouteCostMeter(FeetBetween(from,to),total,crawling);}
- public int RouteStepCost(RouteCostMeter meter,Vector2Int from,Vector2Int to,int spaces,int swimSpeed)=>meter.Next(FeetBetween(from,to),swimSpeed<=0&&SwimmingTerrain!=null&&SwimmingTerrain(to,spaces),DifficultTerrain!=null&&DifficultTerrain(to.x,to.y,spaces));
+ public int RouteStepCost(RouteCostMeter meter,Vector2Int from,Vector2Int to,int spaces,int swimSpeed,int actor=int.MaxValue)=>meter.Next(FeetBetween(from,to),swimSpeed<=0&&SwimmingTerrain!=null&&SwimmingTerrain(to,spaces),RoughTerrainAt(actor,to,spaces));
  public int? MovementTravelDistance {get;private set;}
  int? movementCostOverride;Vector2Int movementOverrideTarget;
  public int? MovementCostOverride(Vector2Int target)=>movementCostOverride.HasValue&&target==movementOverrideTarget?movementCostOverride:null;

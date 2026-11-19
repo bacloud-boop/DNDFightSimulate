@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
         if(!combat.MonsterCanMove)yield break;
         if(monsterGroundWeapon.Dropped&&!MonsterPolymorphed&&combat.MonsterCanAct){yield return RecoverMonsterWeapon();if(monsterGroundWeapon.Dropped)yield break;}
         if(combat.MonsterProne){int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)yield break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();}
-        if(map.NearestEnemyInReach(!combat.PlayerDead,reach)>=0)yield break;
+        if(!map.HasSharedPosition(-1)&&map.NearestEnemyInReach(!combat.PlayerDead,reach)>=0)yield break;
         Vector2Int from=map.Monster,best=from;int initialSpaces=map.MonsterSpaces;
         int bestDistance,bestCost=0;map.NearestEnemyFrom(from,map.MonsterSpaces,!combat.PlayerDead,int.MaxValue,out bestDistance);
         bool foundInRange=false,bestJump=false;

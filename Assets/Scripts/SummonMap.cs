@@ -20,7 +20,7 @@ public sealed partial class BattleMap
         int oldX=unit.X,oldY=unit.Y;
         unit.X=anchor.x;unit.Y=anchor.y;summons.Add(unit);
         if(!RecoverySafe(Player,Monster)){summons.Remove(unit);unit.X=oldX;unit.Y=oldY;return false;}
-        SyncWaterPositions();return true;
+        unit.TurnEnded=()=>ActorTurnEnded?.Invoke(unit.Id);SyncWaterPositions();return true;
     }
     public bool CanAddSummon(SummonedUnit unit,Vector2Int anchor)
     {
@@ -41,7 +41,7 @@ public sealed partial class BattleMap
         if(!Locked||!VoluntaryMovementAllowed(id,cell))return false;
         foreach(var unit in summons)if(unit.Id==id&&unit.Alive){
             var from=new Vector2Int(unit.X,unit.Y);
-            if(CrossesRemains(from,cell,unit.Spaces)||!CanPlaceSummon(cell,unit.Spaces,id)||SegmentCrossesBody(from,cell,unit.Spaces,Monster,OccupiedSpaces(false))||!unit.CanSpendMovement(WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone)))return false;
+            if(!CanOccupyForMove(id,from,cell,unit.Spaces)||!CreaturePathClear(id,from,cell,unit.Spaces)||!unit.CanSpendMovement(WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone,unit.Id)))return false;
             // Preserve both original-form recovery spaces along the entire route.
             int steps=System.Math.Max(System.Math.Abs(cell.x-from.x),System.Math.Abs(cell.y-from.y))*2;
             try{
@@ -64,7 +64,7 @@ public sealed partial class BattleMap
             bool bestBreath=unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater,WaterCells(from,unit.Spaces));
             for(int y=0;y<Size;y++)for(int x=0;x<Size;x++){
                 var cell=new Vector2Int(x,y);if(!CanMoveSummon(id,cell))continue;
-                int waterCells=WaterCells(cell,unit.Spaces),distance=BodyDistance(cell,unit.Spaces,Monster,MonsterSpaces),cost=WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone);
+                int waterCells=WaterCells(cell,unit.Spaces),distance=BodyDistance(cell,unit.Spaces,Monster,MonsterSpaces),cost=WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone,unit.Id);
                 bool submerged=unit.Aquatic.Submerged&&AquaticState.FullyInWater(waterCells,unit.Spaces*unit.Spaces);
                 bool breath=submerged?unit.BreathesWater:waterCells>0?unit.BreathesAir||unit.BreathesWater:unit.BreathesAir;
                 if(breath&&!bestBreath||breath==bestBreath&&(distance>bestDistance||distance==bestDistance&&cost<bestCost)){destination=cell;bestBreath=breath;bestDistance=distance;bestCost=cost;}

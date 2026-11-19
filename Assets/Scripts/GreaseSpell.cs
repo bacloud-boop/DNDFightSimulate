@@ -35,17 +35,18 @@ public sealed partial class TrainingGame
   if(automatic||(long)value+modifier<field.Dc){if(player)combat.PlayerProne=true;else if(monsterActor)combat.MonsterProne=true;else if(rescue)rescueCarrier.Prone=true;else unit.Prone=true;SyncTimedBuffs();history.Insert(0,name+"油腻术豁免失败，倒地。");}else history.Insert(0,name+"通过油腻术敏捷豁免。");
  }
  IEnumerator DrainGreaseEntries(){if(greaseResolving){while(greaseResolving)yield return null;yield break;}bool busy=rolling;rolling=true;greaseResolving=true;try{while(PendingTerrainCount>0){if(greaseEntries.Count>0){var entry=greaseEntries.Dequeue();yield return ResolveGreaseSave(entry.Actor,entry.Field,"进入油脂");}else yield return ResolveSpikeEntry(spikeEntries.Dequeue());}}finally{rolling=busy;greaseResolving=false;}}
- bool GreasePathNeeded(bool player,Vector2Int target){if(SpikePathNeeded(player,target))return true;if(!grease.Any(worldRounds))return false;var from=player?map.Player:map.Monster;int spaces=player?map.PlayerSpaces:map.MonsterSpaces;foreach(var cell in BattleMap.MovementAnchors(from,target)){var field=grease.Current(cell.x,cell.y,spaces,worldRounds);if(field!=null&&!field.Intersects(from.x,from.y,spaces))return true;from=cell;}return false;}
+ bool GreasePathNeeded(bool player,Vector2Int target){if(map.CreaturePathNeedsSteps(player?0:-1,player?map.Player:map.Monster,target,player?map.PlayerSpaces:map.MonsterSpaces))return true;if(SpikePathNeeded(player,target))return true;if(!grease.Any(worldRounds))return false;var from=player?map.Player:map.Monster;int spaces=player?map.PlayerSpaces:map.MonsterSpaces;foreach(var cell in BattleMap.MovementAnchors(from,target)){var field=grease.Current(cell.x,cell.y,spaces,worldRounds);if(field!=null&&!field.Intersects(from.x,from.y,spaces))return true;from=cell;}return false;}
  IEnumerator MoveThroughGrease(bool player,Vector2Int target,bool tactical,bool preserveBusy)
  {
+  if(!(player?map.CanMoveTo(target,tactical):map.CanMoveMonsterTo(target)))yield break;
   var origin=player?map.Player:map.Monster;int spaces=player?map.PlayerSpaces:map.MonsterSpaces;bool crawling=player?combat.PlayerProne:combat.MonsterProne;var meter=map.RouteMeter(origin,target,crawling);var previousCell=origin;
   bool aftermath= combat.Aftermath;rolling=true;try{foreach(var cell in BattleMap.MovementAnchors(origin,target)){
-   int previousTravel=meter.Travelled;int cost=map.RouteStepCost(meter,previousCell,cell,spaces,player?map.PlayerSwimmingSpeed:map.MonsterSwimmingSpeed);previousCell=cell;if(cost<1)continue;
-   bool legal=map.WithMovementCost(cell,cost,()=>player?map.CanMoveTo(cell,tactical):map.CanMoveMonsterTo(cell));if(!legal)break;
+   int previousTravel=meter.Travelled;int cost=map.RouteStepCost(meter,previousCell,cell,spaces,player?map.PlayerSwimmingSpeed:map.MonsterSwimmingSpeed,player?0:-1);previousCell=cell;if(cost<1)continue;
+   bool legal=map.WithCreatureTransitStep(player?0:-1,()=>map.WithMovementCost(cell,cost,()=>player?map.CanMoveTo(cell,tactical):map.CanMoveMonsterTo(cell)));if(!legal)break;
    bool wasProne=player?combat.PlayerProne:combat.MonsterProne;
    yield return ResolveMovement(player,cell,tactical,true,false,true,cost,spaces,meter.Travelled-previousTravel);if((player?map.Player:map.Monster)!=cell)break;
    if((player?combat.PlayerProne:combat.MonsterProne)&&!wasProne){if(player){movementMessage="油腻术使玩家倒地，停在触发格；剩余路程未扣费。";break;}int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();history.Insert(0,"木桩花费"+stand+"尺移动力起身，继续追击。");}
    if(!aftermath&&combat.BattleFinished||player&&(combat.PlayerDead||combat.PlayerHp<=0||combat.PlayerParalyzed)||!player&&!combat.MonsterCanMove||(player?map.PlayerSpaces:map.MonsterSpaces)!=spaces)break;
-  }}finally{if(!preserveBusy)rolling=false;}
+  }}finally{ObserveForcedSharedStop(player?0:-1);if(!preserveBusy)rolling=false;}
  }
 }

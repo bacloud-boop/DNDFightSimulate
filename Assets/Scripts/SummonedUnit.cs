@@ -76,7 +76,8 @@ public sealed class SummonedUnit
     }
     long lastTurn=-1;
     public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;return true;}
-    public void EndTurn(){BonusAvailable=false;TurnActive=false;actionAvailable=false;AttacksRemaining=0;}
+    public Action TurnEnded;
+    public void EndTurn(){bool active=TurnActive;BonusAvailable=false;TurnActive=false;actionAvailable=false;AttacksRemaining=0;if(active)TurnEnded?.Invoke();}
     public bool CanSpendMovement(int cost)=>Alive&&TurnActive&&cost>0&&cost<=MovementRemaining;
     public bool SpendMovement(int cost){if(!CanSpendMovement(cost))return false;movementSpent+=cost;return true;}
     public bool SwitchWaterState(bool submerged,int waterCells)=>Aquatic.TrySwitch(submerged,waterCells,Spaces*Spaces,SpendMovement);

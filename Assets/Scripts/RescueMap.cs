@@ -18,7 +18,7 @@ public sealed partial class BattleMap
     {
         if(!Locked||!RescuePosition.HasValue||cell==RescuePosition.Value||!RescueDestinationClear(cell))return false;
         var from=RescuePosition.Value;
-        return !CrossesRemains(from,cell,RescueSpaces,RescueCargoId??0)&&(RescueCargoPlayer==true||!SegmentCrossesBody(from,cell,RescueSpaces,Player,OccupiedSpaces(true)))&&(RescueCargoPlayer==false||!SegmentCrossesBody(from,cell,RescueSpaces,Monster,OccupiedSpaces(false)));
+        return CreaturePathClear(RescueId,from,cell,RescueSpaces);
     }
     public bool MoveRescue(Vector2Int cell,Func<int,bool> spendMovement)
     {
