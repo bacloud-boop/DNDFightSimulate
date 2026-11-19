@@ -52,7 +52,7 @@ public sealed partial class TrainingGame
         if(draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
         if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
         DrawSpeciesSenseMap(board);DrawFaerieFireMap(board);
-        DrawGroundWeapons(board);DrawRescueMarker(board);
+        DrawRetainedRemains(board);DrawGroundWeapons(board);DrawRescueMarker(board);
         DrawSummonMarkers(board);
         if(!allowDrag || (map.Locked&&!moving)||(page=="deployment"&&terrainBrush>0))return;
         int id=GUIUtility.GetControlID(23891,FocusType.Passive);

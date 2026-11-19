@@ -6,6 +6,7 @@ public sealed class CorpseCarryingState
     public long WeightOunces {get;private set;}
     public long WeightPounds=>WeightUnits.WholePoundsCeiling(WeightOunces);
     public bool Loaded=>TargetId.HasValue;
+    public bool RefreshWeight(BodyWeight body){if(!Loaded||body==null||!body.Known)return false;WeightOunces=body.TotalOunces;return true;}
     public bool PickUp(int targetId,bool targetDead,BodyWeight body,int strength,int size,long ownEquipment,bool drag,Func<bool> useAction)
         =>ownEquipment>=0&&ownEquipment<=long.MaxValue/16&&PickUpOunces(targetId,targetDead,body,strength,size,ownEquipment*16,drag,useAction);
     public bool PickUpOunces(int targetId,bool targetDead,BodyWeight body,int strength,int size,long ownEquipment,bool drag,Func<bool> useAction)

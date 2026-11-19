@@ -18,6 +18,7 @@ public sealed partial class TrainingGame {
   if(steed!=null&&steed.Alive)GUILayout.Label("异界坐骑保留 · HP "+steed.Hp+" / "+steed.MaxHp+"；战后暂停操控，恢复战斗后再行动。",small);
   if(bestialSpirit.Active)GUILayout.Label("召唤物保留 · HP "+bestialSpirit.Unit.Hp+" / "+bestialSpirit.Unit.MaxHp+" · 最多剩余 "+System.Math.Max(0,bestialSpirit.Expires-worldRounds)*6+" 秒。战后暂停操控，时间照常流逝；恢复战斗后再行动。",small);
   if(GUILayout.Button("部署 / 操控救援搬运者",button)&&!rolling){panel="rescue";GUILayout.EndScrollView();GUILayout.EndArea();return;}
+  if(map.Remains.Bodies.Count>0&&GUILayout.Button("旧躯体与遗留装备",button)&&!rolling){panel="remains";GUILayout.EndScrollView();GUILayout.EndArea();return;}
   DrawExternalCasterRest();
   revivalWilling=GUILayout.Toggle(revivalWilling,"确认目标灵魂愿意复活",label);
   foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Gentle Repose","True Resurrection"}){

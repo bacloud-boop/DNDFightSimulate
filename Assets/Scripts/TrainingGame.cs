@@ -283,6 +283,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="remains"){DrawRemainsPanel();return;}
         if(panel=="speciesActions"){DrawSpeciesActions();return;}
         if(panel=="species"||panel=="monsterSpecies"){DrawSpeciesPanel(panel=="species");return;}
         if(panel=="monsterSpells"){DrawMonsterSpells();return;}

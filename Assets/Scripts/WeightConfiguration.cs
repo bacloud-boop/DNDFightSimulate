@@ -20,7 +20,7 @@ public sealed partial class TrainingGame
     {
         bool old=GUI.enabled;GUI.enabled=old&&(!combat.BattleStarted||!draft.Weight.Known);
         GUILayout.Label(beast?"形态体重（整数磅，未设置时不能搬运）":"体重（整数磅，至少1）",small);draft.Body=IntegerField(draft.Body,false);
-        if(!beast){GUILayout.Label("其他装备重量（整数磅，不含护甲、盾牌和武器）",small);draft.Equipment=IntegerField(draft.Equipment,false);GUILayout.Label("护甲与盾牌 "+draft.Weight.ArmorPounds+" 磅 · 装备合计 "+WeightUnits.Format(draft.Weight.GearOunces),small);}
+        if(!beast){GUILayout.Label("其他装备重量（整数磅，不含护甲、盾牌和武器）",small);draft.Equipment=IntegerField(draft.Equipment,false);GUILayout.Label("护甲与盾牌 "+draft.Weight.ArmorPounds+" 磅 · 回收背包装备 "+WeightUnits.Format(draft.Weight.StoredGearOunces)+" · 装备合计 "+WeightUnits.Format(draft.Weight.GearOunces),small);}
         if(GUILayout.Button("应用重量资料",button))draft.Message=!WeightConfigurationFits(draft,beast)?"拒绝配置：装备重量超出携带上限，或输入无效。":draft.Weight.TryApply(draft.Body,beast?"0":draft.Equipment)?"重量已保存。":"体重须为正整数，装备重量须为非负整数。";
         GUI.enabled=old;if(draft.Message!="")GUILayout.Label(draft.Message,small);
     }

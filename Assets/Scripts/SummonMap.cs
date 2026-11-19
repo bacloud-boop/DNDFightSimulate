@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed partial class BattleMap
 {
     readonly List<SummonedUnit> summons=new List<SummonedUnit>();
     public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
-    public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0)
+    public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0,int exceptRemains=0)
     {
         if(exceptId!=RescueId&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
         foreach(var unit in summons)if(unit.Alive&&unit.Id!=exceptId&&Overlap(anchor,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;
-        return true;
+        return RemainsFootprintClear(anchor,spaces,exceptRemains!=0?exceptRemains:exceptId);
     }
     public bool CanPlaceSummon(Vector2Int anchor,int spaces,int exceptId=0)=>spaces>=1&&spaces<=4&&Inside(anchor,spaces)&&SummonFootprintClear(anchor,spaces,exceptId)
         &&(riderMountId!=0&&exceptId==riderMountId||!Overlap(anchor,spaces,Player,OccupiedSpaces(true)))&&!Overlap(anchor,spaces,Monster,OccupiedSpaces(false));
@@ -41,7 +41,7 @@ public sealed partial class BattleMap
         if(!Locked||!VoluntaryMovementAllowed(id,cell))return false;
         foreach(var unit in summons)if(unit.Id==id&&unit.Alive){
             var from=new Vector2Int(unit.X,unit.Y);
-            if(!CanPlaceSummon(cell,unit.Spaces,id)||SegmentCrossesBody(from,cell,unit.Spaces,Monster,OccupiedSpaces(false))||!unit.CanSpendMovement(WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone)))return false;
+            if(CrossesRemains(from,cell,unit.Spaces)||!CanPlaceSummon(cell,unit.Spaces,id)||SegmentCrossesBody(from,cell,unit.Spaces,Monster,OccupiedSpaces(false))||!unit.CanSpendMovement(WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone)))return false;
             // Preserve both original-form recovery spaces along the entire route.
             int steps=System.Math.Max(System.Math.Abs(cell.x-from.x),System.Math.Abs(cell.y-from.y))*2;
             try{

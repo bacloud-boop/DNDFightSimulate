@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
 {
  readonly WeaponInventory carriedWeapons=new WeaponInventory(Weapon.Available.Select(w=>w.Name),Weapon.Available[0].Name);
  readonly GroundWeaponState monsterGroundWeapon=new GroundWeaponState(-1);
- bool PlayerWeaponLoadFits(long ounces)=>EquipmentLoadRules.AllowedOunces(attributes[0],2,((long)playerWeight.Weight.EquipmentPounds+playerWeight.Weight.ArmorPounds)*16+ounces);
+ bool PlayerWeaponLoadFits(long ounces)=>EquipmentLoadRules.AllowedOunces(attributes[0],CarryingCreatureSize(true),((long)playerWeight.Weight.EquipmentPounds+playerWeight.Weight.ArmorPounds)*16+ounces+playerWeight.Weight.StoredGearOunces);
  bool WeaponFallsInWater(Vector2Int cell,int spaces)=>map.IsWater(new Vector2Int(cell.x+spaces/2,cell.y+spaces/2));
  void DropSleepingMonsterWeapon(){if(!MonsterPolymorphed&&combat.MonsterAttackIsWeapon&&combat.MonsterWeaponIsHeld)monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces));}
  void SyncWeaponInventory()
@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
  IEnumerator RecoverMonsterWeapon()
  {
   if(!monsterGroundWeapon.Dropped||!combat.MonsterCanAct||MonsterPolymorphed)yield break;
-  Func<bool> fits=()=>CarryingRules.CanCarryOunces(EffectiveMonsterAbility(0),CarryingCreatureSize(false),((long)monsterWeight.Weight.EquipmentPounds+monsterWeight.Weight.ArmorPounds)*16+combat.MonsterWeaponOunces,0);
+  Func<bool> fits=()=>CarryingRules.CanCarryOunces(EffectiveMonsterAbility(0),CarryingCreatureSize(false),((long)monsterWeight.Weight.EquipmentPounds+monsterWeight.Weight.ArmorPounds)*16+combat.MonsterWeaponOunces+monsterWeight.Weight.StoredGearOunces,0);
   if(!fits())yield break;
   Func<int,int,bool> near=(x,y)=>monsterGroundWeapon.WithinReach(x,y,map.MonsterSpaces)&&(!monsterGroundWeapon.Submerged||map.WaterCells(new Vector2Int(x,y),map.MonsterSpaces)==map.MonsterSpaces*map.MonsterSpaces);
   if(!near(map.Monster.x,map.Monster.y)){
@@ -49,7 +49,7 @@ public sealed partial class TrainingGame
   }
   if(!near(map.Monster.x,map.Monster.y)||!combat.MonsterCanAct)yield break;
   if(monsterGroundWeapon.Submerged&&!map.MonsterAquatic.Submerged&&!map.SwitchWaterState(false,true))yield break;
-  if(monsterGroundWeapon.PickUp(-1,map.Monster.x,map.Monster.y,map.MonsterSpaces,combat.MonsterCanAct,true,()=>CarryingRules.CanCarryOunces(EffectiveMonsterAbility(0),CarryingCreatureSize(false),((long)monsterWeight.Weight.EquipmentPounds+monsterWeight.Weight.ArmorPounds)*16+combat.MonsterWeaponOunces,0),()=>true,map.MonsterAquatic.Submerged)){SyncWeaponInventory();history.Insert(0,"木桩使用本回合自由物件交互拾回自己的武器。");}
+  if(monsterGroundWeapon.PickUp(-1,map.Monster.x,map.Monster.y,map.MonsterSpaces,combat.MonsterCanAct,true,()=>CarryingRules.CanCarryOunces(EffectiveMonsterAbility(0),CarryingCreatureSize(false),((long)monsterWeight.Weight.EquipmentPounds+monsterWeight.Weight.ArmorPounds)*16+combat.MonsterWeaponOunces+monsterWeight.Weight.StoredGearOunces,0),()=>true,map.MonsterAquatic.Submerged)){SyncWeaponInventory();history.Insert(0,"木桩使用本回合自由物件交互拾回自己的武器。");}
  }
  void DrawGroundWeapons(Rect board)
  {

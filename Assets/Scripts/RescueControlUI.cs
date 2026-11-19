@@ -55,7 +55,7 @@ public sealed partial class TrainingGame
         for(int i=0;i<=map.Size;i++){Fill(new Rect(board.x+i*size,board.y,1,board.height),new Color(.3f,.2f,.1f,.5f));Fill(new Rect(board.x,board.y+i*size,board.width,1),new Color(.3f,.2f,.1f,.5f));}
         if(!map.IsContained(true)&&!map.IsCarried(true))Token(BodyRect(board,map.Player,map.PlayerSpaces),true);
         if(!map.IsContained(false)&&!map.IsCarried(false))Token(BodyRect(board,map.Monster,map.MonsterSpaces),false);
-        DrawRescueMarker(board);
+        DrawRetainedRemains(board);DrawRescueMarker(board);
         var e=Event.current;var point=BoardPointer();
         if(!rolling&&combat.Aftermath&&e.type==EventType.MouseDown&&e.button==0&&board.Contains(point)){
             var cell=new Vector2Int((int)((point.x-board.x)/size),(int)((point.y-board.y)/size));
@@ -75,7 +75,7 @@ public sealed partial class TrainingGame
     {
         bool old=GUI.enabled;
         if(rescueCarrier.Load.Loaded){
-            GUILayout.Label((rescueCarrier.Load.Dragging?"拖行":"肩扛")+"："+(rescueCarrier.Load.TargetId==0?"玩家":"木桩")+"，总重 "+WeightUnits.Format(rescueCarrier.Load.WeightOunces),small);
+            GUILayout.Label((rescueCarrier.Load.Dragging?"拖行":"肩扛")+"："+(rescueCarrier.Load.TargetId==0?"玩家":rescueCarrier.Load.TargetId==-1?"木桩":map.Remains.Find(rescueCarrier.Load.TargetId.Value)?.Name??"旧躯体")+"，总重 "+WeightUnits.Format(rescueCarrier.Load.WeightOunces),small);
             GUI.enabled=!rolling&&rescueCarrier.TurnActive;
             if(GUILayout.Button(rescueDropMode?"取消放置选择":"放下搬运对象（免费）",button))rescueDropMode=!rescueDropMode;
         }else foreach(bool player in new[]{true,false}){
@@ -90,7 +90,7 @@ public sealed partial class TrainingGame
                 }
             }
         }
-        GUI.enabled=old;
+        GUI.enabled=old;DrawRescueRetainedCargo();
     }
     IEnumerator NextRescueTurn()
     {

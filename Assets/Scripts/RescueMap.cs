@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 public sealed partial class BattleMap
 {
@@ -18,7 +18,7 @@ public sealed partial class BattleMap
     {
         if(!Locked||!RescuePosition.HasValue||cell==RescuePosition.Value||!RescueDestinationClear(cell))return false;
         var from=RescuePosition.Value;
-        return (RescueCargoPlayer==true||!SegmentCrossesBody(from,cell,RescueSpaces,Player,OccupiedSpaces(true)))&&(RescueCargoPlayer==false||!SegmentCrossesBody(from,cell,RescueSpaces,Monster,OccupiedSpaces(false)));
+        return !CrossesRemains(from,cell,RescueSpaces,RescueCargoId??0)&&(RescueCargoPlayer==true||!SegmentCrossesBody(from,cell,RescueSpaces,Player,OccupiedSpaces(true)))&&(RescueCargoPlayer==false||!SegmentCrossesBody(from,cell,RescueSpaces,Monster,OccupiedSpaces(false)));
     }
     public bool MoveRescue(Vector2Int cell,Func<int,bool> spendMovement)
     {
@@ -26,5 +26,5 @@ public sealed partial class BattleMap
         if(!spendMovement(RescueMovementCost(cell)))return false;
         var from=RescuePosition.Value;RescuePosition=cell;SyncRescueCargo();SyncWaterPositions();MovementObserved?.Invoke(RescueId,from,cell,RescueSpaces,RescueSpaces,false);return true;
     }
-    public bool RemoveRescue(bool reset=false){if(RescueCargoPlayer.HasValue&&!reset)return false;if(RescueCargoPlayer.HasValue){Player=Vector2Int.zero;Monster=new Vector2Int(Size-MonsterSpaces,Size-MonsterSpaces);}RescuePosition=null;RescueSpaces=1;RescueCargoPlayer=null;RescueCargoDragging=false;RescueAquatic.TrySetSubmerged(false,0,1);return true;}
+    public bool RemoveRescue(bool reset=false){if(RescueCargoId.HasValue&&!reset)return false;if(RescueCargoPlayer.HasValue){Player=Vector2Int.zero;Monster=new Vector2Int(Size-MonsterSpaces,Size-MonsterSpaces);}RescuePosition=null;RescueSpaces=1;RescueCargoId=null;RescueCargoDragging=false;RescueAquatic.TrySetSubmerged(false,0,1);return true;}
 }
