@@ -9,7 +9,7 @@ public sealed partial class TrainingGame {
  void AdvanceAftermathTime(long rounds){ObserveDeaths();worldRounds+=rounds;playerCorpse.Age(worldRounds);monsterCorpse.Age(worldRounds);if(rounds>1)combat.ClearShortDurationEffects();RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();UpdateStableRecovery();ObserveDeaths();}
  bool CanPlayerAftermathCast=>combat.Aftermath&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&CanCastInCurrentForm&&playerResurrectionCaster.CanCast;
  bool KnowsRevival(string name){if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);var metadata=spellMetadata.spells.FirstOrDefault(x=>x.name==name);return metadata!=null&&EligibleCasters(metadata).Any();}
- string RevivalError(string name,bool player,bool external){ObserveDeaths();if(!combat.Aftermath)return "请在战后阶段使用。";if(!(external?externalResurrectionCaster:playerResurrectionCaster).CanCast)return "施法者受复生术疲惫影响，必须先完成长休。";if(!external&&!SpellVoiceAllowed(true,name))return "单位中心位于沉默范围，不能进行声音施法。";if(!external&&!ArmorSpellAllowed(name))return "未受训护甲禁止施法，或需要先收起武器腾出空手。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)return "生前形态在原位置越界或与玩家占地重叠，禁止施法且不推进时间。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
+ string RevivalError(string name,bool player,bool external){ObserveDeaths();if(!combat.Aftermath)return "请在战后阶段使用。";if(!(external?externalResurrectionCaster:playerResurrectionCaster).CanCast)return "施法者受复生术疲惫影响，必须先完成长休。";if(!external&&!SpellVoiceAllowed(true,name))return "单位中心位于沉默范围，不能进行声音施法。";if(!external&&!ArmorSpellAllowed(name))return "未受训护甲禁止施法，或需要先收起武器腾出空手。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)return "生前形态在原位置越界或与玩家占地重叠，禁止施法且不推进时间。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";if(name=="Reincarnate"){string placement=ReincarnationPlacementError(player?0:-1);if(placement!="")return placement;}return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
  void DrawAftermath(){
   Surface(new Rect(350,110,540,745),paperTexture);if(Btn(new Rect(780,125,90,46),"关闭")){panel="";return;}
   GUILayout.BeginArea(new Rect(375,185,490,635));aftermathScroll=GUILayout.BeginScrollView(aftermathScroll);
@@ -21,7 +21,7 @@ public sealed partial class TrainingGame {
   if(map.Remains.Bodies.Count>0&&GUILayout.Button("旧躯体与遗留装备",button)&&!rolling){panel="remains";GUILayout.EndScrollView();GUILayout.EndArea();return;}
   DrawExternalCasterRest();
   revivalWilling=GUILayout.Toggle(revivalWilling,"确认目标灵魂愿意复活",label);
-  foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Gentle Repose","True Resurrection"}){
+  foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Reincarnate","Gentle Repose","True Resurrection"}){
    var spell=DirectSpell.Find(name);GUILayout.Label(spell.Summary,small);if(name=="True Resurrection"&&monsterCorpse.Dead&&monsterCorpse.Type==13)GUILayout.Label("生前："+CreatureProfile.TypeNames[originalMonster.Type]+" · "+CreatureProfile.SizeNames[originalMonster.Size]+" · 原位置"+(CanRestoreOriginalMonster?"可容纳（绿色）":"不可容纳（红色），禁止施法"),small);
    foreach(bool external in new[]{false,true}){
     bool targetPlayer=external;string reason=RevivalError(name,targetPlayer,external);bool old=GUI.enabled;GUI.enabled=!rolling&&reason=="";
@@ -43,6 +43,7 @@ public sealed partial class TrainingGame {
   GUI.enabled=previous;GUILayout.Label(aftermathMessage,small);GUILayout.EndScrollView();GUILayout.EndArea();
  }
  IEnumerator CastRevival(string name,bool player,bool external){
+  if(name=="Reincarnate"){yield return CastReincarnation(player?0:-1,external);yield break;}
   if(RevivalError(name,player,external)!="")yield break;long invisibilityToken=senses.Token(true,worldRounds);rolling=true;string chinese=DirectSpell.Find(name).Chinese;dice=chinese+" · 施法中";
   // Longer casting requires concentration; no interruptions exist in the paused aftermath scene.
   if(!external)PlayerCastWhileSubmerged(name);

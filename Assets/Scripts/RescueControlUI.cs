@@ -5,15 +5,18 @@ public sealed partial class TrainingGame
     readonly RescueCarrier rescueCarrier=new RescueCarrier();
     string rescueStrength="10",rescueDexterity="10",rescueMaxHp="10",rescueSpeed="30",rescueBody="150",rescueEquipment="0",rescueMessage="选择地图边缘的合法空位入场。";
     bool rescueDropMode;int rescueSize=2;Vector2 rescueScroll;
+    readonly string[] rescueOtherAbilities={"10","10","10","10"};
+    string rescueProficiency="0";SpeciesProfile rescueSpeciesDraft=new SpeciesProfile();
+    int[] RescueAbilityScores(){var values=new int[6];if(!int.TryParse(rescueStrength,out values[0])||!int.TryParse(rescueDexterity,out values[1]))return null;for(int i=0;i<4;i++)if(!int.TryParse(rescueOtherAbilities[i],out values[i+2]))return null;return values;}
     bool RescueConfiguration(out int strength,out int speed,out int body,out int gear)
     {
-        strength=speed=body=gear=0;int dexterity,maxHp;
+        strength=speed=body=gear=0;int dexterity,maxHp,proficiency;var scores=RescueAbilityScores();if(scores==null||System.Array.Exists(scores,v=>v<3||v>20)||!ValidateSpeciesDraft(rescueSpeciesDraft)||!int.TryParse(rescueProficiency,out proficiency))return false;
         return int.TryParse(rescueMaxHp,out maxHp)&&maxHp>=1&&int.TryParse(rescueDexterity,out dexterity)&&dexterity>=3&&dexterity<=20&&int.TryParse(rescueStrength,out strength)&&strength>=3&&strength<=20&&int.TryParse(rescueSpeed,out speed)&&speed>=0
-            &&int.TryParse(rescueBody,out body)&&body>0&&int.TryParse(rescueEquipment,out gear)&&gear>=0&&EquipmentLoadRules.Allowed(strength,rescueSize,gear,0);
+            &&int.TryParse(rescueBody,out body)&&body>0&&int.TryParse(rescueEquipment,out gear)&&gear>=0&&EquipmentLoadRules.Allowed(strength,rescueSpeciesDraft.CapacitySize(rescueSize),gear,0);
     }
     void DrawRescueMarker(Rect board)
     {
-        if(!map.RescuePosition.HasValue)return;
+        if(!map.RescuePosition.HasValue)return;DrawRescueStoneSense(board);
         var rect=BodyRect(board,map.RescuePosition.Value,map.RescueSpaces);Fill(rect,new Color(.12f,.5f,.31f,.9f));
         GUI.Label(rect,"援",new GUIStyle(centered){fontSize=Mathf.Max(12,(int)(rect.width*.6f)),normal={textColor=Color.white}});
     }
@@ -25,14 +28,19 @@ public sealed partial class TrainingGame
         bool old=GUI.enabled;GUI.enabled=!rolling&&combat.Aftermath&&!map.RescuePosition.HasValue;
         GUILayout.Label("力量（3～20整数）",small);rescueStrength=IntegerField(rescueStrength,false);
         GUILayout.Label("敏捷（3～20整数，豁免无熟练）",small);rescueDexterity=IntegerField(rescueDexterity,false);
-        GUILayout.Label("最大HP（至少1的整数）",small);rescueMaxHp=IntegerField(rescueMaxHp,false);
+        for(int i=0;i<4;i++){GUILayout.Label(PlayerAttributes.Names[i+2]+"（3～20整数）",small);rescueOtherAbilities[i]=IntegerField(rescueOtherAbilities[i],false);}
+        GUILayout.Label("熟练加值（整数，允许负数；特性次数最低0）",small);rescueProficiency=IntegerField(rescueProficiency,true);
+        DrawSpeciesConfiguration(rescueSpeciesDraft,false,false);
+        if(rescueSpeciesDraft.Kind!=Species2024.None){rescueSize=rescueSpeciesDraft.BodySize;rescueSpeed=rescueSpeciesDraft.Speed.ToString();}
+        GUILayout.Label("基础最大HP（至少1的整数，另加种族HP）",small);rescueMaxHp=IntegerField(rescueMaxHp,false);
+        bool customBody=rescueSpeciesDraft.Kind==Species2024.None;GUI.enabled=GUI.enabled&&customBody;
         GUILayout.Label("体型",small);rescueSize=GUILayout.SelectionGrid(rescueSize,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
-        GUILayout.Label("移动力（非负整数尺）",small);rescueSpeed=IntegerField(rescueSpeed,false);
+        GUILayout.Label("移动力（非负整数尺）",small);rescueSpeed=IntegerField(rescueSpeed,false);GUI.enabled=old&&!rolling&&combat.Aftermath&&!map.RescuePosition.HasValue;
         GUILayout.Label("体重（正整数磅）",small);rescueBody=IntegerField(rescueBody,false);
         GUILayout.Label("装备总重（非负整数磅）",small);rescueEquipment=IntegerField(rescueEquipment,false);
         GUI.enabled=old;
         if(map.RescuePosition.HasValue){
-            DrawRescueLifeControls();DrawRescueCargoControls();
+            DrawRescueLifeControls();DrawRescueCargoControls();DrawRescueSpeciesActions();
             GUILayout.Label("HP "+rescueCarrier.Hp+" / "+rescueCarrier.MaxHp, label);
             GUILayout.Label("动作 "+rescueCarrier.ActionsRemaining+" · 剩余移动 "+rescueCarrier.MovementRemaining+"尺 · 当前速度 "+rescueCarrier.EffectiveSpeed+"尺",label);
             GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
@@ -60,7 +68,7 @@ public sealed partial class TrainingGame
         if(!rolling&&combat.Aftermath&&e.type==EventType.MouseDown&&e.button==0&&board.Contains(point)){
             var cell=new Vector2Int((int)((point.x-board.x)/size),(int)((point.y-board.y)/size));
             if(!map.RescuePosition.HasValue){
-                if(config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)&&rescueCarrier.Configure(strength,rescueSize,speed,body,gear,int.Parse(rescueDexterity),int.Parse(rescueMaxHp))&&map.DeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)){
+                if(config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)&&rescueCarrier.ConfigureProfile(RescueAbilityScores(),rescueSpeciesDraft,int.Parse(rescueProficiency),rescueSize,speed,body,gear,int.Parse(rescueMaxHp))&&map.DeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)){
                     rescueCarrier.BeginTurn(worldRounds);rescueMessage="救援者已从边缘入场，可点击合法位置移动。";
                     history.Insert(0,"救援搬运者从地图边缘入场，力量"+strength+"，敏捷"+rescueCarrier.Dexterity+"，移动力"+speed+"尺。");
                 }else rescueMessage="不能入场：请检查配置，选择边缘且能容纳完整占地的空位。";
@@ -81,7 +89,7 @@ public sealed partial class TrainingGame
         }else foreach(bool player in new[]{true,false}){
             var weight=player?playerWeight.Weight:monsterWeight.Weight;bool dead=player?combat.PlayerDead:combat.Hp==0;
             foreach(bool drag in new[]{false,true}){
-                bool fits=CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Size,rescueCarrier.Weight.GearOunces,0)&&weight.Known&&(drag?CarryingRules.CanDragOunces(rescueCarrier.Strength,rescueCarrier.Size,weight.TotalOunces):CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Size,rescueCarrier.Weight.GearOunces,weight.TotalOunces));
+                bool fits=CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),rescueCarrier.Weight.GearOunces,0)&&weight.Known&&(drag?CarryingRules.CanDragOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),weight.TotalOunces):CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),rescueCarrier.Weight.GearOunces,weight.TotalOunces));
                 GUI.enabled=!rolling&&dead&&map.CanAttachRescueCorpse(player)&&rescueCarrier.ActionsRemaining>0&&fits;
                 if(GUILayout.Button((drag?"拖行":"肩扛")+(player?"玩家":"木桩")+"遗体（1动作）",button)){
                     if(rescueCarrier.PickUp(player?0:-1,dead,weight,drag)&&map.AttachRescueCorpse(player,drag)){

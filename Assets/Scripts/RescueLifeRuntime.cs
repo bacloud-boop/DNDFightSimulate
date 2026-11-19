@@ -32,6 +32,7 @@ public sealed partial class TrainingGame
             if(BattleMap.BodyDistance(map.Player,map.PlayerSpaces,map.RescuePosition.Value,map.RescueSpaces)>5)return "玩家须接近救援者至5尺内。";
         }
         if(name!="Gentle Repose"&&!revivalWilling)return "请先确认灵魂愿意复活。";
+        if(name=="Reincarnate"){string placement=ReincarnationPlacementError(BattleMap.RescueId);if(placement!="")return placement;}
         return RevivalRules.Error(name,rescueCarrier.Corpse,worldRounds);
     }
     void DrawRescueLifeControls()
@@ -41,7 +42,7 @@ public sealed partial class TrainingGame
         DrawExternalCasterRest();
         if(!rescueCarrier.Dead)return;
         revivalWilling=GUILayout.Toggle(revivalWilling,"确认救援者灵魂愿意复活",label);
-        foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Gentle Repose","True Resurrection"})foreach(bool external in new[]{false,true}){
+        foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Reincarnate","Gentle Repose","True Resurrection"})foreach(bool external in new[]{false,true}){
             string error=RescueRevivalError(name,external);bool old=GUI.enabled;GUI.enabled=!rolling&&error=="";
             if(GUILayout.Button((external?"外部施法者":"玩家")+" → 救援者："+DirectSpell.Find(name).Chinese,button))StartCoroutine(CastRescueRevival(name,external));
             GUI.enabled=old;
@@ -50,6 +51,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator CastRescueRevival(string name,bool external)
     {
+        if(name=="Reincarnate"){yield return CastReincarnation(BattleMap.RescueId,external);yield break;}
         if(RescueRevivalError(name,external)!="")yield break;
         bool busy=rolling;rolling=true;long invisibilityToken=senses.Token(true,worldRounds);
         try{

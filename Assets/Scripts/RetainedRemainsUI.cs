@@ -46,7 +46,7 @@ public sealed partial class TrainingGame
     {
         if(rescueCarrier.Load.Loaded)return;
         foreach(var body in map.Remains.Bodies)foreach(bool drag in new[]{false,true}){
-            bool fits=drag?CarryingRules.CanDragOunces(rescueCarrier.Strength,rescueCarrier.Size,body.Weight.TotalOunces):CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Size,rescueCarrier.Weight.GearOunces,body.Weight.TotalOunces);
+            bool fits=drag?CarryingRules.CanDragOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),body.Weight.TotalOunces):CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),rescueCarrier.Weight.GearOunces,body.Weight.TotalOunces);
             bool enabled=GUI.enabled;GUI.enabled=enabled&&!rolling&&fits&&map.CanAttachRescueRemains(body.Id)&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
             if(GUILayout.Button((drag?"拖行":"肩扛")+body.Name+"（1动作）",button))if(rescueCarrier.PickUp(body.Id,true,body.Weight,drag)&&map.AttachRescueRemains(body.Id,drag)){rescueMessage="已搬运独立旧躯体，重量包含尚未回收的装备。";history.Insert(0,rescueMessage);}
             GUI.enabled=enabled;

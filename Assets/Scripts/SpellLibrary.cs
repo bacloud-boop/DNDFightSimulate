@@ -49,7 +49,7 @@ public sealed partial class TrainingGame
             if(spellSearch!=""&&(spell.name+chinese).IndexOf(spellSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
             bool available=direct!=null||spell.name=="Acid Splash";
             bool reactionSpell=spell.name=="Shield"||spell.name=="Counterspell";
-            string status=reactionSpell?"反应触发时选择施放":available?(spell.name=="Polymorph"?"战斗结算已接入 · 10种地面形态":"战斗结算已接入"):IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
+            string status=reactionSpell?"反应触发时选择施放":available?(spell.name=="Reincarnate"?"复生与新躯体已接入 · 部分种族特性待接入":spell.name=="Polymorph"?"战斗结算已接入 · 10种地面形态":"战斗结算已接入"):IsLearningOnly(spell.name)?((spell.name=="Alarm"?alarmLearned:learnedUtilitySpells.Contains(spell.name))?"已学习 · 战斗禁用":"可学习 · 战斗禁用"):"待接入";
             string text=(chinese==""?spell.name:chinese+" · "+spell.name)+"\n"+(spell.level==0?"戏法":spell.level+"环")+" · "+SchoolChinese(spell.school)+" · "+status;
             string tooltip=spell.name=="Counterspell"?CounterspellRules.Summary:reactionSpell?"护盾术｜Shield\n一环防护 · 反应 · 声音、姿势\n被攻击命中或成为魔法飞弹目标时选择施放。AC+5，免疫魔法飞弹，至下一玩家回合开始。选择前隐藏命中骰值与总值。":direct!=null?direct.Summary:spell.name=="Acid Splash"?AcidSplash.Summary:spell.name=="Alarm"?AlarmSpell.Summary:spell.name+"\n施法时间："+spell.castingTime+"\n距离："+spell.range+"\n成分："+string.Join("、",spell.components)+"\n持续："+spell.duration+"\n"+(IsLearningOnly(spell.name)?"仅开放学习，不能施放或带入预先生成的效果。":"效果待接入。");
             bool previous=GUI.enabled;GUI.enabled=eligible&&(available||(IsLearningOnly(spell.name)&&!combat.BattleStarted));

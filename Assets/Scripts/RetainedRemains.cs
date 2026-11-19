@@ -16,7 +16,7 @@ public sealed class RetainedRemains
     public bool NonWeaponGearRecovered {get;private set;}
     public RetainedRemains(int id,int owner,int x,int y,int spaces,string name,BodyWeight weight,int armorIndex,bool shield)
     {
-        if(id>=-1||id==int.MinValue||(owner!=0&&owner!=-1)||x<0||y<0||spaces<1||spaces>4||string.IsNullOrEmpty(name)||weight==null||!weight.Known||armorIndex<0)throw new ArgumentException("Invalid retained body");
+        if(id>=-1||id==int.MinValue||(owner!=0&&owner!=-1&&owner!=int.MinValue)||x<0||y<0||spaces<1||spaces>4||string.IsNullOrEmpty(name)||weight==null||!weight.Known||armorIndex<0)throw new ArgumentException("Invalid retained body");
         Id=id;Owner=owner;X=x;Y=y;Spaces=spaces;Name=name;Weight=weight.Copy();ArmorIndex=armorIndex;Shield=shield;
     }
     public long NonWeaponGearOunces=>Weight.GearOunces-Weight.WeaponOunces;

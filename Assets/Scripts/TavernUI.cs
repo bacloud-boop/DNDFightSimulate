@@ -81,6 +81,7 @@ public sealed partial class TrainingGame
         GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-CanvasWidth*scale)/2,(Screen.height-CanvasHeight*scale)/2,0),Quaternion.identity,Vector3.one*scale);
         GUI.DrawTextureWithTexCoords(new Rect(0,0,1600,900),woodTexture,new Rect(0,0,5,3));
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
+        if(reincarnationPending){DrawReincarnationPrompt();return;}
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(sensoryOrderPending){DrawSensorySaveOrder();return;}
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();

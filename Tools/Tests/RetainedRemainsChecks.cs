@@ -20,6 +20,8 @@ class RetainedRemainsChecks
         C(bag.PickUpFromRemains("长剑（单手）",body.Id,n=>true,()=>true)&&bag.Carried("长剑（双手）")&&bag.RemainsOunces(body.Id)==0,"pickup transfers the shared longsword rather than generating another copy");
         var clock=new CorpseClock();clock.Observe(true,9,0);C(ReincarnationRules.Error(clock,ReincarnationRules.DeathLimit-ReincarnationRules.CastingRounds)==""&&ReincarnationRules.Error(clock,ReincarnationRules.DeathLimit-ReincarnationRules.CastingRounds+1)!="","ten-day deadline includes one-hour casting time");
         var undead=new CorpseClock();undead.Observe(true,13,0);C(ReincarnationRules.Error(undead,0)!="","only dead Humanoids qualify");
+        C(RevivalRules.Supported("Reincarnate")&&RevivalRules.Duration("Reincarnate")==ReincarnationRules.CastingRounds&&RevivalRules.FullHp("Reincarnate")&&!RevivalRules.Ordeal("Reincarnate"),"shared aftermath routes use one-hour, full-HP reincarnation without adding resurrection ordeal");
+        C(RevivalRules.Error("Reincarnate",undead,0)!="","normal revival eligibility cannot bypass Humanoid restriction");
         for(int die=1;die<=10;die++)C((int)ReincarnationRules.SpeciesFromDie(die)==die-1,"species table has all ten 2024 entries");
         Console.WriteLine("PASS: independent old bodies, retained weight, full new HP, exact gear transfer, unique weapons and Reincarnate eligibility");
     }
