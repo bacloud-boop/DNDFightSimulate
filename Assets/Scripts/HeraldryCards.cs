@@ -87,6 +87,7 @@ public sealed partial class TrainingGame
             if(classes[11]>0)CardTab(new Rect(x+270,510,60,62),"兽\n形","druid",true);
             CardTab(new Rect(x+270,586,60,62),"技\n能","skills",true);
             CardTab(new Rect(x+270,662,60,62),"护\n甲","armor",true);
+            CardTab(new Rect(x+270,738,60,62),"种\n族","speciesActions",true);
         }else{
             EngravedRow(x,540,"熟练加值",combat.MonsterProficiencyBonus.ToString(),false);
             EngravedRow(x,575,"挑战等级","CR "+ChallengeRatings.Names[monsterProfile.ChallengeIndex],false);

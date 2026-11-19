@@ -26,6 +26,20 @@ class SpeciesChecks
   c.KillMonster();c.SetSpeciesHpBonus(false,7,false);C(c.Hp==0&&c.MaxHp==1007,"original-form species restoration does not revive corpse early");
   var fatigue=new ResurrectionCasterState();fatigue.ApplyExertion();C(fatigue.CompleteLongRest(0,2400,elf.LongRestRounds)&&fatigue.CanCast,"completed elven trance clears caster exertion");
   var external=new ResurrectionCasterState();external.ApplyExertion();C(!external.CompleteLongRest(0,2400)&&external.Taxed,"external caster still requires eight hours");
+  var abilities=new SpeciesAbilityState();
+  C(!abilities.Use(Species2024.Orc,-1,0)&&abilities.RushSpent==0,"negative proficiency cannot consume a use or grant a negative pool");
+  C(abilities.Use(Species2024.Orc,2,0)&&abilities.Use(Species2024.Orc,2,1)&&!abilities.Use(Species2024.Orc,2,2),"Rush stops at proficiency uses");
+  C(abilities.Use(Species2024.Dwarf,2,3)&&abilities.StoneActive(102)&&!abilities.StoneActive(103),"Stonecunning expires after one hundred six-second rounds");
+  C(!abilities.CanAutomaticallyUse(Species2024.Dwarf,2,4)&&abilities.CanUse(Species2024.Dwarf,2,4)&&abilities.StoneSpent==1,"automatic activation skips an active effect while manual renewal remains legal");
+  abilities.ShortRest();C(abilities.RushSpent==0&&abilities.StoneSpent==1,"short rest refreshes Rush without refreshing Stonecunning uses");
+  abilities.LongRest();C(abilities.StoneSpent==0&&abilities.RushSpent==0,"long rest refreshes both species use pools");
+  C(!abilities.Use(Species2024.Dwarf,2,long.MaxValue-50),"duration overflow cannot consume a use");
+  C(SpeciesTurnPolicy.ShouldAttempt(0,true,true,true,true)&&!SpeciesTurnPolicy.ShouldAttempt(0,false,true,true,true)&&SpeciesTurnPolicy.ShouldAttempt(1,false,true,true,true),"priority selects exactly one scheduling phase");
+  C(!SpeciesTurnPolicy.ShouldAttempt(2,true,true,true,true)&&!SpeciesTurnPolicy.ShouldAttempt(1,false,false,true,true)&&!SpeciesTurnPolicy.ShouldAttempt(0,true,true,false,true),"disabled, spent bonus actions and beast form block automatic features");
+  var turns=new CombatState();turns.StartMonsterTurn();C(turns.TryUseMonsterBonusAction()&&!turns.TryUseMonsterBonusAction(),"racial traits and bonus spells share the monster bonus action");
+  turns.StartMonsterTurn();C(turns.MonsterBonusActionAvailable&&turns.TryUseMonsterBonusAction(),"only the next monster turn refreshes its bonus action");
+  turns.MonsterParalyzed=true;turns.StartMonsterTurn();C(!turns.TryUseMonsterBonusAction(),"incapacitated monster cannot activate a species bonus action");
+  var speciesCopy=dwarf.Copy();speciesCopy.BonusPriority=2;C(dwarf.BonusPriority==0&&speciesCopy.Valid(),"turn policy is independently copied with species data");
   Console.WriteLine("PASS: species choices, separate proficiencies, per-level HP, resistance, save advantage, capacity, corpse HP and elven trance");
  }
 }

@@ -190,7 +190,11 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
             worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
+            yield return TryMonsterSpeciesBonus(true);
+            var upcoming=monsterSpells.Next==null?null:MonsterSpellCatalog.Find(monsterSpells.Next.Name);
+            if(upcoming==null||!upcoming.Bonus)yield return TryMonsterSpeciesBonus(false);
             if(Entangled(false)&&combat.MonsterCanAct){
+                yield return TryMonsterSpeciesBonus(false);
                 yield return EscapeMonsterEntangle();
                 if(!Entangled(false)){if(combat.MonsterProne&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);}yield return ChasePlayer();}
                 yield return FinishMonsterSpellTurn();yield break;
@@ -202,7 +206,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         }
         if(endTurn&&combat.MonsterCanAct){
             var spellTurn=new MonsterSpellTurn();yield return TryMonsterTurnSpell(spellTurn);
-            if(spellTurn.Attempted&&!spellTurn.Cast){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
+            yield return TryMonsterSpeciesBonus(false);
+            if(!spellTurn.Cast||spellTurn.Bonus){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
             if(spellTurn.Cast&&(!spellTurn.Bonus||combat.PlayerDead||combat.Hp==0||combat.BattleFinished)){
                 yield return FinishMonsterSpellTurn();yield break;
             }
@@ -278,6 +283,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="speciesActions"){DrawSpeciesActions();return;}
         if(panel=="species"||panel=="monsterSpecies"){DrawSpeciesPanel(panel=="species");return;}
         if(panel=="monsterSpells"){DrawMonsterSpells();return;}
         if(panel=="armor"||panel=="monsterArmor"){DrawArmorPanel(panel=="armor");return;}

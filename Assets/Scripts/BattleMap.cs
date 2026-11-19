@@ -28,6 +28,7 @@ public sealed partial class BattleMap
     public void SetPlayerSpeed(int speed){PlayerSpeed=System.Math.Max(0,speed);MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
     public void SpendMonsterMovement(int feet){MonsterMovementRemaining=System.Math.Max(0,MonsterMovementRemaining-System.Math.Max(0,feet));}
     public int MonsterMovementRemaining {get;private set;} = 30;
+    public void GrantMonsterDash(int speed){MonsterMovementRemaining=(int)System.Math.Min(int.MaxValue,(long)MonsterMovementRemaining+System.Math.Max(0,speed));}
     public void StartMonsterMovementTurn(int speed=30) {MonsterMovementRemaining=System.Math.Max(0,speed);}
     public int TacticalMovementRemaining {get;private set;}
     public void GrantTacticalMovement() {TacticalMovementRemaining+=PlayerSpeed/2;}

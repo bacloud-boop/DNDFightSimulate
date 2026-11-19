@@ -32,9 +32,11 @@ public sealed partial class TrainingGame {
   if(GUILayout.Button("推进6秒 / 倒地死亡豁免",button)){panel="";StartCoroutine(AftermathTick());}
   waitMinutes=IntegerField(waitMinutes,false);int minutes;GUI.enabled=combat.Aftermath&&!rolling&&int.TryParse(waitMinutes,out minutes)&&minutes>0&&!combat.NeedsDeathSave&&!rescueCarrier.NeedsDeathSave;
   if(GUILayout.Button("等待上述分钟数",button)){int.TryParse(waitMinutes,out minutes);AdvanceAftermathTime((long)minutes*10);aftermathMessage="已推进 "+minutes+" 分钟。";}
+  GUI.enabled=combat.Aftermath&&!rolling&&combat.Hp>0&&!combat.NeedsDeathSave&&!rescueCarrier.NeedsDeathSave;
+  if(GUILayout.Button("木桩完成短休（1小时）",button)){AdvanceAftermathTime(600);if(combat.Hp>0)monsterSpeciesAbilities.ShortRest();aftermathMessage="木桩短休完成，肾上腺素激增使用次数恢复；不恢复HP与长休限定次数。";}
   GUI.enabled=combat.Aftermath&&!rolling&&combat.Hp>0&&!combat.NeedsDeathSave&&!rescueCarrier.NeedsDeathSave&&(!hasMonsterLongRest||worldRounds-lastMonsterLongRestStart>=14400);
   long monsterRestDuration=SpeciesPhysicalActive(false)?monsterSpecies.LongRestRounds:4800;
-  if(GUILayout.Button("木桩完成长休（"+(monsterRestDuration/600)+"小时）",button)){lastMonsterLongRestStart=worldRounds;hasMonsterLongRest=true;AdvanceAftermathTime(monsterRestDuration);if(combat.Hp>0){combat.HealMonster(int.MaxValue);combat.CompleteLongRest(false);}aftermathMessage="木桩长休完成；复活减值减轻1（每24小时至多一次）。";}
+  if(GUILayout.Button("木桩完成长休（"+(monsterRestDuration/600)+"小时）",button)){lastMonsterLongRestStart=worldRounds;hasMonsterLongRest=true;AdvanceAftermathTime(monsterRestDuration);if(combat.Hp>0){combat.HealMonster(int.MaxValue);combat.CompleteLongRest(false);monsterSpeciesAbilities.LongRest();}aftermathMessage="木桩长休完成；复活减值减轻1（每24小时至多一次）。";}
   GUI.enabled=combat.Aftermath&&!rolling&&combat.PlayerHp>0&&combat.Hp>0&&!combat.PlayerDead&&RescueDepartureReady;
   if(GUILayout.Button("继续战斗（新回合）",button)){ResumeAftermath();panel="";}
   GUI.enabled=previous;GUILayout.Label(aftermathMessage,small);GUILayout.EndScrollView();GUILayout.EndArea();
