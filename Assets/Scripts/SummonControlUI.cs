@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("协助战斗指令跨回合保留；骑乘时在玩家回合操控坐骑移动、疾走、撤离或闪避。坐骑以心灵感应接受指挥，不需开口。",small);
         DrawRidingControls();
         foreach(var unit in map.Summons)if(unit.Alive){
-            GUILayout.Label(unit.Name+(unit.SleepStage==2?" · 昏迷":unit.SleepStage==1?" · 失能":"")+(unit.Prone?" · 倒地":"")+(unit.Restrained?" · 束缚":"")+(SteedFear(unit.Id)?" · 恐慌":"")+" · HP "+unit.Hp+" / "+unit.MaxHp+" · AC "+unit.Armor,heading);
+            GUILayout.Label(unit.Name+(ActorBlinded(unit.Id)?" · 目盲":"")+(unit.SleepStage==2?" · 昏迷":unit.SleepStage==1?" · 失能":"")+(unit.Prone?" · 倒地":"")+(unit.Restrained?" · 束缚":"")+(SteedFear(unit.Id)?" · 恐慌":"")+" · HP "+unit.Hp+" / "+unit.MaxHp+" · AC "+unit.Armor,heading);
             if(!phase&&unit.SleepStage>0){bool enabled=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&BattleMap.BodyDistance(map.Player,map.PlayerSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=5;if(GUILayout.Button("摇醒 "+unit.Name+"（动作）",button)&&combat.TryUseAction()){unit.SleepStage=0;RefreshSleepConcentration();}GUI.enabled=enabled;}
             if(!phase&&unit!=steed){bool old=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&!PlayerInBeastForm;
                 if(GUILayout.Button(unit.Orders.Kind==SummonCommandKind.AssistCombat?"✓ 协助战斗（持续）":"下令：协助战斗",button))IssueSummonVerbalCommand(unit,SummonCommand.AssistCombat);

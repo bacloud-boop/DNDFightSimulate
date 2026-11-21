@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
         int playerActual=0,totalActual=0;
         foreach(var pair in massHealAllocation){int amount=int.Parse(pair.Value);if(amount==0)continue;
             int actual=pair.Key==0||pair.Key==-1?MassHealRules.Apply(combat,sensory,pair.Key==0,amount,worldRounds):FindSummon(pair.Key).Heal(amount);
-            if(actual>0){feignDeath.EndBlind(pair.Key,worldRounds);SyncFeignDeath();}
+            if(actual>0){EndAuxiliaryCondition(pair.Key,0,worldRounds);SyncFeignDeath();}
             string name=pair.Key==0?"玩家":pair.Key==-1?"木桩":FindSummon(pair.Key).Name;
             if(pair.Key==0)playerActual=actual;totalActual+=actual;
             history.Insert(0,"群体医疗术："+name+"分配 "+amount+"，实际恢复 "+actual+" HP；"+(actual>0?"解除目盲、耳聋与中毒全部施法来源。":"未恢复HP，不解除状态。"));

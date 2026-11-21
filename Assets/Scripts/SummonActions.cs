@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
         =>SpiritSeesAt(unit,id,unit.X,unit.Y,target.x,target.y,targetSpaces);
     bool SpiritSeesAt(SummonedUnit unit,int id,double fromX,double fromY,double targetX,double targetY,int targetSpaces)
     {
-        if(unit.FeignBlind||unit.SleepStage==2)return false;
+        if(ActorBlinded(unit.Id)||unit.SleepStage==2)return false;
         bool invisible=(id==0||id==-1)&&InvisibleWithFaerie(id==0);
         if(invisible)return false;
         for(int dy=0;dy<unit.Spaces;dy++)for(int dx=0;dx<unit.Spaces;dx++)

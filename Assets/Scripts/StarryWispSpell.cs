@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
     void BindStarryWisp(int caster,int target)
     {
         if(!starryWisp.Bind(caster,target,worldRounds))return;
-        RefreshStarryWisp();history.Insert(0,"点点星芒："+ActorName(target)+"发出10尺微光，至施法者下个回合结束不能获得隐形收益；原隐形法术及其专注保留。");
+        RefreshStarryWisp();history.Insert(0,"点点星芒："+TransitActorName(target)+"发出10尺微光，至施法者下个回合结束不能获得隐形收益；原隐形法术及其专注保留。");
     }
     void RefreshStarryWisp()
     {

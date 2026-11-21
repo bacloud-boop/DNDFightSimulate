@@ -20,7 +20,7 @@ public sealed partial class TrainingGame
         if(mindSpike.IgnoresInvisibility(viewerPlayer,!viewerPlayer,worldRounds))invisible=false;
         int range=viewerPlayer?PlayerDarkvision:MonsterPolymorphed?Mathf.Max(vision.SpellRange(false,worldRounds),polymorph.Darkvision):Mathf.Max(vision.Range(false,worldRounds),monsterSpecies.Darkvision),best=2,blind=viewerPlayer?PlayerBlindsight:MonsterPolymorphed?polymorph.Blindsight:0;
         if(!viewerPlayer&&combat.MonsterSleepStage==2)return 2;
-        bool viewerBlinded=(sensory.Blinded(viewerPlayer,worldRounds)||feignDeath.Blind(viewerPlayer?0:-1,worldRounds));
+        bool viewerBlinded=ActorBlinded(viewerPlayer?0:-1);
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){
             double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(SensoryAfflictions.BlocksSight(viewerBlinded,blind,distance))quality=2;if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
         }return best;

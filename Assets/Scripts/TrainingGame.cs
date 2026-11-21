@@ -46,7 +46,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
         map.VoluntaryMovement=(id,cell)=>!Feigning(id)&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id);InitializeCreatureTransit();
-        combat.ExtraConditionRemoval=(player,condition,now)=>condition==0&&feignDeath.EndBlind(player?0:-1,now)?1:0;
+        combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat("MusicVolume", .35f));

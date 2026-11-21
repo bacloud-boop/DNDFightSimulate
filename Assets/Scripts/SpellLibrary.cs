@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
     {
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
-        if(selectedSpellName=="Burning Hands"){DrawBurningHandsPanel();return;}
+        if(selectedSpellName=="Burning Hands"||selectedSpellName=="Color Spray"){DrawBurningHandsPanel();return;}
         if(selectedSpellName=="Light"){DrawLightSpellPanel();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
@@ -153,7 +153,7 @@ public sealed partial class TrainingGame
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         bool aftermathLight=combat.Aftermath&&AftermathLightSpell(spell.Name);
-        if(aftermathLight?combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed:!combat.PlayerCanAct)return "玩家当前不能行动。";
+        if(aftermathLight?combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath:!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!playerResurrectionCaster.CanCast)return "复生术疲惫：完成长休前不能施法。";
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
@@ -167,6 +167,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Faerie Fire")return FaerieFireError();
         if(spell.Name=="Dancing Lights")return DancingLightsError();
+        if(spell.Name=="Color Spray")return ColorSprayError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
         if(spell.Name=="Light")return LightSpellError();
         if(spell.Name=="Starry Wisp")return StarryWispError();
@@ -242,7 +243,8 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
-        BreathTemplate burningAim=default(BreathTemplate);if(spell.Name=="Burning Hands"&&!PlayerBurningTemplate(out burningAim))yield break;
+        BreathTemplate burningAim=default(BreathTemplate);if((spell.Name=="Burning Hands"||spell.Name=="Color Spray")&&!PlayerBurningTemplate(out burningAim))yield break;
+        if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         int starrySelected=starryTarget;if(spell.Name=="Starry Wisp"&&StarryWispError()!="")yield break;
         int feignSelected=feignTarget;if(spell.Name=="Feign Death"&&FeignDeathError()!="")yield break;
         int lightTarget=lightObjectId,lightR=0,lightG=0,lightB=0;if(spell.Name=="Light"&&(LightSpellError()!=""||!LightColors(out lightR,out lightG,out lightB)))yield break;
@@ -288,6 +290,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Color Spray"){yield return ResolveColorSpray(true,caster,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Starry Wisp"){yield return ResolvePlayerStarryWisp(caster,starrySelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Feign Death"){ApplyFeignDeath(feignSelected);if(!embedded)rolling=false;yield break;}

@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
     }
     void DrawRescueLifeControls()
     {
-        GUILayout.Label("生命状态："+rescueCarrier.LifeLabel,small);
+        GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+(ActorBlinded(BattleMap.RescueId)?" · 目盲":""),small);
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
         DrawExternalCasterRest();
         if(!rescueCarrier.Dead)return;

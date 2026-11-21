@@ -35,22 +35,24 @@ public sealed partial class TrainingGame
         }return ids;
     }
     IEnumerator RollMappedDexteritySave(int target,int caster,long dc,HashSet<int> failed,string context)
+        =>RollMappedAbilitySave(target,caster,dc,failed,context,1);
+    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability)
     {
         bool automatic=false;long modifier;int value;int[] shown;
         if(target==0||target==-1){
-            bool player=target==0;automatic=player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterHelpless;
-            var roll=RollArmorSave(player,1);shown=roll.Dice;value=roll.Value;
-            modifier=player?PlayerSavingThrowModifier(1):MonsterSavingThrowModifier(1);
-            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,1,ignoreCover:true);modifier+=adjustment.Value;
-        }else if(target==BattleMap.RescueId){automatic=!rescueCarrier.Conscious;value=Random.Range(1,21);shown=new[]{value};modifier=rescueCarrier.DexteritySaveModifier;}
+            bool player=target==0;automatic=(ability==0||ability==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterHelpless);
+            var roll=RollArmorSave(player,ability);shown=roll.Dice;value=roll.Value;
+            modifier=player?PlayerSavingThrowModifier(ability):MonsterSavingThrowModifier(ability);
+            var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,ability,ignoreCover:true);modifier+=adjustment.Value;
+        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);value=Random.Range(1,21);shown=new[]{value};modifier=AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty;}
         else {
-            var unit=FindSummon(target);if(unit==null)yield break;automatic=unit.SleepStage==2;
-            modifier=AcidSplash.Modifier(SummonAbility(unit,1))+unit.Breathing.D20Penalty;
-            bool advantage=unit.Dodging&&unit.EffectiveSpeed>0,disadvantage=unit.Restrained;
+            var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
+            modifier=AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
+            bool advantage=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0,disadvantage=ability==1&&unit.Restrained;
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);shown=second==0?new[]{first}:new[]{first,second};
         }
-        int cover=target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
-        dice=context+" · "+TransitActorName(target)+"敏捷豁免";
+        int cover=ability!=1||target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
+        dice=context+" · "+TransitActorName(target)+PlayerAttributes.Names[ability]+"豁免";
         if(!automatic)yield return PresentRoll(20,shown,"采用 "+value+" + "+modifier+" / DC "+dc+(cover>0?"（半掩护+2）":""));
         if(automatic||(long)value+modifier<dc)failed.Add(target);
     }
