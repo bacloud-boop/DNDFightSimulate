@@ -3,9 +3,9 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly EntangleEffect entangle=new EntangleEffect();
-    bool Entangled(bool player)=>entangle.Restrained(player?0:-1,worldRounds);
+    bool Entangled(bool player)=>entangle.Restrained(player?0:-1,worldRounds)||web.Restrained(player?0:-1,worldRounds);
     void InitializeEntangle(){map.DifficultTerrain=FullDifficultTerrain;map.RestrainedActor=Entangled;}
-    void SyncEntangleActors(){combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=entangle.Restrained(unit.Id,worldRounds);}
+    void SyncEntangleActors(){combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=entangle.Restrained(unit.Id,worldRounds)||web.Restrained(unit.Id,worldRounds);}
     void EndEntangle(){entangle.Clear();SyncEntangleActors();}
     string EntangleError(){Vector2Int cell;if(!VisionPoint(out cell))return "纠缠区域左上格必须位于地图内。";if(map.DistanceToCell(true,cell)>90)return "纠缠区域起点超出90尺。";return worldRounds<0||worldRounds>long.MaxValue-10?"世界时间超出范围。":"";}
     void DrawEntangleChoices(){GUILayout.Label("20尺方形（4×4格），输入左上格列与行。水域同样生效；完整占地进入才增加地形移动消耗。初始区域内除施法者外的生物进行力量豁免，后进入者不额外束缚。",small);visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);}
@@ -32,24 +32,26 @@ public sealed partial class TrainingGame
         }
         SyncEntangleActors();SyncTimedBuffs();history.Insert(0,"纠缠术：20尺方形困难地形持续至多1分钟；初始豁免排除施法者。脱困、离开区域或区域内没有束缚目标，都不会提前移除地形。");
     }
-    IEnumerator EscapeMonsterEntangle()
+    IEnumerator EscapeMonsterEntangle(bool useWeb=false)
     {
-        if(!combat.TryUseMonsterAction())yield break;
+        if(!useWeb&&!entangle.Restrained(-1,worldRounds)&&web.Restrained(-1,worldRounds)){yield return EscapeMonsterEntangle(true);yield break;}
+        if(!combat.TryUseMonsterAction())yield break;long dc=useWeb?web.Dc:entangle.Dc;
         int tier=MonsterPolymorphed?0:EffectiveMonsterSkillTier(0);long modifier=AcidSplash.Modifier(EffectiveMonsterAbility(0))+(long)tier*combat.MonsterProficiencyBonus+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
         if(MonsterPolymorphed)modifier=polymorph.Skill(0,0)+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty;
         bool advantage=SizeStrengthAdvantage(false,0)||checkBuff.Advantage(false,0,worldRounds),disadvantage=FearDisadvantage(false)||SizeStrengthDisadvantage(false,0)||RayStrengthDisadvantage(false,0)||ArmorD20Disadvantage(false,0)||combat.MonsterPoisoned||mark.CheckDisadvantage(false,0);
         int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
-        yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"木桩脱困 · 力量（运动）：采用 "+value+" + "+modifier+" / DC "+entangle.Dc);
-        if((long)value+modifier>=entangle.Dc){entangle.Release(-1);SyncEntangleActors();SyncTimedBuffs();map.StartMonsterMovementTurn(combat.MonsterSpeed);history.Insert(0,"木桩脱困成功，动作已消耗；可继续移动，本回合不再攻击。");}
+        yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"木桩脱困 · 力量（运动）：采用 "+value+" + "+modifier+" / DC "+dc);
+        if((long)value+modifier>=dc){if(useWeb)web.Release(-1);else entangle.Release(-1);SyncEntangleActors();SyncTimedBuffs();map.StartMonsterMovementTurn(combat.MonsterSpeed);history.Insert(0,"木桩脱困成功，动作已消耗；可继续移动，本回合不再攻击。");}
         else history.Insert(0,"木桩脱困失败，动作已消耗，继续束缚；本回合不攻击。");
     }
-    IEnumerator EscapeSpiritEntangle(SummonedUnit unit)
+    IEnumerator EscapeSpiritEntangle(SummonedUnit unit,bool useWeb=false)
     {
-        if(unit==null||!entangle.Restrained(unit.Id,worldRounds)||!unit.TryUseAction())yield break;
+        if(!useWeb&&unit!=null&&!entangle.Restrained(unit.Id,worldRounds)&&web.Restrained(unit.Id,worldRounds)){yield return EscapeSpiritEntangle(unit,true);yield break;}
+        if(unit==null||!(useWeb?web.Restrained(unit.Id,worldRounds):entangle.Restrained(unit.Id,worldRounds))||!unit.TryUseAction())yield break;long dc=useWeb?web.Dc:entangle.Dc;
         summonActing=true;try{
             int first=Random.Range(1,21),second=FearDisadvantage(unit.Id)?Random.Range(1,21):first,value=Mathf.Min(first,second),modifier=AcidSplash.Modifier(SummonAbility(unit,0))+unit.Breathing.D20Penalty;
-            yield return PresentRoll(20,new[]{value},unit.Name+"脱困 · 力量（运动）："+value+" + "+modifier+" / DC "+entangle.Dc);
-            if((long)value+modifier>=entangle.Dc){entangle.Release(unit.Id);SyncEntangleActors();history.Insert(0,unit.Name+"脱困成功，已消耗其自身动作。");}else history.Insert(0,unit.Name+"脱困失败，已消耗其自身动作。");
+            yield return PresentRoll(20,new[]{value},unit.Name+"脱困 · 力量（运动）："+value+" + "+modifier+" / DC "+dc);
+            if((long)value+modifier>=dc){if(useWeb)web.Release(unit.Id);else entangle.Release(unit.Id);SyncEntangleActors();history.Insert(0,unit.Name+"脱困成功，已消耗其自身动作。");}else history.Insert(0,unit.Name+"脱困失败，已消耗其自身动作。");
         }finally{summonActing=false;}
     }
 }

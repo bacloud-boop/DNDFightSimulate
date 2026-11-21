@@ -13,7 +13,8 @@ public sealed partial class TrainingGame {
   return "";
  }
  void DrawPointBurstPreview(Rect board){if(panel!="spells")return;var spell=DirectSpell.Find(selectedSpellName);if(spell==null||!IsPointBurst(spell))return;Vector2Int center;if(!VisionPoint(out center))return;for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){var cell=new Vector2Int(x,y);if(BattleMap.FeetBetween(center,cell)<=spell.BurstRadius)Fill(CellRect(board,cell),spell.Healing?new Color(.2f,.8f,.3f,.35f):new Color(.85f,.3f,.12f,.35f));}}
- IEnumerator ResolvePointBurst(DirectSpell spell,int caster,int slot){
+ IEnumerator ResolvePointBurst(DirectSpell spell,int caster,int slot){bool old=webAreaFire;try{if(spell.DamageType=="火焰"){Vector2Int center;if(VisionPoint(out center)){IgniteWebArea((x,y)=>BattleMap.BodyDistance(center,1,new Vector2Int(x,y),1)<=spell.BurstRadius);webAreaFire=true;}}yield return ResolvePointBurstCore(spell,caster,slot);}finally{webAreaFire=old;}}
+ IEnumerator ResolvePointBurstCore(DirectSpell spell,int caster,int slot){
   Vector2Int center;if(!VisionPoint(out center))yield break;
   bool[] targets={combat.Hp>0&&map.DistanceToCell(false,center)<=spell.BurstRadius&&(!spell.Healing||burstHealMonster),!combat.PlayerDead&&map.DistanceToCell(true,center)<=spell.BurstRadius&&(!spell.Healing||burstHealPlayer)};bool[] failed=new bool[2];
   var summonTargets=SummonsInBurst(center,spell.BurstRadius);if(spell.Healing)summonTargets.RemoveAll(x=>!burstHealSummons.Contains(x.Id));

@@ -35,7 +35,7 @@ public sealed partial class TrainingGame
                 GUI.enabled=!summonActing&&summonTarget!=unit.Id&&legal&&(!IsSteed(unit)||OtherworldlySteedRules.CanAttack(map.Riding,combat.PlayerHp==0||combat.PlayerParalyzed))&&(unit.ActionAvailable||unit.AttacksRemaining>0);
                 if(GUILayout.Button(legal?(IsSteed(unit)?"异界猛击 · 逐次结算":"撕裂攻击 · 逐次结算"):"无法攻击 · 目标不合法或超过5尺",button))StartCoroutine(ResolveSpiritAttack(unit,summonTarget));
                 GUI.enabled=!summonActing&&unit.Prone;if(GUILayout.Button("起身（半速移动）",button))unit.Stand();
-                GUI.enabled=!summonActing&&unit.ActionAvailable;if(unit.Restrained&&(!IsSteed(unit)||!ControlledSteed)&&GUILayout.Button("挣脱纠缠（动作）",button))StartCoroutine(EscapeSpiritEntangle(unit));
+                GUI.enabled=!summonActing&&unit.ActionAvailable;if(unit.Restrained&&(!IsSteed(unit)||!ControlledSteed)&&GUILayout.Button("挣脱束缚（动作）",button))StartCoroutine(EscapeSpiritEntangle(unit));
                 if(GUILayout.Button("疾走（动作）",button))unit.Dash();
                 if(GUILayout.Button("闪避（动作）",button))unit.Dodge();
                 if(GUILayout.Button("撤离（动作）",button))unit.Disengage();

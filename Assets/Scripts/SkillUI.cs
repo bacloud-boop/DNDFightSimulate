@@ -42,7 +42,7 @@ public sealed partial class TrainingGame
         }
         GUI.enabled=previous;GUILayout.Label(skillMessage,small);
         if(!SkillProfileReady)GUILayout.Label("完成角色创建并应用后才能检定；职业改变后需重新确认。",small);
-        GUILayout.Space(12);GUILayout.Label("本次检定",heading);
+        DrawPlayerWebEscape();GUILayout.Space(12);GUILayout.Label("本次检定",heading);
         checkKind=GUILayout.SelectionGrid(checkKind,new[]{"纯属性","技能","工具"},3,new GUIStyle(button){fontSize=16,fixedHeight=36});
         if(checkKind==0)checkAbility=GUILayout.SelectionGrid(checkAbility,PlayerAttributes.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=32});
         if(checkKind==1){checkSkill=GUILayout.SelectionGrid(checkSkill,SkillCheckRules.Names,3,new GUIStyle(button){fontSize=16,fixedHeight=32});
@@ -83,13 +83,13 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(495,525,285,55),"使用战术头脑"))tacticalMindDecision=1;
         if(Btn(new Rect(820,525,285,55),"放弃"))tacticalMindDecision=2;
     }
-    IEnumerator RollSkillCheck(int dc)
+    IEnumerator RollSkillCheck(int dc,bool webEscape=false)
     {
-        if((!SkillProfileReady&&!PlayerPolymorphed)||!combat.TryUseAction())yield break;
+        if((!SkillProfileReady&&!PlayerPolymorphed&&!webEscape)||!(webEscape?combat.TryUseObjectAction():combat.TryUseAction()))yield break;
         rolling=true;
-        if(checkHearing&&!SilenceHearMonster()){history.Insert(0,"听觉检定自动失败：耳聋或沉默术使玩家无法听见声源，消耗1动作。");dice="听觉检定 · 自动失败";rolling=false;yield break;}
-        if(checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
-        int kind=checkKind,skill=kind==1?checkSkill:-1,tool=kind==2?checkTool:kind==1?checkAuxTool:-1;
+        if(!webEscape&&checkHearing&&!SilenceHearMonster()){history.Insert(0,"听觉检定自动失败：耳聋或沉默术使玩家无法听见声源，消耗1动作。");dice="听觉检定 · 自动失败";rolling=false;yield break;}
+        if(!webEscape&&checkKind==1&&checkSkill==12&&checkVisual&&!PlayerSeesMonster){history.Insert(0,"视觉察觉自动失败：无法看见木桩，消耗1动作。");dice="视觉察觉 · 自动失败";rolling=false;yield break;}
+        int kind=webEscape?1:checkKind,skill=webEscape?0:kind==1?checkSkill:-1,tool=webEscape?-1:kind==2?checkTool:kind==1?checkAuxTool:-1;
         int ability=kind==0?checkAbility:kind==1?SkillCheckRules.Abilities[skill]:SkillSourceTables.ToolAbilities[tool];
         int tier=skill>=0?EffectivePlayerSkillTier(skill):0;bool toolProf=tool>=0&&EffectivePlayerSkillTier(18+tool)>0;
         if(PlayerPolymorphed){tier=0;toolProf=false;}
@@ -102,8 +102,8 @@ public sealed partial class TrainingGame
         }
         if(PlayerPolymorphed)modifier=skill>=0?polymorph.Skill(skill,ability):AcidSplash.Modifier(score);
         modifier+=PlayerAquaticD20Penalty;
-        bool advantage=SizeStrengthAdvantage(true,ability)||checkBuff.Advantage(true,ability,worldRounds)||checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
-        bool disadvantage=ResurrectionD20Disadvantage(true)||FearDisadvantage(true)||SizeStrengthDisadvantage(true,ability)||RayStrengthDisadvantage(true,ability)||ArmorD20Disadvantage(true,ability)||(skill==3&&playerArmor.StealthPenalty(PlayerArmorMelded))||combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
+        bool advantage=SizeStrengthAdvantage(true,ability)||checkBuff.Advantage(true,ability,worldRounds)||!webEscape&&checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(!webEscape&&checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
+        bool disadvantage=ResurrectionD20Disadvantage(true)||FearDisadvantage(true)||SizeStrengthDisadvantage(true,ability)||RayStrengthDisadvantage(true,ability)||ArmorD20Disadvantage(true,ability)||(skill==3&&playerArmor.StealthPenalty(PlayerArmorMelded))||combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||!webEscape&&checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;
         int raw=SkillCheckRules.SelectDie(first,second,advantage,disadvantage),effective=SkillCheckRules.EffectiveDie(raw,!PlayerPolymorphed&&classes[7]>=7,effectiveTier>0||beastProficient?1:0);
         string name=kind==0?PlayerAttributes.Names[ability]:kind==1?SkillCheckRules.Names[skill]:SkillSourceTables.ToolNames[tool];
@@ -117,6 +117,7 @@ public sealed partial class TrainingGame
             tacticalMindDecision=0;tacticalMindPending=true;while(tacticalMindDecision==0)yield return null;tacticalMindPending=false;
             if(tacticalMindDecision==1){int extra=UnityEngine.Random.Range(1,11);yield return PresentRoll(10,new[]{extra},"战术头脑：原总值 "+total+" + "+extra+" / DC "+dc);bool turned=fighter.TacticalMind(classes[0],total,dc,extra);total+=extra;tacticalBonus=extra;success=turned;history.Insert(0,"战术头脑："+(turned?"检定成功，消耗1次回气":"仍失败，不消耗回气")+"；不治疗、不消耗额外动作或附赠动作。");}
         }
+        if(webEscape&&success){web.Release(0);SyncTimedBuffs();history.Insert(0,"玩家挣脱蛛网；其他束缚来源仍保留。");}
         history.Insert(0,dice+"：D20="+raw+(effective!=raw?"（可靠才能10）":"")+" + "+modifier+" + 战术头脑 "+tacticalBonus+" = "+total+" / DC "+dc+"，"+(success?"成功":"失败")+"，消耗1动作。");rolling=false;
     }
 }

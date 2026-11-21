@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
         int source=player?0:-1;var spell=DirectSpell.Find("Burning Hands");var targets=BreathTargets(source,template);var failed=new HashSet<int>();
         long dc=player?8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(casterClass)]):MonsterSpellDc;
         bool previousPreview=burningPreview;var previousTemplate=burningTemplate;int previousSource=burningSource;
-        burningPreview=true;burningTemplate=template;burningSource=source;outcomeDeferDepth++;
+        burningPreview=true;burningTemplate=template;burningSource=source;outcomeDeferDepth++;bool oldWebFire=webAreaFire;webAreaFire=true;IgniteWebArea(template.Cell);
         try{
             foreach(int target in targets)yield return RollMappedDexteritySave(target,source,dc,failed,"燃烧之手");
             int count=spell.DiceCount(player?classes.TotalLevel:monsterSpells.CasterLevel,slot),damage=0;var rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=Random.Range(1,7);damage+=rolls[i];}
@@ -32,6 +32,6 @@ public sealed partial class TrainingGame
             if(playerDamage>0)yield return MaintainConcentration(playerDamage);
             ReconcileFallenRescue();RefreshBestialSpirit();dice="燃烧之手 · "+targets.Count+"名目标结算完成";
             history.Insert(0,"燃烧之手：15尺锥形，"+count+"d6共享火焰伤害；环境可燃物点燃保留说明，暂缓环境结算。");
-        }finally{outcomeDeferDepth--;burningPreview=previousPreview;burningTemplate=previousTemplate;burningSource=previousSource;CheckBattleOutcome();}
+        }finally{webAreaFire=oldWebFire;outcomeDeferDepth--;burningPreview=previousPreview;burningTemplate=previousTemplate;burningSource=previousSource;CheckBattleOutcome();}
     }
 }

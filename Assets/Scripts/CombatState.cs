@@ -28,9 +28,9 @@ public sealed class CombatState
     public bool PlayerUnderwater {get;set;}
     public bool MonsterUnderwater {get;set;}
     bool ResistsDamage(bool player,int type)=>type>=0&&(((player?PlayerFeignDeath:MonsterFeignDeath)&&type!=10)||(player?PlayerEnergyResistance:MonsterEnergyResistance)==type||(DamageResistance!=null&&DamageResistance(player,type))||(type==5&&(player?PlayerUnderwater:MonsterUnderwater)));
-    public int AdjustTypedDamage(bool player,int amount,int type){return DamageImmunity!=null&&DamageImmunity(player,type)?0:ResistsDamage(player,type)?amount/2:amount;}
+    public int AdjustTypedDamage(bool player,int amount,int type){if(type==5)FireExposure?.Invoke(player);return DamageImmunity!=null&&DamageImmunity(player,type)?0:ResistsDamage(player,type)?amount/2:amount;}
     public int AdjustPlayerPacket(long[] packet)=>AdjustDamagePacket(true,packet);
-    public int AdjustDamagePacket(bool player,long[] packet){long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(player,i))total+=Math.Min(int.MaxValue,ResistsDamage(player,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
+    public int AdjustDamagePacket(bool player,long[] packet){if(packet.Length>5&&packet[5]>0)FireExposure?.Invoke(player);long total=0;for(int i=0;i<packet.Length;i++)if(DamageImmunity==null||!DamageImmunity(player,i))total+=Math.Min(int.MaxValue,ResistsDamage(player,i)?Math.Max(0,packet[i])/2:Math.Max(0,packet[i]));return (int)Math.Min(int.MaxValue,total);}
     public bool PlayerBaned {get;set;}
     public bool MonsterBaned {get;set;}
     public bool PlayerBlessed {get;set;}
@@ -99,7 +99,8 @@ public sealed class CombatState
     int playerMockeryUntil;bool monsterMockery;
     public void ApplyMockery(bool player){if(player)playerMockeryUntil=Round+1;else monsterMockery=true;}
     public bool ConsumeMockery(bool player){bool active=player?playerMockeryUntil>0:monsterMockery;if(player)playerMockeryUntil=0;else monsterMockery=false;return active;}
-    public Action<int> TurnEnded;
+    public Action<int> TurnEnded,TurnStarted;
+    public Action<bool> FireExposure;
     public void FinishMonsterTurnEffects(){monsterMockery=false;TurnEnded?.Invoke(-1);}
     int playerHealingBlockedUntil,monsterHealingBlockedUntil;
     public bool PlayerHealingBlocked => playerHealingBlockedUntil>0;
@@ -177,7 +178,7 @@ public sealed class CombatState
     public bool TryUseMonsterAction(){if(!MonsterCanAct||!MonsterActionAvailable)return false;MonsterActionAvailable=false;BattleStarted=true;return true;}
     public bool MonsterBonusActionAvailable {get;private set;}=true;
     public bool TryUseMonsterBonusAction(){if(!MonsterCanAct||!MonsterBonusActionAvailable)return false;MonsterBonusActionAvailable=false;BattleStarted=true;return true;}
-    public void StartMonsterTurn() {MonsterActionAvailable=true;MonsterBonusActionAvailable=true;MonsterReactionsBlocked=false;MonsterOpportunityBlocked=false;MonsterReactionAvailable=true;}
+    public void StartMonsterTurn(bool notify=true) {MonsterActionAvailable=true;MonsterBonusActionAvailable=true;MonsterReactionsBlocked=false;MonsterOpportunityBlocked=false;MonsterReactionAvailable=true;if(notify)TurnStarted?.Invoke(-1);}
     public void MarkBattleStarted() { BattleStarted=true; }
     public int ActionsRemaining { get; private set; } = 1;
     public int ActionsThisRound { get; private set; } = 1;
@@ -253,6 +254,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != monsterBaseMaxHp) { monsterBaseMaxHp = newMaxHp; Hp = MaxHp; }
     }
-    public void EndRound() {PlayerReactionsBlocked=false;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions(); }
+    public void EndRound() {PlayerReactionsBlocked=false;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions();TurnStarted?.Invoke(0); }
 
 }

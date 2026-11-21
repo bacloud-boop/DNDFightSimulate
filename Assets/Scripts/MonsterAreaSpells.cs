@@ -34,6 +34,10 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolveMonsterAreaSpell(DirectSpell spell,int slot,Vector2Int center)
     {
+        bool old=webAreaFire;try{if(spell.DamageType=="火焰"){IgniteWebArea((x,y)=>BattleMap.BodyDistance(center,1,new Vector2Int(x,y),1)<=MonsterSpellCatalog.Radius(spell));webAreaFire=true;}yield return ResolveMonsterAreaSpellCore(spell,slot,center);}finally{webAreaFire=old;}
+    }
+    IEnumerator ResolveMonsterAreaSpellCore(DirectSpell spell,int slot,Vector2Int center)
+    {
         int radius=MonsterSpellCatalog.Radius(spell);var targets=MonsterAreaTargets(center,radius,spell.EmanationRadius>0?map.MonsterSpaces:1,spell.Name=="Word of Radiance");var failed=new HashSet<int>();
         foreach(int id in targets){
             bool player=id==0;var unit=player?null:FindSummon(id);

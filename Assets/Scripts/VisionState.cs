@@ -10,6 +10,7 @@ public sealed class VisionState
 {
     // 0 bright, 1 dim, 2 dark. Coordinates are in feet, at occupied cell centers.
     public int BaseLight,PlayerRange,MonsterRange;
+    public Func<double,double,long,bool> LightObscuration;
     readonly long[] darkvisionEnd={-1,-1};
     public readonly List<VisionZone> Zones=new List<VisionZone>();
     readonly HashSet<int> dispelledLightGroups=new HashSet<int>();
@@ -72,9 +73,9 @@ public sealed class VisionState
     public int Quality(double ax,double ay,double bx,double by,int darkvision,long now,int blindsight=0,bool truesight=false){
         Refresh(now);double distance=Distance(ax,ay,bx,by);if(blindsight>0&&Math.Round(distance)<=blindsight)return 0;
         foreach(var fog in Zones)if(fog.Fog){double lo,hi;if(Interval(fog,ax,ay,bx,by,out lo,out hi))return 2;}
-        if(truesight)return 0;
+        bool obscured=LightObscuration!=null&&LightObscuration(bx,by,now);if(truesight)return obscured?1:0;
         if(MagicalBlock(ax,ay,bx,by,now))return 2;
-        int light=Light(bx,by,now);if(darkvision>0&&Math.Round(distance)<=darkvision)light=Math.Max(0,light-1);return light;
+        int light=Light(bx,by,now);if(darkvision>0&&Math.Round(distance)<=darkvision)light=Math.Max(0,light-1);return obscured?Math.Max(1,light):light;
     }
     // Last position inside any defender reach circle along a multi-cell mover's path.
     public static double ReachExit(double ax,double ay,double bx,double by,int moverSize,double defenderX,double defenderY,int defenderSize,int reach){

@@ -83,11 +83,12 @@ public sealed partial class TrainingGame
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
         if(reincarnationPending){DrawReincarnationPrompt();return;}
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
-        if(sensoryOrderPending){DrawSensorySaveOrder();return;}
+        if(webOrderPending){DrawWebOrder();return;}
+        if(sensoryOrderPending){DrawSensorySaveOrder();DrawWebOrder();return;}
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
         if(page=="battle" && spellTargeting)DrawSpellTargeting(new Rect(600,110,400,400));
         DrawSpellTooltip();
-        DrawReactionPrompt();DrawShieldPrompt();DrawDefenseOrder();DrawTacticalMindPrompt();DrawTemporaryHpChoice();DrawContainmentRelease();DrawCounterspellPrompt();DrawSensorySaveOrder();
+        DrawReactionPrompt();DrawShieldPrompt();DrawDefenseOrder();DrawTacticalMindPrompt();DrawTemporaryHpChoice();DrawContainmentRelease();DrawCounterspellPrompt();DrawSensorySaveOrder();DrawWebOrder();
         DrawSummonOpportunityOrder();
     }
     void DrawHome()

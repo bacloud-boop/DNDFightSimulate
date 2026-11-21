@@ -78,8 +78,8 @@ public sealed class SummonedUnit
         ReactionAvailable=true;Id=id;Name=name;MaxHp=Hp=hp;Armor=armor;Speed=speed;Size=size;AttacksPerAction=attacks;
     }
     long lastTurn=-1;
-    public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;return true;}
-    public Action TurnEnded;
+    public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;TurnStarted?.Invoke();return true;}
+    public Action TurnEnded,TurnStarted,FireExposure;
     public void EndTurn(){bool active=TurnActive;BonusAvailable=false;TurnActive=false;actionAvailable=false;AttacksRemaining=0;if(active)TurnEnded?.Invoke();}
     public bool CanSpendMovement(int cost)=>Alive&&TurnActive&&cost>0&&cost<=MovementRemaining;
     public bool SpendMovement(int cost){if(!CanSpendMovement(cost))return false;movementSpent+=cost;return true;}
@@ -95,6 +95,6 @@ public sealed class SummonedUnit
     public bool TryUseAction(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
     public bool UseReaction(){if(!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-    public int Damage(int amount,int type=-1){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(ResistsType(type))amount/=2;if(amount>0)SleepStage=0;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}return before-Hp;}
+    public int Damage(int amount,int type=-1){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(type==5)FireExposure?.Invoke();if(ResistsType(type))amount/=2;if(amount>0)SleepStage=0;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}return before-Hp;}
     public int Heal(int amount){if(!Alive||amount<=0)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+amount);return Hp-before;}
 }

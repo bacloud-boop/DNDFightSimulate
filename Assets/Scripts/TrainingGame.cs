@@ -45,7 +45,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     void Awake()
     {
         combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
-        map.VoluntaryMovement=(id,cell)=>!Feigning(id)&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id);InitializeCreatureTransit();
+        map.VoluntaryMovement=(id,cell)=>!Feigning(id)&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id);InitializeCreatureTransit();InitializeWeb();
         combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);
@@ -190,7 +190,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.PlayerDead){rolling=false;yield break;}
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
-            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);
+            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
             if(map.NearestEnemyInReach(!combat.PlayerDead,int.MaxValue)<0){history.Insert(0,"木桩没有可攻击的非假死敌人，跳过行动。");yield return FinishMonsterSpellTurn();yield break;}
             yield return TryMonsterSpeciesMagic(true);
             yield return TryMonsterSpeciesBonus(true);

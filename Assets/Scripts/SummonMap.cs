@@ -4,6 +4,7 @@ using UnityEngine;
 public sealed partial class BattleMap
 {
     public System.Func<int,bool> EnemyEligible;
+    public System.Action<int> ActorTurnStarted;public System.Action<SummonedUnit> SummonAdded;
     bool EnemyAllowed(int id)=>EnemyEligible==null||EnemyEligible(id);
     readonly List<SummonedUnit> summons=new List<SummonedUnit>();
     public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
@@ -22,7 +23,7 @@ public sealed partial class BattleMap
         int oldX=unit.X,oldY=unit.Y;
         unit.X=anchor.x;unit.Y=anchor.y;summons.Add(unit);
         if(!RecoverySafe(Player,Monster)){summons.Remove(unit);unit.X=oldX;unit.Y=oldY;return false;}
-        unit.TurnEnded=()=>ActorTurnEnded?.Invoke(unit.Id);SyncWaterPositions();return true;
+        unit.TurnEnded=()=>ActorTurnEnded?.Invoke(unit.Id);unit.TurnStarted=()=>ActorTurnStarted?.Invoke(unit.Id);SummonAdded?.Invoke(unit);SyncWaterPositions();return true;
     }
     public bool CanAddSummon(SummonedUnit unit,Vector2Int anchor)
     {

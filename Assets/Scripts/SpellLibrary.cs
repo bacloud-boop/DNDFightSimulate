@@ -109,6 +109,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Heal")DrawHealChoices();
         else if(definition.Name=="Find Steed")DrawFindSteedChoices();
         else if(definition.Name=="Stoneskin")DrawStoneskinChoices();
+        else if(definition.Name=="Web")DrawWebChoices();
         else if(definition.Name=="Water Breathing")DrawWaterBreathingChoices();
         else if(definition.Name=="Sleep")DrawSleepChoices();
         else if(definition.Name=="Spike Growth")GUILayout.Label("指定地面区域中心，所有生物均受影响。",small);
@@ -167,6 +168,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor")return ArcaneVigorError(directTargetPlayer,directSlotLevel);
         if(spell.Name=="Faerie Fire")return FaerieFireError();
         if(spell.Name=="Dancing Lights")return DancingLightsError();
+        if(spell.Name=="Web")return WebError();
         if(spell.Name=="Color Spray")return ColorSprayError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
         if(spell.Name=="Light")return LightSpellError();
@@ -245,6 +247,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
         BreathTemplate burningAim=default(BreathTemplate);if((spell.Name=="Burning Hands"||spell.Name=="Color Spray")&&!PlayerBurningTemplate(out burningAim))yield break;
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
+        if(spell.Name=="Web"&&WebError()!="")yield break;
         int starrySelected=starryTarget;if(spell.Name=="Starry Wisp"&&StarryWispError()!="")yield break;
         int feignSelected=feignTarget;if(spell.Name=="Feign Death"&&FeignDeathError()!="")yield break;
         int lightTarget=lightObjectId,lightR=0,lightG=0,lightB=0;if(spell.Name=="Light"&&(LightSpellError()!=""||!LightColors(out lightR,out lightG,out lightB)))yield break;
@@ -272,7 +275,7 @@ public sealed partial class TrainingGame
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -290,6 +293,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Find Steed"){ApplyFindSteed(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Color Spray"){yield return ResolveColorSpray(true,caster,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Starry Wisp"){yield return ResolvePlayerStarryWisp(caster,starrySelected);if(!embedded)rolling=false;yield break;}
