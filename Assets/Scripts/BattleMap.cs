@@ -129,12 +129,12 @@ public sealed partial class BattleMap
     public bool MovePlayer(Vector2Int cell,bool tactical=false) {
         if(!CanMoveTo(cell,tactical))return false;
         if(tactical)TacticalMovementRemaining-=PlayerMovementCost(cell);else {int cost=PlayerMovementCost(cell);MovementSpent+=cost;MovementRemaining-=cost;}
-        var observedFrom=Player;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,false);return true;
+        var observedFrom=Player;Player=cell;SyncWaterWalkRoute(0,observedFrom,cell,PlayerSpaces);SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,PlayerSpaces,PlayerSpaces,false);return true;
     }
     public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&VoluntaryMovementAllowed(0,cell)&&!IsContained(true)&&Inside(cell,playerBodySpaces)&&SummonFootprintClear(cell,playerBodySpaces)&&!Overlap(cell,playerBodySpaces,Monster,OccupiedSpaces(false))&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
     public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;int old=PlayerSpaces;riderMountId=0;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,old,PlayerSpaces,true);return true;}
     public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&VoluntaryMovementAllowed(-1,cell)&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanOccupyForMove(-1,Monster,cell,MonsterSpaces)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&CreaturePathClear(-1,Monster,cell,MonsterSpaces);
-    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
+    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncWaterWalkRoute(-1,observedFrom,cell,MonsterSpaces);SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
     public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)
@@ -167,6 +167,10 @@ public sealed partial class BattleMap
             if(FeetBetween(start,candidate)>feet)continue;
             if(toward&&BodyDistance(candidate,spaces,origin,originSpaces)>=BodyDistance(last,spaces,origin,originSpaces))continue;
             if(!CanPlace(player,candidate)||!RecoveryPathSafe(player,last,candidate)||SegmentCrossesBody(last,candidate,spaces,obstacle,obstacleSpaces)||(!player&&CrossesEnemySummon(last,candidate,spaces)))break;
+            // Commit each pushed/pulled step before observing it so breathing,
+            // spell tethers and terrain see the actual position and water layer.
+            if(player)Player=candidate;else Monster=candidate;SyncContainedPosition();
+            ApplyWaterWalkFall(player?0:-1,last,candidate,spaces,false);
             MovementObserved?.Invoke(player?0:-1,last,candidate,spaces,spaces,false);last=candidate;
         }
         if(player)Player=last;else Monster=last;SyncContainedPosition();return FeetBetween(start,last);

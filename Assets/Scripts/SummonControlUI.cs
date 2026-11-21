@@ -42,7 +42,7 @@ public sealed partial class TrainingGame
                 DrawSteedSpecial(unit);
                 GUI.enabled=!summonActing;
                 int water=map.WaterCells(new Vector2Int(unit.X,unit.Y),unit.Spaces);
-                if(water>0&&GUILayout.Button(unit.Aquatic.Submerged?"浮出水面 · 5尺":"潜入水下 · 5尺",button)){unit.SwitchWaterState(!unit.Aquatic.Submerged,water);map.SyncRiderWater();}
+                if(water>0&&GUILayout.Button((unit.Aquatic.Submerged?"浮出水面 · ":"潜入水下 · ")+WaterLayerCost(unit.Id),button)){map.SwitchSummonWaterState(unit.Id,!unit.Aquatic.Submerged);ObserveWaterBreathing();}
                 if(phase&&GUILayout.Button("结束召唤物回合",button))summonEndRequested=true;
                 GUI.enabled=old;
             }

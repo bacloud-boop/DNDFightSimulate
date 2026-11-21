@@ -15,6 +15,7 @@ public sealed partial class RescueCarrier
     public long RecoveryAt {get;private set;}=-1;
     long lastDeathSave=-1;
     public readonly CorpseClock Corpse=new CorpseClock();
+    public readonly BreathingState Breathing=new BreathingState();
     public bool FeignDeath,Restrained;
     public Func<int> WardBonus;public int ArmorClass=>10+(int)Math.Floor((Dexterity-10)/2.0)+(WardBonus==null?0:WardBonus());
     public Func<int,bool> ExtraResistance;public Action<int,int> DamageApplied;
@@ -38,7 +39,7 @@ public sealed partial class RescueCarrier
         if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));
         if(!NeedsDeathSave||sequence<=lastDeathSave)return false;lastDeathSave=sequence;
         if(die==20){Heal(1);return true;}
-        if(die==1)DeathFailures+=2;else if(die+RevivalPenalty+bonus>=10)DeathSuccesses++;else DeathFailures++;
+        if(die==1)DeathFailures+=2;else if(die+RevivalPenalty+Breathing.D20Penalty+bonus>=10)DeathSuccesses++;else DeathFailures++;
         if(DeathFailures>=3)Dead=true;
         else if(DeathSuccesses>=3){Stable=true;DeathFailures=DeathSuccesses=0;}
         return true;
@@ -47,10 +48,17 @@ public sealed partial class RescueCarrier
     public bool ScheduleRecovery(long now,int hours){if(!Stable||RecoveryAt>=0||hours<1||hours>4||now<0||now>long.MaxValue-hours*600)return false;RecoveryAt=now+hours*600;return true;}
     public void ObserveLife(long now){if(Stable&&RecoveryAt>=0&&now>=RecoveryAt)Heal(1);Corpse.Observe(Dead,9,now);Corpse.Age(now);}
     public bool Revive(int hp,bool ordeal){if(!Dead||hp<1)return false;Dead=Stable=false;DeathFailures=DeathSuccesses=0;Hp=Math.Min(MaxHp,hp);RecoveryAt=-1;Corpse.Clear();if(ordeal)RevivalPenalty=-4;return true;}
+    public bool ApplyFatalSuffocation(){
+        if(!Breathing.Fatal||Dead)return false;
+        Hp=TemporaryHp=0;Dead=true;Stable=false;Prone=true;DeathFailures=DeathSuccesses=0;RecoveryAt=-1;BonusActionAvailable=ReactionAvailable=false;EndTurn();return true;
+    }
+    public bool ReconcileRevivalBreathing(bool canBreathe){
+        if(Dead)return false;if(Breathing.ReconcileRevival(canBreathe))return true;ApplyFatalSuffocation();return false;
+    }
     public void CompleteLongRest(){if(!Conscious)return;RevivalPenalty=Math.Min(0,RevivalPenalty+1);SpeciesAbilities.LongRest();SpeciesSpells.LongRest();TemporaryHp=0;Heal(int.MaxValue);}
     public bool Prone {get;set;}
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;MovementSpent+=cost;Prone=false;return true;}
-    public int DexteritySaveModifier=>(int)Math.Floor((Dexterity-10)/2.0)+RevivalPenalty;
+    public int DexteritySaveModifier=>(int)Math.Floor((Dexterity-10)/2.0)+RevivalPenalty+Breathing.D20Penalty;
     public int Size {get;private set;}=2;
     public int Speed {get;private set;}=30;
     public readonly BodyWeight Weight=new BodyWeight();
@@ -60,7 +68,7 @@ public sealed partial class RescueCarrier
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;
-    public int EffectiveSpeed=>FeignDeath||Restrained?0:Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed);
+    public int EffectiveSpeed=>FeignDeath||Restrained?0:Math.Max(0,Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed)-Breathing.SpeedPenalty);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
     public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {
@@ -78,5 +86,5 @@ public sealed partial class RescueCarrier
     public bool Move(int feet){if(!Conscious||!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
     public bool Dash(){if(!UseAction())return false;Dashes++;return true;}
     public bool CanMove(int feet)=>Conscious&&TurnActive&&feet>0&&feet<=MovementRemaining;
-    public void Reset(){FeignDeath=Restrained=false;SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
+    public void Reset(){Breathing.Reset();FeignDeath=Restrained=false;SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
 }

@@ -24,7 +24,7 @@ public sealed partial class BattleMap
     {
         if(!CanMoveRescue(cell)||spendMovement==null)return false;
         if(!spendMovement(RescueMovementCost(cell)))return false;
-        var from=RescuePosition.Value;RescuePosition=cell;SyncRescueCargo();SyncWaterPositions();MovementObserved?.Invoke(RescueId,from,cell,RescueSpaces,RescueSpaces,false);return true;
+        var from=RescuePosition.Value;RescuePosition=cell;SyncWaterWalkRoute(RescueId,from,cell,RescueSpaces);SyncRescueCargo();SyncWaterPositions();MovementObserved?.Invoke(RescueId,from,cell,RescueSpaces,RescueSpaces,false);return true;
     }
     public bool RemoveRescue(bool reset=false){if(RescueCargoId.HasValue&&!reset)return false;if(RescueCargoPlayer.HasValue){Player=Vector2Int.zero;Monster=new Vector2Int(Size-MonsterSpaces,Size-MonsterSpaces);}RescuePosition=null;RescueSpaces=1;RescueCargoId=null;RescueCargoDragging=false;RescueAquatic.TrySetSubmerged(false,0,1);return true;}
 }

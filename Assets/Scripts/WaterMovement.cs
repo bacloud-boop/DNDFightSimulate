@@ -14,10 +14,14 @@ public sealed partial class BattleMap
         if(!Inside(from,spaces)||!Inside(to,spaces))return int.MaxValue;
         int distance=FeetBetween(from,to);if(distance==0)return 0;
         int steps=Math.Max(Math.Abs(to.x-from.x),Math.Abs(to.y-from.y)),total=0,wet=0;var previous=from;
+        bool waterWalking=HasWaterWalking(actor),submerged=ActorAquatic(actor)?.Submerged??false;
+        if(WaterCells(from,spaces)!=spaces*spaces)submerged=false;
         for(int i=1;i<=steps;i++){
             var cell=new Vector2Int(Mathf.RoundToInt(from.x+(to.x-from.x)*(float)i/steps),Mathf.RoundToInt(from.y+(to.y-from.y)*(float)i/steps));
             int part=FeetBetween(previous,cell);total+=part;
-            if(swimSpeed<=0&&WaterCells(cell,spaces)==spaces*spaces)wet+=part;
+            bool fullyWet=WaterCells(cell,spaces)==spaces*spaces;
+            if(!fullyWet)submerged=false;
+            if(swimSpeed<=0&&fullyWet&&(!waterWalking||submerged))wet+=part;
             previous=cell;
         }
         int extra=total==0?0:Mathf.RoundToInt((float)distance*wet/total);
@@ -33,7 +37,7 @@ public sealed partial class BattleMap
             var from=new Vector2Int(unit.X,unit.Y);
             int cost=WaterMovementCost(from,cell,unit.Spaces,unit.SwimSpeed,unit.Prone,unit.Id);
             if(!unit.SpendMovement(cost))return false;
-            unit.X=cell.x;unit.Y=cell.y;SyncRiderToMount(unit);SyncWaterPositions();MovementObserved?.Invoke(unit.Id,from,cell,unit.Spaces,unit.Spaces,false);if(unit.Id==riderMountId)MovementObserved?.Invoke(0,from,cell,unit.Spaces,unit.Spaces,false);return true;
+            unit.X=cell.x;unit.Y=cell.y;SyncWaterWalkRoute(unit.Id,from,cell,unit.Spaces);SyncRiderToMount(unit);SyncWaterPositions();MovementObserved?.Invoke(unit.Id,from,cell,unit.Spaces,unit.Spaces,false);if(unit.Id==riderMountId)MovementObserved?.Invoke(0,from,cell,unit.Spaces,unit.Spaces,false);return true;
         }
         return false;
     }

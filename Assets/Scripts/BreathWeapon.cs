@@ -44,7 +44,7 @@ public sealed partial class TrainingGame
             var roll=RollArmorSave(player,ability);shown=roll.Dice;value=roll.Value;
             modifier=player?PlayerSavingThrowModifier(ability):MonsterSavingThrowModifier(ability);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,ability,ignoreCover:true);modifier+=adjustment.Value;
-        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty;}
+        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty;}
         else {
             var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
             modifier=BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;

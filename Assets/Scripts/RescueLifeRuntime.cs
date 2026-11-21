@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
         string saved=panel;panel="";bool busy=rolling;rolling=true;
         try{
             int die=Random.Range(1,21);
-            yield return PresentRoll(20,new[]{die},"救援者死亡豁免 · D20 "+die+"，调整 "+(rescueCarrier.RevivalPenalty+BondBonus(BattleMap.RescueId)));
+            yield return PresentRoll(20,new[]{die},"救援者死亡豁免 · D20 "+die+"，调整 "+(rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty+BondBonus(BattleMap.RescueId)));
             rescueCarrier.ResolveDeathSave(die,worldRounds,BondBonus(BattleMap.RescueId));rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();
             history.Insert(0,"救援者："+rescueCarrier.LifeLabel+"，死亡豁免成功 "+rescueCarrier.DeathSuccesses+" / 3，失败 "+rescueCarrier.DeathFailures+" / 3。");
             if(rescueCarrier.Stable&&rescueCarrier.RecoveryAt<0){int hours=Random.Range(1,5);yield return PresentRoll(4,new[]{hours},"救援者稳定后 "+hours+" 小时恢复1生命");rescueCarrier.ScheduleRecovery(worldRounds,hours);}
@@ -38,6 +38,7 @@ public sealed partial class TrainingGame
     void DrawRescueLifeControls()
     {
         DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
+        DrawRescueBreathingStatus();
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
         DrawExternalCasterRest();
         if(!rescueCarrier.Dead)return;
@@ -62,8 +63,8 @@ public sealed partial class TrainingGame
             if(!external&&(!aftermathAdvanceCompleted||!CanPlayerAftermathCast))error="施法者失能，复活失败。";
             if(error==""){
                 if(name=="Gentle Repose")rescueCarrier.Corpse.Preserve(worldRounds);
-                else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if(rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name)))RecordResurrectionExertion(external,taxed);}
-                history.Insert(0,DirectSpell.Find(name).Chinese+"对救援者生效；保留战后状态，下一救援回合再行动。");
+                else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if(rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name))){RecordResurrectionExertion(external,taxed);RestoreRescueBreathingAfterRevival();}}
+                history.Insert(0,DirectSpell.Find(name).Chinese+"对救援者结算完成；当前"+rescueCarrier.LifeLabel+"，保留战后状态。");
             }else history.Insert(0,"救援者复活失败："+error);
         }finally{if(!external)BreakOrdinaryInvisibility(true,"施法",invisibilityToken);rolling=busy;}
     }

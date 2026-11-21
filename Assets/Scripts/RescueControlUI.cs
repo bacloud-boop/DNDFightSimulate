@@ -40,7 +40,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("装备总重（非负整数磅）",small);rescueEquipment=IntegerField(rescueEquipment,false);
         GUI.enabled=old;
         if(map.RescuePosition.HasValue){
-            DrawRescueLifeControls();DrawRescueCargoControls();DrawRescueSpeciesActions();
+            DrawRescueLifeControls();DrawRescueCargoControls();DrawRescueSpeciesActions();DrawRescueWaterLayer();
             GUILayout.Label("HP "+rescueCarrier.Hp+" / "+rescueCarrier.MaxHp, label);
             GUILayout.Label("动作 "+rescueCarrier.ActionsRemaining+" · 剩余移动 "+rescueCarrier.MovementRemaining+"尺 · 当前速度 "+rescueCarrier.EffectiveSpeed+"尺",label);
             GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;

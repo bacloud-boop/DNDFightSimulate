@@ -41,8 +41,9 @@ public sealed partial class TrainingGame
    Vector2Int best=map.Monster;int bestDistance=int.MaxValue,bestCost=int.MaxValue;bool found=false;
    for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){
     var cell=new Vector2Int(x,y);if(!map.CanMoveMonsterTo(cell))continue;int cost=map.MonsterMovementCost(cell);
-    int dive=monsterGroundWeapon.Submerged&&!map.MonsterAquatic.Submerged?5:0;
-    bool reachable=near(x,y)&&cost+dive<=map.MonsterMovementRemaining;
+    int dive=monsterGroundWeapon.Submerged&&!map.MonsterAquatic.Submerged&&!waterWalk.Active(-1,worldRounds)?5:0;
+    bool diveBonus=monsterGroundWeapon.Submerged&&!map.MonsterAquatic.Submerged&&waterWalk.Active(-1,worldRounds);
+    bool reachable=near(x,y)&&cost+dive<=map.MonsterMovementRemaining&&(!diveBonus||combat.MonsterBonusActionAvailable);
     long dx=(long)x*2+map.MonsterSpaces-monsterGroundWeapon.CenterX2,dy=(long)y*2+map.MonsterSpaces-monsterGroundWeapon.CenterY2;int distance=(int)(dx*dx+dy*dy);
     if(reachable&&!found||reachable==found&&(reachable?cost<bestCost:distance<bestDistance||distance==bestDistance&&cost<bestCost)){found=reachable;best=cell;bestCost=cost;bestDistance=distance;}
    }

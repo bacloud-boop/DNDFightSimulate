@@ -50,6 +50,7 @@ public sealed partial class TrainingGame
     void ObserveWaterBreathing()
     {
         if(page!="battle"||!map.Locked)return;
+        ObserveRescueBreathing();
         playerBreathing.ExhaustionImmune=EffectiveExhaustionImmune(true);monsterBreathing.ExhaustionImmune=EffectiveExhaustionImmune(false);
         if(!combat.PlayerDead)playerBreathing.Observe(WaterBreathingAllowed(true),worldRounds,EffectivePlayerAbility(2));
         if(combat.Hp>0)monsterBreathing.Observe(WaterBreathingAllowed(false),worldRounds,EffectiveMonsterAbility(2));

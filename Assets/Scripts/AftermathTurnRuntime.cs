@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         try{
             if(aftermathTurns.PlayerTurn){yield return RepeatSensorySaves(true);FinishWaterBreathingTurn(true);NoticeCastingInterruption();ApplySharedTurnEnd(0);combat.ExpirePlayerTurnEffects();}
             else {
-                if(map.RescuePosition.HasValue){if(!rescueCarrier.Dead)yield return FinishUnitEndEffects(BattleMap.RescueId);rescueDropMode=false;bool active=rescueCarrier.TurnActive;rescueCarrier.EndTurn();if(!active)ApplySharedTurnEnd(BattleMap.RescueId);}
+                if(map.RescuePosition.HasValue){if(!rescueCarrier.Dead)yield return FinishUnitEndEffects(BattleMap.RescueId);FinishRescueBreathingTurn();rescueDropMode=false;bool active=rescueCarrier.TurnActive;rescueCarrier.EndTurn();if(!active)ApplySharedTurnEnd(BattleMap.RescueId);}
             }
             bool complete=aftermathTurns.Finish(map.RescuePosition.HasValue);combat.AftermathPlayerTurn=aftermathTurns.PlayerTurn;
             if(!complete){
