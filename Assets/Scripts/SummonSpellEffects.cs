@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
     IEnumerator RollSummonSave(SummonedUnit unit,int ability,int dc,Vector2Int center,SummonSave result,int? sourceId=null)
     {
         if(unit.SleepStage==2&&(ability==0||ability==1)){result.Failed=true;yield break;}
-        int modifier=AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
+        int modifier=BondBonus(unit.Id)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
         if(ability==1)modifier+=sourceId.HasValue?map.CreatureCoverBonus(sourceId.Value,unit.Id):map.CreatureCoverFromPoint(center,unit.Id);
         bool advantage=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0;
         bool disadvantage=ability==1&&unit.Restrained;

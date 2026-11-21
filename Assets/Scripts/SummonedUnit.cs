@@ -21,7 +21,8 @@ public sealed class SummonedUnit
     public int Hp {get;private set;}
     public int TemporaryHp {get;private set;}
     public void ChooseTemporaryHp(int amount,bool takeNew){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(Alive&&takeNew)TemporaryHp=amount;}
-    public int Armor {get;}
+    readonly int baseArmor;public int Armor=>baseArmor+(WardBonus==null?0:WardBonus());
+    public Func<int> WardBonus;public Action<long[]> DamageApplied;
     public int Speed {get;}
     public int Size {get;}
     public int X {get;internal set;}
@@ -34,7 +35,7 @@ public sealed class SummonedUnit
     int dashes;
     public bool FeignDeath,FeignBlind;
     public void SetFeignDeath(bool active,bool blind){FeignDeath=active;FeignBlind=blind;if(active){Dodging=false;AttacksRemaining=0;}}
-    public bool ResistsType(int type)=>type>=0&&(FeignDeath&&type!=10||Stoneskin&&type<=2);
+    public bool ResistsType(int type)=>type>=0&&((WardBonus!=null&&WardBonus()>0)||FeignDeath&&type!=10||Stoneskin&&type<=2);
     public int SleepStage {get;set;}
     public int SleepRepeatRound {get;set;}
     public bool Stoneskin {get;set;}
@@ -77,7 +78,7 @@ public sealed class SummonedUnit
     {
         if(id<1||string.IsNullOrEmpty(name)||hp<1||armor<0||speed<0||swimSpeed<0||size<0||size>5||attacks<1)throw new ArgumentException("Invalid summon");
         SwimSpeed=swimSpeed;BreathesAir=breathesAir;BreathesWater=breathesWater;
-        ReactionAvailable=true;Id=id;Name=name;MaxHp=Hp=hp;Armor=armor;Speed=speed;Size=size;AttacksPerAction=attacks;
+        ReactionAvailable=true;Id=id;Name=name;MaxHp=Hp=hp;baseArmor=armor;Speed=speed;Size=size;AttacksPerAction=attacks;
     }
     long lastTurn=-1;
     public bool BeginTurn(long sequence,bool notify=true){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;if(notify)TurnStarted?.Invoke();return true;}
@@ -97,6 +98,6 @@ public sealed class SummonedUnit
     public bool TryUseAction(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
     public bool UseReaction(){if(!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-    public int Damage(int amount,int type=-1){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(type==5)FireExposure?.Invoke();if(ResistsType(type))amount/=2;if(amount>0)SleepStage=0;int absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}return before-Hp;}
+    public int Damage(int amount,int type=-1,long[] resolvedTypes=null){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));bool wasAlive=Alive;if(type==5)FireExposure?.Invoke();if(resolvedTypes==null&&ResistsType(type))amount/=2;if(amount>0)SleepStage=0;int received=amount;int absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}if(wasAlive&&received>0){var packet=resolvedTypes;if(packet==null){packet=new long[14];packet[type>=0&&type<13?type:13]=received;}DamageApplied?.Invoke(packet);}return before-Hp;}
     public int Heal(int amount){if(!Alive||amount<=0)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+amount);return Hp-before;}
 }

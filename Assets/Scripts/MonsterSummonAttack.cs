@@ -28,11 +28,12 @@ public sealed partial class TrainingGame
         packet.Roll(out details,critical,(s,v,c)=>{sides.Add(s);rolls.Add(v);});
         for(int i=0;i<sides.Count;i++)yield return PresentRoll(sides[i],rolls[i],details);
         bool[] resistance=new bool[DamageTypes.Names.Length];if(unit.Stoneskin)resistance[0]=resistance[1]=resistance[2]=true;if(unit.Aquatic.Submerged)resistance[DamageTypes.Index("火焰")]=true;
+        for(int i=0;i<resistance.Length;i++)resistance[i]|=unit.ResistsType(i);
         bool[] immunity=new bool[DamageTypes.Names.Length];immunity[12]=SilenceUnitImmune(unit,"雷鸣");
         var sized=new RayDamage();sized.Raw=packet.LastRawTypedDamage;if(MonsterPolymorphed||combat.MonsterAttackIsWeapon)yield return ApplySizeWeaponDamage(false,sized.Raw,MonsterBaseWeaponDamageType,critical,sized);
         var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击召唤物",reduced);
-        int damage=DamageTypes.Total(DamageTypes.Resolve(reduced.Raw,resistance,immunity));
-        int actual=unit.Damage(damage);history.Insert(0,"木桩对"+unit.Name+"造成 "+actual+" 伤害（结算值 "+damage+"），"+details);
+        var resolved=DamageTypes.Resolve(reduced.Raw,resistance,immunity);int damage=DamageTypes.Total(resolved);
+        int actual=unit.Damage(damage,resolvedTypes:System.Array.ConvertAll(resolved,x=>(long)x));history.Insert(0,"木桩对"+unit.Name+"造成 "+actual+" 伤害（结算值 "+damage+"），"+details);
         RefreshBestialSpirit();
     }
 }

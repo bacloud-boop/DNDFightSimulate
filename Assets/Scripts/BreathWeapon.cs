@@ -44,10 +44,10 @@ public sealed partial class TrainingGame
             var roll=RollArmorSave(player,ability);shown=roll.Dice;value=roll.Value;
             modifier=player?PlayerSavingThrowModifier(ability):MonsterSavingThrowModifier(ability);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,ability,ignoreCover:true);modifier+=adjustment.Value;
-        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty;}
+        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty;}
         else {
             var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
-            modifier=AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
+            modifier=BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
             bool advantage=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0,disadvantage=ability==1&&unit.Restrained;
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);shown=second==0?new[]{first}:new[]{first,second};
         }

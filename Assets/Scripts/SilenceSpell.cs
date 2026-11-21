@@ -46,6 +46,7 @@ public sealed partial class TrainingGame
         string text=ActorBlinded(player?0:-1)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
         if(player&&playerResurrectionCaster.Taxed)text+=(text==""?"":" · ")+"复生疲惫";
         if(SteedFear(player?0:-1))text+=(text==""?"":" · ")+"恐慌";
+        if(BondBonus(player?0:-1)>0)text+=(text==""?"":" · ")+"守护之链";
         if(HeatDisadvantage(player?0:-1))text+=(text==""?"":" · ")+"灼热劣势";
         if(poisonProtection.Active(player,worldRounds))text+=(text==""?"":" · ")+"抗毒";
         if(text!="")GUI.Label(new Rect(x+20,823,230,22),text,PlaqueText(player,14,TextAnchor.MiddleCenter));

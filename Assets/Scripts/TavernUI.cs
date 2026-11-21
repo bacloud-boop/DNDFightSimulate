@@ -67,6 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
+        BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
         SyncWeaponInventory();ObserveWaterBreathing();
         if(!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();

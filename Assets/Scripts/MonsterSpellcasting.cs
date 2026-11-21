@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
         bool player=target==0;var unit=target>0?FindSummon(target):null;
         int distance=player?map.DistanceFeet:unit==null?0:BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);
         if(spell.Name=="Power Word Kill"&&(player?combat.PlayerHp:unit.Hp)<=100){
-            if(player)combat.KillPlayer();else unit.Damage(unit.Hp);
+            if(player)combat.KillPlayer();else unit.Dismiss();
             BreakOrdinaryInvisibility(false,"造成伤害或死亡效果");
             history.Insert(0,"木桩律令死亡：目标生命不超过100，触发直接死亡；防死结界按原有规则抵消。");yield break;
         }
@@ -103,7 +103,7 @@ public sealed partial class TrainingGame
         }
         if(spell.SaveAbility>=0){
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
-            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
+            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
             bool dodge=!player&&spell.SaveAbility==1&&unit.Dodging&&unit.EffectiveSpeed>0;
             var roll=player?RollArmorSave(true,spell.SaveAbility):new ArmorSaveRoll{Value=Random.Range(1,21)};
             int value=roll.Value;int[] shown=player?roll.Dice:new[]{value};

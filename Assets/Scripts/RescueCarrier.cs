@@ -16,7 +16,9 @@ public sealed partial class RescueCarrier
     long lastDeathSave=-1;
     public readonly CorpseClock Corpse=new CorpseClock();
     public bool FeignDeath,Restrained;
-    public bool ResistsType(int type)=>Species.Resist(type)||FeignDeath&&type>=0&&type!=10;
+    public Func<int> WardBonus;public int ArmorClass=>10+(int)Math.Floor((Dexterity-10)/2.0)+(WardBonus==null?0:WardBonus());
+    public Func<int,bool> ExtraResistance;public Action<int,int> DamageApplied;
+    public bool ResistsType(int type)=>(ExtraResistance!=null&&ExtraResistance(type))||Species.Resist(type)||FeignDeath&&type>=0&&type!=10;
     public bool Conscious=>Hp>0&&!Dead&&!FeignDeath;
     public bool CanDepart=>Conscious&&!Load.Loaded;
     public bool NeedsDeathSave=>Hp==0&&!Dead&&!Stable;
@@ -24,7 +26,7 @@ public sealed partial class RescueCarrier
     public int TakeDamage(long amount,bool critical=false,int damageType=-1){
         if(amount<=0||Dead)return 0;if(damageType==5)FireExposure?.Invoke();
         if(ResistsType(damageType))amount/=2;if(amount<=0)return 0;
-        long incoming=amount;int before=Hp;
+        long incoming=amount;int before=Hp;if(incoming>0)DamageApplied?.Invoke((int)Math.Min(int.MaxValue,incoming),damageType);
         int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;
         if(before==0){Stable=false;RecoveryAt=-1;EndTurn();if(incoming>=MaxHp)Dead=true;else {DeathFailures+=critical?2:1;if(DeathFailures>=3)Dead=true;}return 0;}
         if(amount<=0)return 0;int lost=(int)Math.Min((long)Hp,amount);Hp-=lost;
@@ -32,11 +34,11 @@ public sealed partial class RescueCarrier
             if(amount-before>=MaxHp)Dead=true;
         }return lost;
     }
-    public bool ResolveDeathSave(int die,long sequence){
+    public bool ResolveDeathSave(int die,long sequence,int bonus=0){
         if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));
         if(!NeedsDeathSave||sequence<=lastDeathSave)return false;lastDeathSave=sequence;
         if(die==20){Heal(1);return true;}
-        if(die==1)DeathFailures+=2;else if(die+RevivalPenalty>=10)DeathSuccesses++;else DeathFailures++;
+        if(die==1)DeathFailures+=2;else if(die+RevivalPenalty+bonus>=10)DeathSuccesses++;else DeathFailures++;
         if(DeathFailures>=3)Dead=true;
         else if(DeathSuccesses>=3){Stable=true;DeathFailures=DeathSuccesses=0;}
         return true;

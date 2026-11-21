@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolveMagicMissile(int count)
     {
-        var targets=new bool[count];var rolls=new int[count];var damages=new int[count];
+        var targets=new bool[count];var rolls=new int[count];var damages=new int[count];var resolvedPackets=new long[count][];
         for(int i=0;i<count;i++){targets[i]=missileTargetsPlayer[i];rolls[i]=Random.Range(1,5);}
         if(System.Array.Exists(targets,x=>x))yield return OfferShield(false);
         for(int i=0;i<count;i++){
@@ -31,13 +31,13 @@ public sealed partial class TrainingGame
         }
         for(int i=0;i<count;i++){
             var reduced=new RayDamage();yield return ReduceRayDamage(true,rolls[i]+1,"力场","魔法飞弹第"+(i+1)+"枚",reduced);
-            damages[i]=targets[i]&&combat.ShieldActive?0:ResolveRayPacket(targets[i],reduced.Raw);
+            damages[i]=targets[i]&&combat.ShieldActive?0:ResolveRayPacket(targets[i],reduced.Raw);resolvedPackets[i]=targets[i]&&combat.ShieldActive?new long[13]:combat.CaptureAdjustedDamage(targets[i]);
         }
         int playerDamage=0,monsterDamage=0;
         for(int i=0;i<count;i++){
             int damage=damages[i];
-            if(targets[i]){combat.ApplyPlayerDamage(damage,sourcePlayer:true);playerDamage+=damage;}
-            else {combat.ApplyDamage(damage);monsterDamage+=damage;}
+            if(targets[i]){combat.ApplyPlayerDamage(damage,sourcePlayer:true,resolvedTypes:resolvedPackets[i]);playerDamage+=damage;}
+            else {combat.ApplyDamage(damage,resolvedTypes:resolvedPackets[i]);monsterDamage+=damage;}
             history.Insert(0,"魔法飞弹 "+(i+1)+" → "+(targets[i]?"玩家":"木桩")+"：1d4="+rolls[i]+" + 1，"+damage+"力场伤害。");
         }
         // Each dart is a separate source for concentration; HP is settled before these saves.

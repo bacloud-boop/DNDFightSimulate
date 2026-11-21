@@ -14,8 +14,8 @@ public sealed partial class TrainingGame
         string saved=panel;panel="";bool busy=rolling;rolling=true;
         try{
             int die=Random.Range(1,21);
-            yield return PresentRoll(20,new[]{die},"救援者死亡豁免 · D20 "+die+"，调整 "+rescueCarrier.RevivalPenalty);
-            rescueCarrier.ResolveDeathSave(die,worldRounds);rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();
+            yield return PresentRoll(20,new[]{die},"救援者死亡豁免 · D20 "+die+"，调整 "+(rescueCarrier.RevivalPenalty+BondBonus(BattleMap.RescueId)));
+            rescueCarrier.ResolveDeathSave(die,worldRounds,BondBonus(BattleMap.RescueId));rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();
             history.Insert(0,"救援者："+rescueCarrier.LifeLabel+"，死亡豁免成功 "+rescueCarrier.DeathSuccesses+" / 3，失败 "+rescueCarrier.DeathFailures+" / 3。");
             if(rescueCarrier.Stable&&rescueCarrier.RecoveryAt<0){int hours=Random.Range(1,5);yield return PresentRoll(4,new[]{hours},"救援者稳定后 "+hours+" 小时恢复1生命");rescueCarrier.ScheduleRecovery(worldRounds,hours);}
         }finally{panel=saved;rolling=busy;}
@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
     }
     void DrawRescueLifeControls()
     {
-        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
+        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
         DrawExternalCasterRest();
         if(!rescueCarrier.Dead)return;

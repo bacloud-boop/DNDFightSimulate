@@ -92,7 +92,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
+        if(definition.Name=="Warding Bond")DrawWardingBondChoices();
+        else if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
         else if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
         else if(definition.Name=="Heroism")DrawHeroismChoices();
         else if(definition.Name=="Command")DrawCommandChoices();
@@ -179,6 +180,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Warding Bond")return WardingBondError();
         if(spell.Name=="Flaming Sphere")return FlamingSphereError();
         if(spell.Name=="Heat Metal")return HeatObjectError(heatObject,true);
         if(spell.Name=="Heroism")return HeroismError(directSlotLevel);
@@ -263,6 +265,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        int bondedSelection=bondTarget;if(spell.Name=="Warding Bond"&&WardingBondError()!="")yield break;
         if(spell.Name=="Flaming Sphere"&&FlamingSphereError()!="")yield break;
         int heatedSelection=heatObject;if(spell.Name=="Heat Metal"&&HeatObjectError(heatedSelection,true)!="")yield break;
         var heroismSelected=new System.Collections.Generic.List<int>(heroismTargets);if(spell.Name=="Heroism"&&HeroismError(slotLevel)!="")yield break;
@@ -314,6 +317,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Warding Bond"){CastWardingBond(bondedSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flaming Sphere"){CastFlamingSphere(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heat Metal"){yield return CastHeatMetal(heatedSelection,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
