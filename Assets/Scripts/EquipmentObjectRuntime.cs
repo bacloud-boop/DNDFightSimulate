@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
     string EquipmentHandleError(EquipmentObjectRecord item)
     {
         if(page!="battle"||!map.Locked||rolling||spellTargeting||reactionPending||draggingToken>=0)return "请先完成当前操作。";
-        if(combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||PlayerInBeastForm||summonTurns.Active)return "玩家当前无法进行物件交互。";
+        if(!PlayerTurnAllowed||combat.PlayerFeignDeath||combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||PlayerInBeastForm||summonTurns.Active)return "玩家当前无法进行物件交互。";
         EquipmentPose pose;if(!EquipmentObjectPose(item,out pose)||!EquipmentInTouch(pose))return "装备不在可接触的5尺范围，或已融入／位于水下。";
         if(pose.Carrier.HasValue&&pose.Carrier!=0)return "不能直接操作其他角色穿戴或携带的装备。";
         if(PlayerHasShield&&!weaponGrip.Stowed)return "请先收起武器，腾出空手进行遮盖／揭开。";

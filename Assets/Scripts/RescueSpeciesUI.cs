@@ -26,10 +26,10 @@ public sealed partial class TrainingGame
         }
         if(species.Kind==Species2024.Aasimar){GUI.enabled=old;DrawHealingHandsChoices(BattleMap.RescueId);}
         if(species.Kind==Species2024.Dragonborn){GUI.enabled=old&&!rolling&&rescueCarrier.Conscious&&rescueCarrier.TurnActive;if(GUILayout.Button("龙裔吐息 · 选择范围（攻击动作）",button))panel="breathRescue";GUI.enabled=old;}
-        GUI.enabled=old&&!rolling&&rescueCarrier.Conscious&&!rescueCarrier.Load.Loaded&&!combat.NeedsDeathSave;
-        if(GUILayout.Button("救援者短休（1小时，恢复短休次数）",button)){rescueCarrier.EndTurn();AdvanceAftermathTime(600);rescueCarrier.ShortRest();if(rescueCarrier.Conscious)rescueCarrier.BeginTurn(worldRounds);}
+        GUI.enabled=old&&!rolling&&RescueTurnAllowed&&rescueCarrier.Conscious&&!rescueCarrier.Load.Loaded&&!combat.NeedsDeathSave;
+        if(GUILayout.Button("救援者短休（1小时，恢复短休次数）",button))StartCoroutine(RestRescuerAftermath(false));
         GUI.enabled=GUI.enabled&&rescueCarrier.CanLongRest(worldRounds);
-        if(GUILayout.Button("救援者长休（"+(species.LongRestRounds/600)+"小时）",button)){long start=worldRounds;rescueCarrier.EndTurn();AdvanceAftermathTime(species.LongRestRounds);if(rescueCarrier.FinishLongRest(start,worldRounds))rescueCarrier.BeginTurn(worldRounds);}
+        if(GUILayout.Button("救援者长休（"+(species.LongRestRounds/600)+"小时）",button))StartCoroutine(RestRescuerAftermath(true));
         GUI.enabled=old;
     }
 }

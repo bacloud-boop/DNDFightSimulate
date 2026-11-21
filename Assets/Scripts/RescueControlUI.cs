@@ -24,8 +24,8 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(350,110,900,745),paperTexture);if(Btn(new Rect(1140,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,390,630));rescueScroll=GUILayout.BeginScrollView(rescueScroll);
-        GUILayout.Label("救援搬运者",heading);GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
-        bool old=GUI.enabled;GUI.enabled=!rolling&&combat.Aftermath&&!map.RescuePosition.HasValue;
+        GUILayout.Label("救援搬运者",heading);DrawAftermathPhaseControls();GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
+        bool old=GUI.enabled;GUI.enabled=!rolling&&combat.Aftermath&&PlayerTurnAllowed&&!map.RescuePosition.HasValue;
         GUILayout.Label("力量（3～20整数）",small);rescueStrength=IntegerField(rescueStrength,false);
         GUILayout.Label("敏捷（3～20整数，豁免无熟练）",small);rescueDexterity=IntegerField(rescueDexterity,false);
         for(int i=0;i<4;i++){GUILayout.Label(PlayerAttributes.Names[i+2]+"（3～20整数）",small);rescueOtherAbilities[i]=IntegerField(rescueOtherAbilities[i],false);}
@@ -35,7 +35,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("基础最大HP（至少1的整数，另加种族HP）",small);rescueMaxHp=IntegerField(rescueMaxHp,false);
         bool customBody=rescueSpeciesDraft.Kind==Species2024.None;GUI.enabled=GUI.enabled&&customBody;
         GUILayout.Label("体型",small);rescueSize=GUILayout.SelectionGrid(rescueSize,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
-        GUILayout.Label("移动力（非负整数尺）",small);rescueSpeed=IntegerField(rescueSpeed,false);GUI.enabled=old&&!rolling&&combat.Aftermath&&!map.RescuePosition.HasValue;
+        GUILayout.Label("移动力（非负整数尺）",small);rescueSpeed=IntegerField(rescueSpeed,false);GUI.enabled=old&&!rolling&&combat.Aftermath&&PlayerTurnAllowed&&!map.RescuePosition.HasValue;
         GUILayout.Label("体重（正整数磅）",small);rescueBody=IntegerField(rescueBody,false);
         GUILayout.Label("装备总重（非负整数磅）",small);rescueEquipment=IntegerField(rescueEquipment,false);
         GUI.enabled=old;
@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
             GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.Prone;
             if(GUILayout.Button("起身（半速移动）",button))rescueCarrier.Stand();
             GUI.enabled=!rolling&&combat.Aftermath;
-            if(GUILayout.Button("结束救援回合 / 推进6秒",button))StartCoroutine(NextRescueTurn());
+
             GUI.enabled=old;
         }
         GUILayout.Label(rescueMessage,small);GUILayout.EndScrollView();GUILayout.EndArea();
@@ -57,7 +57,7 @@ public sealed partial class TrainingGame
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){
             var cell=new Vector2Int(x,y);var rect=CellRect(board,cell);
             Fill(rect,map.IsWater(cell)?new Color(.06f,.38f,.62f,.58f):new Color(.5f,.35f,.12f,.12f));
-            bool legal=map.RescuePosition.HasValue?(rescueDropMode?map.CanDropRescueCorpse(cell):map.CanMoveRescue(cell)&&rescueCarrier.CanMove(map.RescueMovementCost(cell))):config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true);
+            bool legal=map.RescuePosition.HasValue?RescueTurnAllowed&&(rescueDropMode?map.CanDropRescueCorpse(cell):map.CanMoveRescue(cell)&&rescueCarrier.CanMove(map.RescueMovementCost(cell))):PlayerTurnAllowed&&config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true);
             if(legal)Fill(rect,new Color(.1f,.65f,.25f,.25f));
         }
         for(int i=0;i<=map.Size;i++){Fill(new Rect(board.x+i*size,board.y,1,board.height),new Color(.3f,.2f,.1f,.5f));Fill(new Rect(board.x,board.y+i*size,board.width,1),new Color(.3f,.2f,.1f,.5f));}
@@ -68,11 +68,11 @@ public sealed partial class TrainingGame
         if(!rolling&&combat.Aftermath&&e.type==EventType.MouseDown&&e.button==0&&board.Contains(point)){
             var cell=new Vector2Int((int)((point.x-board.x)/size),(int)((point.y-board.y)/size));
             if(!map.RescuePosition.HasValue){
-                if(config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)&&rescueCarrier.ConfigureProfile(RescueAbilityScores(),rescueSpeciesDraft,int.Parse(rescueProficiency),rescueSize,speed,body,gear,int.Parse(rescueMaxHp))&&map.DeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)){
-                    rescueCarrier.BeginTurn(worldRounds);rescueMessage="救援者已从边缘入场，可点击合法位置移动。";
+                if(PlayerTurnAllowed&&config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)&&rescueCarrier.ConfigureProfile(RescueAbilityScores(),rescueSpeciesDraft,int.Parse(rescueProficiency),rescueSize,speed,body,gear,int.Parse(rescueMaxHp))&&map.DeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)){
+                    rescueMessage="救援者已入场，结束玩家回合后开始救援者回合。";
                     history.Insert(0,"救援搬运者从地图边缘入场，力量"+strength+"，敏捷"+rescueCarrier.Dexterity+"，移动力"+speed+"尺。");
                 }else rescueMessage="不能入场：请检查配置，选择边缘且能容纳完整占地的空位。";
-            }else if(rescueDropMode){if(rescueCarrier.Drop(()=>map.DropRescueCorpse(cell))){rescueDropMode=false;rescueMessage="对象已放在所选合法占地，未消耗动作。";}else rescueMessage="此处无法放下完整占地，请另选绿色位置。";}
+            }else if(!RescueTurnAllowed){rescueMessage="请先结束玩家回合。";}else if(rescueDropMode){if(rescueCarrier.Drop(()=>map.DropRescueCorpse(cell))){rescueDropMode=false;rescueMessage="对象已放在所选合法占地，未消耗动作。";}else rescueMessage="此处无法放下完整占地，请另选绿色位置。";}
             else if(map.CanMoveRescue(cell)&&rescueCarrier.CanMove(map.RescueMovementCost(cell)))StartCoroutine(MoveRescueThroughGrease(cell));
             else rescueMessage="移动失败：距离超出额度、占地冲突或路径被阻挡。";
             e.Use();
@@ -100,9 +100,5 @@ public sealed partial class TrainingGame
         }
         GUI.enabled=old;DrawRescueRetainedCargo();
     }
-    IEnumerator NextRescueTurn()
-    {
-        rolling=true;if(rescueCarrier.Conscious)yield return ResolveGreaseSave(BattleMap.RescueId,ActorGrease(BattleMap.RescueId),"救援回合末油脂");rescueCarrier.EndTurn();yield return AftermathTick();
-        if(map.RescuePosition.HasValue)rescueCarrier.BeginTurn(worldRounds);
-    }
+    IEnumerator NextRescueTurn(){if(RescueTurnAllowed)yield return EndAftermathTurn();}
 }

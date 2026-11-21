@@ -47,9 +47,9 @@ public sealed partial class TrainingGame
         bool busy=rolling;string savedPanel=panel;panel="";rolling=true;long invisible=senses.Token(true,worldRounds);int formerLevel=ActorSpecies(actor).Level,priority=ActorSpecies(actor).BonusPriority;
         try{
             if(!external){PlayerCastWhileSubmerged("Reincarnate");EndConcentration("开始转生术的1小时施法");}
-            AdvanceAftermathTime(ReincarnationRules.CastingRounds);yield return null;
+            yield return AdvanceRevivalTime("Reincarnate",external);
             error=RevivalRules.CompletionError("Reincarnate",CurrentCorpse(actor),worldRounds);
-            if(!external&&!CanPlayerAftermathCast)error="施法者在施法期间失能，转生失败。";
+            if(!external&&(!aftermathAdvanceCompleted||!CanPlayerAftermathCast))error="施法者在施法期间失能，转生失败。";
             if(error!=""){history.Insert(0,"转生术失败："+error);yield break;}
             int result=Random.Range(1,11);dice="转生术 · 新种族 D10";
             yield return PresentRoll(10,new[]{result},"转生术："+SpeciesProfile.Names[result-1]);

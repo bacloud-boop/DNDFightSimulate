@@ -50,7 +50,7 @@ public sealed partial class TrainingGame
     void OpenDancingLightsControl(){RefreshDancingLights();danceMoveRevision=-1;SyncDanceMoveDraft();panel="dancingLights";}
     string DanceMoveError()
     {
-        bool canAct=combat.Aftermath?combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath:combat.PlayerCanAct;
+        bool canAct=combat.Aftermath?PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath:combat.PlayerCanAct;
         if(page!="battle"||!map.Locked||!canAct)return "玩家当前不能进行附赠动作。";
         if(rolling||spellTargeting||reactionPending||draggingToken>=0)return "请先完成当前操作。";
         if(!combat.BonusActionAvailable)return "本回合的附赠动作已使用。";

@@ -45,7 +45,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     void Awake()
     {
         combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
-        map.VoluntaryMovement=(id,cell)=>!Feigning(id)&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id);InitializeCreatureTransit();InitializeWeb();
+        map.VoluntaryMovement=(id,cell)=>!Feigning(id)&&(!combat.Aftermath||(id==0?PlayerTurnAllowed:id==BattleMap.RescueId&&RescueTurnAllowed))&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id);InitializeCreatureTransit();InitializeWeb();
         combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;
         font = Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei", "SimHei", "Arial"}, 24);

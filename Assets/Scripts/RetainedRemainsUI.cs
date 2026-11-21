@@ -27,7 +27,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("旧躯体独立保留，可由救援者肩扛或拖行；落地及拖行时按原占地提供掩护。装备回收需5尺内、水下须潜水，并遵守交互与负重。护甲、盾牌回收到背包，不在战斗中重新穿戴。",small);
         foreach(var body in map.Remains.Bodies){
             GUILayout.Space(10);GUILayout.Label(body.Name+" · 总重 "+WeightUnits.Format(body.Weight.TotalOunces),label);
-            bool enabled=GUI.enabled;bool ready=page=="battle"&&!rolling&&!PlayerInBeastForm&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&RemainsLootReach(body);
+            bool enabled=GUI.enabled;bool ready=page=="battle"&&!rolling&&!PlayerInBeastForm&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&RemainsLootReach(body);
             GUI.enabled=enabled&&ready&&body.NonWeaponGearOunces>0&&(!PlayerHasShield||weaponGrip.Stowed);
             if(GUILayout.Button("回收护甲、盾牌与其他装备 · "+WeightUnits.Format(body.NonWeaponGearOunces),button)){
                 if(body.RecoverGear(playerWeight.Weight,extra=>CarryingRules.CanCarryOunces(EffectivePlayerAbility(0),CarryingCreatureSize(true),playerWeight.Weight.GearOunces,extra),()=>weaponGrip.TryInteract(combat.Round,worldRounds,()=>combat.TryUseObjectAction()))){RefreshRemainsWeight(body);remainsMessage="装备已放入背包；没有改变当前穿戴与AC。";}else remainsMessage="回收失败：负重或物件交互额度不足。";

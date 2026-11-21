@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
         if(caster==BattleMap.RescueId)return map.RescuePosition.HasValue&&rescueCarrier.Conscious&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
         if(!SpeciesPhysicalActive(caster==0))return false;
         if(caster==-1)return combat.MonsterCanAct&&combat.MonsterActionAvailable;
-        bool canAct=combat.Aftermath?combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath:combat.PlayerCanAct;
+        bool canAct=combat.Aftermath?PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath:combat.PlayerCanAct;
         return canAct&&(fighter.AttacksRemaining>0?!fighter.BreathUsedThisAttackAction:combat.ActionsRemaining>0);
     }
     List<int> BreathActors()

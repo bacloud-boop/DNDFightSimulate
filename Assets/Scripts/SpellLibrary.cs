@@ -154,6 +154,7 @@ public sealed partial class TrainingGame
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
         if(RevivalRules.Supported(spell.Name))return RevivalError(spell.Name,directTargetPlayer,false);
         bool aftermathLight=combat.Aftermath&&AftermathLightSpell(spell.Name);
+        if(combat.Aftermath&&!PlayerTurnAllowed)return "请等待救援者结束回合。";
         if(aftermathLight?combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath:!combat.PlayerCanAct)return "玩家当前不能行动。";
         if(!playerResurrectionCaster.CanCast)return "复生术疲惫：完成长休前不能施法。";
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";

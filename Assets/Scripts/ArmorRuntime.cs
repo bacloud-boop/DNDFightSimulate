@@ -49,7 +49,7 @@ public sealed partial class TrainingGame
     }
     void ToggleHeldWeapon()
     {
-        if(rolling||spellTargeting||reactionPending||PlayerInBeastForm||combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath||summonTurns.Active)return;
+        if(!PlayerTurnAllowed||rolling||spellTargeting||reactionPending||PlayerInBeastForm||combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath||summonTurns.Active)return;
         bool preparation=page=="deployment"||!map.Locked;
         bool stow=!weaponGrip.Stowed;if(!stow&&!carriedWeapons.Carried(selectedWeapon.Name)){dice="武器未携带或已掉落，无法取出。";return;}
         if(!weaponGrip.TrySetStowed(stow,combat.Round,worldRounds,()=>combat.TryUseAction(),preparation)){dice="本回合自由交互已用，且没有可用动作收起／取出武器。";return;}
@@ -58,7 +58,7 @@ public sealed partial class TrainingGame
     }
     bool SelectHeldWeapon(Weapon weapon)
     {
-        if(combat.PlayerFeignDeath||!carriedWeapons.Carried(weapon.Name))return false;
+        if(!PlayerTurnAllowed||combat.PlayerFeignDeath||!carriedWeapons.Carried(weapon.Name))return false;
         if(weapon==selectedWeapon)return true;
         if(combat.BattleStarted&&!weaponGrip.Stowed&&!weaponGrip.TrySetStowed(true,combat.Round,worldRounds,()=>combat.TryUseAction())){dice="请先收起当前武器：自由交互已用且没有可用动作。";return false;}
         selectedWeapon=weapon;RefreshShillelagh();return true;

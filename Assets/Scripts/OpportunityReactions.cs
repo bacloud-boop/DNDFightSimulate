@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
     int reactionRange=5;
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
-        if(combat.Aftermath){if(!rolling&&PendingTerrainCount==0&&panel==""&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&map.CanMoveTo(target,tactical))StartCoroutine(ResolveMovement(true,target,tactical));return;}
+        if(combat.Aftermath){if(!rolling&&PendingTerrainCount==0&&panel==""&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&map.CanMoveTo(target,tactical))StartCoroutine(ResolveMovement(true,target,tactical));return;}
         if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
         StartCoroutine(ResolveMovement(true,target,tactical));
     }

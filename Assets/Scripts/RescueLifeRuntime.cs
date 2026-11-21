@@ -57,9 +57,9 @@ public sealed partial class TrainingGame
         try{
             if(!external)PlayerCastWhileSubmerged(name);
             if(!external&&RevivalRules.Duration(name)>1)EndConcentration("开始长时间施法");
-            AdvanceAftermathTime(RevivalRules.Duration(name));yield return null;
+            yield return AdvanceRevivalTime(name,external);
             string error=RevivalRules.CompletionError(name,rescueCarrier.Corpse,worldRounds);
-            if(!external&&!CanPlayerAftermathCast)error="施法者失能，复活失败。";
+            if(!external&&(!aftermathAdvanceCompleted||!CanPlayerAftermathCast))error="施法者失能，复活失败。";
             if(error==""){
                 if(name=="Gentle Repose")rescueCarrier.Corpse.Preserve(worldRounds);
                 else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if(rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name)))RecordResurrectionExertion(external,taxed);}

@@ -25,7 +25,7 @@ public sealed partial class TrainingGame
   if(!combat.BattleStarted)foreach(var item in carriedWeapons.Items){bool current=item.Location==WeaponLocation.Carried;bool next=GUILayout.Toggle(current,item.Key+" · "+WeightUnits.Format(item.WeightOunces),label);if(next!=current&&!carriedWeapons.TrySetCarried(item.Key,next,PlayerWeaponLoadFits))dice="拒绝配置：携带武器后超过负重上限。";}
   foreach(var item in carriedWeapons.Items)if(item.Location==WeaponLocation.Ground){
    bool old=GUI.enabled;bool near=item.Ground.WithinReach(map.Player.x,map.Player.y,map.PlayerSpaces)&&(!item.Ground.Submerged||map.PlayerAquatic.Submerged);
-   GUI.enabled=old&&!rolling&&near&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!PlayerInBeastForm&&weaponGrip.Stowed;
+   GUI.enabled=old&&!rolling&&near&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!PlayerInBeastForm&&weaponGrip.Stowed;
    if(GUILayout.Button("拾取 "+item.Key+(item.Ground.Submerged?"（水下，须潜水，5尺内）":"（5尺内，需空手）"),button)){
     if(carriedWeapons.PickUp(item.Key,PlayerWeaponLoadFits,()=>weaponGrip.TryInteract(combat.Round,worldRounds,()=>combat.TryUseObjectAction()),map.PlayerAquatic.Submerged)){selectedWeapon=Weapon.Available.First(w=>w.InventoryKey==item.Key);weaponGrip.TrySetStowed(false,combat.Round,worldRounds,()=>true,true);SyncWeaponInventory();history.Insert(0,"拾回 "+item.Key+"。");}else dice="拾取失败：负重或交互额度不足。";
    }GUI.enabled=old;
