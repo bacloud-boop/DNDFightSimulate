@@ -96,7 +96,7 @@ public sealed partial class TrainingGame
             if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术 -"+bane);
             if(ward>0)yield return PresentRoll(4,new[]{ward},"剑刃防护 -"+ward);
             if(mirrorIntercepted||value==1||value!=20&&total<armor){history.Insert(0,"木桩"+spell.Chinese+"未命中本体，伤害0。");yield break;}
-            critical=value==20||player&&(combat.PlayerHp==0||combat.PlayerParalyzed)&&distance<=5;
+            critical=value==20||player&&(combat.PlayerHp==0||combat.PlayerParalyzed)&&distance<=5||unit!=null&&unit.SleepStage==2&&distance<=5;
         }
         if(spell.SaveAbility>=0){
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
@@ -122,6 +122,7 @@ public sealed partial class TrainingGame
         var rayDamage=new RayDamage();yield return ReduceRayDamage(false,amount,spell.DamageType,"木桩法术",rayDamage);amount=rayDamage.Amount;
         if(half)amount/=2;
         int frost=player&&spell.Melee?AgathysRetaliation(true):0;
+        if(spell.Name=="Starry Wisp")BindStarryWisp(-1,target);
         yield return ApplyMonsterSpellDamage(target,amount,spell.DamageType,critical);
         if(frost>0)ApplyAgathysRetaliation(frost,false);
     }

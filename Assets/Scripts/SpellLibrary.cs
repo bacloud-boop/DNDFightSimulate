@@ -89,7 +89,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Feign Death")DrawFeignDeathChoices();
+        if(definition.Name=="Starry Wisp")DrawStarryChoices();
+        else if(definition.Name=="Feign Death")DrawFeignDeathChoices();
         else if(definition.Name=="Faerie Fire")DrawFaerieFireChoices();
         else if(definition.Name=="Silence")DrawSilenceChoices();
         else if(IsPointBurst(definition))DrawPointBurstChoices(definition);
@@ -168,6 +169,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
         if(spell.Name=="Light")return LightSpellError();
+        if(spell.Name=="Starry Wisp")return StarryWispError();
         if(spell.Name=="Feign Death")return FeignDeathError();
         if(spell.Name=="Silence")return SilenceError();
         if(spell.Name=="Destructive Wave")return DestructiveWaveError();
@@ -241,6 +243,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
         BreathTemplate burningAim=default(BreathTemplate);if(spell.Name=="Burning Hands"&&!PlayerBurningTemplate(out burningAim))yield break;
+        int starrySelected=starryTarget;if(spell.Name=="Starry Wisp"&&StarryWispError()!="")yield break;
         int feignSelected=feignTarget;if(spell.Name=="Feign Death"&&FeignDeathError()!="")yield break;
         int lightTarget=lightObjectId,lightR=0,lightG=0,lightB=0;if(spell.Name=="Light"&&(LightSpellError()!=""||!LightColors(out lightR,out lightG,out lightB)))yield break;
         if(spell.Name=="Silence"&&SilenceError()!="")yield break;
@@ -286,6 +289,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire"){yield return ResolveFaerieFire(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Starry Wisp"){yield return ResolvePlayerStarryWisp(caster,starrySelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Feign Death"){ApplyFeignDeath(feignSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Light"){ApplyLightSpell(lightTarget,lightR,lightG,lightB);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stoneskin"){ApplyStoneskin();if(!embedded)rolling=false;yield break;}

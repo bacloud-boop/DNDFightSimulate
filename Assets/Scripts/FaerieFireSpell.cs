@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
     readonly FaerieFireEffect faerieFire=new FaerieFireEffect();
     int faerieColor,activeFaerieColor;
     bool FaerieOutlined(int actor)=>faerieFire.Outlined(actor,worldRounds);
-    bool InvisibleWithFaerie(bool player)=>senses.Invisible(player,worldRounds)&&!FaerieOutlined(player?0:-1);
+    bool InvisibleWithFaerie(bool player)=>senses.Invisible(player,worldRounds)&&!FaerieOutlined(player?0:-1)&&!starryWisp.Suppresses(player?0:-1,worldRounds);
     bool FaerieAdvantage(int target,bool sees)=>faerieFire.AttackAdvantage(target,sees,worldRounds);
     string FaerieFireError(){Vector2Int anchor;if(!VisionPoint(out anchor))return "妖火立方区域左上格须位于地图内。";return map.DistanceToCell(true,anchor)>60?"妖火区域起点超出60尺。":worldRounds<0||worldRounds>long.MaxValue-10?"世界时间超出范围。":"";}
     void DrawFaerieFireChoices(){GUILayout.Label("20尺立方（平面4×4格），输入左上格列／行。区域内所有生物（包括自身及召唤物）进行敏捷豁免。离开初始区域不会结束勾勒。",small);visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);faerieColor=GUILayout.SelectionGrid(faerieColor,new[]{"蓝光","绿光","紫光"},3,button);}

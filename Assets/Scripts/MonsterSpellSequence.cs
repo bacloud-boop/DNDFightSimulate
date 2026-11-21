@@ -8,7 +8,7 @@ public sealed class MonsterSpellEntry
 }
 public sealed class MonsterSpellSequence
 {
-    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance","Burning Hands"};
+    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance","Burning Hands","Starry Wisp"};
     readonly List<MonsterSpellEntry> entries=new List<MonsterSpellEntry>();
     public IReadOnlyList<MonsterSpellEntry> Entries=>entries.AsReadOnly();
     public int Ability {get;private set;}=4;
