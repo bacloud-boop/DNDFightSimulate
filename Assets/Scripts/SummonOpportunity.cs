@@ -48,14 +48,14 @@ public sealed partial class TrainingGame
     }
     IEnumerator MoveSpiritWithReactions(SummonedUnit unit,Vector2Int target,bool greaseStep=false,int? prepaid=null,int? travelDistance=null)
     {
-        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive)yield break;
+        if(page!="battle"||unit==null||!unit.Alive||!CommandMoving(unit.Id)&&(combat.Aftermath||combat.BattleFinished))yield break;
         System.Func<bool> validate=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target);
         if(!(greaseStep?map.WithCreatureTransitStep(unit.Id,validate):validate()))yield break;
         if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds)||web.Active(worldRounds)||cloudDaggers.Active(worldRounds)||map.CreaturePathNeedsSteps(unit.Id,new Vector2Int(unit.X,unit.Y),target,unit.Spaces))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
         bool previous=summonActing;summonActing=true;
         try{
             var from=new Vector2Int(unit.X,unit.Y);
-            if(!unit.Disengaged&&MonsterCanCastAttack&&combat.MonsterCanAct&&combat.MonsterReactionAvailable&&!combat.MonsterReactionsBlocked&&!combat.MonsterOpportunityBlocked&&BattleMap.LeavesReach(from,target,map.Monster,MonsterAttackReach,unit.Spaces,map.MonsterSpaces)){
+            if(!combat.Aftermath&&!unit.Disengaged&&MonsterCanCastAttack&&combat.MonsterCanAct&&combat.MonsterReactionAvailable&&!combat.MonsterReactionsBlocked&&!combat.MonsterOpportunityBlocked&&BattleMap.LeavesReach(from,target,map.Monster,MonsterAttackReach,unit.Spaces,map.MonsterSpaces)){
                 double at=VisionState.ReachExit(from.x,from.y,target.x,target.y,unit.Spaces,map.Monster.x,map.Monster.y,map.MonsterSpaces,MonsterAttackReach);
                 var body=MovingBodyAt(from,target,unit.Spaces,at);
                 if(at>=0&&VisibilityBetween(false,map.Monster.x,map.Monster.y,map.MonsterSpaces,body.X,body.Y,unit.Spaces)<2){
@@ -64,7 +64,7 @@ public sealed partial class TrainingGame
                     if(reactionDecision==1&&combat.TryUseReaction(false))yield return ResolveMonsterSpiritAttack(unit,body);
                 }
             }
-            if(!unit.Alive||combat.BattleFinished||combat.Aftermath)yield break;
+            if(!unit.Alive||!CommandMoving(unit.Id)&&(combat.BattleFinished||combat.Aftermath))yield break;
             System.Func<bool> move=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.MoveSummon(unit.Id,target),travelDistance):map.MoveSummon(unit.Id,target);
             if(greaseStep?map.WithCreatureTransitStep(unit.Id,move):move()){history.Insert(0,unit.Name+"移动至("+(target.x+1)+","+(target.y+1)+")，继续原指令，无需开口。");ObserveWaterBreathing();}
             if(PendingTerrainCount>0)yield return DrainGreaseEntries();

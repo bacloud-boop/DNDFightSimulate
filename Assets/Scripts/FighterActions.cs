@@ -34,6 +34,7 @@ public sealed partial class TrainingGame
         playerSpeciesAbilities.Reset();monsterSpeciesAbilities.Reset();playerSpeciesSpellUses.LongRest();highElfCantripReplacement=false;
         EndFaerieFire();spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();
+        commandEffect.Clear();commandTargets.Clear();commandTargets.Add(-1);commandActor=int.MaxValue;
         ExitAftermathTurns();EndCloudDaggers();EndWeb();terrainMovementEvent=0;terrainTurn=0;terrainActor=0;turnConditions.Clear();ClearStarryWisp();feignDeath.Clear();SyncFeignDeath();sensory.Clear();enfeeblement.Clear();
         monsterSpells.Reset();playerResurrectionCaster.Reset();externalResurrectionCaster.Reset();
         rescueCarrier.Reset();map.Remains.Clear();playerWeight.Weight.SetStoredGear(0);monsterWeight.Weight.SetStoredGear(0);playerCorpseLoad.Clear();monsterCorpseLoad.Clear();

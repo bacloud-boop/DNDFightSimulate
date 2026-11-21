@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
    int beforeTravel=meter.Travelled;int cost=map.RouteStepCost(meter,previousCell,cell,unit.Spaces,unit.SwimSpeed,unit.Id);previousCell=cell;if(cost<1)continue;
    if(!map.WithCreatureTransitStep(unit.Id,()=>map.WithMovementCost(cell,cost,()=>map.CanMoveSummon(unit.Id,cell))))break;bool prone=unit.Prone;
    yield return MoveSpiritWithReactions(unit,cell,true,cost,meter.Travelled-beforeTravel);if(unit.X!=cell.x||unit.Y!=cell.y)break;
-   if(!unit.Alive||unit.Restrained||combat.BattleFinished||!prone&&unit.Prone)break;
+   if(!unit.Alive||unit.Restrained||combat.BattleFinished&&!CommandMoving(unit.Id)||!prone&&unit.Prone)break;
   }}finally{ObserveForcedSharedStop(unit.Id);summonActing=previous;}
  }
  IEnumerator MoveRescueThroughGrease(Vector2Int target)

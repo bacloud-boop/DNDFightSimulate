@@ -78,7 +78,7 @@ public sealed class SummonedUnit
         ReactionAvailable=true;Id=id;Name=name;MaxHp=Hp=hp;Armor=armor;Speed=speed;Size=size;AttacksPerAction=attacks;
     }
     long lastTurn=-1;
-    public bool BeginTurn(long sequence){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;TurnStarted?.Invoke();return true;}
+    public bool BeginTurn(long sequence,bool notify=true){if(!Alive||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ReactionAvailable=true;movementSpent=0;dashes=0;actionAvailable=true;AttacksRemaining=0;Dodging=Disengaged=false;BonusAvailable=true;if(notify)TurnStarted?.Invoke();return true;}
     public Action TurnEnded,TurnStarted,FireExposure;
     public void EndTurn(){bool active=TurnActive;BonusAvailable=false;TurnActive=false;actionAvailable=false;AttacksRemaining=0;if(active)TurnEnded?.Invoke();}
     public bool CanSpendMovement(int cost)=>Alive&&TurnActive&&cost>0&&cost<=MovementRemaining;

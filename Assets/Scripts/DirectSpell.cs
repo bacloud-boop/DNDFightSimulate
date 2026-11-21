@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Command","命令术","1动作 · 60尺 · 声音。选择可见生物，各自感知豁免；失败者下回合执行接近、丢弃、逃跑、趴下或站住，同次施法使用同一命令。每升一环增加1名目标。接近仅普通移动后结束；逃跑仅普通移动及不消耗次数的疾走，不自动施法或消耗职业／种族次数。",1,60,0),
         new DirectSpell("Destructive Wave","湮灭波","1动作 · 自身30尺光环 · 声音。自选范围内生物，体质豁免失败承受5d6雷鸣和5d6光耀或死灵（施法时选择）并倒地；成功只受减半伤害。每类伤害分别结算抗性／免疫，升环不增加伤害。",5,0,6,save:2,halfSave:true),
         new DirectSpell("Chain Lightning","连锁闪电","1动作 · 150尺 · 声音、姿势。首目标必须可见，另选至多3名距其30尺内的不同生物；分别敏捷豁免，失败10d8闪电，成功减半。每升环只增加一个次级目标。物件目标等待环境系统。",6,150,8,save:1,damageType:"闪电",baseDice:10,halfSave:true),
         new DirectSpell("Mass Heal","群体医疗术","1动作 · 60尺 · 声音、姿势。在可见的任意数量生物间分配至多700治疗。仅实际恢复至少1HP的目标解除目盲、耳聋与中毒；满血或恢复生命受阻时不解除。",9,60,0),

@@ -29,6 +29,7 @@ public sealed partial class TrainingGame
             if(!complete){
                 if(!rescueCarrier.BeginTurn(combat.Round))StartWebTurn(BattleMap.RescueId);
                 if(PendingTerrainCount>0)yield return DrainGreaseEntries();yield return RescueDeathSave();
+                var commanded=new CommandResolution();yield return FollowCommand(BattleMap.RescueId,commanded);if(commanded.Consumed){yield return EndAftermathTurn();yield break;}
                 if(!automaticAftermathAdvance)history.Insert(0,"战后切换至救援者回合；世界时间尚未推进，玩家主动操作暂停。");
             }else{
                 AdvanceAftermathClock(1);combat.EndRound(false);fighter.EndRound();lightAttacksThisTurn.Clear();actionWeapon=null;map.RefreshMovement();

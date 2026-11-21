@@ -33,7 +33,7 @@ public sealed partial class TrainingGame
         monsterCounterspellDraft=GUILayout.Toggle(monsterCounterspellDraft,"具备法术反制：满足条件时自动消耗反应",label);
         for(int i=0;i<monsterSpellDraft.Count;i++){
             var entry=monsterSpellDraft[i];var definition=MonsterSpellCatalog.Find(entry.Name);
-            GUILayout.Label((i+1)+". "+definition.Chinese+" · "+(entry.Slot==0?"戏法":entry.Slot+"环"),small);
+            GUILayout.Label((i+1)+". "+definition.Chinese+" · "+(entry.Slot==0?"戏法":entry.Slot+"环")+(entry.Name=="Command"?" · "+CommandEffect.Names[entry.CommandMode]:""),small);
             GUILayout.BeginHorizontal();
             if(GUILayout.Button("上移",button)&&i>0){monsterSpellDraft[i]=monsterSpellDraft[i-1];monsterSpellDraft[i-1]=entry;}
             if(GUILayout.Button("删除",button)){monsterSpellDraft.RemoveAt(i);GUILayout.EndHorizontal();break;}
@@ -44,7 +44,8 @@ public sealed partial class TrainingGame
         string chosen=MonsterSpellSequence.Supported[monsterSpellPick];int minimum=MonsterSpellSequence.BaseLevel(chosen);
         monsterSpellSlot=minimum==0?0:Mathf.Clamp(monsterSpellSlot,minimum,9);
         if(minimum>0){GUILayout.Label("施法环阶",small);string[] slots=new string[10-minimum];for(int i=0;i<slots.Length;i++)slots[i]=(minimum+i).ToString();monsterSpellSlot=minimum+GUILayout.SelectionGrid(monsterSpellSlot-minimum,slots,5,button);}
-        if(GUILayout.Button("添加到循环列表",button))monsterSpellDraft.Add(new MonsterSpellEntry(chosen,monsterSpellSlot));
+        if(chosen=="Command")monsterCommandChoice=GUILayout.SelectionGrid(monsterCommandChoice,CommandEffect.Names,3,button);
+        if(GUILayout.Button("添加到循环列表",button))monsterSpellDraft.Add(new MonsterSpellEntry(chosen,monsterSpellSlot,chosen=="Command"?monsterCommandChoice:0));
         if(GUILayout.Button("确认更改",button)){
             int level;var target=monsterSpellsOriginal?new MonsterSpellSequence():monsterSpells;
             if(!int.TryParse(monsterCasterLevelDraft,out level)||!target.Configure(monsterSpellAbilityDraft,level,monsterCounterspellDraft,monsterSpellDraft))monsterSpellMessage="施法等级须为1～20整数，法术环阶须合法。";

@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
         Vector2Int from=movingPlayer?map.Player:map.Monster;
         if(from==target||jumping&&!CanUseJump(movingPlayer,target,tactical))yield break;
         bool proneAtStart=movingPlayer?combat.PlayerProne:combat.MonsterProne;combat.MarkBattleStarted();rolling=true;
-        if(!movingPlayer){yield return ResolveMonsterMoveSummonReactions(from,target);if(combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
+        if(!movingPlayer&&!combat.Aftermath){yield return ResolveMonsterMoveSummonReactions(from,target);if(combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=!combat.Aftermath&&(defenderPlayer?PlayerWeaponReactionReady&&!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:MonsterCanCastAttack&&!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked);
         int reach=defenderPlayer?5:MonsterAttackReach;

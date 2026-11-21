@@ -4,11 +4,12 @@ public sealed class MonsterSpellEntry
 {
     public string Name {get;}
     public int Slot {get;}
-    public MonsterSpellEntry(string name,int slot){Name=name;Slot=slot;}
+    public int CommandMode {get;}
+    public MonsterSpellEntry(string name,int slot,int commandMode=0){Name=name;Slot=slot;CommandMode=commandMode;}
 }
 public sealed class MonsterSpellSequence
 {
-    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance","Burning Hands","Color Spray","Starry Wisp"};
+    public static readonly string[] Supported={"Fire Bolt","Sacred Flame","Poison Spray","Toll the Dead","Inflict Wounds","Cure Wounds","Healing Word","Magic Missile","Scorching Ray","Blight","Power Word Kill","Acid Splash","Fireball","Shatter","Circle of Death","Thunderclap","Word of Radiance","Burning Hands","Color Spray","Starry Wisp","Command"};
     readonly List<MonsterSpellEntry> entries=new List<MonsterSpellEntry>();
     public IReadOnlyList<MonsterSpellEntry> Entries=>entries.AsReadOnly();
     public int Ability {get;private set;}=4;
@@ -16,15 +17,16 @@ public sealed class MonsterSpellSequence
     public bool Counterspell {get;private set;}
     public int Cursor {get;private set;}
     public MonsterSpellEntry Next=>entries.Count==0?null:entries[Cursor];
-    public static int BaseLevel(string name)=>name=="Power Word Kill"?9:name=="Circle of Death"?6:name=="Blight"?4:name=="Fireball"?3:name=="Scorching Ray"||name=="Shatter"?2:name=="Burning Hands"||name=="Color Spray"||name=="Inflict Wounds"||name=="Cure Wounds"||name=="Healing Word"||name=="Magic Missile"?1:Array.IndexOf(Supported,name)>=0?0:-1;
+    public static int BaseLevel(string name)=>name=="Power Word Kill"?9:name=="Circle of Death"?6:name=="Blight"?4:name=="Fireball"?3:name=="Scorching Ray"||name=="Shatter"?2:name=="Command"||name=="Burning Hands"||name=="Color Spray"||name=="Inflict Wounds"||name=="Cure Wounds"||name=="Healing Word"||name=="Magic Missile"?1:Array.IndexOf(Supported,name)>=0?0:-1;
     public bool Configure(int ability,int level,bool counterspell,IEnumerable<MonsterSpellEntry> values)
     {
         if(ability<0||ability>5||level<1||level>20||values==null)return false;
         var draft=new List<MonsterSpellEntry>();
         foreach(var entry in values){
             if(entry==null)return false;int minimum=BaseLevel(entry.Name);
+            if(entry.CommandMode<0||entry.CommandMode>4)return false;
             if(minimum<0||entry.Slot<minimum||entry.Slot>9||(minimum==0&&entry.Slot!=0))return false;
-            draft.Add(new MonsterSpellEntry(entry.Name,entry.Slot));
+            draft.Add(new MonsterSpellEntry(entry.Name,entry.Slot,entry.CommandMode));
         }
         entries.Clear();entries.AddRange(draft);Ability=ability;CasterLevel=level;Counterspell=counterspell;Cursor=0;return true;
     }

@@ -7,7 +7,7 @@ public sealed partial class TrainingGame
     {
         get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?(MonsterSpellCatalog.IsCone(spell)?15:Mathf.Max(spell.Range,spell.EmanationRadius)):MonsterAttackReach;}
     }
-    bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
+    bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Command"||spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)
     {
         if(id==0)return MonsterSeesPlayer;var unit=FindSummon(id);
@@ -29,7 +29,8 @@ public sealed partial class TrainingGame
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
         var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell),cone=MonsterSpellCatalog.IsCone(spell);Vector2Int areaCenter=default(Vector2Int);BreathTemplate conePlan=default(BreathTemplate);
-        int target=spell==null?-2:cone?(TryPlanMonsterBurningHands(out conePlan)?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
+        var commandVictims=spell!=null&&spell.Name=="Command"?MonsterCommandTargets(entry.Slot):null;
+        int target=spell==null?-2:commandVictims!=null?(commandVictims.Count>0?commandVictims[0]:-2):cone?(TryPlanMonsterBurningHands(out conePlan)?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2||spell.Bonus&&!combat.MonsterBonusActionAvailable||!SpellVoiceAllowed(false,spell.Name)){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
         if(!(spell.Bonus?combat.TryUseMonsterBonusAction():combat.TryUseMonsterAction()))yield break;
         result.Cast=true;result.Bonus=spell.Bonus;
@@ -44,7 +45,8 @@ public sealed partial class TrainingGame
         }
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
-            if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
+            if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
+            else if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
             else if(cone)yield return ResolveBurningHands(false,0,entry.Slot,conePlan);
             else if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
             else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);

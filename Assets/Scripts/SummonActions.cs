@@ -84,7 +84,8 @@ public sealed partial class TrainingGame
             web.ExpireMissingSummonOwners(id=>FindSummon(id)!=null);SyncTimedBuffs();summonTurns.Begin(followers,combat.Round,combat.Aftermath,continuing);
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;if(PendingTerrainCount>0)yield return DrainGreaseEntries();summonEndRequested=false;
-                if(unit.FeignDeath||unit.SleepStage==2)summonEndRequested=true;
+                var commanded=new CommandResolution();yield return FollowCommand(unit.Id,commanded);
+                if(commanded.Consumed||unit.FeignDeath||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 if(unit.Alive)yield return FinishSummonPassiveEffects(unit);
