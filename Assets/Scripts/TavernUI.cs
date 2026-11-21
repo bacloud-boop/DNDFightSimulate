@@ -70,7 +70,7 @@ public sealed partial class TrainingGame
         SyncWeaponInventory();ObserveWaterBreathing();
         if(!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
-        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
+        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath){knownFormReplacement=false;highElfCantripReplacement=false;}
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
@@ -84,6 +84,8 @@ public sealed partial class TrainingGame
         if(reincarnationPending){DrawReincarnationPrompt();return;}
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(webOrderPending){DrawWebOrder();return;}
+        if(terrainEntryOrderPending){DrawTerrainEntryOrder();return;}
+        if(unitEndOrderPending){DrawUnitEndOrder();return;}
         if(sensoryOrderPending){DrawSensorySaveOrder();DrawWebOrder();return;}
         if(page=="home") DrawHome();else if(page=="settings") DrawSettings();else if(page=="deployment") DrawDeployment();else DrawBattle();
         if(page=="battle" && spellTargeting)DrawSpellTargeting(new Rect(600,110,400,400));

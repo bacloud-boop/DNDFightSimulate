@@ -29,14 +29,15 @@ public sealed partial class TrainingGame
     bool InWeb(int actor){Vector2Int p;int n;return WebBody(actor,out p,out n)&&web.Intersects(p.x,p.y,n,worldRounds);}
     void SyncWeb()
     {
-        web.Refresh(worldRounds,combat.Aftermath);
+        web.Refresh(worldRounds);
         foreach(int actor in BreathActors())if(web.Restrained(actor,worldRounds)&&!InWeb(actor))web.Release(actor);
         rescueCarrier.Restrained=web.Restrained(BattleMap.RescueId,worldRounds);
         combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=entangle.Restrained(unit.Id,worldRounds)||web.Restrained(unit.Id,worldRounds);
     }
-    void StartWebTurn(int actor)
+    void StartWebTurn(int actor)=>StartTerrainTurn(actor,false);
+    void StartTerrainTurn(int actor,bool independent)
     {
-        bool shared=actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
+        bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
         if(!shared){terrainActor=actor;terrainTurn++;}web.StartTurn(actor);SyncWeb();
         QueueWebEntry(actor,true);SyncTimedBuffs();
     }

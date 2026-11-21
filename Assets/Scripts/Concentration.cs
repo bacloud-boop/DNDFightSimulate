@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     {
         if(!IsConcentrating)return;
         ClearStoneskin();ClearSleepEffects();EndFaerieFire();EndDancingLights();
-        EndWeb();spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
+        EndCloudDaggers();EndWeb();spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();
         silence.Clear();
         history.Insert(0,concentrationSpell+"专注结束："+reason+"。");

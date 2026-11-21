@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         try{
             if(aftermathTurns.PlayerTurn){yield return RepeatSensorySaves(true);FinishWaterBreathingTurn(true);NoticeCastingInterruption();ApplySharedTurnEnd(0);combat.ExpirePlayerTurnEffects();}
             else {
-                if(map.RescuePosition.HasValue){if(!rescueCarrier.Dead)yield return ResolveGreaseSave(BattleMap.RescueId,ActorGrease(BattleMap.RescueId),"救援回合末油脂");rescueDropMode=false;bool active=rescueCarrier.TurnActive;rescueCarrier.EndTurn();if(!active)ApplySharedTurnEnd(BattleMap.RescueId);}
+                if(map.RescuePosition.HasValue){if(!rescueCarrier.Dead)yield return FinishUnitEndEffects(BattleMap.RescueId);rescueDropMode=false;bool active=rescueCarrier.TurnActive;rescueCarrier.EndTurn();if(!active)ApplySharedTurnEnd(BattleMap.RescueId);}
             }
             bool complete=aftermathTurns.Finish(map.RescuePosition.HasValue);combat.AftermathPlayerTurn=aftermathTurns.PlayerTurn;
             if(!complete){
@@ -31,8 +31,8 @@ public sealed partial class TrainingGame
                 if(PendingTerrainCount>0)yield return DrainGreaseEntries();yield return RescueDeathSave();
                 if(!automaticAftermathAdvance)history.Insert(0,"战后切换至救援者回合；世界时间尚未推进，玩家主动操作暂停。");
             }else{
-                AdvanceAftermathClock(1);combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();actionWeapon=null;map.RefreshMovement();
-                if(PendingTerrainCount>0)yield return DrainGreaseEntries();NoticeCastingInterruption();yield return PlayerDeathSave();
+                AdvanceAftermathClock(1);combat.EndRound(false);fighter.EndRound();lightAttacksThisTurn.Clear();actionWeapon=null;map.RefreshMovement();
+                yield return RunAftermathPassiveTurns();StartWebTurn(0);if(PendingTerrainCount>0)yield return DrainGreaseEntries();NoticeCastingInterruption();yield return PlayerDeathSave();
                 if(!automaticAftermathAdvance)history.Insert(0,"战后双方回合结束，推进6秒并开始下一玩家回合；救援者资源在其回合开始时刷新。");
             }
         }finally{rolling=busy;}

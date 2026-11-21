@@ -76,8 +76,7 @@ public sealed partial class TrainingGame
         try{
             EndSteedFearsAtPlayerTurnEnd();
             if(ControlledSteed&&steed.TurnActive){
-                yield return RepeatSummonSleep(steed);if(steed!=null&&steed.Alive)yield return ResolveGreaseSave(steed.Id,ActorGrease(steed.Id),"坐骑回合末油脂");
-                if(steed!=null&&steed.Alive){ObserveWaterBreathing();if(steed.Breathing.EndTurn(combat.Round,worldRounds+1)&&steed.Breathing.Fatal)steed.Dismiss();}
+                yield return FinishSummonPassiveEffects(steed);
             }
             int continuing=steed!=null&&steed.TurnActive&&!ControlledSteed?steed.Id:0;
             var followers=new System.Collections.Generic.List<SummonedUnit>();
@@ -88,9 +87,7 @@ public sealed partial class TrainingGame
                 if(unit.FeignDeath||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
-                if(unit.Alive)yield return RepeatSummonSleep(unit);
-                if(unit.Alive)yield return ResolveGreaseSave(unit.Id,ActorGrease(unit.Id),"召唤物回合末油脂");
-                if(unit.Alive){ObserveWaterBreathing();if(unit.Breathing.EndTurn(combat.Round,worldRounds+1)&&unit.Breathing.Fatal)unit.Dismiss();}
+                if(unit.Alive)yield return FinishSummonPassiveEffects(unit);
                 if(summonTurns.Current==unit)summonTurns.EndCurrent();else summonTurns.Reconcile();
             }
         }finally{summonTurns.Cancel();panel="";summonActing=false;}

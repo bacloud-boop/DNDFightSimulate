@@ -51,7 +51,7 @@ public sealed partial class TrainingGame
         if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive)yield break;
         System.Func<bool> validate=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target);
         if(!(greaseStep?map.WithCreatureTransitStep(unit.Id,validate):validate()))yield break;
-        if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds)||web.Active(worldRounds)||map.CreaturePathNeedsSteps(unit.Id,new Vector2Int(unit.X,unit.Y),target,unit.Spaces))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
+        if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds)||web.Active(worldRounds)||cloudDaggers.Active(worldRounds)||map.CreaturePathNeedsSteps(unit.Id,new Vector2Int(unit.X,unit.Y),target,unit.Spaces))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
         bool previous=summonActing;summonActing=true;
         try{
             var from=new Vector2Int(unit.X,unit.Y);

@@ -298,6 +298,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="armor"||panel=="monsterArmor"){DrawArmorPanel(panel=="armor");return;}
         if(panel=="summons"){DrawSummonControl();return;}
         if(panel=="rescue"){DrawRescueControl();return;}
+        if(panel=="cloudDaggers"){DrawCloudDaggersControl();return;}
         if(panel=="dancingLights"){DrawDancingLightsPanel(true);return;}
         if(panel=="equipmentObjects"){DrawEquipmentObjectsPanel();return;}
         if(panel=="breathRescue"){DrawBreathPanel(BattleMap.RescueId);return;}

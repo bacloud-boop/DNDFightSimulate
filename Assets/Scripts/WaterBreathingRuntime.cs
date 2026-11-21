@@ -103,12 +103,12 @@ public sealed partial class TrainingGame
         if(player?combat.PlayerDead:combat.Hp==0)return;
         ObserveWaterBreathing();var state=player?playerBreathing:monsterBreathing;
         long now=worldRounds+(player?1:0);
-        bool increased=state.EndTurn(combat.Round,now,()=>{
+        bool increased=state.EndTurn(terrainTurn,now,()=>{
             if(!deathWard.Consume(player,now))return false;
             history.Insert(0,"防死结界抵消本次致死窒息力竭，"+(player?"玩家":"木桩")+"保持5级，结界消耗。");return true;
         });
         if(increased)history.Insert(0,(player?"玩家":"木桩")+"窒息力竭 "+state.SuffocationExhaustion+"级，d20减值 "+state.D20Penalty+"，速度减少 "+state.SpeedPenalty+"尺。");
-        if(state.Fatal){if(player)worldRounds=now;combat.ApplyFatalExhaustion(player,state.SuffocationExhaustion);CheckBattleOutcome();}
+        if(state.Fatal){if(player&&!combat.Aftermath)worldRounds=now;combat.ApplyFatalExhaustion(player,state.SuffocationExhaustion);CheckBattleOutcome();}
         SyncTimedBuffs();
     }
 }

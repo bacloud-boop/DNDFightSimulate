@@ -255,6 +255,6 @@ public sealed class CombatState
         if(newMaxHp < 1) throw new ArgumentOutOfRangeException(nameof(newMaxHp));
         if(newMaxHp != monsterBaseMaxHp) { monsterBaseMaxHp = newMaxHp; Hp = MaxHp; }
     }
-    public void EndRound() {PlayerReactionsBlocked=false;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions();TurnStarted?.Invoke(0); }
+    public void EndRound(bool notify=true) {PlayerReactionsBlocked=false;ShieldActive=false;PlayerSlowed=false;MonsterSlowed=false;PlayerOpportunityBlocked=false; BattleStarted=true;Round++;PlayerReactionAvailable=true;RefreshActions();if(notify)TurnStarted?.Invoke(0); }
 
 }
