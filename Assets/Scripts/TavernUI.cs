@@ -83,6 +83,7 @@ public sealed partial class TrainingGame
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
         if(reincarnationPending){DrawReincarnationPrompt();return;}
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
+        if(heatPromptPending){DrawHeatMetalPrompt();return;}
         if(temporaryHpPending){DrawTemporaryHpChoice();return;}
         if(heroismOrderPending){DrawHeroismStartOrder();return;}
         if(webOrderPending){DrawWebOrder();return;}

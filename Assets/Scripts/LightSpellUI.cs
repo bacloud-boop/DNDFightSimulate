@@ -43,12 +43,13 @@ public sealed partial class TrainingGame
         if(selected!=null){
             EquipmentPose pose;bool onMap=EquipmentObjectPose(selected,out pose);GUILayout.Label(selected.Name,heading);GUILayout.Label(onMap?pose.Location:"场外存放",small);
             bool enabled=GUI.enabled;GUI.enabled=enabled&&!combat.BattleStarted&&!rolling;
-            int size=GUILayout.SelectionGrid(selected.Size,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=16,fixedHeight=36});if(size!=selected.Size)equipmentObjects.Configure(selected.Id,size,selected.Covered);GUI.enabled=enabled;
+            int size=GUILayout.SelectionGrid(selected.Size,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=16,fixedHeight=36});if(size!=selected.Size)equipmentObjects.Configure(selected.Id,size,selected.Covered);
+            bool metal=GUILayout.Toggle(selected.Metal,"金属物件（灼热金属可选目标）",label);if(metal!=selected.Metal)equipmentObjects.Configure(selected.Id,selected.Size,selected.Covered,metal);GUI.enabled=enabled;
             if(onMap)GUILayout.Label("当前体型："+CreatureProfile.SizeNames[EffectiveObjectSize(selected,pose)]+(pose.Melded?" · 装备已融入":"")+"\n遮盖："+(selected.Covered?"完全遮盖，阻光":"未遮盖")+"\n"+(objectLight.ObjectId==selected.Id&&objectLight.Active(worldRounds)?"附着光亮术，最多剩余 "+Math.Max(0,objectLight.Expires-worldRounds)*6+" 秒":""),label);
             string error=!combat.BattleStarted?"":EquipmentHandleError(selected);GUI.enabled=enabled&&!rolling&&error=="";
             if(GUILayout.Button(selected.Covered?"揭开物件":"完全遮盖物件（不透明遮盖）",button))ToggleEquipmentCover(selected);GUI.enabled=enabled;
             if(error!="")GUILayout.Label(error,small);
-            GUILayout.Label("体型用于法术的目标合法性判断，重量仍由装备资料结算。回收进背包的护甲／盾牌先按遮盖状态存放，可再揭开；不会自动穿戴。",small);
+            GUILayout.Label("体型与金属标记仅能在首次操作前更改；盾牌默认金属，武器与护甲按常见材质预填。重量仍由装备资料结算。回收进背包的护甲／盾牌先按遮盖状态存放，可再揭开；不会自动穿戴。",small);
         }
         GUILayout.EndArea();
     }

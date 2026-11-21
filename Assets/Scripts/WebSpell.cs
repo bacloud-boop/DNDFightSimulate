@@ -37,6 +37,7 @@ public sealed partial class TrainingGame
     void StartWebTurn(int actor)=>StartTerrainTurn(actor,false);
     void StartTerrainTurn(int actor,bool independent)
     {
+        if(actor==0)heatMetal.CasterTurnStarts();
         bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
         if(!shared){terrainActor=actor;terrainTurn++;}web.StartTurn(actor);SyncWeb();
         QueueWebEntry(actor,true);QueueHeroismStart(actor);SyncTimedBuffs();

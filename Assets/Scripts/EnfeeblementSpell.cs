@@ -9,7 +9,7 @@ public sealed partial class TrainingGame
         bool result=enfeeblement.ConsumeAttack(player,ability,worldRounds,combat.Round);
         bool mockery=combat.ConsumeMockery(player);
         if(result&&concentrationSpell=="衰弱射线"&&!enfeeblement.Active(true,worldRounds,combat.Round)&&!enfeeblement.Active(false,worldRounds,combat.Round))EndConcentration("下次攻击劣势已使用");
-        return result||mockery;
+        return result||mockery||HeatDisadvantage(player?0:-1);
     }
     int MonsterCustomAttackAbility=>MonsterPolymorphed?BeastAttack.Find(polymorph.Form).Ability:monsterAttackAbility-1;
     string EnfeeblementError(bool player)

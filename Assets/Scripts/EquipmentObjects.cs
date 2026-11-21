@@ -13,6 +13,7 @@ public sealed class EquipmentObjectRecord
     public int Definition {get;internal set;}
     public int Size {get;internal set;}
     public bool Covered {get;internal set;}
+    public bool Metal {get;internal set;}
     public EquipmentObjectPlace Place {get;internal set;}
     public int RemainsId {get;internal set;}
     public int Carrier {get;internal set;}
@@ -20,7 +21,12 @@ public sealed class EquipmentObjectRecord
 // Identity remains stable through corpse storage and recovery; preparation options survive a reset.
 public sealed class EquipmentObjectCatalog
 {
-    struct Options {public int Size;public bool Covered;}
+    struct Options {public int Size;public bool Covered,Metal;}
+    public static bool DefaultMetal(EquipmentObjectKind kind,string name,int definition)
+    {
+        if(kind==EquipmentObjectKind.Shield)return true;if(kind==EquipmentObjectKind.Armor)return definition>=5;
+        return name!="短棒"&&name!="巨棒"&&name!="长棍"&&name!="鞭"&&name!="长弓"&&name!="短弓"&&name!="投石索";
+    }
     readonly Dictionary<string,Options> preparation=new Dictionary<string,Options>();
     readonly Dictionary<string,EquipmentObjectRecord> weapons=new Dictionary<string,EquipmentObjectRecord>(),slots=new Dictionary<string,EquipmentObjectRecord>();
     readonly List<EquipmentObjectRecord> objects=new List<EquipmentObjectRecord>();int nextId=1;
@@ -29,7 +35,7 @@ public sealed class EquipmentObjectCatalog
     EquipmentObjectRecord Create(int owner,EquipmentObjectKind kind,string key,string name,int definition,int defaultSize)
     {
         Options option;bool configured=preparation.TryGetValue(key,out option);
-        var record=new EquipmentObjectRecord{Id=nextId++,Owner=owner,Kind=kind,Key=key,Name=name,Definition=definition,Size=configured?option.Size:Math.Max(0,Math.Min(5,defaultSize)),Covered=configured&&option.Covered,Place=EquipmentObjectPlace.Equipped};objects.Add(record);return record;
+        var record=new EquipmentObjectRecord{Id=nextId++,Owner=owner,Kind=kind,Key=key,Name=name,Definition=definition,Size=configured?option.Size:Math.Max(0,Math.Min(5,defaultSize)),Covered=configured&&option.Covered,Metal=configured?option.Metal:DefaultMetal(kind,name,definition),Place=EquipmentObjectPlace.Equipped};objects.Add(record);return record;
     }
     void DefaultSize(EquipmentObjectRecord record,int size,bool preparing){if(preparing&&!preparation.ContainsKey(record.Key))record.Size=Math.Max(0,Math.Min(5,size));}
     public EquipmentObjectRecord Weapon(int owner,string weaponKey,string name,int defaultSize,bool preparing)
@@ -45,9 +51,9 @@ public sealed class EquipmentObjectCatalog
         if(record==null){record=Create(owner,kind,slot+":"+definition,name,definition,defaultSize);slots[slot]=record;}
         DefaultSize(record,defaultSize,preparing);return record;
     }
-    public bool Configure(int id,int size,bool covered)
+    public bool Configure(int id,int size,bool covered,bool? metal=null)
     {
-        var record=Find(id);if(record==null||size<0||size>5)return false;record.Size=size;record.Covered=covered;preparation[record.Key]=new Options{Size=size,Covered=covered};return true;
+        var record=Find(id);if(record==null||size<0||size>5)return false;record.Size=size;record.Covered=covered;if(metal.HasValue)record.Metal=metal.Value;preparation[record.Key]=new Options{Size=size,Covered=covered,Metal=record.Metal};return true;
     }
     public bool Cover(int id,bool covered,Func<bool> interact)
     {
