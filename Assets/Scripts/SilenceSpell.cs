@@ -43,7 +43,7 @@ public sealed partial class TrainingGame
     }
     void DrawSilenceStatus(float x,bool player)
     {
-        string text=sensory.Blinded(player,worldRounds)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
+        string text=(sensory.Blinded(player,worldRounds)||feignDeath.Blind(player?0:-1,worldRounds))?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
         if(player&&playerResurrectionCaster.Taxed)text+=(text==""?"":" · ")+"复生疲惫";
         if(SteedFear(player?0:-1))text+=(text==""?"":" · ")+"恐慌";
         if(poisonProtection.Active(player,worldRounds))text+=(text==""?"":" · ")+"抗毒";

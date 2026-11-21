@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     bool riderWasProne,mountWasProne,mountFallPending;
     string steedColumn="2",steedRow="2",steedTeleportColumn="2",steedTeleportRow="2";
     bool IsSteed(SummonedUnit u)=>u!=null&&u==steed;
-    bool ControlledSteed=>steed!=null&&steed.Alive&&map.RiderMountId==steed.Id&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed;
+    bool ControlledSteed=>steed!=null&&steed.Alive&&map.RiderMountId==steed.Id&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath;
     long RiderWeight()
     {
         var body=PlayerInBeastForm?BeastWeight(PlayerBeast.name).Weight:playerWeight.Weight;

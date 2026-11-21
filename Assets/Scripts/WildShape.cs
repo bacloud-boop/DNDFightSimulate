@@ -34,8 +34,8 @@ public sealed partial class TrainingGame
     void RefreshWildShape()
     {
         if(!IsWildShaped)return;
-        if(PlayerPolymorphed){if(worldRounds>=wildShapeEndsAt||combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed){wildForm=null;map.TrySetRecoverySize(true,1);}return;}
-        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndWildShape("失能或死亡");
+        if(PlayerPolymorphed){if(worldRounds>=wildShapeEndsAt||combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath){wildForm=null;map.TrySetRecoverySize(true,1);}return;}
+        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath)EndWildShape("失能或死亡");
         else if(worldRounds>=wildShapeEndsAt)EndWildShape("持续时间结束");
     }
     void EndWildShape(string reason)

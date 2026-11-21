@@ -15,13 +15,15 @@ public sealed partial class RescueCarrier
     public long RecoveryAt {get;private set;}=-1;
     long lastDeathSave=-1;
     public readonly CorpseClock Corpse=new CorpseClock();
-    public bool Conscious=>Hp>0&&!Dead;
+    public bool FeignDeath;
+    public bool ResistsType(int type)=>Species.Resist(type)||FeignDeath&&type>=0&&type!=10;
+    public bool Conscious=>Hp>0&&!Dead&&!FeignDeath;
     public bool CanDepart=>Conscious&&!Load.Loaded;
     public bool NeedsDeathSave=>Hp==0&&!Dead&&!Stable;
-    public string LifeLabel=>Dead?"死亡":Hp>0?"清醒":Stable?"稳定 / 昏迷":"倒地 / 昏迷";
+    public string LifeLabel=>Dead?"死亡":Hp>0?(FeignDeath?"假死 / 失能":"清醒"):Stable?"稳定 / 昏迷":"倒地 / 昏迷";
     public int TakeDamage(long amount,bool critical=false,int damageType=-1){
         if(amount<=0||Dead)return 0;
-        if(Species.Resist(damageType))amount/=2;
+        if(ResistsType(damageType))amount/=2;
         int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;if(amount<=0)return 0;
         int before=Hp,lost=(int)Math.Min((long)Hp,amount);Hp-=lost;
         if(Hp==0){Prone=true;EndTurn();Stable=false;RecoveryAt=-1;
@@ -55,7 +57,7 @@ public sealed partial class RescueCarrier
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;
-    public int EffectiveSpeed=>Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed);
+    public int EffectiveSpeed=>FeignDeath?0:Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
     public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {
@@ -70,8 +72,8 @@ public sealed partial class RescueCarrier
     public bool UseAction(){if(!Conscious||!TurnActive||ActionsRemaining<1)return false;ActionsRemaining--;return true;}
     public bool PickUp(int id,bool dead,BodyWeight corpse,bool drag)=>TurnActive&&Load.PickUpOunces(id,dead,corpse,Strength,Species.CapacitySize(Size),Weight.GearOunces,drag,UseAction);
     public bool Drop(Func<bool> place)=>TurnActive&&Load.Drop(place);
-    public bool Move(int feet){if(!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
+    public bool Move(int feet){if(!Conscious||!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
     public bool Dash(){if(!UseAction())return false;Dashes++;return true;}
-    public bool CanMove(int feet)=>TurnActive&&feet>0&&feet<=MovementRemaining;
-    public void Reset(){SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
+    public bool CanMove(int feet)=>Conscious&&TurnActive&&feet>0&&feet<=MovementRemaining;
+    public void Reset(){FeignDeath=false;SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
 }

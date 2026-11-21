@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     Vector2 sensorySaveScroll;
     bool CanSeeOwnBody()
     {
-        if(SensoryAfflictions.BlocksSight(sensory.Blinded(true,worldRounds),PlayerBlindsight,0))return false;
+        if(SensoryAfflictions.BlocksSight((sensory.Blinded(true,worldRounds)||feignDeath.Blind(0,worldRounds)),PlayerBlindsight,0))return false;
         if(InvisibleWithFaerie(true)&&!senses.RevealsInvisible(true,0,worldRounds,PlayerBlindsight))return false;
         return vision.Quality(map.Player.x*5,map.Player.y*5,map.Player.x*5,map.Player.y*5,PlayerDarkvision,worldRounds,PlayerBlindsight,senses.TrueSight(true,worldRounds))<2;
     }

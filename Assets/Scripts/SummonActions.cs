@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
         =>SpiritSeesAt(unit,id,unit.X,unit.Y,target.x,target.y,targetSpaces);
     bool SpiritSeesAt(SummonedUnit unit,int id,double fromX,double fromY,double targetX,double targetY,int targetSpaces)
     {
-        if(unit.SleepStage==2)return false;
+        if(unit.FeignBlind||unit.SleepStage==2)return false;
         bool invisible=(id==0||id==-1)&&InvisibleWithFaerie(id==0);
         if(invisible)return false;
         for(int dy=0;dy<unit.Spaces;dy++)for(int dx=0;dx<unit.Spaces;dx++)
@@ -33,8 +33,8 @@ public sealed partial class TrainingGame
     bool SpiritPackTactics(SummonedUnit attacker,int targetId,Vector2Int target,int spaces,CreatureCover.Body? targetAt=null)
     {
         var body=targetAt??new CreatureCover.Body(target.x,target.y,spaces);
-        if(targetId!=0&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&SummonGeometry.Distance(new CreatureCover.Body(map.Player.x,map.Player.y,map.PlayerSpaces),body)<=5)return true;
-        foreach(var ally in map.Summons)if(ally.Id!=attacker.Id&&ally.Id!=targetId&&ally.Alive&&SummonGeometry.Distance(new CreatureCover.Body(ally.X,ally.Y,ally.Spaces),body)<=5)return true;
+        if(targetId!=0&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&SummonGeometry.Distance(new CreatureCover.Body(map.Player.x,map.Player.y,map.PlayerSpaces),body)<=5)return true;
+        foreach(var ally in map.Summons)if(ally.Id!=attacker.Id&&ally.Id!=targetId&&ally.Alive&&!ally.FeignDeath&&ally.SleepStage==0&&SummonGeometry.Distance(new CreatureCover.Body(ally.X,ally.Y,ally.Spaces),body)<=5)return true;
         return false;
     }
     IEnumerator ResolveSpiritAttack(SummonedUnit unit,int targetId,bool opportunity=false,CreatureCover.Body? targetAt=null)
@@ -64,7 +64,7 @@ public sealed partial class TrainingGame
             int[] rolls=new int[critical?2:1];int damage=SummonDamageBonus(unit),type=SummonDamageType(unit);string damageName=DamageTypes.Names[type];
             for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);damage+=rolls[i];}
             yield return PresentRoll(8,rolls,(IsSteed(unit)?"异界猛击":"撕裂")+(critical?"暴击":"")+"：骰值 + "+SummonDamageBonus(unit)+" = "+damage+" "+damageName);
-            if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,type);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null);unit.Damage(frost);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
+            if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,type);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null);unit.Damage(frost,4);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
             else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,type);combat.ApplyDamage(damage,sourcePlayer:null);}
             else other.Damage(damage,type);
             history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" "+damageName+"伤害。");RefreshBestialSpirit();CheckBattleOutcome();
@@ -85,7 +85,7 @@ public sealed partial class TrainingGame
             summonTurns.Begin(followers,combat.Round,combat.Aftermath,continuing);
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;summonEndRequested=false;
-                if(unit.SleepStage==2)summonEndRequested=true;
+                if(unit.FeignDeath||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 if(unit.Alive)yield return RepeatSummonSleep(unit);

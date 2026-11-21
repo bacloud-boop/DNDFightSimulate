@@ -25,7 +25,7 @@ public sealed partial class TrainingGame
         RefreshBestialSpirit();RefreshSleepConcentration();
         if(!IsConcentrating||resolvingHoldPerson)return;
         if(combat.Hp==0)combat.MonsterParalyzed=false;
-        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed)EndConcentration("施法者失能或死亡");
+        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath)EndConcentration("施法者失能或死亡");
         else if((concentrationExpiresWorld>=0&&worldRounds>=concentrationExpiresWorld)||combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
         else if(concentrationSpell=="衰弱射线"&&!enfeeblement.Active(true,worldRounds,combat.Round)&&!enfeeblement.Active(false,worldRounds,combat.Round))EndConcentration("衰弱射线效果已结束");
         else if((concentrationSpell=="人类定身术"||concentrationSpell=="怪物定身术")&&!combat.PlayerParalyzed&&!combat.MonsterParalyzed)EndConcentration("所有目标均已摆脱效果");
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
     IEnumerator MaintainConcentration(int damage)
     {
         if(!IsConcentrating||damage<=0)yield break;
-        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed){EndConcentration("施法者失能或死亡");yield break;}
+        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath){EndConcentration("施法者失能或死亡");yield break;}
         var concentrationRoll=RollD20Test(true,ability:2);int dc=ConcentrationRules.DamageSaveDc(damage),value=concentrationRoll.Value,modifier=PlayerSavingThrowModifier(2);
         dice=concentrationSpell+" · 受伤专注豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,false,adjustment);modifier+=adjustment.Value;

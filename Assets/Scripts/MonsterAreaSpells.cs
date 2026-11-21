@@ -7,18 +7,18 @@ public sealed partial class TrainingGame
     bool monsterAreaPreview,monsterAreaChoosing;
     Vector2Int monsterAreaCenter;
     int monsterAreaRadius,monsterAreaOriginSpaces=1;
-    List<int> MonsterAreaTargets(Vector2Int center,int radius,int spaces=1,bool sight=false)
+    List<int> MonsterAreaTargets(Vector2Int center,int radius,int spaces=1,bool sight=false,bool planning=false)
     {
         var targets=new List<int>();
-        if(!combat.PlayerDead&&!map.IsContained(true)&&BattleMap.BodyDistance(center,spaces,map.Player,map.PlayerSpaces)<=radius&&(!sight||MonsterSeesPlayer))targets.Add(0);
-        foreach(var unit in map.Summons)if(unit.Alive&&BattleMap.BodyDistance(center,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius&&(!sight||MonsterCanSeeTarget(unit.Id)))targets.Add(unit.Id);
+        if((!planning||!Feigning(0))&&!combat.PlayerDead&&!map.IsContained(true)&&BattleMap.BodyDistance(center,spaces,map.Player,map.PlayerSpaces)<=radius&&(!sight||MonsterSeesPlayer))targets.Add(0);
+        foreach(var unit in map.Summons)if(unit.Alive&&(!planning||!Feigning(unit.Id))&&BattleMap.BodyDistance(center,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius&&(!sight||MonsterCanSeeTarget(unit.Id)))targets.Add(unit.Id);
         return targets;
     }
     bool TryPlanMonsterArea(DirectSpell spell,out Vector2Int center)
     {
         int x,y,radius=MonsterSpellCatalog.Radius(spell);
-        if(spell.EmanationRadius>0){center=map.Monster;return MonsterAreaTargets(center,radius,map.MonsterSpaces,spell.Name=="Word of Radiance").Count>0;}
-        bool found=MonsterAreaPlanner.Choose(map.Size,spell.Range,radius,(column,row)=>map.DistanceToCell(false,new Vector2Int(column,row)),(column,row)=>MonsterAreaTargets(new Vector2Int(column,row),radius).Count,out x,out y);
+        if(spell.EmanationRadius>0){center=map.Monster;return MonsterAreaTargets(center,radius,map.MonsterSpaces,spell.Name=="Word of Radiance",true).Count>0;}
+        bool found=MonsterAreaPlanner.Choose(map.Size,spell.Range,radius,(column,row)=>map.DistanceToCell(false,new Vector2Int(column,row)),(column,row)=>MonsterAreaTargets(new Vector2Int(column,row),radius,planning:true).Count,out x,out y);
         center=new Vector2Int(x,y);return found;
     }
     void ShowMonsterArea(DirectSpell spell,Vector2Int center)
@@ -61,7 +61,7 @@ public sealed partial class TrainingGame
         foreach(int id in targets){
             int raw=failed.Contains(id)?damage:spell.HalfSave?damage/2:0;
             if(id==0){playerDamage=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(spell.DamageType));combat.ApplyPlayerDamage(playerDamage);history.Insert(0,"木桩"+spell.Chinese+"对玩家造成 "+playerDamage+" "+spell.DamageType+"伤害。");}
-            else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;int amount=SilenceUnitImmune(unit,spell.DamageType)?0:unit.Aquatic.Submerged&&spell.DamageType=="火焰"?raw/2:raw;unit.Damage(amount);history.Insert(0,"木桩"+spell.Chinese+"对"+unit.Name+"造成 "+amount+" "+spell.DamageType+"伤害。");}
+            else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;int amount=SilenceUnitImmune(unit,spell.DamageType)?0:unit.Aquatic.Submerged&&spell.DamageType=="火焰"&&!unit.ResistsType(DamageTypes.Index(spell.DamageType))?raw/2:raw;unit.Damage(amount,DamageTypes.Index(spell.DamageType));history.Insert(0,"木桩"+spell.Chinese+"对"+unit.Name+"造成 "+amount+" "+spell.DamageType+"伤害。");}
         }
         if(targets.Contains(0))yield return MaintainConcentration(playerDamage);
     }

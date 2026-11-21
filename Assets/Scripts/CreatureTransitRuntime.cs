@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
         map.CreatureSizeIndex=actor=>actor==0?EffectiveCreatureSize(true):actor==-1?EffectiveCreatureSize(false):actor==BattleMap.RescueId?rescueCarrier.Size:FindSummon(actor)?.Size??2;
         map.CreatureNimble=actor=>actor==BattleMap.RescueId?rescueCarrier.Species.Kind==Species2024.Halfling:(actor==0||actor==-1)&&SpeciesPhysicalActive(actor==0)&&Species(actor==0).Kind==Species2024.Halfling;
         map.CreatureLiving=actor=>actor==0?!combat.PlayerDead:actor==-1?combat.Hp>0:actor==BattleMap.RescueId?!rescueCarrier.Dead:FindSummon(actor)?.Alive??false;
-        map.CreatureIncapacitated=actor=>actor==0?combat.PlayerHp==0||combat.PlayerParalyzed:actor==-1?combat.MonsterParalyzed||combat.MonsterSleepStage>0:actor==BattleMap.RescueId?!rescueCarrier.Conscious:(FindSummon(actor)?.SleepStage??0)>0;
+        map.CreatureIncapacitated=actor=>actor==0?combat.PlayerFeignDeath||combat.PlayerHp==0||combat.PlayerParalyzed:actor==-1?combat.MonsterFeignDeath||combat.MonsterParalyzed||combat.MonsterSleepStage>0:actor==BattleMap.RescueId?!rescueCarrier.Conscious:Feigning(actor)||(FindSummon(actor)?.SleepStage??0)>0;
         map.ActorTurnEnded=ApplySharedTurnEnd;combat.TurnEnded=ApplySharedTurnEnd;rescueCarrier.TurnEnded=()=>ApplySharedTurnEnd(BattleMap.RescueId);
     }
     string TransitActorName(int actor)=>actor==0?"玩家":actor==-1?"木桩":actor==BattleMap.RescueId?"救援者":FindSummon(actor)?.Name??"生物";

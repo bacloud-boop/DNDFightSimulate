@@ -87,11 +87,11 @@ public sealed partial class TrainingGame
             GUI.enabled=!rolling&&rescueCarrier.TurnActive;
             if(GUILayout.Button(rescueDropMode?"取消放置选择":"放下搬运对象（免费）",button))rescueDropMode=!rescueDropMode;
         }else foreach(bool player in new[]{true,false}){
-            var weight=player?playerWeight.Weight:monsterWeight.Weight;bool dead=player?combat.PlayerDead:combat.Hp==0;
+            var weight=player?playerWeight.Weight:monsterWeight.Weight;bool dead=(player?combat.PlayerDead:combat.Hp==0)||Feigning(player?0:-1);
             foreach(bool drag in new[]{false,true}){
                 bool fits=CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),rescueCarrier.Weight.GearOunces,0)&&weight.Known&&(drag?CarryingRules.CanDragOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),weight.TotalOunces):CarryingRules.CanCarryOunces(rescueCarrier.Strength,rescueCarrier.Species.CapacitySize(rescueCarrier.Size),rescueCarrier.Weight.GearOunces,weight.TotalOunces));
                 GUI.enabled=!rolling&&dead&&map.CanAttachRescueCorpse(player)&&rescueCarrier.ActionsRemaining>0&&fits;
-                if(GUILayout.Button((drag?"拖行":"肩扛")+(player?"玩家":"木桩")+"遗体（1动作）",button)){
+                if(GUILayout.Button((drag?"拖行":"肩扛")+(player?"玩家":"木桩")+"（遗体／假死者，1动作）",button)){
                     if(rescueCarrier.PickUp(player?0:-1,dead,weight,drag)&&map.AttachRescueCorpse(player,drag)){
                         rescueMessage="已开始"+(drag?"拖行":"肩扛")+"，消耗救援者1个动作。";history.Insert(0,rescueMessage);
                     }

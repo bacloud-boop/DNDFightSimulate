@@ -17,8 +17,8 @@ public sealed partial class TrainingGame
     {
         if(spell.Healing)return -1;
         int target=-2,best=int.MaxValue;
-        if(!combat.PlayerDead&&!map.IsContained(true)&&map.DistanceFeet<=spell.Range&&(!MonsterSpellNeedsSight(spell)||MonsterSeesPlayer)){target=0;best=map.DistanceFeet;}
-        foreach(var unit in map.Summons)if(unit.Alive){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
+        if(!Feigning(0)&&!combat.PlayerDead&&!map.IsContained(true)&&map.DistanceFeet<=spell.Range&&(!MonsterSpellNeedsSight(spell)||MonsterSeesPlayer)){target=0;best=map.DistanceFeet;}
+        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
         return target;
     }
     IEnumerator TryMonsterTurnSpell(MonsterSpellTurn result)
@@ -128,7 +128,7 @@ public sealed partial class TrainingGame
     IEnumerator ApplyMonsterSpellDamage(int target,int raw,string type,bool critical)
     {
         if(target==0){int amount=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(type));combat.ApplyPlayerDamage(amount,critical);history.Insert(0,"木桩法术对玩家造成 "+amount+" "+type+"伤害。");yield return MaintainConcentration(amount);}
-        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"?raw/2:raw;unit.Damage(amount,DamageTypes.Index(type));history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
+        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"&&!unit.ResistsType(DamageTypes.Index(type))?raw/2:raw;unit.Damage(amount,DamageTypes.Index(type));history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
     }
     IEnumerator FinishMonsterSpellTurn()
     {

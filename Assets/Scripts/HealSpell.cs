@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         if(HealSpellError()!=""){history.Insert(0,"医疗术目标已失效。");return;}
         int actual;
         if(healTarget==0||healTarget==-1)actual=HealRules.Apply(combat,sensory,healTarget==0,slot,worldRounds);
-        else actual=FindSummon(healTarget).Heal(HealRules.Amount(slot));
+        else {actual=FindSummon(healTarget).Heal(HealRules.Amount(slot));feignDeath.EndBlind(healTarget,worldRounds);SyncFeignDeath();}
         if(healTarget==0)ApplySteedLifeBond(actual,6);
         history.Insert(0,"医疗术："+(healTarget==0?"玩家":healTarget==-1?"木桩":FindSummon(healTarget).Name)+"实际恢复 "+actual+" HP，解除目盲、耳聋和中毒的全部施法来源。持续区域造成的状态仍按位置判定。");
         dice="医疗术 · 固定治疗 "+HealRules.Amount(slot)+" · 实际恢复 "+actual;

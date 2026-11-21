@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
     }
     int ApplySummonSpellDamage(SummonedUnit unit,int raw,string type,bool? sourcePlayer=true,string context="")
     {
-        int damage=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"?raw/2:raw;
+        int damage=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"&&!unit.ResistsType(DamageTypes.Index(type))?raw/2:raw;
         int actual=unit.Damage(damage,DamageTypes.Index(type));if(damage>0&&sourcePlayer.HasValue)BreakOrdinaryInvisibility(sourcePlayer.Value,"造成伤害");
         history.Insert(0,(context==""?"":context+"：")+unit.Name+"承受 "+damage+" "+type+"伤害（扣除HP "+actual+"）。");return actual;
     }

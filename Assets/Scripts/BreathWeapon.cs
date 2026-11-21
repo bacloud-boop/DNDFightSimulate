@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
         if(caster==BattleMap.RescueId)return map.RescuePosition.HasValue&&rescueCarrier.Conscious&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
         if(!SpeciesPhysicalActive(caster==0))return false;
         if(caster==-1)return combat.MonsterCanAct&&combat.MonsterActionAvailable;
-        bool canAct=combat.Aftermath?combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed:combat.PlayerCanAct;
+        bool canAct=combat.Aftermath?combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath:combat.PlayerCanAct;
         return canAct&&(fighter.AttacksRemaining>0?!fighter.BreathUsedThisAttackAction:combat.ActionsRemaining>0);
     }
     List<int> BreathActors()
@@ -85,7 +85,7 @@ public sealed partial class TrainingGame
     IEnumerator TryMonsterBreath(bool beforeSpell)
     {
         if(!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct)||!BreathReady(-1))yield break;
-        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if(id==0||id>0){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
+        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
         BreathTemplate plan;
         if(map.IsContained(false)){if(combat.PlayerDead||!BreathTemplate.TryCreate(map.Monster.x,map.Monster.y,map.MonsterSpaces,0,map.MonsterSpaces,map.Size, map.Monster.y,false,out plan))yield break;}
         else if(!BreathWeaponRules.Choose(map.Size,map.Monster.x,map.Monster.y,map.MonsterSpaces,enemies,out plan))yield break;

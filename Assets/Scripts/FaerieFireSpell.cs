@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
             bool failed;string name;
             if(actor==0||actor==-1){bool player=actor==0;name=player?"玩家":"木桩";bool automatic=player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterHelpless;var roll=RollArmorSave(player,1);int modifier=player?PlayerSavingThrowModifier(1):MonsterSavingThrowModifier(1);var adjust=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjust,1,anchor);modifier+=adjust.Value;
                 if(!automatic)yield return PresentRoll(20,roll.Dice,"妖火 · "+name+"敏捷豁免："+roll.Value+" + "+modifier+" / DC "+dc);failed=automatic||(long)roll.Value+modifier<dc;
-            }else if(actor==BattleMap.RescueId){name="救援者";int raw=Random.Range(1,21);failed=!rescueCarrier.Conscious||(long)raw+rescueCarrier.DexteritySaveModifier<dc;if(rescueCarrier.Conscious)yield return PresentRoll(20,new[]{raw},"妖火 · 救援者敏捷豁免："+raw+" + "+rescueCarrier.DexteritySaveModifier+" / DC "+dc);
+            }else if(actor==BattleMap.RescueId){name="救援者";int raw=Random.Range(1,21);failed=rescueCarrier.Hp==0||rescueCarrier.Dead||(long)raw+rescueCarrier.DexteritySaveModifier<dc;if(rescueCarrier.Hp>0&&!rescueCarrier.Dead)yield return PresentRoll(20,new[]{raw},"妖火 · 救援者敏捷豁免："+raw+" + "+rescueCarrier.DexteritySaveModifier+" / DC "+dc);
             }else {var unit=FindSummon(actor);if(unit==null)continue;name=unit.Name;var save=new SummonSave();yield return RollSummonSave(unit,1,dc,anchor,save);failed=save.Failed;}
             if(failed)faerieFire.Bind(actor,worldRounds);
             history.Insert(0,"妖火："+name+(failed?"豁免失败，被光芒勾勒，不能获得隐形收益。":"豁免成功，未被勾勒。"));RefreshFaerieFire();

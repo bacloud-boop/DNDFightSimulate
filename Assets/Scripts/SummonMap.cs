@@ -3,6 +3,8 @@ using UnityEngine;
 
 public sealed partial class BattleMap
 {
+    public System.Func<int,bool> EnemyEligible;
+    bool EnemyAllowed(int id)=>EnemyEligible==null||EnemyEligible(id);
     readonly List<SummonedUnit> summons=new List<SummonedUnit>();
     public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
     public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0,int exceptRemains=0)
@@ -84,8 +86,8 @@ public sealed partial class BattleMap
     public int NearestEnemyFrom(Vector2Int from,int spaces,bool playerAlive,int reachFeet,out int best)
     {
         int chosen=-1;best=int.MaxValue;
-        if(playerAlive&&!IsContained(true)&&!IsCarried(true)){int distance=BodyDistance(from,spaces,Player,PlayerSpaces);if(distance<=reachFeet){chosen=0;best=distance;}}
-        foreach(var unit in summons){if(!unit.Alive)continue;int distance=BodyDistance(from,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);
+        if(playerAlive&&EnemyAllowed(0)&&!IsContained(true)&&!IsCarried(true)){int distance=BodyDistance(from,spaces,Player,PlayerSpaces);if(distance<=reachFeet){chosen=0;best=distance;}}
+        foreach(var unit in summons){if(!unit.Alive||!EnemyAllowed(unit.Id))continue;int distance=BodyDistance(from,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);
             if(distance<=reachFeet&&distance<best){chosen=unit.Id;best=distance;}
         }
         return chosen;
