@@ -28,6 +28,7 @@ public sealed partial class TrainingGame
     }
     void DrawCommandChoices()
     {
+        commandTargets.RemoveWhere(id=>{Vector2Int p;int n;string name;return !HealingHandsTarget(id,out p,out n,out name);});
         commandChoice=GUILayout.SelectionGrid(commandChoice,CommandEffect.Names,3,button);
         GUILayout.Label("选择至多 "+CommandEffect.TargetLimit(directSlotLevel)+" 名60尺内可见生物；各自感知豁免。下个回合执行，不会立刻触发。",small);
         foreach(int id in BreathActors()){

@@ -90,7 +90,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Command")DrawCommandChoices();
+        if(definition.Name=="Heroism")DrawHeroismChoices();
+        else if(definition.Name=="Command")DrawCommandChoices();
         else if(definition.Name=="Starry Wisp")DrawStarryChoices();
         else if(definition.Name=="Feign Death")DrawFeignDeathChoices();
         else if(definition.Name=="Faerie Fire")DrawFaerieFireChoices();
@@ -174,6 +175,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Heroism")return HeroismError(directSlotLevel);
         if(spell.Name=="Command")return CommandError(directSlotLevel);
         if(spell.Name=="Color Spray")return ColorSprayError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
@@ -255,6 +257,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        var heroismSelected=new System.Collections.Generic.List<int>(heroismTargets);if(spell.Name=="Heroism"&&HeroismError(slotLevel)!="")yield break;
         var commandSelected=new System.Collections.Generic.List<int>(commandTargets);var chosenCommand=(CommandWord)commandChoice;if(spell.Name=="Command"&&CommandError(slotLevel)!="")yield break;
         int starrySelected=starryTarget;if(spell.Name=="Starry Wisp"&&StarryWispError()!="")yield break;
         int feignSelected=feignTarget;if(spell.Name=="Feign Death"&&FeignDeathError()!="")yield break;
@@ -283,7 +286,7 @@ public sealed partial class TrainingGame
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -303,6 +306,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Command"){yield return ResolveCommandCast(0,caster,chosenCommand,commandSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Color Spray"){yield return ResolveColorSpray(true,caster,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}

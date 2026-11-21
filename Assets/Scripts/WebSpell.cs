@@ -39,7 +39,7 @@ public sealed partial class TrainingGame
     {
         bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
         if(!shared){terrainActor=actor;terrainTurn++;}web.StartTurn(actor);SyncWeb();
-        QueueWebEntry(actor,true);SyncTimedBuffs();
+        QueueWebEntry(actor,true);QueueHeroismStart(actor);SyncTimedBuffs();
     }
     void QueueWebEntry(int actor,bool starting)
     {

@@ -11,6 +11,7 @@ public sealed partial class RescueCarrier
     public bool BonusActionAvailable {get;private set;}=true;
     public bool ReactionAvailable {get;private set;}=true;
     public int TemporaryHp {get;private set;}
+    public void ChooseTemporaryHp(int amount,bool takeNew){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(!Dead&&takeNew)TemporaryHp=amount;}
     public long LastLongRestStart {get;private set;}=-1;
     public bool ConfigureProfile(int[] scores,SpeciesProfile species,int proficiency,int size,int speed,int bodyPounds,int equipmentPounds,int baseMaxHp)
     {

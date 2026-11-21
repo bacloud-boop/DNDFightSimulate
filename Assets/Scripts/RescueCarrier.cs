@@ -23,12 +23,13 @@ public sealed partial class RescueCarrier
     public string LifeLabel=>Dead?"死亡":Hp>0?(FeignDeath?"假死 / 失能":"清醒"):Stable?"稳定 / 昏迷":"倒地 / 昏迷";
     public int TakeDamage(long amount,bool critical=false,int damageType=-1){
         if(amount<=0||Dead)return 0;if(damageType==5)FireExposure?.Invoke();
-        if(ResistsType(damageType))amount/=2;
-        int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;if(amount<=0)return 0;
-        int before=Hp,lost=(int)Math.Min((long)Hp,amount);Hp-=lost;
+        if(ResistsType(damageType))amount/=2;if(amount<=0)return 0;
+        long incoming=amount;int before=Hp;
+        int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;
+        if(before==0){Stable=false;RecoveryAt=-1;EndTurn();if(incoming>=MaxHp)Dead=true;else {DeathFailures+=critical?2:1;if(DeathFailures>=3)Dead=true;}return 0;}
+        if(amount<=0)return 0;int lost=(int)Math.Min((long)Hp,amount);Hp-=lost;
         if(Hp==0){Prone=true;EndTurn();Stable=false;RecoveryAt=-1;
             if(amount-before>=MaxHp)Dead=true;
-            else if(before==0){DeathFailures+=critical?2:1;if(DeathFailures>=3)Dead=true;}
         }return lost;
     }
     public bool ResolveDeathSave(int die,long sequence){
