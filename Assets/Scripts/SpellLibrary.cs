@@ -38,6 +38,7 @@ public sealed partial class TrainingGame
         GUILayout.BeginArea(new Rect(375,185,430,635));
         GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
+        if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
         if(heatMetal.Active(worldRounds)&&GUILayout.Button("再次加热灼热金属（附赠动作）",button))panel="heatMetal";
         if(cloudDaggers.Active(worldRounds)&&GUILayout.Button("传送现存匕首之云（魔法动作）",button))OpenCloudDaggersControl();
         if(dancingLights.Active(worldRounds)&&GUILayout.Button("移动现存舞光（附赠动作）",button))OpenDancingLightsControl();
@@ -91,7 +92,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
+        if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
+        else if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
         else if(definition.Name=="Heroism")DrawHeroismChoices();
         else if(definition.Name=="Command")DrawCommandChoices();
         else if(definition.Name=="Starry Wisp")DrawStarryChoices();
@@ -177,6 +179,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Flaming Sphere")return FlamingSphereError();
         if(spell.Name=="Heat Metal")return HeatObjectError(heatObject,true);
         if(spell.Name=="Heroism")return HeroismError(directSlotLevel);
         if(spell.Name=="Command")return CommandError(directSlotLevel);
@@ -260,6 +263,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Flaming Sphere"&&FlamingSphereError()!="")yield break;
         int heatedSelection=heatObject;if(spell.Name=="Heat Metal"&&HeatObjectError(heatedSelection,true)!="")yield break;
         var heroismSelected=new System.Collections.Generic.List<int>(heroismTargets);if(spell.Name=="Heroism"&&HeroismError(slotLevel)!="")yield break;
         var commandSelected=new System.Collections.Generic.List<int>(commandTargets);var chosenCommand=(CommandWord)commandChoice;if(spell.Name=="Command"&&CommandError(slotLevel)!="")yield break;
@@ -290,7 +294,7 @@ public sealed partial class TrainingGame
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -310,6 +314,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Flaming Sphere"){CastFlamingSphere(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heat Metal"){yield return CastHeatMetal(heatedSelection,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Command"){yield return ResolveCommandCast(0,caster,chosenCommand,commandSelected);if(!embedded)rolling=false;yield break;}

@@ -13,12 +13,13 @@ public sealed partial class TrainingGame
     IEnumerator FinishUnitEndEffects(int actor,SummonedUnit unit=null)
     {
         bool sleep=unit!=null&&unit.Alive&&unit.SleepStage==1&&combat.Round>=unit.SleepRepeatRound;
-        var greaseEnd=ActorGrease(actor);bool cloud=DaggersEndAvailable(actor);
-        while(sleep||greaseEnd!=null||cloud){
+        var greaseEnd=ActorGrease(actor);bool cloud=DaggersEndAvailable(actor),sphere=SphereEndAvailable(actor);
+        while(sleep||greaseEnd!=null||cloud||sphere){
             if(actor==BattleMap.RescueId?rescueCarrier.Dead:unit==null||!unit.Alive)yield break;
             var keys=new List<int>();var names=new List<string>();if(sleep){keys.Add(0);names.Add("睡眠术 · 感知豁免");}if(greaseEnd!=null){keys.Add(1);names.Add("油腻术 · 敏捷豁免");}if(cloud){keys.Add(2);names.Add("匕首之云 · 挥砍伤害");}
+            if(sphere){keys.Add(3);names.Add("炽焰法球 · 敏捷豁免与火焰伤害");}
             int choice=keys[0];if(keys.Count>1){unitEndOrderActor=actor;unitEndOrderLabels=names.ToArray();unitEndOrderChoice=-1;unitEndOrderPending=true;while(unitEndOrderChoice<0)yield return null;choice=keys[unitEndOrderChoice];unitEndOrderPending=false;}
-            if(choice==0){sleep=false;yield return RepeatSummonSleep(unit);}else if(choice==1){var field=greaseEnd;greaseEnd=null;yield return ResolveGreaseSave(actor,field,"回合末油脂");}else{cloud=false;yield return EndDaggersTurn(actor);}
+            if(choice==0){sleep=false;yield return RepeatSummonSleep(unit);}else if(choice==1){var field=greaseEnd;greaseEnd=null;yield return ResolveGreaseSave(actor,field,"回合末油脂");}else if(choice==2){cloud=false;yield return EndDaggersTurn(actor);}else{sphere=false;yield return EndFlamingSphereTurn(actor);}
         }
     }
 }

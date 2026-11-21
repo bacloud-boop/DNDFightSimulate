@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
 {
     readonly SensoryAfflictions sensory=new SensoryAfflictions();
     int blindnessPlayerMode,blindnessMonsterMode;
-    bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption;
+    bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption;
     long sensorySaveChoice;
     System.Collections.Generic.List<SensoryAffliction> sensorySaveOptions;
     Vector2 sensorySaveScroll;
@@ -52,6 +52,7 @@ public sealed partial class TrainingGame
         sensorySaveScroll=GUILayout.BeginScrollView(sensorySaveScroll);
         if(sensoryGreaseOption&&GUILayout.Button("油腻术 · 敏捷豁免 · DC "+(ActorGrease(sensorySavePlayer?0:-1)==null?"—":ActorGrease(sensorySavePlayer?0:-1).Dc.ToString()),button))sensorySaveChoice=-2;
         if(sensorySleepOption&&GUILayout.Button("睡眠术 · 感知豁免 · DC "+sleepDc,button))sensorySaveChoice=-3;
+        if(sensorySphereOption&&GUILayout.Button("炽焰法球 · 回合末敏捷豁免与火焰伤害",button))sensorySaveChoice=-5;
         if(sensoryDaggersOption&&GUILayout.Button("匕首之云 · 回合末挥砍伤害",button))sensorySaveChoice=-4;
         if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
         foreach(var effect in sensorySaveOptions)if(GUILayout.Button("#"+effect.Id+" · "+(effect.Blind?"目盲":"耳聋")+" · DC "+effect.Dc+" · 剩余"+(effect.Expires-worldRounds)+"回合",button))sensorySaveChoice=effect.Id;
@@ -62,11 +63,12 @@ public sealed partial class TrainingGame
         if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         if(player?combat.PlayerDead:combat.Hp==0)yield break;
         bool sleepPending=!player&&combat.MonsterSleepStage==1&&combat.Round>=sleepRepeatRound;
-        bool daggersPending=DaggersEndAvailable(player?0:-1);var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);var greasePending=ActorGrease(player?0:-1);
-        while(pending.Count>0||rayPending||greasePending!=null||sleepPending||daggersPending){
+        bool spherePending=SphereEndAvailable(player?0:-1);bool daggersPending=DaggersEndAvailable(player?0:-1);var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);var greasePending=ActorGrease(player?0:-1);
+        while(pending.Count>0||rayPending||greasePending!=null||sleepPending||daggersPending||spherePending){
             if(player?combat.PlayerDead:combat.Hp==0)yield break;
-            long choice=pending.Count>0?pending[0].Id:rayPending?-1:greasePending!=null?-2:sleepPending?-3:-4;
-            if(pending.Count+(rayPending?1:0)+(greasePending!=null?1:0)+(sleepPending?1:0)+(daggersPending?1:0)>1){sensoryDaggersOption=daggersPending;sensorySaveOptions=pending;sensoryRayOption=rayPending;sensoryGreaseOption=greasePending!=null;sensorySleepOption=sleepPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+            long choice=pending.Count>0?pending[0].Id:rayPending?-1:greasePending!=null?-2:sleepPending?-3:daggersPending?-4:-5;
+            if(pending.Count+(rayPending?1:0)+(greasePending!=null?1:0)+(sleepPending?1:0)+(daggersPending?1:0)+(spherePending?1:0)>1){sensorySphereOption=spherePending;sensoryDaggersOption=daggersPending;sensorySaveOptions=pending;sensoryRayOption=rayPending;sensoryGreaseOption=greasePending!=null;sensorySleepOption=sleepPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+            if(choice==-5){spherePending=false;yield return EndFlamingSphereTurn(player?0:-1);continue;}
             if(choice==-4){daggersPending=false;yield return EndDaggersTurn(player?0:-1);continue;}
             if(choice==-3){sleepPending=false;yield return RepeatSleepSave();continue;}
             if(choice==-2){var field=greasePending;greasePending=null;yield return ResolveGreaseSave(player?0:-1,field,"回合末油脂");continue;}

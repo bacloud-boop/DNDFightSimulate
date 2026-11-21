@@ -2978,7 +2978,7 @@
       "name": "Flaming Sphere",
       "chineseName": "炽焰法球",
       "level": 2,
-      "school": "咒法",
+      "school": "Evocation",
       "classes": [
         "Druid",
         "Sorcerer",
@@ -2993,7 +2993,7 @@
       "duration": "专注，至多1分钟",
       "concentration": true,
       "source": "https://5echm.kagangtuya.top/topics/%E7%8E%A9%E5%AE%B6%E6%89%8B%E5%86%8C2024/%E6%B3%95%E6%9C%AF%E8%AF%A6%E8%BF%B0/2%E7%8E%AF.htm#Flaming_Sphere",
-      "implementation": "not_implemented"
+      "implementation": "combat_implemented"
     },
     {
       "name": "Flesh to Stone",
