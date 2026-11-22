@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
         int result=modifier+((classes.SavingThrowProficient(ability)||beastProficient)?classes.ProficiencyBonus:0);
         return beastProficient?Mathf.Max(result,wildForm.saves[ability]):result;
     }
-    IEnumerator MaintainConcentration(int damage){yield return DrainBondConcentration();yield return MaintainConcentrationCore(damage);}
+    IEnumerator MaintainConcentration(int damage){yield return DrainHellishRebukes();yield return DrainBondConcentration();yield return MaintainConcentrationCore(damage);}
     IEnumerator MaintainConcentrationCore(int damage)
     {
         if(!IsConcentrating||damage<=0)yield break;

@@ -67,9 +67,10 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
+        if(!rolling&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
         BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
         SyncWeaponInventory();ObserveWaterBreathing();
-        if(!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
+        if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath){knownFormReplacement=false;highElfCantripReplacement=false;}
@@ -82,6 +83,7 @@ public sealed partial class TrainingGame
         GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-CanvasWidth*scale)/2,(Screen.height-CanvasHeight*scale)/2,0),Quaternion.identity,Vector3.one*scale);
         GUI.DrawTextureWithTexCoords(new Rect(0,0,1600,900),woodTexture,new Rect(0,0,5,3));
         for(int y=0;y<900;y+=150)Fill(new Rect(0,y,1600,3),new Color(.06f,.025f,.01f,.65f));
+        if(hellishPending){DrawHellishRebukePrompt();return;}
         if(reincarnationPending){DrawReincarnationPrompt();return;}
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(heatPromptPending){DrawHeatMetalPrompt();return;}

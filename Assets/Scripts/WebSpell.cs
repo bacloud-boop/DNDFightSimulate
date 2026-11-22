@@ -112,7 +112,7 @@ public sealed partial class TrainingGame
                 if(damage&&entry.Fire&&InWeb(entry.Actor)){int a=UnityEngine.Random.Range(1,5),b=UnityEngine.Random.Range(1,5);yield return PresentRoll(4,new[]{a,b},"蛛网燃烧 · "+TransitActorName(entry.Actor)+"："+(a+b)+" 火焰");
                     // Existing flames do not ignite additional occupied cells.
                     var reduced=new RayDamage();yield return ReduceRayDamage(true,a+b,"火焰","蛛网燃烧",reduced);
-                    webAreaFire=true;int amount;try{amount=ApplyMappedAreaDamage(entry.Actor,0,reduced.Amount,5,"蛛网燃烧");}finally{webAreaFire=false;}
+                    webAreaFire=true;int amount;try{amount=ApplyMappedAreaDamage(entry.Actor,0,reduced.Amount,5,"蛛网燃烧",creatureSource:false);}finally{webAreaFire=false;}
                     if(entry.Actor==0)yield return MaintainConcentration(amount);ReconcileFallenRescue();RefreshBestialSpirit();CheckBattleOutcome();
                 }else if(!damage&&entry.Save&&MovementFreedom(entry.Actor)){history.Insert(0,TransitActorName(entry.Actor)+"受到行动自如保护，不会被蛛网束缚。");}
                 else if(!damage&&entry.Save){var failed=new HashSet<int>();yield return RollMappedAbilitySave(entry.Actor,entry.Actor,web.Dc,failed,"蛛网术",1);if(failed.Contains(entry.Actor)){if(InWeb(entry.Actor))web.Bind(entry.Actor,worldRounds);SyncTimedBuffs();history.Insert(0,TransitActorName(entry.Actor)+"蛛网敏捷豁免失败；"+(InWeb(entry.Actor)?"在网内束缚，主动移动停在触发位置。":"已被强制移出，不保留束缚。"));}else history.Insert(0,TransitActorName(entry.Actor)+"通过蛛网敏捷豁免；先前仍有效的束缚不会因此自动解除。");}

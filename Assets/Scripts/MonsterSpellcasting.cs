@@ -52,7 +52,7 @@ public sealed partial class TrainingGame
             else if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
             else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
             else if(spell.Name=="Scorching Ray")for(int n=0;n<spell.DiceCount(monsterSpells.CasterLevel,entry.Slot);n++){
-                int victim=MonsterSpellTarget(spell);if(victim==-2)break;
+                if(!MonsterSpellReady)break;int victim=MonsterSpellTarget(spell);if(victim==-2)break;
                 yield return MonsterNumericSpell(spell,entry.Slot,victim,2);
             }
             else yield return MonsterNumericSpell(spell,entry.Slot,target);

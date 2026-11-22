@@ -32,6 +32,7 @@ public sealed class CombatState
     public Func<bool,int> WardBonus;
     public Func<bool,bool> UniversalResistance;public Func<bool,int,bool> DamageVulnerability;
     public Action<bool,long[]> DamageApplied;
+    public Action<bool,int?,int> DamageReceived;
     readonly long[][] pendingTypes=new long[2][];
     public long[] CaptureAdjustedDamage(bool player)=>pendingTypes[player?0:1]==null?null:(long[])pendingTypes[player?0:1].Clone();
     public long[] ResolveTypedPacket(bool player,long[] raw){var result=new long[raw.Length];long remaining=int.MaxValue;for(int i=0;i<raw.Length;i++){long value=System.Math.Max(0,raw[i]);if(i<13){if(DamageImmunity!=null&&DamageImmunity(player,i))value=0;else {if(ResistsDamage(player,i))value/=2;if(DamageVulnerability!=null&&DamageVulnerability(player,i))value=value>int.MaxValue/2?int.MaxValue:value*2;}}result[i]=System.Math.Min(remaining,value);remaining-=result[i];}return result;}
@@ -194,6 +195,8 @@ public sealed class CombatState
         else {if(!MonsterCanAct||MonsterReactionsBlocked||!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
         BattleStarted=true;return true;
     }
+    public bool CanPlayerDamageReact=>PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&!PlayerReactionsBlocked&&PlayerReactionAvailable;
+    public bool TryUseDamageReaction(){if(!CanPlayerDamageReact)return false;PlayerReactionAvailable=false;BattleStarted=true;return true;}
     public bool MonsterActionAvailable {get;private set;}=true;
     public bool TryUseMonsterAction(){if(!MonsterCanAct||!MonsterActionAvailable)return false;MonsterActionAvailable=false;BattleStarted=true;return true;}
     public bool MonsterBonusActionAvailable {get;private set;}=true;
@@ -249,10 +252,10 @@ public sealed class CombatState
     }
     void RefreshActions() {ActionsRemaining=1;ActionsThisRound=1;RestrictedActionsRemaining=0;BonusActionAvailable=true;}
     public void ResetBattle() {pendingTypes[0]=pendingTypes[1]=null;PlayerFeignDeath=MonsterFeignDeath=false;MonsterActionAvailable=true;MonsterBonusActionAvailable=true;MonsterSleepStage=0;PlayerUnderwater=MonsterUnderwater=false;PlayerMaxHpReduction=MonsterMaxHpReduction=0;PlayerProne=false;MonsterFormSpeed=MonsterFormArmor=null;Aftermath=false;AftermathPlayerTurn=true;PlayerRevivalPenalty=MonsterRevivalPenalty=0;PlayerBaned=MonsterBaned=false;PlayerBlessed=MonsterBlessed=false;MonsterTemporaryHp=0;PlayerAidBonus=MonsterAidBonus=0;Array.Clear(playerAidCredits,0,40);Array.Clear(monsterAidCredits,0,40);PlayerArmorBonus=MonsterArmorBonus=PlayerArmorFloor=MonsterArmorFloor=0;PlayerBladeWard=false;PlayerEnergyResistance=MonsterEnergyResistance=-1;MonsterSpeedBonus=0;ClearShortDurationEffects();PlayerTemporaryHp=0;playerArmorOverride=null;PlayerParalyzed=false;MonsterParalyzed=false;MonsterProne=false;PlayerDead=false;PlayerStable=false;DeathSuccesses=0;DeathFailures=0;Hp=MaxHp;PlayerHp=PlayerMaxHp;Round=1;BattleStarted=false;PlayerReactionAvailable=true;MonsterReactionAvailable=true;RefreshActions();}
-    public void ApplyDamage(int damage,bool? sourcePlayer=true,long[] resolvedTypes=null) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); var eventTypes=DamageEvent(false,damage,resolvedTypes);int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageApplied?.Invoke(false,eventTypes);if(damage>0)MonsterDamaged?.Invoke();if(damage>0&&sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value); }
-    public void ApplyPlayerDamage(int damage,bool critical=false,bool? sourcePlayer=false,long[] resolvedTypes=null) {
+    public void ApplyDamage(int damage,bool? sourcePlayer=true,long[] resolvedTypes=null,int? sourceActor=null) { if(damage < 0) throw new ArgumentOutOfRangeException(nameof(damage)); var eventTypes=DamageEvent(false,damage,resolvedTypes);int absorbed=Math.Min(damage,MonsterTemporaryHp);MonsterTemporaryHp-=absorbed;int remaining=damage-absorbed;if(Hp>0&&remaining>=Hp&&PreventDeath(false))Hp=1;else Hp = Math.Max(0, Hp - remaining);if(damage>0)DamageApplied?.Invoke(false,eventTypes);if(damage>0)DamageReceived?.Invoke(false,sourceActor??(sourcePlayer.HasValue?(int?)(sourcePlayer.Value?0:-1):null),damage);if(damage>0)MonsterDamaged?.Invoke();if(damage>0&&sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value); }
+    public void ApplyPlayerDamage(int damage,bool critical=false,bool? sourcePlayer=false,long[] resolvedTypes=null,int? sourceActor=null) {
         if(damage<=0||PlayerDead)return;
-        var eventTypes=DamageEvent(true,damage,resolvedTypes);
+        var eventTypes=DamageEvent(true,damage,resolvedTypes);int received=damage;
         try{
         int originalDamage=damage,before=PlayerHp;
         int absorbed=Math.Min(damage,PlayerTemporaryHp);PlayerTemporaryHp-=absorbed;damage-=absorbed;
@@ -263,7 +266,7 @@ public sealed class CombatState
         if(overflow>=PlayerMaxHp){PlayerHp=0;PlayerDead=true;return;}
         PlayerHp=Math.Max(0,PlayerHp-damage);
         if(PlayerHp==0)PlayerReactionAvailable=false;
-        }finally{DamageApplied?.Invoke(true,eventTypes);if(sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value);}
+        }finally{DamageApplied?.Invoke(true,eventTypes);DamageReceived?.Invoke(true,sourceActor??(sourcePlayer.HasValue?(int?)(sourcePlayer.Value?0:-1):null),received);if(sourcePlayer.HasValue)DamageDealt?.Invoke(sourcePlayer.Value);}
     }
     public void UpdatePlayerMaxHp(int constitution, PlayerClasses classes) {
 

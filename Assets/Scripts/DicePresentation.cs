@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     const float DiceResultHoldSeconds=2f;
     IEnumerator PresentRoll(int sides,int[] results,string calculation="")
     {
-        yield return DrainBondConcentration();
+        yield return DrainHellishRebukes();yield return DrainBondConcentration();
         rollContext=dice;rollResultReady=false;rollCalculation=calculation;
         string values=string.Join("、",results);
         rollResultText="D"+sides+"："+values;
