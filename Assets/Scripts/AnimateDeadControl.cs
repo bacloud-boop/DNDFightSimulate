@@ -9,7 +9,7 @@ public sealed class AnimateDeadControl
     public sealed class Entry
     {
         public int Actor {get;}
-        public bool Destroyed {get;internal set;}
+        public bool Destroyed {get;internal set;}public bool Permanent {get;internal set;}
         public long ControlExpires {get;internal set;}
         internal int Order;
         internal Entry(int actor,long until){Actor=actor;ControlExpires=until;}
@@ -21,7 +21,7 @@ public sealed class AnimateDeadControl
     public static bool ValidTime(long now)=>now>=0&&now<=long.MaxValue-DayRounds;
     public bool Controlled(int actor,long now)
     {
-        var entry=Find(actor);return entry!=null&&!entry.Destroyed&&now>=0&&now<entry.ControlExpires;
+        var entry=Find(actor);return entry!=null&&!entry.Destroyed&&now>=0&&(entry.Permanent||now<entry.ControlExpires);
     }
     public bool Neutral(int actor,long now){var entry=Find(actor);return entry!=null&&!entry.Destroyed&&!Controlled(actor,now);}
     public int OrderFor(int actor,long now)=>Controlled(actor,now)?Find(actor).Order:0;
@@ -40,10 +40,11 @@ public sealed class AnimateDeadControl
     }
     // Project rule: recasting may regain an expired, neutral creature as well
     // as renew a currently controlled creature. Neither operation heals it.
+    public bool RegisterPermanent(int actor,long now){if(actor<1||now<0||entries.ContainsKey(actor))return false;entries.Add(actor,new Entry(actor,long.MaxValue){Permanent=true});return true;}
     public bool Reassert(IEnumerable<int> actors,int slot,long now,Func<int,bool> withinTenFeet)
     {
         List<int> chosen;if(!ValidTime(now)||withinTenFeet==null||!Selection(actors,RenewalLimit(slot),out chosen))return false;
-        foreach(int actor in chosen){var entry=Find(actor);if(entry==null||entry.Destroyed||!withinTenFeet(actor))return false;}
+        foreach(int actor in chosen){var entry=Find(actor);if(entry==null||entry.Permanent||entry.Destroyed||!withinTenFeet(actor))return false;}
         foreach(int actor in chosen){var entry=Find(actor);if(!Controlled(actor,now))entry.Order=0;entry.ControlExpires=now+DayRounds;}return true;
     }
     // One mental Bonus Action gives the same order to the whole chosen group.
@@ -51,7 +52,7 @@ public sealed class AnimateDeadControl
     public bool Command(IEnumerable<int> actors,int order,long now,Func<int,bool> withinSixtyFeet,Func<bool> payBonusAction)
     {
         List<int> chosen;if(order<1||order>2||withinSixtyFeet==null||payBonusAction==null||!Selection(actors,int.MaxValue,out chosen))return false;
-        foreach(int actor in chosen)if(!Controlled(actor,now)||!withinSixtyFeet(actor))return false;
+        foreach(int actor in chosen)if(!Controlled(actor,now)||Find(actor).Permanent||!withinSixtyFeet(actor))return false;
         if(!payBonusAction())return false;
         foreach(int actor in chosen)Find(actor).Order=order;return true;
     }

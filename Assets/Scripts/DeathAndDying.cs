@@ -14,6 +14,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator PlayerDeathSave()
     {
+        yield return DrainFingerRaising();
         if(PendingTerrainCount>0)yield return DrainGreaseEntries();yield return PlayerDeathSaveCore();yield return FollowPlayerCommand();
     }
     IEnumerator PlayerDeathSaveCore()

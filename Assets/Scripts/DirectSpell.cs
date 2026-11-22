@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Finger of Death","死亡一指","1动作 · 60尺 · 声音、姿势。可见生物体质豁免，失败7d8＋30死灵，成功减半。被本法术杀死的类人生物在施法者下回合开始变为服从口头指令的僵尸。升环不增强，不需要专注；仅倒地未死不触发起尸。",7,60,8,save:2,damageType:"死灵",baseDice:7,halfSave:true),
         new DirectSpell("Fire Storm","火焰风暴","1动作 · 150尺 · 声音、姿势。布置至多10块10尺立方区域，各生物敏捷豁免；失败7d10火焰，成功减半。可单块；多块时每块至少与另一块共边，可有分离组。升环不增强，非专注即时。",7,150,10,save:1,damageType:"火焰",baseDice:7,halfSave:true),
         new DirectSpell("Animate Dead","操纵死尸","持续施法1分钟 · 10尺 · 声音、姿势。小型／中型类人生物遗体成为僵尸，骨堆成为骷髅；消耗原遗体、沿用原装备，不生成武器。基础创造1只，每升环+2只；或续控4只，每升环+2只。控制24小时，60尺内附赠动作精神命令。失控后中立停留，可重施恢复控制。",3,10,0),
         new DirectSpell("Flame Strike","焰击术","1动作 · 60尺 · 声音、姿势。10尺半径、40尺高圆柱中所有生物敏捷豁免；失败5d6火焰＋5d6光耀，成功每类各减半。每升环两类伤害各增加1d6。即时、无需专注，不产生困难地形。",5,60,6,save:1,damageType:"火焰",baseDice:5,upcastDice:1,halfSave:true),

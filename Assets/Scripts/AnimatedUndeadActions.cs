@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
     int UndeadReach(UndeadFollower f)=>f.Equipped==null?5:f.Equipped.Reach;
     void DrawUndeadEquipment(UndeadFollower f)
     {
-        var unit=f.Unit;GUILayout.Label(NeutralUndead(unit.Id)?"中立失控：不移动、不攻击、不接受指令。":"受控 · 精神指令保留至更改或控制到期",small);
+        var unit=f.Unit;GUILayout.Label(NeutralUndead(unit.Id)?"中立失控：不移动、不攻击、不接受指令。":f.Verbal?"永久服从口头指令 · 更改指令时需要开口":"受控 · 精神指令保留至更改或控制到期",small);
         if(f.ArmorIndex>0)GUILayout.Label("继承护甲未受训：力量／敏捷D20检定劣势；继承盾牌不提供受训AC加值。",small);
         GUILayout.Label("装备负重 "+WeightUnits.Format(f.Weight.GearOunces)+" · "+(f.Shield?"持盾；双手武器不可用":"未持盾"),small);
         bool old=GUI.enabled;GUI.enabled=old&&unit.ControllerReady&&unit.TurnActive&&!summonActing;

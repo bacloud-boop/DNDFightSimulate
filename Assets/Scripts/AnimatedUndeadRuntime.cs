@@ -15,7 +15,7 @@ public sealed partial class TrainingGame
     sealed class UndeadFollower
     {
         public SummonedUnit Unit;public AnimatedUndeadRules Rules;public int Source,Owner,Corpse;
-        public BodyWeight Weight;public int ArmorIndex;public bool Shield;
+        public bool Verbal;public BodyWeight Weight;public int ArmorIndex;public bool Shield;
         public readonly List<UndeadItem> Items=new List<UndeadItem>();public UndeadItem Equipped;
         public int LightRound=-1;public string LastLightKey;public AmmunitionState Ammo;
         public readonly WeaponGripState Grip=new WeaponGripState();
@@ -100,5 +100,5 @@ public sealed partial class TrainingGame
         foreach(var item in inherited){item.Follower=follower.Unit.Id;item.Place=EquipmentObjectPlace.Carried;item.Carrier=follower.Unit.Id;item.RemainsId=0;}
         follower.Equipped=follower.Items.FirstOrDefault(i=>i.Held&&!i.Ground.Dropped);follower.Grip.DropHeld();
     }
-    void ResetUndeadFollowers(){foreach(var restore in undeadEquipmentReset.Values)restore();undeadEquipmentReset.Clear();CancelAnimateDead();undeadControl.Clear();undeadFollowers.Clear();undeadSaves.Clear();}
+    void ResetUndeadFollowers(){ResetFingerRaising();foreach(var restore in undeadEquipmentReset.Values)restore();undeadEquipmentReset.Clear();CancelAnimateDead();undeadControl.Clear();undeadFollowers.Clear();undeadSaves.Clear();}
 }

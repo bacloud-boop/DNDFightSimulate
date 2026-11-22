@@ -19,8 +19,8 @@ public sealed partial class TrainingGame
         foreach(var unit in map.Summons)if(unit.Alive){
             GUILayout.Label(unit.Name+(NeutralUndead(unit.Id)?" · 中立失控":"")+(PassTraceBenefit(unit.Id)?" · 无踪步":"")+(BeaconHope(unit.Id)?" · 希望信标":"")+(MovementFreedom(unit.Id)?" · 行动自如":"")+(ActorBlinded(unit.Id)?" · 目盲":"")+(unit.SleepStage==2?" · 昏迷":unit.SleepStage==1?" · 失能":"")+(unit.Prone?" · 倒地":"")+(unit.Restrained?" · 束缚":"")+(SteedFear(unit.Id)?" · 恐慌":"")+" · HP "+unit.Hp+" / "+unit.MaxHp+" · 临时生命 "+unit.TemporaryHp+" · AC "+unit.Armor,heading);
             if(!phase&&unit.SleepStage>0){bool enabled=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&BattleMap.BodyDistance(map.Player,map.PlayerSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=5;if(GUILayout.Button("摇醒 "+unit.Name+"（动作）",button)&&combat.TryUseAction()){unit.SleepStage=0;RefreshSleepConcentration();}GUI.enabled=enabled;}
-            if(!phase&&unit!=steed){bool old=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&!NeutralUndead(unit.Id)&&(!PlayerInBeastForm||Undead(unit)!=null);
-                if(Undead(unit)!=null)GUILayout.Label("亡灵更改指令消耗附赠动作，通过精神传达。",small);
+            if(!phase&&unit!=steed){bool old=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&!NeutralUndead(unit.Id)&&(!PlayerInBeastForm||Undead(unit)!=null&&!Undead(unit).Verbal);
+                if(Undead(unit)!=null)GUILayout.Label(Undead(unit).Verbal?"更改指令需要口头传达，不消耗动作；旧指令持续有效。":"亡灵更改指令消耗附赠动作，通过精神传达。",small);
                 if(GUILayout.Button(unit.Orders.Kind==SummonCommandKind.AssistCombat?"✓ 协助战斗（持续）":"下令：协助战斗",button))IssueSummonVerbalCommand(unit,SummonCommand.AssistCombat);
                 if(GUILayout.Button(unit.Orders.Kind==SummonCommandKind.Dodge?"✓ 闪避（持续）":"下令：闪避",button))IssueSummonVerbalCommand(unit,SummonCommand.Dodge);
                 GUI.enabled=old;

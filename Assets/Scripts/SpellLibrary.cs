@@ -195,6 +195,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
         if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")return ConjuredWeaponsError(spell.Name=="Conjure Volley");
+        if(spell.Name=="Finger of Death")return FingerOfDeathError(directTargetPlayer);
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
@@ -296,6 +297,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Finger of Death"&&FingerOfDeathError(targetPlayer)!="")yield break;
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
@@ -361,6 +363,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Conjure Barrage"||conjuredVolley){yield return ResolveConjuredWeapons(true,caster,slotLevel,conjuredVolley,barrageAim,entangleAnchor,conjuredSelected);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Finger of Death"){yield return ResolveFingerOfDeath(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
