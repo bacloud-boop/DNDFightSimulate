@@ -26,7 +26,7 @@ public sealed partial class TrainingGame
     {
         if(AcidArrowResidue.InitialDice(slot)==0||!AcidArrowTargetAvailable(target)||!acidArrows.CanAdd(target))yield break;
         Vector2Int from,to;int n,m;string name;if(AcidArrowIsolated(source,target)||!CommandBody(source,out from,out n)||!SummonTarget(target,out to,out m,out name)||BattleMap.BodyDistance(from,n,to,m)>90)yield break;
-        var attack=new SpellAttackResult();yield return RollMappedRangedSpellAttack(source,target,caster,"马友夫强酸箭",attack);
+        var attack=new SpellAttackResult();yield return RollMappedSpellAttack(source,target,caster,"马友夫强酸箭",attack);
         if(attack.Intercepted){history.Insert(0,"马友夫强酸箭命中镜像而非本体，未对本体生成初始或残留伤害。");yield break;}
         int count=AcidArrowResidue.InitialDice(slot,attack.Critical),sum=0;var rolls=new int[count];for(int i=0;i<count;i++){rolls[i]=Random.Range(1,5);sum+=rolls[i];}
         dice="马友夫强酸箭 · 初始强酸";yield return PresentRoll(4,rolls,count+"d4 = "+sum+(attack.Hit?attack.Critical?"（暴击）":"":"，未命中仅溅射半伤"));

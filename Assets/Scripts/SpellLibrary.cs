@@ -37,6 +37,7 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,635));
         GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();
+        if(VampiricTouchActive&&GUILayout.Button("使用现存吸血之触（魔法动作）",button))selectedSpellName="Vampiric Touch";
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
         if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
         if(heatMetal.Active(worldRounds)&&GUILayout.Button("再次加热灼热金属（附赠动作）",button))panel="heatMetal";
@@ -98,6 +99,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Vampiric Touch")DrawVampiricTouchChoices();
         else if(definition.Name=="Vitriolic Sphere")DrawVitriolicSphereChoices();
         else if(definition.Name=="Ice Storm")DrawIceStormChoices();
         else if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
@@ -204,6 +206,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Vampiric Touch")return VampiricTouchError();
         if(spell.Name=="Vitriolic Sphere")return VitriolicSphereError();
         if(spell.Name=="Ice Storm")return IceStormError();
         if(spell.Name=="Produce Flame")return ProduceFlameError();
@@ -311,6 +314,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        int vampiricSelected=vampiricTarget;if(spell.Name=="Vampiric Touch"&&VampiricTouchError()!="")yield break;
         if(spell.Name=="Vitriolic Sphere"&&VitriolicSphereError()!="")yield break;
         if(spell.Name=="Ice Storm"&&IceStormError()!="")yield break;
         if(spell.Name=="Produce Flame"&&ProduceFlameError()!="")yield break;
@@ -356,7 +360,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -382,6 +386,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Vampiric Touch"){yield return CastVampiricTouch(caster,slotLevel,vampiricSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Vitriolic Sphere"){yield return ResolveVitriolicSphere(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Storm"){yield return ResolveIceStorm(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}

@@ -4,7 +4,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     sealed class SpellAttackResult {public bool Hit,Critical,Intercepted;}
-    IEnumerator RollMappedRangedSpellAttack(int source,int target,int caster,string title,SpellAttackResult result)
+    IEnumerator RollMappedSpellAttack(int source,int target,int caster,string title,SpellAttackResult result,bool melee=false)
     {
         Vector2Int origin,p;int n,m;string name;if(!CommandBody(source,out origin,out n)||!SummonTarget(target,out p,out m,out name))yield break;
         bool playerSource=source==0,primary=target==0||target==-1,player=target==0;var unit=primary?null:FindSummon(target);
@@ -19,8 +19,8 @@ public sealed partial class TrainingGame
         disadvantage|=playerSource?combat.PlayerPoisoned||combat.PlayerProne||ResurrectionD20Disadvantage(true):combat.MonsterPoisoned||combat.MonsterProne;
         if(player)disadvantage|=BlurDisadvantage(playerSource,true);
         if(unit!=null)disadvantage|=unit.Dodging&&unit.EffectiveSpeed>0&&targetSees;
-        if(playerSource)disadvantage|=combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
-        else{
+        if(!melee&&playerSource)disadvantage|=combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
+        else if(!melee){
             disadvantage|=combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5;
             foreach(var ally in map.Summons)if(ally.Alive&&ally.ControllerReady&&!ally.FeignDeath&&ally.SleepStage==0&&BattleMap.BodyDistance(origin,n,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,source,origin,n))disadvantage=true;
         }
@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
         BreakOrdinaryInvisibility(playerSource,"进行攻击检定");mirrorIntercepted=false;
         if(player&&value!=1&&(value==20||(long)value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,(long)value+bonus,sees,PerceivesWithSpecialSense(playerSource,true),cover);armor=combat.PlayerArmorClass+cover;}
         result.Intercepted=mirrorIntercepted;result.Hit=!result.Intercepted&&value!=1&&(value==20||(long)value+bonus>=armor);result.Critical=result.Hit&&(value==20||helpless&&distance<=5);
-        dice=title+" · 远程法术攻击";yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+bonus+" / AC "+armor+(result.Intercepted?"，镜像拦截":result.Hit?result.Critical?"，暴击":"，命中":"，未命中"));
+        dice=title+(melee?" · 近战法术攻击":" · 远程法术攻击");yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+bonus+" / AC "+armor+(result.Intercepted?"，镜像拦截":result.Hit?result.Critical?"，暴击":"，命中":"，未命中"));
         if(bless>0)yield return PresentRoll(4,new[]{bless},"祝福术 +"+bless);if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术 -"+bane);if(ward>0)yield return PresentRoll(4,new[]{ward},"剑刃防护 -"+ward);
         if(playerSource&&!result.Hit&&!result.Intercepted)fighter.RecordMiss(classes[0]);
     }
