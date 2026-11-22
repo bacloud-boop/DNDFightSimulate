@@ -184,7 +184,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             StartCoroutine(EndPlayerTurnWithSensorySaves());
         }
     }
-    IEnumerator Counterattack(bool endTurn=true)
+    IEnumerator Counterattack(bool endTurn=true,bool priorityAction=false)
     {
         rolling=true;
         if(combat.PlayerDead){rolling=false;yield break;}
@@ -193,50 +193,13 @@ public sealed partial class TrainingGame : MonoBehaviour
             worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
             var commandTurn=new CommandResolution();yield return FollowCommand(-1,commandTurn);if(commandTurn.Consumed){yield return FinishMonsterSpellTurn();yield break;}
             if(map.NearestEnemyInReach(!combat.PlayerDead,int.MaxValue)<0){history.Insert(0,"木桩没有可攻击的非假死敌人，跳过行动。");yield return FinishMonsterSpellTurn();yield break;}
-            yield return TryMonsterSpeciesMagic(true);
-            yield return TryMonsterSpeciesBonus(true);
-            var upcoming=monsterSpells.Next==null?null:MonsterSpellCatalog.Find(monsterSpells.Next.Name);
-            if(upcoming==null||!upcoming.Bonus)yield return TryMonsterSpeciesBonus(false);
             if(Entangled(false)&&combat.MonsterCanAct&&combat.MonsterActionAvailable){
-                yield return TryMonsterSpeciesBonus(false);
                 yield return EscapeMonsterEntangle();
                 if(!Entangled(false)){if(combat.MonsterProne&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);}yield return ChasePlayer();}
                 yield return FinishMonsterSpellTurn();yield break;
             }
             if(combat.MonsterProne&&combat.MonsterCanAct&&combat.MonsterSpeed>0){combat.MonsterProne=false;map.SpendMonsterMovement(combat.MonsterSpeed/2);history.Insert(0,"木桩消耗"+(combat.MonsterSpeed/2)+"尺移动力起身。");}
-            yield return ChasePlayer();
-            if(page!="battle" || !map.Locked || combat.BattleFinished){rolling=false;yield break;}
-            rolling=true;
-        }
-        if(endTurn&&combat.MonsterCanAct){
-            yield return TryMonsterBreath(true);
-            if(combat.BattleFinished){yield return FinishMonsterSpellTurn();yield break;}
-            var spellTurn=new MonsterSpellTurn();yield return TryMonsterTurnSpell(spellTurn);
-            yield return TryMonsterSpeciesMagic(false);
-            yield return TryMonsterBreath(false);
-            yield return TryMonsterSpeciesBonus(false);
-            if(combat.MonsterActionAvailable&&(!spellTurn.Cast||spellTurn.Bonus)){yield return ChasePlayer(MonsterAttackReach);if(page!="battle"||combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
-            if(spellTurn.Cast&&(!spellTurn.Bonus||combat.PlayerDead||combat.Hp==0||combat.BattleFinished)){
-                yield return FinishMonsterSpellTurn();yield break;
-            }
-        }
-        if(endTurn&&(!combat.MonsterCanAct||!MonsterCanCastAttack)){
-            history.Insert(0,"木桩失能或未受训护甲禁止法术攻击，跳过本次攻击。");yield return RepeatHoldPersonSave();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
-        }
-        if(endTurn&&!combat.TryUseMonsterAction()){yield return FinishMonsterSpellTurn();yield break;}
-        int summonVictim=endTurn?map.NearestEnemyInReach(!combat.PlayerDead,MonsterAttackReach):-1;
-        if(summonVictim>0){
-            yield return ResolveMonsterSpiritAttack(FindSummon(summonVictim));
-            FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
-            RefreshConcentration();yield return PlayerDeathSave();rolling=false;yield break;
-        }
-        if(endTurn && summonVictim<0) {
-            dice="木桩无法攻击：玩家距离 "+map.DistanceFeet+" 尺，攻击距离 "+MonsterAttackReach+" 尺。";
-            history.Insert(0,dice);
-            FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();tacticalMovement=false;
-            movementMessage="拖动玩家棋子移动。";
-            RefreshConcentration();yield return PlayerDeathSave();
-            rolling=false;logScroll=Vector2.zero;yield break;
+            yield return RunMonsterPriorityTurn();yield return FinishMonsterSpellTurn();yield break;
         }
         mirrorIntercepted=false;int firstHit=Random.Range(1,21);
         bool monsterAdvantage=Entangled(true)|combat.ConsumeGuidingLight(true)||FaerieAdvantage(0,MonsterSeesPlayer)||!PlayerSeesMonster||combat.PlayerHp==0||combat.PlayerParalyzed||(combat.PlayerProne&&map.DistanceFeet<=5),monsterDisadvantage=FearDisadvantage(false)||Entangled(false)|RayAttackDisadvantage(false,MonsterCustomAttackAbility)||MonsterArmorAttackDisadvantage||MonsterUnderwaterDisadvantage()||combat.MonsterPoisoned||BlurDisadvantage(false,true)||!MonsterSeesPlayer||combat.MonsterProne||(combat.PlayerProne&&map.DistanceFeet>5)||(!MonsterMeleeAttack&&combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5);
@@ -256,7 +219,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(blessing>0)yield return PresentRoll(4,new[]{blessing},"祝福术：本次木桩攻击 +"+blessing);
         if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术：本次木桩攻击 -"+bane);
         if(wardPenalty>0)yield return PresentRoll(4,new[]{wardPenalty},"剑刃防护：攻击检定减去 "+wardPenalty+"；命中总值 "+hitTotal);
-        string hitDetails=(endTurn?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练及复活减值 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
+        string hitDetails=(endTurn||priorityAction?"木桩反击":"木桩借机攻击")+" D20="+hitRoll+"，熟练及复活减值 "+proficiency+"，命中总值 "+hitTotal+" / 玩家护甲 "+targetArmor;
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(mirrorIntercepted){dice="镜像术拦截 · 本体伤害0";history.Insert(0,hitDetails+"，攻击转移至镜像，本体伤害0。");}
         else if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
@@ -292,6 +255,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     }
     void DrawPanel()
     {
+        if(panel=="dragonBreath"){DrawDragonBreathPanel();return;}
         if(panel=="remains"){DrawRemainsPanel();return;}
         if(panel=="speciesActions"){DrawSpeciesActions();return;}
         if(panel=="species"||panel=="monsterSpecies"){DrawSpeciesPanel(panel=="species");return;}

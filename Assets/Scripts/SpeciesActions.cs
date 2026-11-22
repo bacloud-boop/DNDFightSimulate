@@ -35,9 +35,9 @@ public sealed partial class TrainingGame
         }
         yield break;
     }
-    IEnumerator TryMonsterSpeciesBonus(bool beforeSpell)
+    IEnumerator TryMonsterSpeciesBonus(bool beforeSpell,bool unified=false)
     {
-        if(!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterBonusActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct))yield break;
+        if(unified?!(combat.MonsterBonusActionAvailable&&SpeciesPhysicalActive(false)&&combat.MonsterCanAct):!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterBonusActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct))yield break;
         if(!monsterSpeciesAbilities.CanAutomaticallyUse(monsterSpecies.Kind,SpeciesProficiency(false),worldRounds))yield break;
         yield return UseSpeciesBonus(false);
     }

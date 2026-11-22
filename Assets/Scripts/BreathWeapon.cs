@@ -82,10 +82,9 @@ public sealed partial class TrainingGame
             RefreshBestialSpirit();ReconcileFallenRescue();dice="龙裔吐息 · "+targets.Count+"名目标结算完成";
         }finally{outcomeDeferDepth--;breathResolving=false;panel=automatic?"":saved;rolling=busy;CheckBattleOutcome();}
     }
-    bool MonsterBreathPreferred=>monsterSpecies.BonusPriority==0&&BreathReady(-1);
-    IEnumerator TryMonsterBreath(bool beforeSpell)
+    IEnumerator TryMonsterBreath(bool beforeSpell,bool unified=false)
     {
-        if(!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct)||!BreathReady(-1))yield break;
+        if((unified?!(combat.MonsterActionAvailable&&SpeciesPhysicalActive(false)&&combat.MonsterCanAct):!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct))||!BreathReady(-1))yield break;
         var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)&&!NeutralUndead(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
         BreathTemplate plan;
         if(map.IsContained(false)){if(combat.PlayerDead||!BreathTemplate.TryCreate(map.Monster.x,map.Monster.y,map.MonsterSpaces,0,map.MonsterSpaces,map.Size, map.Monster.y,false,out plan))yield break;}

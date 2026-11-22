@@ -5,7 +5,12 @@ public sealed partial class TrainingGame
     sealed class MonsterSpellTurn {public bool Attempted,Cast,Bonus;}
     int MonsterTurnReach
     {
-        get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?(MonsterSpellCatalog.IsCone(spell)?(spell.Name=="Conjure Barrage"||spell.Name=="Cone of Cold"?60:15):MonsterSpellCatalog.IsLine(spell)?100:Mathf.Max(spell.Range,spell.EmanationRadius)):MonsterAttackReach;}
+        get{foreach(int kind in monsterActions.Order)if(monsterActions.Enabled(kind)){
+            if(kind==(int)MonsterActionKind.Species&&BreathReady(-1))return 30;
+            if(kind==(int)MonsterActionKind.DragonBreath&&DragonBreathReady(-1))return 15;
+            if(kind==(int)MonsterActionKind.SpellCycle){var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);if(MonsterSpellReady&&spell!=null&&!spell.Healing)return SpellChaseReach(spell);}
+            if(kind==(int)MonsterActionKind.CustomAttack)return MonsterAttackReach;
+        }return MonsterAttackReach;}
     }
     bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Dissonant Whispers"||spell.Name=="Command"||spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)
@@ -25,7 +30,7 @@ public sealed partial class TrainingGame
     {
         if(!combat.MonsterCanAct)yield break;
         var upcoming=monsterSpells.Next;var choice=upcoming==null?null:MonsterSpellCatalog.Find(upcoming.Name);
-        if(choice!=null&&!choice.Bonus&&!combat.MonsterActionAvailable)yield break;
+        if(choice!=null&&(choice.Bonus?!combat.MonsterBonusActionAvailable:!combat.MonsterActionAvailable))yield break;
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
         var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell),cone=MonsterSpellCatalog.IsCone(spell)||MonsterSpellCatalog.IsLine(spell);Vector2Int areaCenter=default(Vector2Int);BreathTemplate conePlan=default(BreathTemplate);

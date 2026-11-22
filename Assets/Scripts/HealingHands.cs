@@ -53,9 +53,9 @@ public sealed partial class TrainingGame
             dice="治愈之手 · 实际治疗 "+actual;ObserveDeaths();
         }finally{panel=saved;rolling=busy;}
     }
-    IEnumerator TryMonsterSpeciesMagic(bool beforeSpell)
+    IEnumerator TryMonsterSpeciesMagic(bool beforeSpell,bool unified=false)
     {
-        if(!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct)||monsterSpecies.Kind!=Species2024.Aasimar||combat.Hp>=combat.MaxHp||HealingHandsProficiency(-1)<=0)yield break;
+        if((unified?!(combat.MonsterActionAvailable&&SpeciesPhysicalActive(false)&&combat.MonsterCanAct):!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct))||monsterSpecies.Kind!=Species2024.Aasimar||combat.Hp>=combat.MaxHp||HealingHandsProficiency(-1)<=0)yield break;
         yield return UseHealingHands(-1,-1,true);
     }
     void DrawHealingHandsChoices(int caster)

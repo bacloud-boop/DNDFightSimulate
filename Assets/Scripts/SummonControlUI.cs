@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
                 if(GUILayout.Button("疾走（动作）",button))unit.Dash();
                 if(GUILayout.Button("闪避（动作）",button))unit.Dodge();
                 if(GUILayout.Button("撤离（动作）",button))unit.Disengage();
-                DrawSteedSpecial(unit);
+                DrawSteedSpecial(unit);DrawDragonBreathActionButton(unit.Id,"summons");
                 GUI.enabled=!summonActing;
                 int water=map.WaterCells(new Vector2Int(unit.X,unit.Y),unit.Spaces);
                 if(water>0&&GUILayout.Button((unit.Aquatic.Submerged?"浮出水面 · ":"潜入水下 · ")+WaterLayerCost(unit.Id),button)){map.SwitchSummonWaterState(unit.Id,!unit.Aquatic.Submerged);ObserveWaterBreathing();}

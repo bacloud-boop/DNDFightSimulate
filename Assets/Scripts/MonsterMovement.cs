@@ -5,11 +5,11 @@ public sealed partial class TrainingGame
 {
     bool monsterMoving;
     Vector2 monsterVisualCell;
-    IEnumerator ChasePlayer(int? reachOverride=null)
+    IEnumerator ChasePlayer(int? reachOverride=null,bool needsWeapon=true)
     {
         int reach=reachOverride??MonsterTurnReach;
         if(!combat.MonsterCanMove)yield break;
-        if(monsterGroundWeapon.Dropped&&!MonsterPolymorphed&&combat.MonsterCanAct){yield return RecoverMonsterWeapon();if(monsterGroundWeapon.Dropped)yield break;}
+        if(needsWeapon&&monsterGroundWeapon.Dropped&&!MonsterPolymorphed&&combat.MonsterCanAct){yield return RecoverMonsterWeapon();if(monsterGroundWeapon.Dropped)yield break;}
         if(combat.MonsterProne){int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)yield break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();}
         if(!map.HasSharedPosition(-1)&&map.NearestEnemyInReach(!combat.PlayerDead,reach)>=0)yield break;
         Vector2Int from=map.Monster,best=from;int initialSpaces=map.MonsterSpaces;
@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
         if(best!=from) {
             dice="木桩向最近敌人移动 "+bestCost+" 尺";
             yield return ResolveMovement(false,best,false,true,bestJump);
-            if((bestJump||map.Monster!=best||map.MonsterSpaces!=initialSpaces)&&(map.Monster!=from||map.MonsterSpaces!=initialSpaces)&&(!combat.MonsterProne||combat.MonsterSpeed>0&&map.MonsterMovementRemaining>=combat.MonsterSpeed/2)&&!combat.BattleFinished&&combat.MonsterCanMove)yield return ChasePlayer(reach);
+            if((bestJump||map.Monster!=best||map.MonsterSpaces!=initialSpaces)&&(map.Monster!=from||map.MonsterSpaces!=initialSpaces)&&(!combat.MonsterProne||combat.MonsterSpeed>0&&map.MonsterMovementRemaining>=combat.MonsterSpeed/2)&&!combat.BattleFinished&&combat.MonsterCanMove)yield return ChasePlayer(reach,needsWeapon);
         }
     }
     IEnumerator AnimateMonsterMovement(Vector2Int from,Vector2Int to)

@@ -48,3 +48,6 @@
 `Tools/Test-CreatureTransitIntegration.ps1`覆盖穿行许可、主动终点阻挡、敌方困难地形、分段扣费、被迫共占与体型豁免，并回归水域、地形、骑乘和救援移动。
 
 来源：[官方2024基本种族规则](https://www.dndbeyond.com/sources/dnd/br-2024/character-origins)、[2024十种种族介绍](https://www.dndbeyond.com/posts/1783-the-10-species-in-the-2024-players-handbook)。
+
+
+怪物自动行动现在在怪物法术面板统一排序和启停（种族主动特性、法术循环、龙息术喷吐、自定义攻击），取代原先仅按种族／常规法术先后的选择；各种行动仍共享对应的动作或附赠动作额度。生前资料独立保存该配置。

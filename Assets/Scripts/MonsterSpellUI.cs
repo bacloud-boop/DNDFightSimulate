@@ -15,7 +15,7 @@ public sealed partial class TrainingGame
         monsterSpellDraft.Clear();
         if(original){foreach(var entry in originalDraft.Spells)monsterSpellDraft.Add(entry);monsterSpellAbilityDraft=originalDraft.SpellAbility;monsterCasterLevelDraft=originalDraft.SpellLevel.ToString();monsterCounterspellDraft=originalDraft.CanCounterspell;}
         else {foreach(var entry in monsterSpells.Entries)monsterSpellDraft.Add(entry);monsterSpellAbilityDraft=monsterSpells.Ability;monsterCasterLevelDraft=monsterSpells.CasterLevel.ToString();monsterCounterspellDraft=monsterSpells.Counterspell;}
-        monsterSpellMessage="";OpenPanel("monsterSpells");
+        monsterActionDraft=(original?originalDraft.ActionPolicy:monsterActions).Copy();monsterSpellMessage="";OpenPanel("monsterSpells");
     }
     void DrawMonsterSpells()
     {
@@ -23,8 +23,8 @@ public sealed partial class TrainingGame
         if(Btn(new Rect(1140,125,90,46),"关闭")){panel=monsterSpellsOriginal?"originalMonster":"";return;}
         GUILayout.BeginArea(new Rect(790,185,440,640));monsterSpellScroll=GUILayout.BeginScrollView(monsterSpellScroll);
         GUILayout.Label(monsterSpellsOriginal?"生前形态 · 法术草稿":"怪物法术",heading);
-        GUILayout.Label("按列表循环，每回合取一项；无合法施法则用原有自定义攻击。附赠动作治疗后仍可攻击。范围法术避开自身并优先覆盖更多敌人；法术位暂不限。",small);
-        bool previous=GUI.enabled;GUI.enabled=!combat.BattleStarted&&!rolling;
+        GUILayout.Label("按列表循环，每回合最多尝试一项；不可用时尝试后续启用的行动类别。附赠动作治疗后仍可攻击。范围法术避开自身并优先覆盖更多敌人；法术位暂不限。",small);
+        bool previous=GUI.enabled;GUI.enabled=!combat.BattleStarted&&!rolling;DrawMonsterActionPriorities();
         GUILayout.Label("施法属性",label);monsterSpellAbilityDraft=GUILayout.SelectionGrid(monsterSpellAbilityDraft,PlayerAttributes.Names,3,button);
         GUILayout.Label("施法等级（1～20，仅用于戏法强化）",small);monsterCasterLevelDraft=IntegerField(monsterCasterLevelDraft,false);
         int previewAbility=monsterAttributes[monsterSpellAbilityDraft],previewProficiency=combat.MonsterProficiencyBonus;
@@ -49,8 +49,8 @@ public sealed partial class TrainingGame
         if(GUILayout.Button("确认更改",button)){
             int level;var target=monsterSpellsOriginal?new MonsterSpellSequence():monsterSpells;
             if(!int.TryParse(monsterCasterLevelDraft,out level)||!target.Configure(monsterSpellAbilityDraft,level,monsterCounterspellDraft,monsterSpellDraft))monsterSpellMessage="施法等级须为1～20整数，法术环阶须合法。";
-            else if(monsterSpellsOriginal){originalDraft.SpellAbility=target.Ability;originalDraft.SpellLevel=target.CasterLevel;originalDraft.CanCounterspell=target.Counterspell;originalDraft.Spells=monsterSpellDraft.ToArray();monsterSpellMessage="已写入生前草稿，请返回生前资料面板应用保存。";}
-            else monsterSpellMessage="已保存，循环从第一项开始。";
+            else if(monsterSpellsOriginal){originalDraft.ActionPolicy=monsterActionDraft.Copy();originalDraft.SpellAbility=target.Ability;originalDraft.SpellLevel=target.CasterLevel;originalDraft.CanCounterspell=target.Counterspell;originalDraft.Spells=monsterSpellDraft.ToArray();monsterSpellMessage="已写入生前草稿，请返回生前资料面板应用保存。";}
+            else {monsterActions=monsterActionDraft.Copy();monsterSpellMessage="已保存行动优先级，法术循环从第一项开始。";}
         }
         GUI.enabled=previous;GUILayout.Label(monsterSpellMessage,small);GUILayout.EndScrollView();GUILayout.EndArea();
     }

@@ -160,6 +160,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
         if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))page="home";
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))ResetCombat();
+        if(dragonBreath.Active(worldRounds)&&dragonBreath.Target==0&&Btn(new Rect(800,77,205,26),"龙息术喷吐（魔法动作）",!rolling&&panel==""&&DragonBreathReady(0)))OpenDragonBreath(0);
         if(HasFrozenRemains&&Btn(new Rect(1015,77,205,26),"冻结遗体 / 免费解冻",!rolling&&!spellTargeting&&panel==""&&draggingToken<0))OpenPanel("frozen");
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
