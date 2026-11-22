@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
  sealed class GreaseEntry {public int Actor;public GreaseField Field;public long MoveEvent;public int MoveStep;}
  readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
  void InitializeGrease(){map.MovementObserved=ObserveGreaseMovement;map.SwimmingTerrain=(cell,spaces)=>map.WaterCells(cell,spaces)==spaces*spaces;}
- bool FullDifficultTerrain(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(!entangle.FullFootprint(x+i,y+j,1,worldRounds)&&!grease.Cell(x+i,y+j,worldRounds)&&!spikeGrowth.Cell(x+i,y+j,worldRounds)&&!web.Cell(x+i,y+j,worldRounds))return false;return spaces>0;}
+ bool FullDifficultTerrain(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(!entangle.FullFootprint(x+i,y+j,1,worldRounds)&&!grease.Cell(x+i,y+j,worldRounds)&&!spikeGrowth.Cell(x+i,y+j,worldRounds)&&!web.Cell(x+i,y+j,worldRounds)&&!iceStorm.Cell(x+i,y+j,worldRounds))return false;return spaces>0;}
  void ObserveGreaseMovement(int actor,Vector2Int from,Vector2Int to,int oldSpaces,int spaces,bool landing)
  {
   BondBonus(0);terrainMovementEvent++;RefreshFaerieFire();RefreshDancingLights();RefreshLightSpell();ObserveSpikeMovement(actor,from,to,spaces,landing);ObserveWebMovement(actor,from,to,oldSpaces,spaces,landing);ObserveDaggersMovement(actor,from,to,oldSpaces,spaces,landing);

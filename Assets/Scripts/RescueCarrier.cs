@@ -30,13 +30,25 @@ public sealed partial class RescueCarrier
     public int TakeDamage(long amount,bool critical=false,int damageType=-1){
         if(amount<=0||Dead)return 0;if(damageType==5)FireExposure?.Invoke();
         if(ResistsType(damageType))amount/=2;if(amount<=0)return 0;
-        long incoming=amount;int before=Hp;if(incoming>0)DamageApplied?.Invoke((int)Math.Min(int.MaxValue,incoming),damageType);
+        long incoming=amount;if(incoming>0)DamageApplied?.Invoke((int)Math.Min(int.MaxValue,incoming),damageType);
+        return ApplyResolvedDamage(amount,critical);
+    }
+    int ApplyResolvedDamage(long amount,bool critical){long incoming=amount;int before=Hp;
         int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;
         if(before==0){Stable=false;RecoveryAt=-1;EndTurn();if(incoming>=MaxHp)Dead=true;else {DeathFailures+=critical?2:1;if(DeathFailures>=3)Dead=true;}return 0;}
         if(amount<=0)return 0;int lost=(int)Math.Min((long)Hp,amount);Hp-=lost;
         if(Hp==0){Prone=true;EndTurn();Stable=false;RecoveryAt=-1;
             if(amount-before>=MaxHp)Dead=true;
         }return lost;
+    }
+    public Action<long[]> TypedDamageApplied;
+    public int TakeDamagePacket(long[] raw){
+        if(raw==null)throw new ArgumentNullException(nameof(raw));if(Dead)return 0;
+        var resolved=new long[raw.Length];long total=0;
+        for(int i=0;i<raw.Length;i++){long value=Math.Max(0,raw[i]);if(i==5&&value>0)FireExposure?.Invoke();if(ResistsType(i))value/=2;resolved[i]=Math.Min(int.MaxValue-total,value);total+=resolved[i];}
+        if(total==0)return 0;
+        if(TypedDamageApplied!=null)TypedDamageApplied(resolved);else if(DamageApplied!=null)for(int i=0;i<resolved.Length;i++)if(resolved[i]>0)DamageApplied((int)resolved[i],i);
+        ApplyResolvedDamage(total,false);return (int)total;
     }
     public bool ResolveDeathSave(int die,long sequence,int bonus=0){
         if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));

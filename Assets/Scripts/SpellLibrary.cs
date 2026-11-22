@@ -93,7 +93,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
+        if(definition.Name=="Ice Storm")DrawIceStormChoices();
+        else if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
         else if(definition.Name=="Continual Flame")DrawContinualFlameChoices();
         else if(definition.Name=="Pass without Trace")DrawPassTraceChoices();
         else if(definition.Name=="Beacon of Hope")DrawBeaconHopeChoices();
@@ -188,6 +189,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Ice Storm")return IceStormError();
         if(spell.Name=="Produce Flame")return ProduceFlameError();
         if(spell.Name=="Continual Flame")return ContinualFlameError(continualObject);
         if(spell.Name=="Pass without Trace")return PassTraceError();
@@ -282,6 +284,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Ice Storm"&&IceStormError()!="")yield break;
         if(spell.Name=="Produce Flame"&&ProduceFlameError()!="")yield break;
         int continualSelected=continualObject;if(spell.Name=="Continual Flame"&&ContinualFlameError(continualSelected)!="")yield break;
         var traceSelected=new List<int>(passTraceTargets);if(spell.Name=="Pass without Trace"&&PassTraceError()!="")yield break;
@@ -342,6 +345,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Ice Storm"){yield return ResolveIceStorm(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Continual Flame"){CastContinualFlame(continualSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Pass without Trace"){CastPassTrace(traceSelected);if(!embedded)rolling=false;yield break;}

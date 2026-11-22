@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     {
         combat.WardBonus=player=>BondBonus(player?0:-1);combat.UniversalResistance=player=>BondBonus(player?0:-1)>0;
         combat.DamageApplied=(player,packet)=>TransferBondDamage(player?0:-1,packet);
-        rescueCarrier.WardBonus=()=>BondBonus(BattleMap.RescueId);
+        rescueCarrier.WardBonus=()=>BondBonus(BattleMap.RescueId);rescueCarrier.TypedDamageApplied=packet=>TransferBondDamage(BattleMap.RescueId,packet);
         rescueCarrier.ExtraResistance=type=>BondBonus(BattleMap.RescueId)>0||type==5&&map.RescueAquatic.Submerged;
         rescueCarrier.DamageApplied=(amount,type)=>TransferBondSingle(BattleMap.RescueId,amount,type);
     }
@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         if(resolved.Length>5&&resolved[5]>0)combat.FireExposure?.Invoke(true);
         combat.ApplyPlayerDamage(amount,sourcePlayer:null,resolvedTypes:resolved);
         history.Insert(0,"守护之链：保留原伤害类型，施法者自身抗性／免疫结算后承受 "+amount+" 伤害（临时生命优先吸收）。");
-        bondConcentration.Enqueue(amount);RefreshConcentration();NoticeCastingInterruption();if(combat.PlayerHp==0)wardingBond.Clear();
+        bondConcentration.Enqueue(amount);if(outcomeDeferDepth==0)RefreshConcentration();NoticeCastingInterruption();if(combat.PlayerHp==0)wardingBond.Clear();
     }
     IEnumerator DrainBondConcentration()
     {

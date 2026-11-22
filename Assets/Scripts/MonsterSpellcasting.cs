@@ -49,6 +49,7 @@ public sealed partial class TrainingGame
             else if(MonsterSpellCatalog.IsLine(spell))yield return ResolveLightningBolt(false,0,entry.Slot,conePlan);
             else if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
             else if(cone)yield return ResolveBurningHands(false,0,entry.Slot,conePlan);
+            else if(spell.Name=="Ice Storm")yield return ResolveIceStorm(false,0,entry.Slot,areaCenter);
             else if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
             else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
             else if(spell.Name=="Scorching Ray")for(int n=0;n<spell.DiceCount(monsterSpells.CasterLevel,entry.Slot);n++){

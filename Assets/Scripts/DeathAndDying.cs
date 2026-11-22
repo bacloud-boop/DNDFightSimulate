@@ -9,6 +9,7 @@ public sealed partial class TrainingGame
     {
         ObserveDeaths();if(combat.PlayerDead)commandEffect.Remove(0);if(combat.Hp==0)commandEffect.Remove(-1);if(rescueCarrier.Dead)commandEffect.Remove(BattleMap.RescueId);
         if(outcomeDeferDepth>0||!combat.BattleFinished||outcomeRecorded)return;
+        iceStorm.EndTurn(terrainActor,terrainTurn);
         outcomeRecorded=true;history.Insert(0,combat.PlayerDead&&combat.Hp==0?"双方死亡。战斗结束，保留现场，可手动重置。":combat.PlayerDead?"玩家死亡。战斗结束，保留现场，可手动重置。":"木桩死亡。战斗结束，保留现场，可手动重置。");
     }
     IEnumerator PlayerDeathSave()

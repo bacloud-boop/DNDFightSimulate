@@ -45,7 +45,7 @@ public sealed partial class TrainingGame
                 paintEvent.Use();
             }
         }
-        DrawAuraVitalityArea(board);DrawSpikeGrowthArea(board);DrawEntangleArea(board);DrawGreaseArea(board);
+        DrawIceStormArea(board);DrawAuraVitalityArea(board);DrawSpikeGrowthArea(board);DrawEntangleArea(board);DrawGreaseArea(board);
         if(breathResolving)DrawBreathArea(board,activeBreath,activeBreathCaster);
         if(burningPreview)DrawBreathArea(board,burningTemplate,burningSource);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);

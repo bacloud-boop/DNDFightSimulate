@@ -4,6 +4,6 @@ public static class MonsterSpellCatalog
     public static DirectSpell Find(string name)=>name=="Acid Splash"?Acid:DirectSpell.Find(name);
     public static bool IsCone(DirectSpell spell)=>spell!=null&&(spell.Name=="Burning Hands"||spell.Name=="Color Spray");
     public static bool IsLine(DirectSpell spell)=>spell!=null&&spell.Name=="Lightning Bolt";
-    public static bool IsArea(DirectSpell spell)=>spell!=null&&(spell.Name=="Acid Splash"||spell.Name=="Fireball"||spell.Name=="Shatter"||spell.Name=="Circle of Death"||spell.Name=="Thunderclap"||spell.Name=="Word of Radiance");
+    public static bool IsArea(DirectSpell spell)=>spell!=null&&(spell.Name=="Ice Storm"||spell.Name=="Acid Splash"||spell.Name=="Fireball"||spell.Name=="Shatter"||spell.Name=="Circle of Death"||spell.Name=="Thunderclap"||spell.Name=="Word of Radiance");
     public static int Radius(DirectSpell spell)=>spell.Name=="Acid Splash"?5:spell.EmanationRadius>0?spell.EmanationRadius:spell.BurstRadius;
 }
