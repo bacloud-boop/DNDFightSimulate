@@ -8,8 +8,8 @@ public sealed partial class TrainingGame
     int reactionRange=5;
     void RequestPlayerMove(Vector2Int target,bool tactical)
     {
-        if(combat.Aftermath){if(!rolling&&PendingTerrainCount==0&&panel==""&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&map.CanMoveTo(target,tactical))StartCoroutine(ResolveMovement(true,target,tactical));return;}
-        if(!combat.PlayerCanAct || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
+        if(combat.Aftermath){if(!rolling&&PendingTerrainCount==0&&panel==""&&PlayerTurnAllowed&&combat.PlayerMovementReady&&map.CanMoveTo(target,tactical))StartCoroutine(ResolveMovement(true,target,tactical));return;}
+        if(!combat.PlayerCanMove || rolling || reactionPending || panel!="" || !map.CanMoveTo(target,tactical))return;
         StartCoroutine(ResolveMovement(true,target,tactical));
     }
     // Entry point for future monster movement; deployment never invokes reactions.
@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
                 } finally {opportunitySenseDistance=null;playerSightOverride=monsterSightOverride=null;playerAttackCoverOverride=monsterAttackCoverOverride=null;}
             }else history.Insert(0,(defenderPlayer?"玩家":"木桩")+"放弃借机攻击，保留反应。");
             rolling=true;
-            if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerCanAct) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
+            if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerMovementReady) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
         }
         if(expectedSpaces.HasValue&&((movingPlayer?map.PlayerSpaces:map.MonsterSpaces)!=expectedSpaces.Value||(movingPlayer?combat.PlayerProne:combat.MonsterProne)!=proneAtStart)){if(PendingTerrainCount>0)yield return DrainGreaseEntries();if(!preserveBusy)rolling=false;yield break;}
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);

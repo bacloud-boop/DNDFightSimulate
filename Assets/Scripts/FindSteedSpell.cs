@@ -78,7 +78,7 @@ public sealed partial class TrainingGame
         if(steed==null||!steed.Alive)return;
         GUILayout.Label(map.Riding?"骑乘中 · 共享坐骑完整占地":"异界坐骑 · 可骑乘",heading);
         GUILayout.Label("坐骑携带上限 "+WeightUnits.Format(CarryingRules.CapacityOunces(18,steed.Size))+"；骑手含装备与搬运负重 "+(RiderWeight()<0?"形态体重尚未填写":WeightUnits.Format(RiderWeight())),small);
-        bool enabled=GUI.enabled;GUI.enabled=!rolling&&!summonTurns.Active&&combat.PlayerCanAct;
+        bool enabled=GUI.enabled;GUI.enabled=!rolling&&!summonTurns.Active&&(combat.PlayerCanAct||map.Riding&&combat.PlayerCanMove);
         int cost=map.PlayerSpeed/2;
         if(!map.Riding){GUI.enabled=GUI.enabled&&RidingState.SizeAllowed(EffectiveCreatureSize(true),steed.Size)&&map.CanMountSummon(steed.Id)&&map.PlayerSpeed>0&&map.MovementRemaining>=cost&&RiderWeight()>=0&&CarryingRules.CanCarryOunces(18,steed.Size,0,RiderWeight());
             if(GUILayout.Button("上马 · "+cost+"尺玩家移动力",button)&&map.SpendPlayerMovement(cost)){map.MountSummon(steed.Id);combat.MarkBattleStarted();RefreshSteed();}}

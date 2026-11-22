@@ -34,6 +34,8 @@ public sealed class SummonedUnit
     long movementSpent;
     int dashes;
     public bool FeignDeath,FeignBlind;
+    public Func<bool> MovementFreedom;
+    bool HasMovementFreedom=>MovementFreedom!=null&&MovementFreedom();
     public void SetFeignDeath(bool active,bool blind){FeignDeath=active;FeignBlind=blind;if(active){Dodging=false;AttacksRemaining=0;}}
     public bool ResistsType(int type)=>type>=0&&((WardBonus!=null&&WardBonus()>0)||FeignDeath&&type!=10||Stoneskin&&type<=2);
     public int SleepStage {get;set;}
@@ -45,7 +47,7 @@ public sealed class SummonedUnit
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
-    public int EffectiveSpeed=>FeignDeath||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
+    public int EffectiveSpeed=>FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}

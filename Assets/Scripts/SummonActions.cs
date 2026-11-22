@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
             bool sees=targetAt.HasValue?SpiritSeesAt(unit,targetId,unit.X,unit.Y,targetAt.Value.X,targetAt.Value.Y,spaces):SpiritSees(unit,targetId,cell,spaces),targetSees=TargetSeesSpirit(targetId,unit);
             if(targetAt.HasValue&&targetId==-1)targetSees=VisibilityBetween(false,targetAt.Value.X,targetAt.Value.Y,spaces,unit.X,unit.Y,unit.Spaces)<2;
             bool advantage=FaerieAdvantage(targetId,sees)||(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||(!IsSteed(unit)&&SpiritPackTactics(unit,targetId,cell,spaces,targetAt))||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
-            bool disadvantage=FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,unit.SwimSpeed,false);
+            bool disadvantage=FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,SummonSwimSpeed(unit),false);
             if(targetId==0)disadvantage|=senses.Blurred(worldRounds);
             var other=FindSummon(targetId);if(other!=null&&other.Dodging&&other.Speed>other.Breathing.SpeedPenalty&&targetSees)disadvantage=true;
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;
@@ -85,7 +85,8 @@ public sealed partial class TrainingGame
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;if(PendingTerrainCount>0)yield return DrainGreaseEntries();summonEndRequested=false;
                 var commanded=new CommandResolution();yield return FollowCommand(unit.Id,commanded);
-                if(commanded.Consumed||unit.FeignDeath||unit.SleepStage==2)summonEndRequested=true;
+                if(commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
+                else if(unit.FeignDeath){panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 if(unit.Alive)yield return FinishSummonPassiveEffects(unit);

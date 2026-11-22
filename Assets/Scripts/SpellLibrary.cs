@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
-    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -75,6 +75,7 @@ public sealed partial class TrainingGame
     {
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
+        if(selectedSpellName=="Lightning Bolt"){DrawLightningBoltPanel();return;}
         if(selectedSpellName=="Burning Hands"||selectedSpellName=="Color Spray"){DrawBurningHandsPanel();return;}
         if(selectedSpellName=="Light"){DrawLightSpellPanel();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
@@ -92,7 +93,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Water Walk")DrawWaterWalkChoices();
+        if(definition.Name=="Freedom of Movement")DrawFreedomMovementChoices();
+        else if(definition.Name=="Water Walk")DrawWaterWalkChoices();
         else if(definition.Name=="Warding Bond")DrawWardingBondChoices();
         else if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
         else if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
@@ -181,6 +183,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Freedom of Movement")return FreedomMovementError(directSlotLevel);
         if(spell.Name=="Water Walk")return WaterWalkError();
         if(spell.Name=="Warding Bond")return WardingBondError();
         if(spell.Name=="Flaming Sphere")return FlamingSphereError();
@@ -189,6 +192,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Command")return CommandError(directSlotLevel);
         if(spell.Name=="Color Spray")return ColorSprayError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
+        if(spell.Name=="Lightning Bolt")return LightningBoltError();
         if(spell.Name=="Light")return LightSpellError();
         if(spell.Name=="Starry Wisp")return StarryWispError();
         if(spell.Name=="Feign Death")return FeignDeathError();
@@ -263,10 +267,12 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
+        BreathTemplate lightningAim=default(BreathTemplate);if(spell.Name=="Lightning Bolt"&&!PlayerLightningTemplate(out lightningAim))yield break;
         BreathTemplate burningAim=default(BreathTemplate);if((spell.Name=="Burning Hands"||spell.Name=="Color Spray")&&!PlayerBurningTemplate(out burningAim))yield break;
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        var freedomSelected=new List<int>(freedomTargets);if(spell.Name=="Freedom of Movement"&&FreedomMovementError(slotLevel)!="")yield break;
         var walkSelected=new List<int>(waterWalkTargets);if(spell.Name=="Water Walk"&&WaterWalkError()!="")yield break;
         int bondedSelection=bondTarget;if(spell.Name=="Warding Bond"&&WardingBondError()!="")yield break;
         if(spell.Name=="Flaming Sphere"&&FlamingSphereError()!="")yield break;
@@ -320,6 +326,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Freedom of Movement"){CastFreedomMovement(freedomSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Walk"){CastWaterWalk(walkSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Warding Bond"){CastWardingBond(bondedSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flaming Sphere"){CastFlamingSphere(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
@@ -327,6 +334,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Command"){yield return ResolveCommandCast(0,caster,chosenCommand,commandSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Color Spray"){yield return ResolveColorSpray(true,caster,burningAim);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Lightning Bolt"){yield return ResolveLightningBolt(true,caster,slotLevel,lightningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Burning Hands"){yield return ResolveBurningHands(true,caster,slotLevel,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Starry Wisp"){yield return ResolvePlayerStarryWisp(caster,starrySelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Feign Death"){ApplyFeignDeath(feignSelected);if(!embedded)rolling=false;yield break;}

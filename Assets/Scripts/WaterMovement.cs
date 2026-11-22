@@ -21,7 +21,7 @@ public sealed partial class BattleMap
             int part=FeetBetween(previous,cell);total+=part;
             bool fullyWet=WaterCells(cell,spaces)==spaces*spaces;
             if(!fullyWet)submerged=false;
-            if(swimSpeed<=0&&fullyWet&&(!waterWalking||submerged))wet+=part;
+            if(swimSpeed<=0&&!HasMovementFreedom(actor)&&fullyWet&&(!waterWalking||submerged))wet+=part;
             previous=cell;
         }
         int extra=total==0?0:Mathf.RoundToInt((float)distance*wet/total);

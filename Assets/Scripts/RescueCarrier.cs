@@ -17,6 +17,9 @@ public sealed partial class RescueCarrier
     public readonly CorpseClock Corpse=new CorpseClock();
     public readonly BreathingState Breathing=new BreathingState();
     public bool FeignDeath,Restrained;
+    public Func<bool> MovementFreedom;
+    bool HasMovementFreedom=>MovementFreedom!=null&&MovementFreedom();
+    public bool MovementReady=>Hp>0&&!Dead&&(!FeignDeath||HasMovementFreedom);
     public Func<int> WardBonus;public int ArmorClass=>10+(int)Math.Floor((Dexterity-10)/2.0)+(WardBonus==null?0:WardBonus());
     public Func<int,bool> ExtraResistance;public Action<int,int> DamageApplied;
     public bool ResistsType(int type)=>(ExtraResistance!=null&&ExtraResistance(type))||Species.Resist(type)||FeignDeath&&type>=0&&type!=10;
@@ -68,7 +71,7 @@ public sealed partial class RescueCarrier
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;
-    public int EffectiveSpeed=>FeignDeath||Restrained?0:Math.Max(0,Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed)-Breathing.SpeedPenalty);
+    public int EffectiveSpeed=>FeignDeath&&!HasMovementFreedom||Restrained?0:Math.Max(0,Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed)-Breathing.SpeedPenalty);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
     public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {
@@ -76,15 +79,15 @@ public sealed partial class RescueCarrier
     }
     public bool BeginTurn(long sequence)
     {
-        if(!Conscious||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ActionsRemaining=1;BonusActionAvailable=true;ReactionAvailable=true;MovementSpent=0;Dashes=0;TurnStarted?.Invoke();return true;
+        if(!MovementReady||TurnActive||sequence<=lastTurn)return false;lastTurn=sequence;TurnActive=true;ActionsRemaining=1;BonusActionAvailable=true;ReactionAvailable=true;MovementSpent=0;Dashes=0;TurnStarted?.Invoke();return true;
     }
     public Action TurnEnded,TurnStarted,FireExposure;
     public void EndTurn(bool notify=true){bool active=TurnActive;TurnActive=false;ActionsRemaining=0;if(active&&notify)TurnEnded?.Invoke();}
     public bool UseAction(){if(!Conscious||!TurnActive||ActionsRemaining<1)return false;ActionsRemaining--;return true;}
     public bool PickUp(int id,bool dead,BodyWeight corpse,bool drag)=>TurnActive&&Load.PickUpOunces(id,dead,corpse,Strength,Species.CapacitySize(Size),Weight.GearOunces,drag,UseAction);
     public bool Drop(Func<bool> place)=>TurnActive&&Load.Drop(place);
-    public bool Move(int feet){if(!Conscious||!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
+    public bool Move(int feet){if(!MovementReady||!TurnActive||feet<1||feet>MovementRemaining)return false;MovementSpent+=feet;return true;}
     public bool Dash(){if(!UseAction())return false;Dashes++;return true;}
-    public bool CanMove(int feet)=>Conscious&&TurnActive&&feet>0&&feet<=MovementRemaining;
+    public bool CanMove(int feet)=>MovementReady&&TurnActive&&feet>0&&feet<=MovementRemaining;
     public void Reset(){Breathing.Reset();FeignDeath=Restrained=false;SpeciesAbilities.Reset();SpeciesSpells.LongRest();TemporaryHp=0;BonusActionAvailable=ReactionAvailable=true;Dead=Stable=false;DeathFailures=DeathSuccesses=RevivalPenalty=0;RecoveryAt=lastDeathSave=-1;Corpse.Clear();Hp=MaxHp;Prone=false;EndTurn(false);Load.Clear();MovementSpent=0;Dashes=0;lastTurn=-1;}
 }

@@ -15,6 +15,10 @@ class FeignDeathChecks
         for(int i=0;i<13;i++)C(combat.AdjustTypedDamage(true,9,i)==(i==10?9:4),"only psychic damage bypasses the spell resistance");
         combat.PlayerEnergyResistance=5;combat.PlayerUnderwater=true;C(combat.AdjustTypedDamage(true,9,5)==4,"overlapping resistance is applied once");
         combat.ApplyPoison(true);C(!combat.PlayerPoisoned,"poisoned immunity does not mean poison damage immunity");
+        combat.MovementFreedom=player=>true;
+        C(combat.PlayerCanMove&&combat.PlayerMovementReady&&combat.MonsterCanMove&&combat.MonsterSpeed==30,"freedom suppresses only the feigned magical speed reduction for both primary actors");
+        C(combat.PlayerFeignDeath&&combat.MonsterFeignDeath&&!combat.PlayerCanAct&&!combat.MonsterCanAct&&!combat.TryUseAction()&&!combat.TryUseBonusAction()&&!combat.TryUseReaction(true),"freedom leaves feigned incapacitation and action/reaction gates intact");
+        combat.MovementFreedom=null;C(!combat.PlayerCanMove&&!combat.MonsterCanMove&&combat.MonsterSpeed==0,"speed zero resumes when freedom is no longer active");
         var sensory=new SensoryAfflictions();sensory.Add(true,true,12,9);sensory.Add(true,true,13,9);effect.Cast(0,9);
         combat.ExtraConditionRemoval=(player,condition,now)=>condition==0&&effect.EndBlind(player?0:-1,now)?1:0;
         C(RestorationRules.EndCondition(combat,sensory,true,0,9)==3&&!effect.Blind(0,9)&&effect.Active(0,9),"restoration ends all blindness sources, preserving feigned incapacitation");
@@ -23,6 +27,10 @@ class FeignDeathChecks
         combat.ApplyPlayerDamage(2);MassHealRules.Apply(combat,sensory,true,5,11);C(!effect.Blind(0,11),"Mass Heal clears blindness after actual healing");
         var unit=new SummonedUnit(1,"spirit",30,12,30,2,2);unit.BeginTurn(1);unit.Dodge();unit.SetFeignDeath(true,true);
         C(unit.Alive&&!unit.Dodging&&unit.MovementRemaining==0&&!unit.Attack()&&!unit.UseReaction()&&!unit.Dash(),"living summons lose Dodge and cannot act or react");
+        unit.MovementFreedom=()=>true;
+        C(unit.EffectiveSpeed==30&&unit.CanSpendMovement(5)&&unit.SpendMovement(5)&&unit.MovementRemaining==25,"protected feigned summons may use their own movement pool");
+        C(unit.FeignDeath&&unit.FeignBlind&&!unit.ActionAvailable&&!unit.Attack()&&!unit.TryUseBonus()&&!unit.UseReaction(),"summon freedom keeps blindness, incapacitation and all action restrictions");
+        unit.MovementFreedom=null;C(unit.MovementRemaining==0,"removing freedom resumes the feigned summon speed zero");
         C(unit.Damage(9,9)==4&&unit.Damage(9,10)==9,"summons resist poison damage but not psychic damage");
         var map=new BattleMap();map.EnemyEligible=id=>!effect.Active(id,11);
         C(map.NearestEnemyInReach(true,int.MaxValue)==-1,"a lone feigned player is ignored by target selection");
@@ -34,6 +42,10 @@ class FeignDeathChecks
         C(rescuer.PickUp(0,effect.Active(0,11),weight,false)&&rescuer.ActionsRemaining==0,"carrying a feigned body uses the existing action and weight rules");
         rescuer.FeignDeath=true;C(!rescuer.Conscious&&!rescuer.Dead&&rescuer.Hp>0&&!rescuer.Move(5)&&!rescuer.TryUseReaction(),"rescuers also stay alive but cannot act");
         C(rescuer.TakeDamage(9,false,9)==4,"rescuers share nonpsychic resistance");
+        var protectedRescuer=new RescueCarrier();protectedRescuer.FeignDeath=true;protectedRescuer.MovementFreedom=()=>true;
+        C(protectedRescuer.BeginTurn(1)&&protectedRescuer.MovementReady&&protectedRescuer.EffectiveSpeed==30&&protectedRescuer.Move(5),"feigned rescuers under freedom receive and spend only their normal movement on their turn");
+        C(!protectedRescuer.Conscious&&!protectedRescuer.UseAction()&&!protectedRescuer.TryUseBonusAction()&&!protectedRescuer.TryUseReaction(),"rescuer remains incapacitated and cannot spend action, bonus or reaction");
+        protectedRescuer.MovementFreedom=null;C(!protectedRescuer.CanMove(5)&&protectedRescuer.EffectiveSpeed==0,"rescuer speed zero resumes when freedom ends");
         effect.Clear();combat.ResetBattle();C(!effect.Active(0,11)&&combat.PlayerCanAct&&!combat.PlayerFeignDeath&&!combat.MonsterFeignDeath,"reset clears feigned status and resources");
         Console.WriteLine("PASS: Feign Death duration, independent blindness, real life state, typed resistance, immunity, restoration, action gates, target exclusion and carrying");
     }

@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(380,455,205,28),"跳跃落点 · 列／行",small);
         jumpColumn=GUI.TextField(new Rect(380,485,98,34),jumpColumn,fieldStyle);jumpRow=GUI.TextField(new Rect(487,485,98,34),jumpRow,fieldStyle);
         int x=0,y=0;var valid=int.TryParse(jumpColumn,out x)&&int.TryParse(jumpRow,out y);var cell=new Vector2Int(x-1,y-1);
-        bool ready=valid&&page=="battle"&&panel==""&&!rolling&&!spellTargeting&&draggingToken<0&&combat.PlayerCanAct&&CanUseJump(true,cell,tacticalMovement);
+        bool ready=valid&&page=="battle"&&panel==""&&!rolling&&!spellTargeting&&draggingToken<0&&combat.PlayerCanMove&&CanUseJump(true,cell,tacticalMovement);
         if(Btn(new Rect(380,530,205,48),combat.PlayerProne?"请先起身":tacticalMovement?"战术跳跃（10尺）":"跳跃（10尺移动）",ready))StartCoroutine(ResolveMovement(true,cell,tacticalMovement,false,true));
     }
 }

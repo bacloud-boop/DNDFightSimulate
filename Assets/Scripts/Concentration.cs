@@ -28,7 +28,7 @@ public sealed partial class TrainingGame
         if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath)EndConcentration("施法者失能或死亡");
         else if((concentrationExpiresWorld>=0&&worldRounds>=concentrationExpiresWorld)||combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
         else if(concentrationSpell=="衰弱射线"&&!enfeeblement.Active(true,worldRounds,combat.Round)&&!enfeeblement.Active(false,worldRounds,combat.Round))EndConcentration("衰弱射线效果已结束");
-        else if((concentrationSpell=="人类定身术"||concentrationSpell=="怪物定身术")&&!combat.PlayerParalyzed&&!combat.MonsterParalyzed)EndConcentration("所有目标均已摆脱效果");
+        else if((concentrationSpell=="人类定身术"||concentrationSpell=="怪物定身术")&&!combat.PlayerParalysisEffect&&!combat.MonsterParalysisEffect)EndConcentration("所有目标均已摆脱效果");
     }
     int PlayerSavingThrowModifier(int ability)
     {
@@ -51,13 +51,13 @@ public sealed partial class TrainingGame
     }
     IEnumerator RepeatHoldPersonSave()
     {
-        if(!combat.MonsterParalyzed||(concentrationSpell!="人类定身术"&&concentrationSpell!="怪物定身术")||combat.Hp==0)yield break;
+        if(!combat.MonsterParalysisEffect||(concentrationSpell!="人类定身术"&&concentrationSpell!="怪物定身术")||combat.Hp==0)yield break;
         var d20=RollD20Test(false,ability:3);int value=d20.Value,modifier=MonsterSavingThrowModifier(3);
         dice="木桩回合结束 · "+concentrationSpell+"感知豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,d20.Dice,value+" + "+modifier+" / DC "+holdPersonDc);
         if(value+modifier>=holdPersonDc){combat.MonsterParalyzed=false;history.Insert(0,"木桩通过感知豁免，摆脱麻痹。");RefreshConcentration();}
-        else history.Insert(0,"木桩感知豁免失败，继续麻痹。");
+        else history.Insert(0,MovementFreedom(-1)?"木桩感知豁免失败；定身术仍持续，行动自如暂时抑制麻痹。":"木桩感知豁免失败，继续麻痹。");
     }
     IEnumerator ResolveHoldPerson(DirectSpell spell,bool player,int caster,bool both)
     {
@@ -70,6 +70,7 @@ public sealed partial class TrainingGame
             if(!targetPlayer&&(!spell.AllowsCreatureType(monsterProfile.TypeIndex)||combat.Hp==0))continue;
             if(targetPlayer&&combat.PlayerDead)continue;
             string target=targetPlayer?"玩家":"木桩";
+            if(MovementFreedom(targetPlayer?0:-1)){history.Insert(0,target+"受到行动自如保护，定身术不能造成麻痹。");continue;}
             var d20=RollD20Test(targetPlayer,ability:3);int value=d20.Value,modifier=targetPlayer?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);
             dice=spell.Chinese+" · "+target+"感知豁免";
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(targetPlayer,false,adjustment);modifier+=adjustment.Value;

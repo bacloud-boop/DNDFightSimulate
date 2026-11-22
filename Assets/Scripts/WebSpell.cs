@@ -31,8 +31,8 @@ public sealed partial class TrainingGame
     {
         web.Refresh(worldRounds);
         foreach(int actor in BreathActors())if(web.Restrained(actor,worldRounds)&&!InWeb(actor))web.Release(actor);
-        rescueCarrier.Restrained=web.Restrained(BattleMap.RescueId,worldRounds);
-        combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=entangle.Restrained(unit.Id,worldRounds)||web.Restrained(unit.Id,worldRounds);
+        rescueCarrier.Restrained=!MovementFreedom(BattleMap.RescueId)&&web.Restrained(BattleMap.RescueId,worldRounds);
+        combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=MagicalRestraint(unit.Id);
     }
     void StartWebTurn(int actor)=>StartTerrainTurn(actor,false);
     void StartTerrainTurn(int actor,bool independent)
@@ -113,7 +113,8 @@ public sealed partial class TrainingGame
                     var reduced=new RayDamage();yield return ReduceRayDamage(true,a+b,"火焰","蛛网燃烧",reduced);
                     webAreaFire=true;int amount;try{amount=ApplyMappedAreaDamage(entry.Actor,0,reduced.Amount,5,"蛛网燃烧");}finally{webAreaFire=false;}
                     if(entry.Actor==0)yield return MaintainConcentration(amount);ReconcileFallenRescue();RefreshBestialSpirit();CheckBattleOutcome();
-                }else if(!damage&&entry.Save){var failed=new HashSet<int>();yield return RollMappedAbilitySave(entry.Actor,entry.Actor,web.Dc,failed,"蛛网术",1);if(failed.Contains(entry.Actor)){if(InWeb(entry.Actor))web.Bind(entry.Actor,worldRounds);SyncTimedBuffs();history.Insert(0,TransitActorName(entry.Actor)+"蛛网敏捷豁免失败；"+(InWeb(entry.Actor)?"在网内束缚，主动移动停在触发位置。":"已被强制移出，不保留束缚。"));}else history.Insert(0,TransitActorName(entry.Actor)+"通过蛛网敏捷豁免；先前仍有效的束缚不会因此自动解除。");}
+                }else if(!damage&&entry.Save&&MovementFreedom(entry.Actor)){history.Insert(0,TransitActorName(entry.Actor)+"受到行动自如保护，不会被蛛网束缚。");}
+                else if(!damage&&entry.Save){var failed=new HashSet<int>();yield return RollMappedAbilitySave(entry.Actor,entry.Actor,web.Dc,failed,"蛛网术",1);if(failed.Contains(entry.Actor)){if(InWeb(entry.Actor))web.Bind(entry.Actor,worldRounds);SyncTimedBuffs();history.Insert(0,TransitActorName(entry.Actor)+"蛛网敏捷豁免失败；"+(InWeb(entry.Actor)?"在网内束缚，主动移动停在触发位置。":"已被强制移出，不保留束缚。"));}else history.Insert(0,TransitActorName(entry.Actor)+"通过蛛网敏捷豁免；先前仍有效的束缚不会因此自动解除。");}
             }
         }finally{webOrderPending=false;panel=saved;}
     }

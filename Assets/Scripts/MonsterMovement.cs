@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
         if(best!=from) {
             dice="木桩向最近敌人移动 "+bestCost+" 尺";
             yield return ResolveMovement(false,best,false,true,bestJump);
-            if((bestJump||map.Monster!=best||map.MonsterSpaces!=initialSpaces)&&(map.Monster!=from||map.MonsterSpaces!=initialSpaces)&&(!combat.MonsterProne||combat.MonsterSpeed>0&&map.MonsterMovementRemaining>=combat.MonsterSpeed/2)&&!combat.BattleFinished&&combat.MonsterCanAct)yield return ChasePlayer(reach);
+            if((bestJump||map.Monster!=best||map.MonsterSpaces!=initialSpaces)&&(map.Monster!=from||map.MonsterSpaces!=initialSpaces)&&(!combat.MonsterProne||combat.MonsterSpeed>0&&map.MonsterMovementRemaining>=combat.MonsterSpeed/2)&&!combat.BattleFinished&&combat.MonsterCanMove)yield return ChasePlayer(reach);
         }
     }
     IEnumerator AnimateMonsterMovement(Vector2Int from,Vector2Int to)

@@ -82,6 +82,7 @@ public sealed partial class BattleMap
     }
     bool RoughTerrainAt(int actor,Vector2Int cell,int spaces)
     {
+        if(HasMovementFreedom(actor))return false;
         if(actor==int.MaxValue)return DifficultTerrain!=null&&DifficultTerrain(cell.x,cell.y,spaces);
         for(int y=0;y<spaces;y++)for(int x=0;x<spaces;x++)if(!(DifficultTerrain!=null&&DifficultTerrain(cell.x+x,cell.y+y,1))&&!CreatureCellRough(actor,cell.x+x,cell.y+y))return false;return spaces>0;
     }

@@ -3,9 +3,9 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly EntangleEffect entangle=new EntangleEffect();
-    bool Entangled(bool player)=>entangle.Restrained(player?0:-1,worldRounds)||web.Restrained(player?0:-1,worldRounds);
+    bool Entangled(bool player)=>MagicalRestraint(player?0:-1);
     void InitializeEntangle(){map.DifficultTerrain=FullDifficultTerrain;map.RestrainedActor=Entangled;}
-    void SyncEntangleActors(){combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=entangle.Restrained(unit.Id,worldRounds)||web.Restrained(unit.Id,worldRounds);}
+    void SyncEntangleActors(){combat.MonsterRestrained=Entangled(false);foreach(var unit in map.Summons)unit.Restrained=MagicalRestraint(unit.Id);}
     void EndEntangle(){entangle.Clear();SyncEntangleActors();}
     string EntangleError(){Vector2Int cell;if(!VisionPoint(out cell))return "纠缠区域左上格必须位于地图内。";if(map.DistanceToCell(true,cell)>90)return "纠缠区域起点超出90尺。";return worldRounds<0||worldRounds>long.MaxValue-10?"世界时间超出范围。":"";}
     void DrawEntangleChoices(){GUILayout.Label("20尺方形（4×4格），输入左上格列与行。水域同样生效；完整占地进入才增加地形移动消耗。初始区域内除施法者外的生物进行力量豁免，后进入者不额外束缚。",small);visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);}
@@ -25,10 +25,11 @@ public sealed partial class TrainingGame
         if(combat.Hp>0&&entangle.Intersects(map.Monster.x,map.Monster.y,map.MonsterSpaces,worldRounds)){
             bool automatic=combat.MonsterParalyzed||combat.MonsterSleepStage==2;var roll=RollArmorSave(false,0);int modifier=MonsterSavingThrowModifier(0);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(false,automatic,adjustment,0);modifier+=adjustment.Value;
             if(!automatic)yield return PresentRoll(20,roll.Dice,"纠缠术 · 木桩力量豁免："+roll.Value+" + "+modifier+" / DC "+dc);
-            if(automatic||(long)roll.Value+modifier<dc){entangle.Bind(-1,worldRounds);history.Insert(0,"木桩被纠缠术束缚，需消耗动作进行力量（运动）检定脱困。");}else history.Insert(0,"木桩通过力量豁免，未被束缚；困难地形仍生效。");
+            if(MovementFreedom(-1))history.Insert(0,"木桩受到行动自如保护，不会被纠缠术束缚。");
+            else if(automatic||(long)roll.Value+modifier<dc){entangle.Bind(-1,worldRounds);history.Insert(0,"木桩被纠缠术束缚，需消耗动作进行力量（运动）检定脱困。");}else history.Insert(0,"木桩通过力量豁免，未被束缚；困难地形仍生效。");
         }
         foreach(var unit in map.Summons)if(unit.Alive&&entangle.Intersects(unit.X,unit.Y,unit.Spaces,worldRounds)){
-            var save=new SummonSave();yield return RollSummonSave(unit,0,dc,anchor,save);if(save.Failed)entangle.Bind(unit.Id,worldRounds);
+            var save=new SummonSave();yield return RollSummonSave(unit,0,dc,anchor,save);if(save.Failed&&!MovementFreedom(unit.Id))entangle.Bind(unit.Id,worldRounds);
         }
         SyncEntangleActors();SyncTimedBuffs();history.Insert(0,"纠缠术：20尺方形困难地形持续至多1分钟；初始豁免排除施法者。脱困、离开区域或区域内没有束缚目标，都不会提前移除地形。");
     }

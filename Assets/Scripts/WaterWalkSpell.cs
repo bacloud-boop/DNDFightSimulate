@@ -22,8 +22,8 @@ public sealed partial class TrainingGame
     string WaterLayerCost(int actor)=>waterWalk.Active(actor,worldRounds)?"附赠动作":"5尺移动力";
     bool PlayerCanSwitchWaterLayer()
     {
-        if(!PlayerTurnAllowed||summonTurns.Active||combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.PlayerFeignDeath||map.IsContained(true)||map.Riding)return false;
-        return waterWalk.Active(0,worldRounds)?combat.BonusActionAvailable:map.MovementRemaining>=AquaticState.SwitchCost;
+        if(!PlayerTurnAllowed||summonTurns.Active||!combat.PlayerMovementReady||map.IsContained(true)||map.Riding)return false;
+        return waterWalk.Active(0,worldRounds)?!combat.PlayerFeignDeath&&combat.BonusActionAvailable:map.MovementRemaining>=AquaticState.SwitchCost;
     }
     bool WaterWalkTarget(int actor)
     {
@@ -62,7 +62,7 @@ public sealed partial class TrainingGame
     {
         if(!map.RescuePosition.HasValue)return;
         bool old=GUI.enabled;int cells=map.WaterCells(map.RescuePosition.Value,map.RescueSpaces);
-        GUI.enabled=old&&!rolling&&RescueTurnAllowed&&rescueCarrier.Conscious&&rescueCarrier.TurnActive&&(map.RescueAquatic.Submerged||AquaticState.FullyInWater(cells,map.RescueSpaces*map.RescueSpaces));
+        GUI.enabled=old&&!rolling&&RescueTurnAllowed&&rescueCarrier.MovementReady&&(!waterWalk.Active(BattleMap.RescueId,worldRounds)||rescueCarrier.Conscious)&&rescueCarrier.TurnActive&&(map.RescueAquatic.Submerged||AquaticState.FullyInWater(cells,map.RescueSpaces*map.RescueSpaces));
         if(cells>0&&GUILayout.Button((map.RescueAquatic.Submerged?"浮出水面 · ":"潜入水下 · ")+WaterLayerCost(BattleMap.RescueId),button)){
             if(map.SwitchRescueWaterState(!map.RescueAquatic.Submerged,rescueCarrier.Move)){ObserveWaterBreathing();rescueMessage="救援者切换水层，消耗"+WaterLayerCost(BattleMap.RescueId)+"。";}
         }

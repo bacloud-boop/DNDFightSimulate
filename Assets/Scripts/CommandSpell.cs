@@ -60,10 +60,10 @@ public sealed partial class TrainingGame
     }
     bool CommandCanMove(int actor)
     {
-        if(actor==0)return combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!Entangled(true)&&!map.IsContained(true)&&!map.IsCarried(true);
-        if(actor==-1)return combat.Hp>0&&!combat.MonsterParalyzed&&!combat.MonsterFeignDeath&&combat.MonsterSleepStage<2&&!Entangled(false)&&!map.IsContained(false)&&!map.IsCarried(false);
-        if(actor==BattleMap.RescueId)return rescueCarrier.Conscious&&!rescueCarrier.Restrained;
-        var u=FindSummon(actor);return u!=null&&u.Alive&&!u.FeignDeath&&u.SleepStage!=2&&!u.Restrained;
+        if(actor==0)return combat.PlayerMovementReady&&!Entangled(true)&&!map.IsContained(true)&&!map.IsCarried(true);
+        if(actor==-1)return combat.Hp>0&&!combat.MonsterParalyzed&&(!combat.MonsterFeignDeath||MovementFreedom(-1))&&combat.MonsterSleepStage<2&&!Entangled(false)&&!map.IsContained(false)&&!map.IsCarried(false);
+        if(actor==BattleMap.RescueId)return rescueCarrier.MovementReady&&!rescueCarrier.Restrained;
+        var u=FindSummon(actor);return u!=null&&u.Alive&&(!u.FeignDeath||MovementFreedom(actor))&&u.SleepStage!=2&&!u.Restrained;
     }
     int CommandBudget(int actor)=>actor==0?map.MovementRemaining:actor==-1?map.MonsterMovementRemaining:actor==BattleMap.RescueId?rescueCarrier.MovementRemaining:FindSummon(actor)?.MovementRemaining??0;
     void CommandStand(int actor)

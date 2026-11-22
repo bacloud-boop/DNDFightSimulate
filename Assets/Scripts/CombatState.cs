@@ -58,9 +58,16 @@ public sealed class CombatState
     public bool MonsterAttackIsWeapon {get;set;}=true;
     public bool MonsterWeaponIsHeld {get;set;}
     public int MonsterWeaponOunces {get;set;}=16;
-    public bool PlayerParalyzed {get;set;}
-    public bool PlayerSlowed {get;private set;}
-    public bool MonsterSlowed {get;private set;}
+    public Func<bool,bool> MovementFreedom;
+    bool playerParalysisEffect,monsterParalysisEffect,playerSlowEffect,monsterSlowEffect;
+    bool HasMovementFreedom(bool player)=>MovementFreedom!=null&&MovementFreedom(player);
+    // Suppression does not end the original spell, but a new magical effect
+    // cannot be added while the target is protected. Clearing always removes it.
+    public bool PlayerParalysisEffect=>playerParalysisEffect;
+    public bool MonsterParalysisEffect=>monsterParalysisEffect;
+    public bool PlayerParalyzed {get=>playerParalysisEffect&&!HasMovementFreedom(true);set{if(!value||!HasMovementFreedom(true))playerParalysisEffect=value;}}
+    public bool PlayerSlowed {get=>playerSlowEffect&&!HasMovementFreedom(true);private set=>playerSlowEffect=value;}
+    public bool MonsterSlowed {get=>monsterSlowEffect&&!HasMovementFreedom(false);private set=>monsterSlowEffect=value;}
     public bool PlayerReactionsBlocked {get;private set;}
     public bool MonsterReactionsBlocked {get;private set;}
     public void BlockReactions(bool player){if(player)PlayerReactionsBlocked=true;else MonsterReactionsBlocked=true;}
@@ -78,21 +85,23 @@ public sealed class CombatState
     }
     public int? MonsterFormSpeed {get;set;}
     public int? MonsterFormArmor {get;set;}
-    public int MonsterSpeed => MonsterFeignDeath||MonsterRestrained||MonsterSleepStage==2?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
-    public void ApplyFrostSlow(bool player){if(player)PlayerSlowed=true;else MonsterSlowed=true;}
+    public int MonsterSpeed => MonsterFeignDeath&&!HasMovementFreedom(false)||MonsterRestrained||MonsterSleepStage==2?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
+    public void ApplyFrostSlow(bool player){if(HasMovementFreedom(player))return;if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}
-    public bool MonsterParalyzed {get;set;}
+    public bool MonsterParalyzed {get=>monsterParalysisEffect&&!HasMovementFreedom(false);set{if(!value||!HasMovementFreedom(false))monsterParalysisEffect=value;}}
     public int MonsterSleepStage {get;set;}
     public bool MonsterHelpless=>MonsterParalyzed||MonsterSleepStage==2;
     public Action MonsterDamaged {get;set;}
-    public bool MonsterCanMove => !Aftermath&&Hp>0&&!MonsterParalyzed&&!MonsterFeignDeath&&MonsterSleepStage<2;
+    public bool MonsterCanMove => !Aftermath&&Hp>0&&!MonsterParalyzed&&(!MonsterFeignDeath||HasMovementFreedom(false))&&MonsterSleepStage<2;
     public bool MonsterCanAct => MonsterSleepStage==0&& !Aftermath&&Hp>0&&!MonsterParalyzed&&!MonsterFeignDeath;
     public bool PlayerDead {get;private set;}
     public bool PlayerStable {get;private set;}
     public int DeathSuccesses {get;private set;}
     public int DeathFailures {get;private set;}
     public bool NeedsDeathSave => PlayerHp==0&&!PlayerDead&&!PlayerStable;
+    public bool PlayerMovementReady=>PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&(!PlayerFeignDeath||HasMovementFreedom(true));
+    public bool PlayerCanMove=>!Aftermath&&Hp>0&&PlayerMovementReady;
     public bool PlayerCanAct => !Aftermath&&PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&Hp>0;
     public bool BattleFinished => PlayerDead || (Hp==0 && (PlayerHp>0||PlayerStable));
     public string PlayerLifeLabel => PlayerDead?"死亡":PlayerFeignDeath?"假死 / 失能":PlayerParalyzed?"麻痹":PlayerHp>0?"清醒":PlayerStable?"稳定 / 昏迷":"倒地 / 昏迷";

@@ -1,7 +1,7 @@
 public sealed partial class TrainingGame
 {
-    int PlayerSwimSpeed=>PlayerInBeastForm?PlayerBeast.swim:0;
-    int MonsterSwimSpeed=>MonsterPolymorphed?PolymorphBeast.swim:0;
+    int PlayerSwimSpeed=>MovementFreedom(0)?System.Math.Max(map.PlayerSpeed,PlayerInBeastForm?PlayerBeast.swim:0):PlayerInBeastForm?PlayerBeast.swim:0;
+    int MonsterSwimSpeed=>MovementFreedom(-1)?System.Math.Max(combat.MonsterSpeed,MonsterPolymorphed?PolymorphBeast.swim:0):MonsterPolymorphed?PolymorphBeast.swim:0;
     bool PlayerUnderwaterWeaponDisadvantage(Weapon weapon)=>UnderwaterCombatRules.Disadvantage(map.PlayerAquatic.Submerged,true,weapon.IsMelee,PlayerSwimSpeed,weapon.DamageType=="穿刺");
     bool MonsterUnderwaterDisadvantage()
     {
