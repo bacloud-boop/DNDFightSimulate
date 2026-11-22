@@ -82,9 +82,10 @@ public sealed partial class TrainingGame
             int a=Random.Range(1,7),b=Random.Range(1,7),amount=a+b;
             dice="活力灵光 · 2d6治疗";yield return PresentRoll(6,new[]{a,b},"2d6 = "+amount+" 治疗，不附加属性调整值");
             if(revision!=auraVitality.Revision||!auraVitality.Active(worldRounds)||!AuraVitalityTarget(target))yield break;
+            int rolled=amount;amount=RollHealingAmount(target,amount,12L);
             int actual=target==0?combat.HealPlayer(amount):target==-1?combat.HealMonster(amount):target==BattleMap.RescueId?rescueCarrier.Heal(amount):FindSummon(target).Heal(amount);
             if(target==0)ApplySteedLifeBond(actual,3);
-            history.Insert(0,"活力灵光："+TransitActorName(target)+"治疗骰 "+amount+"，实际恢复 "+actual+" HP。");
+            history.Insert(0,"活力灵光："+TransitActorName(target)+"治疗骰 "+rolled+(amount!=rolled?"；希望信标按最大值 "+amount+" 治疗":"")+"，实际恢复 "+actual+" HP。");
             dice="活力灵光 · 实际治疗 "+actual;ObserveDeaths();RefreshConcentration();
         }finally{auraChoicePending=false;panel=oldPanel;rolling=oldBusy;}
     }

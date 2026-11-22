@@ -42,19 +42,19 @@ public sealed partial class TrainingGame
         foreach(int id in targets){
             bool player=id==0;var unit=player?null:FindSummon(id);
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
-            int first=Random.Range(1,21),second=0,value=first;
-            int modifier;
+            ArmorSaveRoll save;int modifier;
             if(player){
-                var save=RollArmorSave(true,spell.SaveAbility);value=save.Value;first=save.Dice[0];if(save.Dice.Length>1)second=save.Dice[1];
+                save=RollArmorSave(true,spell.SaveAbility);
                 modifier=PlayerSavingThrowModifier(spell.SaveAbility);
                 var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment,spell.SaveAbility,center);modifier+=adjustment.Value;
             }else{
+                save=RollSummonSavingThrow(unit,spell.SaveAbility);
                 modifier=AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
-                if(spell.SaveAbility==1){modifier+=map.CreatureCoverFromPoint(center,id);if(unit.Dodging&&unit.EffectiveSpeed>0){second=Random.Range(1,21);value=Mathf.Max(first,second);}if(unit.Restrained){second=Random.Range(1,21);value=Mathf.Min(first,second);}}
+                if(spell.SaveAbility==1)modifier+=map.CreatureCoverFromPoint(center,id);
             }
             dice="木桩"+spell.Chinese+" · "+(player?"玩家":unit.Name)+PlayerAttributes.Names[spell.SaveAbility]+"豁免";
-            if(!automatic)yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+modifier+" / DC "+MonsterSpellDc);
-            if(automatic||(long)value+modifier<MonsterSpellDc)failed.Add(id);
+            if(!automatic)yield return PresentRoll(20,save.Dice,"采用 "+save.Value+" + "+modifier+" / DC "+MonsterSpellDc);
+            if(automatic||(long)save.Value+modifier<MonsterSpellDc)failed.Add(id);
         }
         int count=spell.DiceCount(monsterSpells.CasterLevel,slot),damage=0;var rolls=new int[count];
         for(int i=0;i<count;i++){rolls[i]=Random.Range(1,spell.Sides+1);damage+=rolls[i];}

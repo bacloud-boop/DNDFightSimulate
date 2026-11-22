@@ -6,8 +6,13 @@ public sealed partial class TrainingGame
     bool ResurrectionD20Disadvantage(bool player)=>player&&playerResurrectionCaster.D20Disadvantage;
     ArmorSaveRoll RollD20Test(bool player,bool advantage=false,bool disadvantage=false,int ability=-1)
     {
-        advantage|=SpeciesSaveAdvantage(player,ability);
-        disadvantage|=ResurrectionD20Disadvantage(player);bool two=advantage!=disadvantage;
+        advantage|=SpeciesSaveAdvantage(player,ability)||ability==3&&BeaconHope(player?0:-1);
+        disadvantage|=ResurrectionD20Disadvantage(player);
+        return RollSavingThrowDice(advantage,disadvantage);
+    }
+    ArmorSaveRoll RollSavingThrowDice(bool advantage,bool disadvantage)
+    {
+        bool two=advantage!=disadvantage;
         int first=Random.Range(1,21),second=two?Random.Range(1,21):0;
         return new ArmorSaveRoll{Value=PoisonProtectionEffect.SelectDie(first,second,advantage,disadvantage),Dice=two?new[]{first,second}:new[]{first}};
     }

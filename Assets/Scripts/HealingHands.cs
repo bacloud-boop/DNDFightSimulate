@@ -46,8 +46,9 @@ public sealed partial class TrainingGame
             int amount=(int)Math.Min(int.MaxValue,total),actual=0;string targetName;
             Vector2Int cell;int spaces;
             if(HealingHandsTarget(target,out cell,out spaces,out targetName)){
+                int rolled=amount;amount=RollHealingAmount(target,amount,4L*count);
                 if(target==0)actual=combat.HealPlayer(amount);else if(target==-1)actual=combat.HealMonster(amount);else if(target==BattleMap.RescueId)actual=rescueCarrier.Heal(amount);else {var unit=FindSummon(target);if(unit!=null)actual=unit.Heal(amount);}
-                history.Insert(0,ActorName(caster)+"以魔法动作使用治愈之手："+count+"d4="+total+"，"+targetName+"实际恢复 "+actual+" HP；消耗本次长休的1次特性，不施放法术。");
+                history.Insert(0,ActorName(caster)+"以魔法动作使用治愈之手："+count+"d4="+total+(amount!=rolled?"；希望信标按最大值 "+amount+" 治疗":"")+"，"+targetName+"实际恢复 "+actual+" HP；消耗本次长休的1次特性，不施放法术。");
             }
             dice="治愈之手 · 实际治疗 "+actual;ObserveDeaths();
         }finally{panel=saved;rolling=busy;}

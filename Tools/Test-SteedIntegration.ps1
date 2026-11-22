@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe"
 $csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $model=@('SummonedUnit','CreatureProfile','ChallengeRatings','AquaticState','BreathingState','PolymorphEffect','OtherworldlySteedRules','RidingState','SummonTurnQueue','BestialSpiritRules','BestialSpiritSession')
-$maps=@('BattleMap','ContainmentMap','SummonMap','WaterMap','WaterMovement','DifficultTerrainMap','GreaseMovementMap','RescueMap','RescueCargoMap','RescueReleasePlanner','RidingMap','CreatureCoverMap','CreatureCover','RouteCostMeter','JumpMap')
+$maps=@('BattleMap','ContainmentMap','SummonMap','WaterMap','WaterMovement','DifficultTerrainMap','GreaseMovementMap','RescueMap','RescueCargoMap','RescueReleasePlanner','RidingMap','CreatureCoverMap','CreatureCover','RouteCostMeter','JumpMap','CreatureTransitMap','CreatureTransitRules','RetainedRemainsMap','RetainedRemains','BodyWeight','WeightUnits')
 foreach($check in @('SteedRulesChecks','RidingChecks','SteedTurnChecks','RidingMapChecks','SummonTurnChecks','SummonIntegrationChecks','CreatureCoverMapChecks','WaterMapChecks')){
  $sources=@("Tools/Tests/$check.cs")+$model.ForEach({"Assets/Scripts/$_.cs"})
  if($check -in @('RidingMapChecks','SummonIntegrationChecks','CreatureCoverMapChecks','WaterMapChecks')){$sources+=@('Tools/Tests/MapValueStubs.cs')+$maps.ForEach({"Assets/Scripts/$_.cs"})}

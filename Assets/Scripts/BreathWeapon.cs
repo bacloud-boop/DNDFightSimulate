@@ -48,8 +48,7 @@ public sealed partial class TrainingGame
         else {
             var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
             modifier=BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
-            bool advantage=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0,disadvantage=ability==1&&unit.Restrained;
-            int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);shown=second==0?new[]{first}:new[]{first,second};
+            var roll=RollSummonSavingThrow(unit,ability);value=roll.Value;shown=roll.Dice;
         }
         int cover=ability!=1?0:effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target):target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
         dice=context+" · "+TransitActorName(target)+PlayerAttributes.Names[ability]+"豁免";

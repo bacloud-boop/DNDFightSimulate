@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
         disadvantage|=SizeStrengthDisadvantage(player,ability);
         disadvantage|=ArmorD20Disadvantage(player,ability)||RayStrengthDisadvantage(player,ability);
         bool advantage=SpeciesSaveAdvantage(player,ability,avoidsOrEndsPoisoned,avoidsOrEndsCharmed,avoidsOrEndsFrightened)||SizeStrengthAdvantage(player,ability)||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player);
-        return RollD20Test(player,advantage,disadvantage);
+        return RollD20Test(player,advantage,disadvantage,ability);
     }
     void SyncArmorEquipment()
     {

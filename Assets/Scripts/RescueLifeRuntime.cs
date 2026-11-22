@@ -13,8 +13,8 @@ public sealed partial class TrainingGame
         if(!map.RescuePosition.HasValue||!rescueCarrier.NeedsDeathSave)yield break;
         string saved=panel;panel="";bool busy=rolling;rolling=true;
         try{
-            int die=Random.Range(1,21);
-            yield return PresentRoll(20,new[]{die},"救援者死亡豁免 · D20 "+die+"，调整 "+(rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty+BondBonus(BattleMap.RescueId)));
+            var roll=RollSavingThrowDice(BeaconHope(BattleMap.RescueId),false);int die=roll.Value;
+            yield return PresentRoll(20,roll.Dice,"救援者死亡豁免 · D20 "+die+"，调整 "+(rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty+BondBonus(BattleMap.RescueId)));
             rescueCarrier.ResolveDeathSave(die,worldRounds,BondBonus(BattleMap.RescueId));rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();
             history.Insert(0,"救援者："+rescueCarrier.LifeLabel+"，死亡豁免成功 "+rescueCarrier.DeathSuccesses+" / 3，失败 "+rescueCarrier.DeathFailures+" / 3。");
             if(rescueCarrier.Stable&&rescueCarrier.RecoveryAt<0){int hours=Random.Range(1,5);yield return PresentRoll(4,new[]{hours},"救援者稳定后 "+hours+" 小时恢复1生命");rescueCarrier.ScheduleRecovery(worldRounds,hours);}
@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
     }
     void DrawRescueLifeControls()
     {
-        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+(MovementFreedom(BattleMap.RescueId)?" · 行动自如":"")+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
+        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+(BeaconHope(BattleMap.RescueId)?" · 希望信标":"")+(MovementFreedom(BattleMap.RescueId)?" · 行动自如":"")+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
         DrawRescueBreathingStatus();
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
         DrawExternalCasterRest();

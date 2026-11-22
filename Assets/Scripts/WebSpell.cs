@@ -9,10 +9,11 @@ public sealed partial class TrainingGame
     readonly Queue<WebEntry> webEntries=new Queue<WebEntry>();
     long terrainTurn;int terrainActor;bool webOrderPending;int webOrderChoice;
     bool webAreaFire;
-    ArmorSaveRoll RollRescueSave(int ability)
+    ArmorSaveRoll RollRescueSave(int ability,bool advantage=false,bool disadvantage=false)
     {
-        int first=UnityEngine.Random.Range(1,21);if(ability!=1||!rescueCarrier.Restrained)return new ArmorSaveRoll{Value=first,Dice=new[]{first}};
-        int second=UnityEngine.Random.Range(1,21);return new ArmorSaveRoll{Value=Mathf.Min(first,second),Dice=new[]{first,second}};
+        advantage|=ability==3&&BeaconHope(BattleMap.RescueId);
+        disadvantage|=ability==1&&rescueCarrier.Restrained;
+        return RollSavingThrowDice(advantage,disadvantage);
     }
     void InitializeWeb()
     {

@@ -45,7 +45,8 @@ public sealed partial class TrainingGame
         bool previous=summonActing,previousRolling=rolling;summonActing=true;rolling=true;
         try{if(steedRules.Kind==SteedKind.Celestial){int[] rolls={Random.Range(1,9),Random.Range(1,9)};int amount=rolls[0]+rolls[1]+steedRules.Slot;
                 yield return PresentRoll(8,rolls,"治疗之触：2d8 + "+steedRules.Slot+" = "+amount);
-                int healed=targetId==0?combat.HealPlayer(amount):targetId==-1?combat.HealMonster(amount):FindSummon(targetId).Heal(amount);history.Insert(0,"治疗之触："+target+"实际恢复 "+healed+" HP。");}
+                int rolled=amount;amount=RollHealingAmount(targetId,amount,16L+steedRules.Slot);
+                int healed=targetId==0?combat.HealPlayer(amount):targetId==-1?combat.HealMonster(amount):FindSummon(targetId).Heal(amount);history.Insert(0,"治疗之触："+target+(amount!=rolled?"受希望信标影响，按最大值 "+amount+" 治疗，":"")+"实际恢复 "+healed+" HP。");}
             else {if(HeroismImmune(targetId)){history.Insert(0,"凶恶凝视："+target+"受英雄气概保护，免疫恐慌。");yield break;}int dc=8+SummonAttackBonus(unit);bool failed;
                 if(targetId==0||targetId==-1){bool player=targetId==0;var roll=RollArmorSave(player,3,avoidsOrEndsFrightened:true);int modifier=player?PlayerSavingThrowModifier(3):MonsterSavingThrowModifier(3);var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment,3);modifier+=adjustment.Value;
                     yield return PresentRoll(20,roll.Dice,"凶恶凝视 · "+target+"感知豁免 "+roll.Value+" + "+modifier+" / DC "+dc);failed=(long)roll.Value+modifier<dc;}

@@ -24,16 +24,17 @@ public sealed partial class TrainingGame
     IEnumerator ResolveArcaneVigor(int caster,int slot)
     {
         if(!ArcaneVigorRules.TrySpend(VigorLevels(),hitDiceSpent,vigorDice,slot))yield break;
-        var chosen=(int[])vigorDice.Clone();int amount=0;
+        var chosen=(int[])vigorDice.Clone();int amount=0;long maximum=0;
         for(int i=0;i<chosen.Length;i++)if(chosen[i]>0){
-            int sides=classes.HitDie(i);var rolls=new int[chosen[i]];
+            int sides=classes.HitDie(i);maximum+=(long)sides*chosen[i];var rolls=new int[chosen[i]];
             for(int n=0;n<rolls.Length;n++){rolls[n]=Random.Range(1,sides+1);amount+=rolls[n];}
             dice="活力奥法 · "+PlayerClasses.Names[i]+"生命骰";
             yield return PresentRoll(sides,rolls,"累计骰值 "+amount+"；本次生命骰已消耗");
         }
-        int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),healing=System.Math.Max(0,amount+modifier);
+        int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),rolled=System.Math.Max(0,amount+modifier);
+        int healing=RollHealingAmount(0,rolled,maximum+modifier);
         int actual=combat.HealPlayer(healing);ApplySteedLifeBond(actual,2);
-        history.Insert(0,"活力奥法：生命骰合计 "+amount+" + 施法调整值 "+modifier+" = "+healing+"；实际恢复 "+actual+" HP。生命骰与短休共享，不因治疗受阻或满血返还。");
+        history.Insert(0,"活力奥法：生命骰合计 "+amount+" + 施法调整值 "+modifier+" = "+rolled+(healing!=rolled?"；希望信标按最大值 "+healing+" 治疗":"")+"；实际恢复 "+actual+" HP。生命骰与短休共享，不因治疗受阻或满血返还。");
         System.Array.Clear(vigorDice,0,vigorDice.Length);
     }
 }

@@ -41,6 +41,7 @@ public sealed partial class TrainingGame
         int value=Random.Range(1,classes.HitDie(index)+1),modifier=AcidSplash.Modifier(attributes[2]);
         restMessage="生命骰 "+value+" + 体质 "+modifier+" = "+Mathf.Max(0,value+modifier)+"（结果停留2秒）";
         yield return new WaitForSecondsRealtime(2);
-        int actual=combat.HealPlayer(Mathf.Max(0,value+modifier));restMessage+="，实际恢复 "+actual+"。";
+        int rolled=Mathf.Max(0,value+modifier),healing=RollHealingAmount(0,rolled,(long)classes.HitDie(index)+modifier);
+        int actual=combat.HealPlayer(healing);restMessage+=(healing!=rolled?"；希望信标按最大值 "+healing+" 治疗":"")+"，实际恢复 "+actual+"。";
         rolling=false;
     }}

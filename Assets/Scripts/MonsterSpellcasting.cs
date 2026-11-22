@@ -105,11 +105,8 @@ public sealed partial class TrainingGame
         if(spell.SaveAbility>=0){
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
             int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
-            bool dodge=!player&&spell.SaveAbility==1&&unit.Dodging&&unit.EffectiveSpeed>0;
-            var roll=player?RollArmorSave(true,spell.SaveAbility):new ArmorSaveRoll{Value=Random.Range(1,21)};
-            int value=roll.Value;int[] shown=player?roll.Dice:new[]{value};
-            if(dodge){int second=Random.Range(1,21);value=Mathf.Max(value,second);shown=new[]{roll.Value,second};}
-            if(!player&&spell.SaveAbility==1&&unit.Restrained){int second=Random.Range(1,21);value=Mathf.Min(value,second);shown=new[]{roll.Value,second};}
+            var roll=player?RollArmorSave(true,spell.SaveAbility):RollSummonSavingThrow(unit,spell.SaveAbility);
+            int value=roll.Value;int[] shown=roll.Dice;
             if(player){var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment,spell.SaveAbility,map.Monster,spell.Name=="Sacred Flame",map.MonsterSpaces);modifier+=adjustment.Value;}
             else if(spell.SaveAbility==1&&spell.Name!="Sacred Flame")modifier+=map.CreatureCoverBonus(-1,target);
             dice="木桩"+spell.Chinese+" · 目标"+PlayerAttributes.Names[spell.SaveAbility]+"豁免";
@@ -120,7 +117,7 @@ public sealed partial class TrainingGame
         int sides=spell.Name=="Toll the Dead"&&(player?combat.PlayerHp<combat.PlayerMaxHp:unit.Hp<unit.MaxHp)?12:spell.Sides;
         int count=(fixedCount>0?fixedCount:spell.DiceCount(monsterSpells.CasterLevel,slot))*(critical?2:1),amount=0;int[] rolls=new int[count];
         for(int i=0;i<count;i++){rolls[i]=Random.Range(1,sides+1);amount+=rolls[i];}
-        if(spell.Healing)amount=Mathf.Max(0,amount+AcidSplash.Modifier(EffectiveMonsterAbility(monsterSpells.Ability)));
+        if(spell.Healing){int modifier=AcidSplash.Modifier(EffectiveMonsterAbility(monsterSpells.Ability));amount=RollHealingAmount(-1,Mathf.Max(0,amount+modifier),(long)count*sides+modifier);}
         dice="木桩"+spell.Chinese+(critical?" · 暴击":"");yield return PresentRoll(sides,rolls,"结算 "+amount+(spell.Healing?" 治疗":" "+spell.DamageType));
         if(spell.Healing){history.Insert(0,"木桩"+spell.Chinese+"实际恢复 "+combat.HealMonster(amount)+" HP。");yield break;}
         var rayDamage=new RayDamage();yield return ReduceRayDamage(false,amount,spell.DamageType,"木桩法术",rayDamage);amount=rayDamage.Amount;

@@ -15,8 +15,8 @@ public sealed partial class TrainingGame
         int value=Random.Range(1,11);
         dice="回气 · 1d10 + 战士等级 "+fighterLevel;
         yield return PresentRoll(10,new[]{value},"回气："+value+" + 战士等级 "+fighterLevel+" = "+(value+fighterLevel)+"，治疗不超过生命上限");
-        int healing=value+fighterLevel,actual=combat.HealPlayer(healing);
-        dice="回气 D10="+value+" + "+fighterLevel+"，实际恢复 "+actual;
+        int rolled=value+fighterLevel,healing=RollHealingAmount(0,rolled,10L+fighterLevel),actual=combat.HealPlayer(healing);
+        dice="回气 D10="+value+" + "+fighterLevel+(healing!=rolled?"；希望信标按最大值 "+healing+" 治疗":"")+"，实际恢复 "+actual;
         history.Insert(0,dice+"，生命 "+combat.PlayerHp+" / "+combat.PlayerMaxHp+"。");
         if(fighterLevel>=5){map.GrantTacticalMovement();history.Insert(0,"战术转进：获得独立 "+(map.PlayerSpeed/2)+" 尺移动，本回合使用，不引发借机攻击。");}
         rolling=false;
@@ -31,6 +31,7 @@ public sealed partial class TrainingGame
     void ResetCombat()
     {
         if(rolling || panel!="" || draggingToken>=0)return;
+        EndBeaconHope();
         playerSpeciesAbilities.Reset();monsterSpeciesAbilities.Reset();playerSpeciesSpellUses.LongRest();highElfCantripReplacement=false;
         EndFaerieFire();spikeGrowth.Clear();spikeEntries.Clear();grease.Clear();greaseEntries.Clear();EndEntangle();poisonProtection.Clear();
         jumpEffect.Clear();

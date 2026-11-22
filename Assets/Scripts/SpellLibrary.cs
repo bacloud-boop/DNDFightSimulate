@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
-    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -93,7 +93,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Aura of Vitality")DrawAuraVitalityChoices();
+        if(definition.Name=="Beacon of Hope")DrawBeaconHopeChoices();
+        else if(definition.Name=="Aura of Vitality")DrawAuraVitalityChoices();
         else if(definition.Name=="Freedom of Movement")DrawFreedomMovementChoices();
         else if(definition.Name=="Water Walk")DrawWaterWalkChoices();
         else if(definition.Name=="Warding Bond")DrawWardingBondChoices();
@@ -184,6 +185,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Beacon of Hope")return BeaconHopeError();
         if(spell.Name=="Aura of Vitality")return AuraVitalityError();
         if(spell.Name=="Freedom of Movement")return FreedomMovementError(directSlotLevel);
         if(spell.Name=="Water Walk")return WaterWalkError();
@@ -274,6 +276,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        var beaconSelected=new List<int>(beaconTargets);if(spell.Name=="Beacon of Hope"&&BeaconHopeError()!="")yield break;
         if(spell.Name=="Aura of Vitality"&&AuraVitalityError()!="")yield break;
         var freedomSelected=new List<int>(freedomTargets);if(spell.Name=="Freedom of Movement"&&FreedomMovementError(slotLevel)!="")yield break;
         var walkSelected=new List<int>(waterWalkTargets);if(spell.Name=="Water Walk"&&WaterWalkError()!="")yield break;
@@ -309,7 +312,7 @@ public sealed partial class TrainingGame
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -329,6 +332,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Beacon of Hope"){CastBeaconHope(beaconSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Aura of Vitality"){yield return CastAuraVitality();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Freedom of Movement"){CastFreedomMovement(freedomSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Walk"){CastWaterWalk(walkSelected);if(!embedded)rolling=false;yield break;}
@@ -432,7 +436,7 @@ public sealed partial class TrainingGame
         yield return PresentRoll(damageSides,rolls,"骰值 ["+string.Join("+",rolls)+"]"+(spell.Healing?" + 施法属性 "+modifier:spell.Name=="False Life"?" + 固定加值 "+(4+5*(slotLevel-1)):"")+(saveSucceeded&&spell.HalfSave?"，豁免成功减半向下取整":"")+" = "+amount);
         if(spell.Name=="Sorcerous Burst"){var burst=new BurstDamage();yield return RollSorcerousBurstExtra(rolls,modifier,critical,burst);amount+=burst.Extra;}
         if(spell.Name=="False Life"){combat.GrantPlayerTemporaryHp(amount);history.Insert(0,"虚假生命：掷出临时生命 "+amount+"，当前保留 "+combat.PlayerTemporaryHp+"（不叠加）。");if(!embedded)rolling=false;yield break;}
-        if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(amount),monsterHeal=combat.HealMonster(amount);ApplySteedLifeBond(playerHeal,spell.Level);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Mass Healing Word"&&directBothTargets){int playerHeal=combat.HealPlayer(RollHealingAmount(0,amount,(long)count*damageSides+modifier)),monsterHeal=combat.HealMonster(RollHealingAmount(-1,amount,(long)count*damageSides+modifier));ApplySteedLifeBond(playerHeal,spell.Level);history.Insert(0,"群体治愈真言：玩家实际恢复 "+playerHeal+"，木桩实际恢复 "+monsterHeal+"；使用同组治疗骰结果。");dice="群体治愈真言 · 已结算";if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ray of Sickness"){combat.ApplyPoison(targetPlayer);history.Insert(0,target+"中毒，至施法者下一回合结束；攻击与属性检定具有劣势。");}
         if(spell.Name=="Mind Sliver"){combat.ApplySliver(targetPlayer);history.Insert(0,target+"下一次豁免减1d4，至玩家下一回合结束失效。");}
         if(!spell.Healing){
@@ -442,7 +446,7 @@ public sealed partial class TrainingGame
             if(saveSucceeded&&spell.HalfSave)for(int i=0;i<reduced.Raw.Length;i++)reduced.Raw[i]/=2;
             amount=ResolveRayPacket(targetPlayer,reduced.Raw);
         }
-        if(spell.Healing){amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);if(targetPlayer)ApplySteedLifeBond(amount,spell.Level);}
+        if(spell.Healing){amount=RollHealingAmount(targetPlayer?0:-1,amount,(long)count*damageSides+modifier);amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);if(targetPlayer)ApplySteedLifeBond(amount,spell.Level);}
         else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
         if(spell.Name=="Harm"&&!saveSucceeded){int reduced=combat.ReduceMaxHp(targetPlayer,amount);history.Insert(0,"伤害术："+target+"生命上限减少 "+reduced+"，上限最低1；不恢复生命。");}
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}

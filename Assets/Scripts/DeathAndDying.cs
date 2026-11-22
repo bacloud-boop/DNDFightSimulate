@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
     IEnumerator PlayerDeathSaveCore()
     {
         if(!combat.NeedsDeathSave)yield break;
-        var d20=RollD20Test(true);int value=d20.Value;dice="玩家回合开始 · 死亡豁免";
+        var d20=RollD20Test(true,advantage:BeaconHope(0));int value=d20.Value;dice="玩家回合开始 · 死亡豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,false,adjustment);
         yield return PresentRoll(20,d20.Dice,value==20?"自然20：恢复1生命":value==1?"自然1：累计2次失败":value+adjustment.Value>=10?"累计1次成功":"累计1次失败");
         combat.ResolveDeathSave(value,adjustment.Value);
