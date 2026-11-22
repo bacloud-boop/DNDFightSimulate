@@ -102,6 +102,8 @@ public sealed partial class TrainingGame
         }
         if(PlayerPolymorphed)modifier=skill>=0?polymorph.Skill(skill,ability):AcidSplash.Modifier(score);
         modifier+=PlayerAquaticD20Penalty;
+        int traceBonus=passTrace.CheckBonus(0,ability,skill,BeaconHopeTarget(0),worldRounds);modifier+=traceBonus;
+        if(traceBonus>0)history.Insert(0,"无踪步：本次敏捷（隐匿）检定 +10。");
         bool advantage=SizeStrengthAdvantage(true,ability)||checkBuff.Advantage(true,ability,worldRounds)||!webEscape&&checkCircumstance==1||(skill>=0&&tier>0&&toolProf)||(!webEscape&&checkTracking&&skill>=0&&(skill==12||skill==13)&&mark.Active&&!mark.Hex);
         bool disadvantage=HeatDisadvantage(0)||ResurrectionD20Disadvantage(true)||FearDisadvantage(true)||SizeStrengthDisadvantage(true,ability)||RayStrengthDisadvantage(true,ability)||ArmorD20Disadvantage(true,ability)||(skill==3&&playerArmor.StealthPenalty(PlayerArmorMelded))||combat.PlayerPoisoned||(skill==12&&checkVisual&&Visibility(true,false)==1)||!webEscape&&checkCircumstance==2||mark.CheckDisadvantage(true,ability),two=advantage!=disadvantage;
         int first=UnityEngine.Random.Range(1,21),second=two?UnityEngine.Random.Range(1,21):0;

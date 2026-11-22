@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
     }
     void DrawRescueLifeControls()
     {
-        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+(BeaconHope(BattleMap.RescueId)?" · 希望信标":"")+(MovementFreedom(BattleMap.RescueId)?" · 行动自如":"")+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
+        DrawRescueWebEscape();GUILayout.Label("生命状态："+rescueCarrier.LifeLabel+(PassTraceBenefit(BattleMap.RescueId)?" · 无踪步":"")+(BeaconHope(BattleMap.RescueId)?" · 希望信标":"")+(MovementFreedom(BattleMap.RescueId)?" · 行动自如":"")+" · AC "+rescueCarrier.ArmorClass+" · 临时生命 "+rescueCarrier.TemporaryHp+(ActorBlinded(BattleMap.RescueId)?" · 目盲":"")+(rescueCarrier.Restrained?" · 蛛网束缚":""),small);
         DrawRescueBreathingStatus();
         if(rescueCarrier.NeedsDeathSave)GUILayout.Label("每推进6秒进行一次死亡豁免。",small);
         DrawExternalCasterRest();
