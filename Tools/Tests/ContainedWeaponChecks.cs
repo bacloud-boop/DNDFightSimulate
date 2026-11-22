@@ -25,8 +25,8 @@ class ContainedWeaponChecks
         var plans=map.MandatoryReleasePlans();C(plans.Count>0&&ended==1&&dropped.ContainedBy==-1,"mandatory release planning is mutation-free for items");
         C(map.ApplyMandatoryReleasePlan(plans[0])&&ended==2&&!dropped.ContainedBy.HasValue,"mandatory death/form release triggers same item policy");
         var flames=new ContinualFlameEffect();ContinualFlameEffect.Source s;C(flames.Cast(1,3,out s),"light attachment");
-        var vision=new VisionState{BaseLight=2};vision.HideLightGroup(s.Group);C(vision.Light(0,0,0)==2,"hidden internal attachment emits no exterior light");
-        C(vision.SetLightGroup(s.Group,new[]{new[]{0d,0d}},20,40,s.Slot,-1,0)&&vision.Light(0,0,0)==0,"attachment can resume after release");
+        var vision=new VisionState{BaseLight=2};vision.HideLightGroup(-s.Group);C(vision.Light(0,0,0)==2,"hidden internal attachment emits no exterior light");
+        C(vision.SetLightGroup(-s.Group,new[]{new[]{0d,0d}},20,40,s.Slot,-1,0)&&vision.Light(0,0,0)==0,"attachment can resume after release");
         inventory.ResetBattle();dropped.Reset();C(!dropped.ContainedBy.HasValue&&!inventory.Find("匕首").Ground.ContainedBy.HasValue,"battle reset clears internal location");
         Console.WriteLine("PASS: internal weapon drops, atomic pickup isolation, host following, water release, normal/mandatory release callbacks, pure previews, light hiding and reset");
     }

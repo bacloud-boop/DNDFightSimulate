@@ -25,18 +25,18 @@ public sealed partial class TrainingGame
         if(!retained){dice="不灭明焰 · 被黑暗术驱散";history.Insert(0,"不灭明焰施放完成，但与黑暗术重叠后立即被驱散。");return;}
         dice="不灭明焰 · 已附着";history.Insert(0,"不灭明焰附着于"+equipmentObjects.Find(target).Name+"，"+slot+"环、直到驱散；不会引燃蛛网、造成火焰伤害或改变呼吸状态。");
     }
-    void EndContinualFlames(){foreach(var source in continualFlame.All)vision.ClearLightGroup(source.Group);continualFlame.Clear();}
+    void EndContinualFlames(){foreach(var source in continualFlame.All)vision.ClearLightGroup(-source.Group);continualFlame.Clear();}
     void RefreshContinualFlames()
     {
-        foreach(var source in continualFlame.All)if(vision.ConsumeDispelledLightGroup(source.Group)){continualFlame.Remove(source.Group);vision.ClearLightGroup(source.Group);history.Insert(0,"不灭明焰被黑暗术驱散。");}
-        foreach(var source in continualFlame.All)if(continualFlame.Effective(source.ObjectId)!=source)vision.HideLightGroup(source.Group);
+        foreach(var source in continualFlame.All)if(vision.ConsumeDispelledLightGroup(-source.Group)){continualFlame.Remove(source.Group);vision.ClearLightGroup(-source.Group);history.Insert(0,"不灭明焰被黑暗术驱散。");}
+        foreach(var source in continualFlame.All)if(continualFlame.Effective(source.ObjectId)!=source)vision.HideLightGroup(-source.Group);
         foreach(int target in continualFlame.Objects){
             ContinualFlameEffect.Source source;
             while((source=continualFlame.Effective(target))!=null){
                 var item=equipmentObjects.Find(target);EquipmentPose pose;
-                if(!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(source.Group);break;}
-                if(vision.SetLightGroup(source.Group,new[]{new[]{pose.X,pose.Y}},20,40,source.Slot,-1,worldRounds))break;
-                continualFlame.Remove(source.Group);vision.ClearLightGroup(source.Group);history.Insert(0,"不灭明焰与黑暗术重叠，被驱散。");
+                if(!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(-source.Group);break;}
+                if(vision.SetLightGroup(-source.Group,new[]{new[]{pose.X,pose.Y}},20,40,source.Slot,-1,worldRounds))break;
+                continualFlame.Remove(source.Group);vision.ClearLightGroup(-source.Group);history.Insert(0,"不灭明焰与黑暗术重叠，被驱散。");
             }
         }
     }

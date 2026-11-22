@@ -13,8 +13,8 @@ public sealed partial class TrainingGame
     int energyChoice=2;bool energyTargetWilling;
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
-    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
-    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame";
+    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -93,7 +93,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Continual Flame")DrawContinualFlameChoices();
+        if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
+        else if(definition.Name=="Continual Flame")DrawContinualFlameChoices();
         else if(definition.Name=="Pass without Trace")DrawPassTraceChoices();
         else if(definition.Name=="Beacon of Hope")DrawBeaconHopeChoices();
         else if(definition.Name=="Aura of Vitality")DrawAuraVitalityChoices();
@@ -187,6 +188,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Produce Flame")return ProduceFlameError();
         if(spell.Name=="Continual Flame")return ContinualFlameError(continualObject);
         if(spell.Name=="Pass without Trace")return PassTraceError();
         if(spell.Name=="Beacon of Hope")return BeaconHopeError();
@@ -280,6 +282,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Produce Flame"&&ProduceFlameError()!="")yield break;
         int continualSelected=continualObject;if(spell.Name=="Continual Flame"&&ContinualFlameError(continualSelected)!="")yield break;
         var traceSelected=new List<int>(passTraceTargets);if(spell.Name=="Pass without Trace"&&PassTraceError()!="")yield break;
         var beaconSelected=new List<int>(beaconTargets);if(spell.Name=="Beacon of Hope"&&BeaconHopeError()!="")yield break;
@@ -317,6 +320,7 @@ public sealed partial class TrainingGame
         if(!embedded&&!(spell.Bonus?combat.TryUseBonusAction():AftermathLightSpell(spell.Name)?combat.TryUseAftermathMagicAction():combat.TryUseMagicAction()))yield break;
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
+        if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
         if(spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
@@ -338,6 +342,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Continual Flame"){CastContinualFlame(continualSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Pass without Trace"){CastPassTrace(traceSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Beacon of Hope"){CastBeaconHope(beaconSelected);if(!embedded)rolling=false;yield break;}

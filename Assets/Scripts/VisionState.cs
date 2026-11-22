@@ -24,7 +24,7 @@ public sealed class VisionState
         Refresh(now);Zones.RemoveAll(z=>z.LightGroup==group);
         // -1 is an ongoing spell with no timed expiry, rather than a large
         // artificial timestamp that would eventually remove its illumination.
-        if(group<1||brightRadius<0||brightRadius>radius||radius<1||slot<0||slot>9||end<-1||end!=-1&&end<=now||dispelledLightGroups.Remove(group))return false;
+        if(group==0||brightRadius<0||brightRadius>radius||radius<1||slot<0||slot>9||end<-1||end!=-1&&end<=now||dispelledLightGroups.Remove(group))return false;
         var added=new List<VisionZone>();
         foreach(var point in points){
             if(slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,point[0],point[1])<=z.Radius+radius))return false;
@@ -48,7 +48,7 @@ public sealed class VisionState
         // Only Daylight dispels Darkness; another light-producing spell does not.
         if(dark&&slot<=3&&Zones.Exists(z=>!z.Fog&&!z.Dark&&z.LightGroup==0&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
         // The outer dim-light region is part of the light spell's area.
-        Zones.RemoveAll(z=>{bool remove=!z.Fog&&z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3);if(remove&&z.LightGroup>0)dispelledLightGroups.Add(z.LightGroup);return remove;});
+        Zones.RemoveAll(z=>{bool remove=!z.Fog&&z.Dark!=dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius&&z.Level<=(dark?2:3);if(remove&&z.LightGroup!=0)dispelledLightGroups.Add(z.LightGroup);return remove;});
         // Existing Darkness also dispels a newly overlapping light spell of level <=2.
         if(!dark&&slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,x,y)<=z.Radius+added.Radius))return;
         Zones.Add(added);

@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
             var rect=BodyRect(board,cell,spaces);Fill(rect,new Color(.6f,.72f,1f,.25f));GUI.Label(new Rect(rect.x,rect.y,150,20),"星芒 · 微光10尺",small);
         }
     }
-    IEnumerator ResolvePlayerStarryWisp(int caster,int target)
+    IEnumerator ResolvePlayerStarryWisp(int caster,int target,string attackName="点点星芒",bool bindGlow=true,string damageType="光耀")
     {
         Vector2Int cell;int spaces;string name;if(!SummonTarget(target,out cell,out spaces,out name))yield break;
         var unit=target>0?FindSummon(target):null;bool primary=target==0||target==-1,player=target==0;
@@ -70,18 +70,18 @@ public sealed partial class TrainingGame
         int cover=map.CreatureCoverBonus(0,target),armor=(primary?player?combat.PlayerArmorClass:combat.MonsterArmorClass:unit.Armor)+cover;
         BreakOrdinaryInvisibility(true,"进行攻击检定");mirrorIntercepted=false;
         if(player&&value!=1&&(value==20||(long)value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,(long)value+bonus,sees,PerceivesWithSpecialSense(true,true),cover);armor=combat.PlayerArmorClass+cover;}
-        dice="点点星芒 · 远程法术攻击";yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+bonus+" / AC "+armor);
+        dice=attackName+" · 远程法术攻击";yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+bonus+" / AC "+armor);
         if(bless>0)yield return PresentRoll(4,new[]{bless},"祝福术 +"+bless);if(bane>0)yield return PresentRoll(4,new[]{bane},"灾祸术 -"+bane);if(ward>0)yield return PresentRoll(4,new[]{ward},"剑刃防护 -"+ward);
-        if(mirrorIntercepted||value==1||value!=20&&(long)value+bonus<armor){if(!mirrorIntercepted)fighter.RecordMiss(classes[0]);history.Insert(0,"点点星芒："+(mirrorIntercepted?"镜像拦截":"未命中")+"，不附加微光。");yield break;}
+        if(mirrorIntercepted||value==1||value!=20&&(long)value+bonus<armor){if(!mirrorIntercepted)fighter.RecordMiss(classes[0]);history.Insert(0,attackName+"："+(mirrorIntercepted?"镜像拦截":"未命中")+"，不附加后续效果。");yield break;}
         bool critical=value==20||helpless&&distance<=5;int[] rolls=new int[AcidSplash.DiceCount(classes.TotalLevel)*(critical?2:1)];int raw=0;
         for(int i=0;i<rolls.Length;i++){rolls[i]=UnityEngine.Random.Range(1,9);raw+=rolls[i];}
-        yield return PresentRoll(8,rolls,rolls.Length+"d8="+raw+" 光耀"+(critical?"（暴击）":""));
-        var packet=new long[DamageTypes.Names.Length];packet[DamageTypes.Index("光耀")]=raw;
+        yield return PresentRoll(8,rolls,rolls.Length+"d8="+raw+" "+damageType+(critical?"（暴击）":""));
+        var packet=new long[DamageTypes.Names.Length];packet[DamageTypes.Index(damageType)]=raw;
         if(primary){var extra=new ExtraMarkDamage();yield return RollMarkDamage(player,critical,extra);if(extra.Raw>0)packet[mark.DamageType]+=extra.Raw;}
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,packet,true,"点点星芒",reduced);
-        BindStarryWisp(0,target);
-        if(primary){int amount=ResolveRayPacket(player,reduced.Raw);if(player){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);history.Insert(0,"点点星芒对"+name+"造成 "+amount+" 点结算伤害。");}
-        else {int amount=0;for(int i=0;i<reduced.Raw.Length;i++)amount+=(int)Math.Min(int.MaxValue-amount,unit.ResistsType(i)?reduced.Raw[i]/2:reduced.Raw[i]);unit.Damage(amount);history.Insert(0,"点点星芒对"+name+"造成 "+amount+" 光耀伤害。");}
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,packet,true,attackName+"",reduced);
+        if(bindGlow)BindStarryWisp(0,target);
+        if(primary){int amount=ResolveRayPacket(player,reduced.Raw);if(player){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);history.Insert(0,attackName+"对"+name+"造成 "+amount+" 点结算伤害。");}
+        else {int amount=0;for(int i=0;i<reduced.Raw.Length;i++)amount+=(int)Math.Min(int.MaxValue-amount,(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)?reduced.Raw[i]/2:reduced.Raw[i]);var resolved=(long[])reduced.Raw.Clone();for(int i=0;i<resolved.Length;i++)if(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)resolved[i]/=2;unit.Damage(amount,type:DamageTypes.Index(damageType),resolvedTypes:resolved);history.Insert(0,attackName+"对"+name+"造成 "+amount+" "+damageType+"伤害。");}
         RefreshStarryWisp();CheckBattleOutcome();
     }
 }
