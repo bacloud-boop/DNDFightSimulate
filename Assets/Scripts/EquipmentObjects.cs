@@ -16,7 +16,7 @@ public sealed class EquipmentObjectRecord
     public bool Metal {get;internal set;}
     public EquipmentObjectPlace Place {get;internal set;}
     public int RemainsId {get;internal set;}
-    public int Carrier {get;internal set;}
+    public int Carrier {get;internal set;}public int? Follower {get;set;}
 }
 // Identity remains stable through corpse storage and recovery; preparation options survive a reset.
 public sealed class EquipmentObjectCatalog

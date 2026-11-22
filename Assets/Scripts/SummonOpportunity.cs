@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public sealed partial class TrainingGame
 {
-    sealed class SummonOpportunity {public int Id;public double At;public CreatureCover.Body Target;}
+    sealed class SummonOpportunity {public int Id,Reach=5;public double At;public CreatureCover.Body Target;}
     List<SummonOpportunity> opportunityChoices;
     int opportunityChoice=-1;
     string reactionActorLabel="";
@@ -24,10 +24,10 @@ public sealed partial class TrainingGame
             double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,map.Player.x,map.Player.y,map.PlayerSpaces,5);
             candidates.Add(new SummonOpportunity{Id=0,At=at,Target=MovingBodyAt(from,to,map.MonsterSpaces,at)});
         }
-        foreach(var unit in map.Summons)if(unit.Alive&&(!IsSteed(unit)||!ControlledSteed)&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),5,map.MonsterSpaces,unit.Spaces)){
-            double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,unit.X,unit.Y,unit.Spaces,5);
+        foreach(var unit in map.Summons)if(unit.Alive&&unit.ControllerReady&&(!IsSteed(unit)||!ControlledSteed)&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),UndeadOpportunityReach(unit),map.MonsterSpaces,unit.Spaces)){
+            double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,unit.X,unit.Y,unit.Spaces,UndeadOpportunityReach(unit));
             var target=MovingBodyAt(from,to,map.MonsterSpaces,at);
-            if(at>=0&&SpiritSeesAt(unit,-1,unit.X,unit.Y,target.X,target.Y,map.MonsterSpaces))candidates.Add(new SummonOpportunity{Id=unit.Id,At=at,Target=target});
+            if(at>=0&&SpiritSeesAt(unit,-1,unit.X,unit.Y,target.X,target.Y,map.MonsterSpaces))candidates.Add(new SummonOpportunity{Id=unit.Id,Reach=UndeadOpportunityReach(unit),At=at,Target=target});
         }
         candidates.Sort((a,b)=>a.At.CompareTo(b.At));
         while(candidates.Count>0&&combat.Hp>0&&!combat.BattleFinished){
@@ -35,7 +35,7 @@ public sealed partial class TrainingGame
             if(simultaneous.Count>1){opportunityChoices=simultaneous;opportunityChoice=-1;while(opportunityChoice<0)yield return null;chosen=candidates.IndexOf(simultaneous[opportunityChoice]);opportunityChoices=null;}
             var candidate=candidates[chosen];candidates.RemoveAt(chosen);var unit=FindSummon(candidate.Id);
             if(candidate.Id!=0&&(unit==null||!unit.ReactionAvailable))continue;
-            reactionActorLabel=candidate.Id==0?"玩家":unit.Name;reactionForPlayer=candidate.Id==0;reactionRange=5;reactionDecision=0;reactionPending=true;
+            reactionActorLabel=candidate.Id==0?"玩家":unit.Name;reactionForPlayer=candidate.Id==0;reactionRange=candidate.Reach;reactionDecision=0;reactionPending=true;
             while(reactionDecision==0)yield return null;reactionPending=false;reactionActorLabel="";
             if(reactionDecision!=1)continue;
             if(candidate.Id==0){

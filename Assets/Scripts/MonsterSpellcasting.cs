@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
         if(spell.Healing)return -1;
         int target=-2,best=int.MaxValue;
         if(!Feigning(0)&&!combat.PlayerDead&&!map.IsContained(true)&&map.DistanceFeet<=spell.Range&&(!MonsterSpellNeedsSight(spell)||MonsterSeesPlayer)){target=0;best=map.DistanceFeet;}
-        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
+        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)&&!NeutralUndead(unit.Id)){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
         return target;
     }
     IEnumerator TryMonsterTurnSpell(MonsterSpellTurn result)
@@ -107,7 +107,7 @@ public sealed partial class TrainingGame
         }
         if(spell.SaveAbility>=0){
             bool automatic=(spell.SaveAbility==0||spell.SaveAbility==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:unit.SleepStage==2);
-            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,spell.SaveAbility))+unit.Breathing.D20Penalty;
+            int modifier=player?PlayerSavingThrowModifier(spell.SaveAbility):BondBonus(target)+SummonSaveModifier(unit,spell.SaveAbility)+unit.Breathing.D20Penalty;
             var roll=player?RollArmorSave(true,spell.SaveAbility):RollSummonSavingThrow(unit,spell.SaveAbility);
             int value=roll.Value;int[] shown=roll.Dice;
             if(player){var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,automatic,adjustment,spell.SaveAbility,map.Monster,spell.Name=="Sacred Flame",map.MonsterSpaces);modifier+=adjustment.Value;}
@@ -133,7 +133,7 @@ public sealed partial class TrainingGame
     IEnumerator ApplyMonsterSpellDamage(int target,int raw,string type,bool critical)
     {
         if(target==0){int amount=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(type));combat.ApplyPlayerDamage(amount,critical);history.Insert(0,"木桩法术对玩家造成 "+amount+" "+type+"伤害。");yield return MaintainConcentration(amount);}
-        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"&&!unit.ResistsType(DamageTypes.Index(type))?raw/2:raw;unit.Damage(amount,DamageTypes.Index(type));history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
+        else {var unit=FindSummon(target);if(unit==null||!unit.Alive)yield break;int amount=SilenceUnitImmune(unit,type)?0:unit.Aquatic.Submerged&&type=="火焰"&&!unit.ResistsType(DamageTypes.Index(type))?raw/2:raw;unit.Damage(amount,DamageTypes.Index(type),critical:critical);history.Insert(0,"木桩法术对"+unit.Name+"造成 "+amount+" "+type+"伤害。");BreakOrdinaryInvisibility(false,"造成伤害");}
     }
     IEnumerator FinishMonsterSpellTurn()
     {

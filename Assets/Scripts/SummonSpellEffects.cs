@@ -11,13 +11,13 @@ public sealed partial class TrainingGame
     ArmorSaveRoll RollSummonSavingThrow(SummonedUnit unit,int ability,bool advantage=false,bool disadvantage=false)
     {
         advantage|=ability==1&&unit.Dodging&&unit.EffectiveSpeed>0||ability==3&&BeaconHope(unit.Id);
-        disadvantage|=ability==1&&unit.Restrained;
+        disadvantage|=ability==1&&unit.Restrained||Undead(unit)!=null&&Undead(unit).ArmorIndex>0&&(ability==0||ability==1);
         return RollSavingThrowDice(advantage,disadvantage);
     }
     IEnumerator RollSummonSave(SummonedUnit unit,int ability,int dc,Vector2Int center,SummonSave result,int? sourceId=null)
     {
         if(unit.SleepStage==2&&(ability==0||ability==1)){result.Failed=true;yield break;}
-        int modifier=BondBonus(unit.Id)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
+        int modifier=BondBonus(unit.Id)+SummonSaveModifier(unit,ability)+unit.Breathing.D20Penalty;
         if(ability==1)modifier+=sourceId.HasValue?map.CreatureCoverBonus(sourceId.Value,unit.Id):map.CreatureCoverFromPoint(center,unit.Id);
         var roll=RollSummonSavingThrow(unit,ability);
         yield return PresentRoll(20,roll.Dice,unit.Name+" · "+PlayerAttributes.Names[ability]+"豁免："+roll.Value+" + "+modifier+" / DC "+dc);

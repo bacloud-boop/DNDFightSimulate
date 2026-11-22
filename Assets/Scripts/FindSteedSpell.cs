@@ -19,10 +19,11 @@ public sealed partial class TrainingGame
         if(sizeChange.Applies(true))mass=sizeChange.Delta>0?mass*8:System.Math.Max(1,mass/8);
         return mass+PlayerEquipmentWeight+(playerCorpseLoad.Loaded?playerCorpseLoad.WeightOunces:0);
     }
-    int SummonAbility(SummonedUnit u,int ability)=>IsSteed(u)?steedRules.Ability(ability):bestialSpirit.Rules.Ability(ability);
-    int SummonAttackBonus(SummonedUnit u)=>IsSteed(u)?classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(steedCaster)]):bestialSpirit.Rules.AttackBonus;
-    int SummonDamageBonus(SummonedUnit u)=>IsSteed(u)?steedRules.DamageBonus:bestialSpirit.Rules.FixedDamage;
-    int SummonDamageType(SummonedUnit u)=>IsSteed(u)?steedRules.DamageType:2;
+    int SummonSaveModifier(SummonedUnit u,int ability)=>Undead(u)!=null?Undead(u).Rules.Save(ability):AcidSplash.Modifier(SummonAbility(u,ability));
+    int SummonAbility(SummonedUnit u,int ability)=>Undead(u)!=null?Undead(u).Rules.Ability(ability):IsSteed(u)?steedRules.Ability(ability):bestialSpirit.Rules.Ability(ability);
+    int SummonAttackBonus(SummonedUnit u)=>Undead(u)!=null?2+UndeadWeaponModifier(Undead(u)):IsSteed(u)?classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(steedCaster)]):bestialSpirit.Rules.AttackBonus;
+    int SummonDamageBonus(SummonedUnit u)=>Undead(u)!=null?UndeadWeaponModifier(Undead(u)):IsSteed(u)?steedRules.DamageBonus:bestialSpirit.Rules.FixedDamage;
+    int SummonDamageType(SummonedUnit u)=>Undead(u)!=null?(Undead(u).Equipped==null?0:Undead(u).Equipped.Type):IsSteed(u)?steedRules.DamageType:2;
     bool SteedCell(out Vector2Int cell){int x,y;cell=Vector2Int.zero;if(!int.TryParse(steedColumn,out x)||!int.TryParse(steedRow,out y))return false;cell=new Vector2Int(x-1,y-1);return map.Inside(cell,2);}
     void DrawFindSteedChoices()
     {

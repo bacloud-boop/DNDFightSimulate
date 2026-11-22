@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
  {
   if(combat.BattleStarted&&!carriedWeapons.Locked)carriedWeapons.BeginBattle();
   if(combat.PlayerHp==0&&!PlayerInBeastForm&&!weaponGrip.Stowed){carriedWeapons.BeginBattle();if(carriedWeapons.Drop(selectedWeapon.Name,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces),WeaponContainer(true))){weaponGrip.DropHeld();RefreshShillelagh();}}
-  if(combat.Hp==0&&!MonsterPolymorphed&&combat.MonsterWeaponIsHeld)monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces),WeaponContainer(false));
+  if(map.BodyPresent(-1)&&!UndeadClaimsCustomWeapon()&&combat.Hp==0&&!MonsterPolymorphed&&combat.MonsterWeaponIsHeld)monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces),WeaponContainer(false));
   playerWeight.Weight.SetWeaponWeight(checked((int)carriedWeapons.CarriedOunces));
   monsterWeight.Weight.SetWeaponWeight(combat.MonsterWeaponIsHeld&&!monsterGroundWeapon.Dropped?combat.MonsterWeaponOunces:0);
   if(objectLight.ObjectId>0||continualFlame.All.Length>0)RefreshLightSpell();
@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
   if(GUILayout.Button("物件体型与遮盖／揭开",button)&&!rolling)OpenEquipmentObjects("weapons");
   GUILayout.Label("随身武器："+WeightUnits.Format(carriedWeapons.CarriedOunces)+"；场外武器不能在战斗中取用。",small);
   if(!combat.BattleStarted)foreach(var item in carriedWeapons.Items){bool current=item.Location==WeaponLocation.Carried;bool next=GUILayout.Toggle(current,item.Key+" · "+WeightUnits.Format(item.WeightOunces),label);if(next!=current&&!carriedWeapons.TrySetCarried(item.Key,next,PlayerWeaponLoadFits))dice="拒绝配置：携带武器后超过负重上限。";}
-  foreach(var item in carriedWeapons.Items)if(item.Location==WeaponLocation.Ground){
+  foreach(var item in carriedWeapons.Items)if(item.Location==WeaponLocation.Ground&&item.FollowerId==0){
    bool old=GUI.enabled;bool near=(item.Ground.ContainedBy.HasValue?item.Ground.AccessibleFrom(WeaponContainer(true)):item.Ground.WithinReach(map.Player.x,map.Player.y,map.PlayerSpaces,WeaponContainer(true)))&&(!item.Ground.Submerged||map.PlayerAquatic.Submerged);
    GUI.enabled=old&&!rolling&&near&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!PlayerInBeastForm&&weaponGrip.Stowed;
    if(GUILayout.Button("拾取 "+item.Key+(item.Ground.ContainedBy.HasValue?"（吞咽体内，需空手）":item.Ground.Submerged?"（水下，须潜水，5尺内）":"（5尺内，需空手）"),button)){
@@ -33,7 +33,7 @@ public sealed partial class TrainingGame
  }
  IEnumerator RecoverMonsterWeapon()
  {
-  if(!monsterGroundWeapon.AccessibleFrom(WeaponContainer(false))||!combat.MonsterCanAct||MonsterPolymorphed)yield break;
+  if(UndeadClaimsCustomWeapon()||!monsterGroundWeapon.AccessibleFrom(WeaponContainer(false))||!combat.MonsterCanAct||MonsterPolymorphed)yield break;
   Func<bool> fits=()=>CarryingRules.CanCarryOunces(EffectiveMonsterAbility(0),CarryingCreatureSize(false),((long)monsterWeight.Weight.EquipmentPounds+monsterWeight.Weight.ArmorPounds)*16+combat.MonsterWeaponOunces+monsterWeight.Weight.StoredGearOunces,0);
   if(!fits())yield break;
   Func<int,int,bool> near=(x,y)=>(monsterGroundWeapon.ContainedBy.HasValue||monsterGroundWeapon.WithinReach(x,y,map.MonsterSpaces,WeaponContainer(false)))&&(!monsterGroundWeapon.Submerged||map.WaterCells(new Vector2Int(x,y),map.MonsterSpaces)==map.MonsterSpaces*map.MonsterSpaces);

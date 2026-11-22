@@ -40,7 +40,8 @@ public sealed partial class TrainingGame
     IEnumerator ResolveSpiritAttack(SummonedUnit unit,int targetId,bool opportunity=false,CreatureCover.Body? targetAt=null)
     {
         Vector2Int cell;int spaces;string target;
-        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive||(unit!=bestialSpirit.Unit&&unit!=steed)||(IsSteed(unit)&&ControlledSteed)||targetId==unit.Id||!SummonTarget(targetId,out cell,out spaces,out target))yield break;
+        if(page!="battle"||combat.Aftermath||combat.BattleFinished||unit==null||!unit.Alive||(unit!=bestialSpirit.Unit&&unit!=steed&&Undead(unit)==null)||(IsSteed(unit)&&ControlledSteed)||targetId==unit.Id||!SummonTarget(targetId,out cell,out spaces,out target))yield break;
+        if(Undead(unit)!=null){yield return ResolveUndeadAttack(Undead(unit),targetId,opportunity,targetAt);yield break;}
         if(!opportunity&&BattleMap.BodyDistance(new Vector2Int(unit.X,unit.Y),unit.Spaces,cell,spaces)>5)yield break;
         if(!opportunity&&(!unit.TurnActive||unit.Orders.Kind!=SummonCommandKind.AssistCombat||!unit.Attack()))yield break;
         bool previousBusy=summonActing;summonActing=true;
@@ -66,7 +67,7 @@ public sealed partial class TrainingGame
             yield return PresentRoll(8,rolls,(IsSteed(unit)?"异界猛击":"撕裂")+(critical?"暴击":"")+"：骰值 + "+SummonDamageBonus(unit)+" = "+damage+" "+damageName);
             if(targetId==0){int frost=AgathysRetaliation(true);damage=combat.AdjustTypedDamage(true,damage,type);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null,sourceActor:unit.Id);unit.Damage(frost,4);if(frost>0)BreakOrdinaryInvisibility(true,"造成伤害");yield return MaintainConcentration(damage);}
             else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,type);combat.ApplyDamage(damage,sourcePlayer:null);}
-            else other.Damage(damage,type);
+            else other.Damage(damage,type,critical:critical);
             history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" "+damageName+"伤害。");RefreshBestialSpirit();CheckBattleOutcome();
         }finally{summonActing=previousBusy;}
     }
@@ -85,7 +86,7 @@ public sealed partial class TrainingGame
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;if(PendingTerrainCount>0)yield return DrainGreaseEntries();summonEndRequested=false;
                 var commanded=new CommandResolution();yield return FollowCommand(unit.Id,commanded);
-                if(commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
+                if(NeutralUndead(unit.Id)||commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.FeignDeath){panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}

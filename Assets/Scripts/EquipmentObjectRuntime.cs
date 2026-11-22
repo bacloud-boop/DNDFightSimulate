@@ -17,6 +17,7 @@ public sealed partial class TrainingGame
         foreach(var item in carriedWeapons.Items)equipmentObjects.Weapon(0,item.Key,item.Key,NaturalPlayerSize,preparing);
         equipmentObjects.Weapon(-1,"custom","木桩手持武器",monsterProfile.SizeIndex,preparing);
         foreach(int actor in new[]{0,-1}){
+            if(!map.BodyPresent(actor))continue;
             var armor=actor==0?playerArmor:monsterArmor;int size=actor==0?NaturalPlayerSize:monsterProfile.SizeIndex;
             equipmentObjects.Slot(actor,EquipmentObjectKind.Armor,armor.ArmorIndex,armor.Armor.Name,armor.WearingArmor,size,preparing);
             equipmentObjects.Slot(actor,EquipmentObjectKind.Shield,0,"盾牌",armor.Shield,size,preparing);
@@ -26,6 +27,8 @@ public sealed partial class TrainingGame
     bool EquipmentOnActor(int actor,out EquipmentPose pose)
     {
         pose=new EquipmentPose();
+        if(!map.BodyPresent(actor))return false;
+        if(actor>0){var u=FindSummon(actor);if(u==null)return false;EquipmentCenter(pose,new Vector2Int(u.X,u.Y),u.Spaces);pose.Carrier=actor;pose.Submerged=u.Aquatic.Submerged;pose.Location=u.Name+"携带／穿戴";return true;}
         if(actor==BattleMap.RescueId){if(!map.RescuePosition.HasValue)return false;EquipmentCenter(pose,map.RescuePosition.Value,map.RescueSpaces);pose.Carrier=rescueCarrier.Dead?(int?)null:actor;pose.Submerged=map.RescueAquatic.Submerged;pose.Location="救援者携带";return true;}
         if(actor!=0&&actor!=-1)return false;
         bool player=actor==0;var cell=player?map.Player:map.Monster;int spaces=player?map.PlayerSpaces:map.MonsterSpaces;
@@ -35,7 +38,7 @@ public sealed partial class TrainingGame
     }
     bool EquipmentOnRemains(int id,out EquipmentPose pose)
     {
-        pose=new EquipmentPose();var body=map.Remains.Find(id);if(body==null)return false;
+        pose=new EquipmentPose();var body=map.Remains.Find(id);if(body==null||!map.BodyPresent(id))return false;
         if(map.RescueCargoId==id&&!map.RescueCargoDragging&&map.RescuePosition.HasValue){EquipmentCenter(pose,map.RescuePosition.Value,map.RescueSpaces);pose.Carrier=BattleMap.RescueId;pose.Submerged=map.RescueAquatic.Submerged;pose.Location="救援者肩扛的旧躯体装备";}
         else {EquipmentCenter(pose,new Vector2Int(body.X,body.Y),body.Spaces);pose.Submerged=WeaponFallsInWater(new Vector2Int(body.X,body.Y),body.Spaces);pose.Location=body.Name+"上的装备";}
         return true;
@@ -43,6 +46,7 @@ public sealed partial class TrainingGame
     bool EquipmentObjectPose(EquipmentObjectRecord item,out EquipmentPose pose)
     {
         pose=null;if(item==null)return false;
+        if(item.Follower.HasValue)return UndeadEquipmentPose(item,out pose);
         if(item.Kind==EquipmentObjectKind.Weapon){
             GroundWeaponState ground;
             if(item.Owner==0){var weapon=carriedWeapons.Find(item.InventoryKey);if(weapon==null||weapon.Location==WeaponLocation.Stored)return false;

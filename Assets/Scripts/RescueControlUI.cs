@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
     }
     void DrawRescueMarker(Rect board)
     {
-        if(!map.RescuePosition.HasValue)return;DrawRescueStoneSense(board);
+        if(!map.BodyPresent(BattleMap.RescueId)||!map.RescuePosition.HasValue)return;DrawRescueStoneSense(board);
         var rect=BodyRect(board,map.RescuePosition.Value,map.RescueSpaces);Fill(rect,new Color(.12f,.5f,.31f,.9f));
         GUI.Label(rect,"援",new GUIStyle(centered){fontSize=Mathf.Max(12,(int)(rect.width*.6f)),normal={textColor=Color.white}});
     }
@@ -61,8 +61,8 @@ public sealed partial class TrainingGame
             if(legal)Fill(rect,new Color(.1f,.65f,.25f,.25f));
         }
         for(int i=0;i<=map.Size;i++){Fill(new Rect(board.x+i*size,board.y,1,board.height),new Color(.3f,.2f,.1f,.5f));Fill(new Rect(board.x,board.y+i*size,board.width,1),new Color(.3f,.2f,.1f,.5f));}
-        if(!map.IsContained(true)&&!map.IsCarried(true))Token(BodyRect(board,map.Player,map.PlayerSpaces),true);
-        if(!map.IsContained(false)&&!map.IsCarried(false))Token(BodyRect(board,map.Monster,map.MonsterSpaces),false);
+        if(map.BodyPresent(0)&&!map.IsContained(true)&&!map.IsCarried(true))Token(BodyRect(board,map.Player,map.PlayerSpaces),true);
+        if(map.BodyPresent(-1)&&!map.IsContained(false)&&!map.IsCarried(false))Token(BodyRect(board,map.Monster,map.MonsterSpaces),false);
         DrawFlamingSphereMap(board);DrawCloudDaggersArea(board);DrawWebArea(board);DrawRetainedRemains(board);DrawRescueMarker(board);DrawSharedPositions(board);
         var e=Event.current;var point=BoardPointer();
         if(!rolling&&combat.Aftermath&&e.type==EventType.MouseDown&&e.button==0&&board.Contains(point)){

@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     string BurningHandsError(){BreathTemplate template;return PlayerBurningTemplate(out template)?"":"请选择有效的源点与朝外锥形方向。";}
     bool TryPlanMonsterBurningHands(out BreathTemplate template)
     {
-        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
+        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)&&!NeutralUndead(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
         return BreathWeaponRules.Choose(map.Size,map.Monster.x,map.Monster.y,map.MonsterSpaces,enemies,out template,false);
     }
     IEnumerator ResolveBurningHands(bool player,int casterClass,int slot,BreathTemplate template)

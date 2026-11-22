@@ -10,7 +10,7 @@ public sealed partial class BattleMap
     public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
     public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0,int exceptRemains=0)
     {
-        if(exceptId!=RescueId&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
+        if(exceptId!=RescueId&&BodyPresent(RescueId)&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
         foreach(var unit in summons)if(unit.Alive&&unit.Id!=exceptId&&Overlap(anchor,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;
         return RemainsFootprintClear(anchor,spaces,exceptRemains!=0?exceptRemains:exceptId);
     }

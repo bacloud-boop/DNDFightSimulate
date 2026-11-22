@@ -13,6 +13,8 @@ public sealed class RetainedRemains
     public BodyWeight Weight {get;}
     public int ArmorIndex {get;}
     public bool Shield {get;}
+    public int CreatureType {get;set;}=9;public int BodySize {get;set;}=2;
+    public bool Bones {get;set;}
     public bool NonWeaponGearRecovered {get;private set;}
     public RetainedRemains(int id,int owner,int x,int y,int spaces,string name,BodyWeight weight,int armorIndex,bool shield)
     {

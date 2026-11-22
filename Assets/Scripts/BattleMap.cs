@@ -2,6 +2,12 @@ using UnityEngine;
 
 public sealed partial class BattleMap
 {
+    readonly System.Collections.Generic.HashSet<int> consumedBodies=new System.Collections.Generic.HashSet<int>();
+    public bool BodyPresent(int actor)=>!consumedBodies.Contains(actor);
+    public bool CanRestoreBodyAt(int actor,Vector2Int cell,int spaces){if(BodyPresent(actor)||!Inside(cell,spaces)||!CanPlaceSummon(cell,spaces,actor))return false;Vector2Int old;int n;if(actor==0){old=Player;n=PlayerSpaces;}else if(actor==-1){old=Monster;n=MonsterSpaces;}else if(actor==RescueId&&RescuePosition.HasValue){old=RescuePosition.Value;n=RescueSpaces;}else return false;SetReincarnationBody(actor,cell,spaces);consumedBodies.Remove(actor);try{return RecoverySafe(Player,Monster);}finally{consumedBodies.Add(actor);SetReincarnationBody(actor,old,n);}}
+    public bool RestoreBodyAt(int actor,Vector2Int cell,int spaces){if(!CanRestoreBodyAt(actor,cell,spaces))return false;SetReincarnationBody(actor,cell,spaces);consumedBodies.Remove(actor);SyncWaterPositions();MovementObserved?.Invoke(actor,new Vector2Int(-100,-100),cell,0,spaces,true);return true;}
+    public bool CanAnimateBody(SummonedUnit unit,int body){if(!Locked||unit==null||!BodyPresent(body)||RescueCargoId==body||(body==0||body==-1)&&IsContained(body==0))return false;Vector2Int cell;int n;if(!CargoBody(body,out cell,out n))return false;consumedBodies.Add(body);try{return CanAddSummon(unit,cell);}finally{consumedBodies.Remove(body);}}
+    public bool AnimateBody(SummonedUnit unit,int body){if(!CanAnimateBody(unit,body))return false;Vector2Int cell;int n;CargoBody(body,out cell,out n);consumedBodies.Add(body);if(AddSummon(unit,cell))return true;consumedBodies.Remove(body);return false;}
     public static readonly string[] Names={"小地图","中地图","大地图"};
     public static readonly int[] Sizes={10,15,20};
     public System.Func<int,Vector2Int,bool> VoluntaryMovement;
@@ -82,7 +88,7 @@ public sealed partial class BattleMap
             double dx=x+recovery*.5-body.x-bodySpaces*.5,dy=y+recovery*.5-body.y-bodySpaces*.5,d=dx*dx+dy*dy;if(d<best){best=d;result=cell;}
         }return best<double.MaxValue;
     }
-    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored,riderMountId))&&(IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
+    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (!BodyPresent(0)||IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored,riderMountId))&&(!BodyPresent(-1)||IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
     bool RecoveryPathSafe(bool player,Vector2Int from,Vector2Int to){
         if(playerRecoverySpaces==0&&monsterRecoverySpaces==0)return true;
         int steps=System.Math.Max(System.Math.Abs(to.x-from.x),System.Math.Abs(to.y-from.y))*2;
@@ -202,5 +208,5 @@ public sealed partial class BattleMap
         if(player)Player=cell;else Monster=cell;return true;
     }
     public bool Lock() {if(!CanPlace(true,Player)||!CanPlace(false,Monster))return false;Locked=true;RefreshMovement();StartMonsterMovementTurn();return true;}
-    public void Unlock(){riderMountId=0;RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
+    public void Unlock(){consumedBodies.Clear();riderMountId=0;RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
 }

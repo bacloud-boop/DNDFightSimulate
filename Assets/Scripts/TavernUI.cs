@@ -67,9 +67,10 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
-        if(!rolling&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
+        if(!rolling&&undeadSaves.Count>0&&!drainingUndeadSaves)StartCoroutine(DrainUndeadSaves());
+        if(!rolling&&!drainingUndeadSaves&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
         BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
-        SyncWeaponInventory();ObserveWaterBreathing();
+        RefreshAnimateDead();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();

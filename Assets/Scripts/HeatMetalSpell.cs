@@ -29,6 +29,7 @@ public sealed partial class TrainingGame
     int? HeatContact(EquipmentObjectRecord item)
     {
         EquipmentPose pose;if(item==null||!EquipmentObjectPose(item,out pose)||pose.Melded)return null;
+        if(item.Follower.HasValue){UndeadFollower f;if(!undeadFollowers.TryGetValue(item.Follower.Value,out f)||!f.Unit.Alive)return null;return item.Kind==EquipmentObjectKind.Weapon?f.Equipped!=null&&f.Equipped.Object==item?(int?)f.Unit.Id:null:(int?)f.Unit.Id;}
         int owner=item.Owner;if(owner!=0&&owner!=-1)return null;
         bool held=owner==0?carriedWeapons.Carried(item.InventoryKey??"")&&selectedWeapon.InventoryKey==item.InventoryKey&&!weaponGrip.Stowed:combat.MonsterWeaponIsHeld&&!monsterGroundWeapon.Dropped;
         return HeatMetalEffect.Touching(item.Kind,item.Place,held,pose.Melded,owner==0?!combat.PlayerDead:combat.Hp>0)?(int?)owner:null;
@@ -50,6 +51,7 @@ public sealed partial class TrainingGame
     bool DropHeatedWeapon(EquipmentObjectRecord item,int actor)
     {
         if(item.Kind!=EquipmentObjectKind.Weapon||HeatContact(item)!=actor)return false;
+        if(actor>0){var f=Undead(FindSummon(actor));if(f==null||f.Equipped==null||f.Equipped.Object!=item)return false;DropUndeadItem(f,f.Equipped);return !HeatContact(item).HasValue;}
         if(actor==0){carriedWeapons.BeginBattle();if(!carriedWeapons.Drop(item.InventoryKey,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces),WeaponContainer(true)))return false;weaponGrip.DropHeld();RefreshShillelagh();}
         else monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces),WeaponContainer(false));
         SyncWeaponInventory();return !HeatContact(item).HasValue;

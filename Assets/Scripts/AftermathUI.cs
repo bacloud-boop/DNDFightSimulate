@@ -9,7 +9,7 @@ public sealed partial class TrainingGame {
  void AdvanceAftermathClock(long rounds){ObserveDeaths();worldRounds+=rounds;playerCorpse.Age(worldRounds);monsterCorpse.Age(worldRounds);if(rounds>1)combat.ClearShortDurationEffects();RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();UpdateStableRecovery();ObserveDeaths();}
  bool CanPlayerAftermathCast=>combat.Aftermath&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&CanCastInCurrentForm&&playerResurrectionCaster.CanCast&&combat.AftermathMagicActionAvailable;
  bool KnowsRevival(string name){if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);var metadata=spellMetadata.spells.FirstOrDefault(x=>x.name==name);return metadata!=null&&EligibleCasters(metadata).Any();}
- string RevivalError(string name,bool player,bool external){ObserveDeaths();if(!combat.Aftermath)return "请在战后阶段使用。";if(!(external?externalResurrectionCaster:playerResurrectionCaster).CanCast)return "施法者受复生术疲惫影响，必须先完成长休。";if(!external&&!SpellVoiceAllowed(true,name))return "单位中心位于沉默范围，不能进行声音施法。";if(!external&&!ArmorSpellAllowed(name))return "未受训护甲禁止施法，或需要先收起武器腾出空手。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)return "生前形态在原位置越界或与玩家占地重叠，禁止施法且不推进时间。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";if(name=="Reincarnate"){string placement=ReincarnationPlacementError(player?0:-1);if(placement!="")return placement;}return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
+ string RevivalError(string name,bool player,bool external){ObserveDeaths();string absent=MissingBodyError(name,player?0:-1,external);if(absent!="")return absent;if(!combat.Aftermath)return "请在战后阶段使用。";if(!(external?externalResurrectionCaster:playerResurrectionCaster).CanCast)return "施法者受复生术疲惫影响，必须先完成长休。";if(!external&&!SpellVoiceAllowed(true,name))return "单位中心位于沉默范围，不能进行声音施法。";if(!external&&!ArmorSpellAllowed(name))return "未受训护甲禁止施法，或需要先收起武器腾出空手。";if(!external&&!CanPlayerAftermathCast)return "玩家当前不能施法。";if(!external&&!KnowsRevival(name))return "当前职业不能施放该法术。";if(!external&&!player&&map.BodyPresent(-1)&&map.DistanceFeet>5)return "玩家必须先接近尸体至5尺内。";if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)return "生前形态在原位置越界或与玩家占地重叠，禁止施法且不推进时间。";if(name!="Gentle Repose"&&!revivalWilling)return "请确认目标愿意复活。";if(name=="Reincarnate"){string placement=ReincarnationPlacementError(player?0:-1);if(placement!="")return placement;}return RevivalRules.Error(name,player?playerCorpse:monsterCorpse,worldRounds);}
  void DrawAftermath(){
   Surface(new Rect(350,110,540,745),paperTexture);if(Btn(new Rect(780,125,90,46),"关闭")){panel="";return;}
   GUILayout.BeginArea(new Rect(375,185,490,635));aftermathScroll=GUILayout.BeginScrollView(aftermathScroll);
@@ -19,7 +19,7 @@ public sealed partial class TrainingGame {
   if(bestialSpirit.Active)GUILayout.Label("召唤物保留 · HP "+bestialSpirit.Unit.Hp+" / "+bestialSpirit.Unit.MaxHp+" · 最多剩余 "+System.Math.Max(0,bestialSpirit.Expires-worldRounds)*6+" 秒。战后暂停操控，时间照常流逝；恢复战斗后再行动。",small);
   if(GUILayout.Button("部署 / 操控救援搬运者",button)&&!rolling){panel="rescue";GUILayout.EndScrollView();GUILayout.EndArea();return;}
   if(map.Remains.Bodies.Count>0&&GUILayout.Button("旧躯体与遗留装备",button)&&!rolling){panel="remains";GUILayout.EndScrollView();GUILayout.EndArea();return;}
-  DrawPlayerWebEscape();DrawExternalCasterRest();
+  DrawMissingBodyChoices();DrawPlayerWebEscape();DrawExternalCasterRest();
   revivalWilling=GUILayout.Toggle(revivalWilling,"确认目标灵魂愿意复活",label);
   foreach(string name in new[]{"Revivify","Raise Dead","Resurrection","Reincarnate","Gentle Repose","True Resurrection"}){
    var spell=DirectSpell.Find(name);GUILayout.Label(spell.Summary,small);if(name=="True Resurrection"&&monsterCorpse.Dead&&monsterCorpse.Type==13)GUILayout.Label("生前："+CreatureProfile.TypeNames[originalMonster.Type]+" · "+CreatureProfile.SizeNames[originalMonster.Size]+" · 原位置"+(CanRestoreOriginalMonster?"可容纳（绿色）":"不可容纳（红色），禁止施法"),small);
@@ -49,7 +49,7 @@ public sealed partial class TrainingGame {
   if(!external)PlayerCastWhileSubmerged(name);
   if(!external&&RevivalRules.Duration(name)>1)EndConcentration("开始长时间施法");
   yield return AdvanceRevivalTime(name,external);
-  string error=RevivalRules.CompletionError(name,player?playerCorpse:monsterCorpse,worldRounds);
+  string error=RevivalRules.CompletionError(name,player?playerCorpse:monsterCorpse,worldRounds);if(error=="")error=MissingBodyError(name,player?0:-1,external);
   if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13&&!CanRestoreOriginalMonster)error="原位置无法容纳生前形态，复生失败。";
   if(!external&&(!aftermathAdvanceCompleted||!PlayerCanSustainCast))error="施法者在施法期间失能，施法失败。";
   bool survivedRevival=true;bool taxesCaster=ResurrectionCasterState.RequiresExertion(name,player?playerCorpse:monsterCorpse,worldRounds);
@@ -58,7 +58,7 @@ public sealed partial class TrainingGame {
    else {
     bool full=RevivalRules.FullHp(name);
     if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13)RestoreOriginalMonster();
-    if(combat.Revive(player,full?(player?combat.PlayerMaxHp:combat.MaxHp):1,RevivalRules.Ordeal(name))){RecordResurrectionExertion(external,taxesCaster);(player?playerCorpse:monsterCorpse).Clear();survivedRevival=RestoreBreathingAfterRevival(player);}
+    if((name!="True Resurrection"||RestoreMissingBody(player?0:-1,external))&&combat.Revive(player,full?(player?combat.PlayerMaxHp:combat.MaxHp):1,RevivalRules.Ordeal(name))){RecordResurrectionExertion(external,taxesCaster);(player?playerCorpse:monsterCorpse).Clear();survivedRevival=RestoreBreathingAfterRevival(player);}
     if(name=="True Resurrection"){combat.ClearPoison(player);if(mark.Active&&mark.Hex&&mark.Applies(player))EndConcentration("完全复生术解除诅咒");}
     if(RevivalRules.Ordeal(name))combat.ClearPoison(player);stableRecoveryAt=-1;ObserveDeaths();}
    history.Insert(0,(external?"外部救援：":"战后施法：")+chinese+"对"+(player?"玩家":"木桩")+"生效，耗时 "+RevivalRules.Duration(name)*6+" 秒。"+(RevivalRules.Ordeal(name)?"复活者d20检定减4，每次完成长休减轻1。":""));dice=chinese+(survivedRevival?" · 已完成":" · 复活后窒息再次死亡");if(!survivedRevival)history.Insert(0,"复活后的致死窒息仍在，目标立即再次死亡；本次施法耗时已经推进。");

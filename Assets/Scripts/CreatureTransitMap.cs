@@ -13,14 +13,14 @@ public sealed partial class BattleMap
     {
         if(actor!=0&&actor!=riderMountId&&OccupiedSpaces(true)>0&&!(actor==RescueId&&RescueCargoId==0))yield return new TransitBody(0,Player,PlayerSpaces);
         if(actor!=-1&&OccupiedSpaces(false)>0&&!(actor==RescueId&&RescueCargoId==-1))yield return new TransitBody(-1,Monster,MonsterSpaces);
-        if(actor!=RescueId&&RescuePosition.HasValue)yield return new TransitBody(RescueId,RescuePosition.Value,RescueSpaces);
+        if(actor!=RescueId&&BodyPresent(RescueId)&&RescuePosition.HasValue)yield return new TransitBody(RescueId,RescuePosition.Value,RescueSpaces);
         foreach(var u in summons)if(u.Alive&&u.Id!=actor&&!(actor==0&&u.Id==riderMountId))yield return new TransitBody(u.Id,new Vector2Int(u.X,u.Y),u.Spaces);
     }
     public bool MovementBody(int actor,out Vector2Int cell,out int spaces)
     {
         if(actor==0){cell=Player;spaces=OccupiedSpaces(true);return spaces>0;}
         if(actor==-1){cell=Monster;spaces=OccupiedSpaces(false);return spaces>0;}
-        if(actor==RescueId){cell=RescuePosition??Vector2Int.zero;spaces=RescueSpaces;return RescuePosition.HasValue;}
+        if(actor==RescueId){cell=RescuePosition??Vector2Int.zero;spaces=RescueSpaces;return BodyPresent(RescueId)&&RescuePosition.HasValue;}
         foreach(var u in summons)if(u.Id==actor&&u.Alive){cell=new Vector2Int(u.X,u.Y);spaces=u.Spaces;return true;}
         cell=Vector2Int.zero;spaces=0;return false;
     }

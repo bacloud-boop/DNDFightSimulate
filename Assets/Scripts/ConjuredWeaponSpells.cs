@@ -55,14 +55,14 @@ public sealed partial class TrainingGame
     {
         if(map.IsContained(false))return BreathTemplate.TryCreate(map.Monster.x,map.Monster.y,map.MonsterSpaces,4,0,map.Monster.x+map.MonsterSpaces+1,map.Monster.y,false,out template,false,60)&&ConjuredTargetVisible(false,0)&&!Feigning(0);
         var enemies=new List<BreathBody>();
-        foreach(int actor in BreathActors())if((actor==0||actor>0)&&!Feigning(actor)&&ConjuredTargetVisible(false,actor)){
+        foreach(int actor in BreathActors())if((actor==0||actor>0)&&!Feigning(actor)&&!NeutralUndead(actor)&&ConjuredTargetVisible(false,actor)){
             Vector2Int p;int n;string name;if((actor!=0||!map.IsContained(true))&&HealingHandsTarget(actor,out p,out n,out name))enemies.Add(new BreathBody(actor,p.x,p.y,n));
         }
         return BreathWeaponRules.Choose(map.Size,map.Monster.x,map.Monster.y,map.MonsterSpaces,enemies,out template,false,ConjuredWeaponRules.ConeFeet,false);
     }
     HashSet<int> MonsterConjuredSelection()
     {
-        var result=new HashSet<int>();foreach(int actor in BreathActors())if((actor==0||actor>0)&&!Feigning(actor))result.Add(actor);return result;
+        var result=new HashSet<int>();foreach(int actor in BreathActors())if((actor==0||actor>0)&&!Feigning(actor)&&!NeutralUndead(actor))result.Add(actor);return result;
     }
     bool TryPlanMonsterVolley(out Vector2Int center)
     {

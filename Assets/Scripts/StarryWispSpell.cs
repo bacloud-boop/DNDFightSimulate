@@ -81,7 +81,7 @@ public sealed partial class TrainingGame
         var reduced=new RayDamage();yield return ReduceRayPacket(true,packet,true,attackName+"",reduced);
         if(bindGlow)BindStarryWisp(0,target);
         if(primary){int amount=ResolveRayPacket(player,reduced.Raw);if(player){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount);history.Insert(0,attackName+"对"+name+"造成 "+amount+" 点结算伤害。");}
-        else {int amount=0;for(int i=0;i<reduced.Raw.Length;i++)amount+=(int)Math.Min(int.MaxValue-amount,(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)?reduced.Raw[i]/2:reduced.Raw[i]);var resolved=(long[])reduced.Raw.Clone();for(int i=0;i<resolved.Length;i++)if(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)resolved[i]/=2;unit.Damage(amount,type:DamageTypes.Index(damageType),resolvedTypes:resolved);history.Insert(0,attackName+"对"+name+"造成 "+amount+" "+damageType+"伤害。");}
+        else {int amount=0;for(int i=0;i<reduced.Raw.Length;i++)amount+=(int)Math.Min(int.MaxValue-amount,(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)?reduced.Raw[i]/2:reduced.Raw[i]);var resolved=(long[])reduced.Raw.Clone();for(int i=0;i<resolved.Length;i++)if(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)resolved[i]/=2;unit.Damage(amount,type:DamageTypes.Index(damageType),resolvedTypes:resolved,critical:critical);history.Insert(0,attackName+"对"+name+"造成 "+amount+" "+damageType+"伤害。");}
         RefreshStarryWisp();CheckBattleOutcome();
     }
 }

@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     bool PlayerHasShield=>playerArmor.Shield&&!PlayerArmorMelded;
     bool PlayerWeaponReactionReady=>PlayerInBeastForm||!weaponGrip.Stowed&&WeaponHandError(selectedWeapon)=="";
     bool MonsterArmorAttackDisadvantage=>!MonsterPolymorphed&&combat.MonsterAttackIsWeapon&&monsterArmor.Untrained(monsterArmorTraining);
-    bool MonsterCanCastAttack=>MonsterPolymorphed||(combat.MonsterAttackIsWeapon?(!combat.MonsterWeaponIsHeld||!monsterGroundWeapon.Dropped):!monsterArmor.Untrained(monsterArmorTraining));
+    bool MonsterCanCastAttack=>MonsterPolymorphed||!UndeadClaimsCustomWeapon()&&(combat.MonsterAttackIsWeapon?(!combat.MonsterWeaponIsHeld||!monsterGroundWeapon.Dropped):!monsterArmor.Untrained(monsterArmorTraining));
     int PlayerArmorSpeedPenalty=>playerArmor.SpeedPenalty(EffectivePlayerAbility(0),PlayerArmorMelded);
     int MonsterArmorSpeedPenalty=>monsterArmor.SpeedPenalty(EffectiveMonsterAbility(0),MonsterPolymorphed);
     bool ArmorD20Disadvantage(bool player,int ability)=>(player?playerArmor:monsterArmor).D20Disadvantage(ability,player?PlayerArmorTraining:monsterArmorTraining,player?PlayerArmorMelded:MonsterPolymorphed);

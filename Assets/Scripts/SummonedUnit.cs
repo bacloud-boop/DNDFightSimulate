@@ -21,7 +21,10 @@ public sealed class SummonedUnit
     public int Hp {get;private set;}
     public int TemporaryHp {get;private set;}
     public void ChooseTemporaryHp(int amount,bool takeNew){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(Alive&&takeNew)TemporaryHp=amount;}
-    readonly int baseArmor;public int Armor=>baseArmor+(WardBonus==null?0:WardBonus());
+    public Func<int> BaseArmorOverride;public Func<bool> ControllerAllows;
+    public bool ControllerReady=>ControllerAllows==null||ControllerAllows();
+    public Func<int,bool> IntrinsicImmunity,IntrinsicVulnerability;public Func<int,long[],bool,bool> LethalGuard;
+    readonly int baseArmor;public int Armor=>(BaseArmorOverride==null?baseArmor:BaseArmorOverride())+(WardBonus==null?0:WardBonus());
     public Func<int> WardBonus;public Action<long[]> DamageApplied;
     public int Speed {get;}
     public int Size {get;}
@@ -47,19 +50,20 @@ public sealed class SummonedUnit
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
-    public int EffectiveSpeed=>FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
+    public int EffectiveSpeed=>!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}
     bool actionAvailable;
-    public bool ActionAvailable=>actionAvailable&&!FeignDeath&&SleepStage==0;
+    public bool ActionAvailable=>ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
     public bool Dodging {get;private set;}
     public bool Disengaged {get;private set;}
     public bool BonusAvailable {get;private set;}
-    public bool TryUseBonus(){if(!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
+    public bool TryUseBonus(){if(!ControllerReady||!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
     public bool Disengage(){if(!TryUseAction())return false;Disengaged=true;return true;}
     public SummonCommand Orders {get;private set;}
     public bool HasVerbalOrders=>Orders.Kind!=SummonCommandKind.None;
+    public void ClearOrders(){Orders=default(SummonCommand);}
     public bool ReceiveVerbalOrders(SummonCommand command,out bool changed)
     {
         changed=false;
@@ -68,8 +72,9 @@ public sealed class SummonedUnit
         changed=!Orders.Equals(command);if(changed)Orders=command;
         return true;
     }
-    // The currently supported spirits have neither a CR nor class levels.
-    public bool CanBePolymorphTarget=>Alive&&PolymorphEffect.TargetChallengeLimit(null,0)>=0;
+    public int CreatureType {get;set;}=1;public int? ChallengeEighths {get;set;}
+    // Spirits have no CR; independent animated undead retain their printed CR.
+    public bool CanBePolymorphTarget=>Alive&&PolymorphEffect.TargetChallengeLimit(ChallengeEighths,0)>=0;
     public int SwimSpeed {get;}
     public bool BreathesAir {get;}
     public bool BreathesWater {get;}
@@ -91,15 +96,25 @@ public sealed class SummonedUnit
     public bool SwitchWaterState(bool submerged,int waterCells)=>Aquatic.TrySwitch(submerged,waterCells,Spaces*Spaces,SpendMovement);
     public bool Attack()
     {
-        if(!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
+        if(!ControllerReady||!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
         if(AttacksRemaining==0){if(!ActionAvailable)return false;actionAvailable=false;AttacksRemaining=AttacksPerAction;}
         AttacksRemaining--;return true;
     }
-    public bool Dodge(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;Dodging=true;return true;}
-    public bool Dash(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;dashes++;return true;}
-    public bool TryUseAction(){if(!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
-    public bool UseReaction(){if(!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
+    public bool Dodge(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;Dodging=true;return true;}
+    public bool Dash(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;dashes++;return true;}
+    public bool TryUseAction(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
+    public bool UseReaction(){if(!ControllerReady||!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-    public int Damage(int amount,int type=-1,long[] resolvedTypes=null){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));bool wasAlive=Alive;if(type==5)FireExposure?.Invoke();if(resolvedTypes==null&&ResistsType(type))amount/=2;if(amount>0)SleepStage=0;int received=amount;int absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;Hp=Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}if(wasAlive&&received>0){var packet=resolvedTypes;if(packet==null){packet=new long[14];packet[type>=0&&type<13?type:13]=received;}DamageApplied?.Invoke(packet);}return before-Hp;}
+    public int Damage(int amount,int type=-1,long[] resolvedTypes=null,bool critical=false){
+        if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));bool wasAlive=Alive;
+        if(type==5||resolvedTypes!=null&&resolvedTypes.Length>5&&resolvedTypes[5]>0)FireExposure?.Invoke();
+        long[] packet;
+        if(resolvedTypes!=null){packet=(long[])resolvedTypes.Clone();long sum=0;for(int i=0;i<packet.Length;i++){long v=Math.Max(0,packet[i]);if(IntrinsicImmunity!=null&&IntrinsicImmunity(i))v=0;else if(IntrinsicVulnerability!=null&&IntrinsicVulnerability(i))v=(v>int.MaxValue/2?int.MaxValue:v*2);packet[i]=Math.Min(int.MaxValue-sum,v);sum+=packet[i];}amount=(int)sum;}
+        else {if(IntrinsicImmunity!=null&&IntrinsicImmunity(type))amount=0;else {if(ResistsType(type))amount/=2;if(IntrinsicVulnerability!=null&&IntrinsicVulnerability(type))amount=(int)Math.Min(int.MaxValue,(long)amount*2);}packet=new long[14];packet[type>=0&&type<13?type:13]=amount;}
+        if(amount>0)SleepStage=0;int received=amount,absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;
+        bool guarded=before>0&&amount>=before&&LethalGuard!=null&&LethalGuard(received,packet,critical);
+        Hp=guarded?1:Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
+        if(wasAlive&&received>0)DamageApplied?.Invoke(packet);return before-Hp;
+    }
     public int Heal(int amount){if(!Alive||amount<=0)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+amount);return Hp-before;}
 }

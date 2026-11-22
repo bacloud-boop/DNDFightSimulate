@@ -5,6 +5,7 @@ public sealed partial class BattleMap
 {
     bool CoverBody(int id,out CreatureCover.Body body)
     {
+        if(!BodyPresent(id)){body=default(CreatureCover.Body);return false;}
         if(id==0){body=new CreatureCover.Body(Player.x,Player.y,PlayerSpaces);return !IsContained(true)&&!IsCarried(true);}
         if(id==-1){body=new CreatureCover.Body(Monster.x,Monster.y,MonsterSpaces);return !IsContained(false)&&!IsCarried(false);}
         if(id==RescueId&&RescuePosition.HasValue){var p=RescuePosition.Value;body=new CreatureCover.Body(p.x,p.y,RescueSpaces);return true;}

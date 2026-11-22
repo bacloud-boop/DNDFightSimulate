@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
             int playerDamage=0;
             foreach(int id in targets){string name=SpellTargetName(id);bool knocked=failed.Contains(id);var raw=DestructiveWaveRules.AfterSave(reduction.Raw,!knocked);int damage;
                 if(id==0||id==-1){damage=ResolveRayPacket(id==0,raw);if(id==0){playerDamage=damage;combat.ApplyPlayerDamage(damage,sourcePlayer:true);if(knocked)combat.PlayerProne=true;}else{combat.ApplyDamage(damage);if(knocked)combat.MonsterProne=true;}}
-                else {var unit=FindSummon(id);if(unit==null)continue;var immune=new bool[DamageTypes.Names.Length];immune[12]=SilenceUnitImmune(unit,"雷鸣");damage=DamageTypes.Total(DamageTypes.Resolve(raw,immunity:immune));unit.Damage(damage);if(knocked)unit.Prone=true;if(damage>0)BreakOrdinaryInvisibility(true,"造成伤害");}
+                else {var unit=FindSummon(id);if(unit==null)continue;damage=ApplyMappedDamagePacket(id,0,raw);if(knocked)unit.Prone=true;}
                 history.Insert(0,"湮灭波："+name+"承受 "+damage+" 点混合伤害"+(knocked?"，豁免失败并倒地。":"，豁免成功不倒地。"));
             }
             SyncTimedBuffs();if(playerDamage>0)yield return MaintainConcentration(playerDamage);RefreshBestialSpirit();dice="湮灭波 · "+targets.Count+"名目标已结算";

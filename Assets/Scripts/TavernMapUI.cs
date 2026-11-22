@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
     int draggingToken=-1,dragControl;
     Vector2 dragOffset;
     string deploymentMessage="拖动蓝色玩家与红色木桩，选择不同格子。";
-    void BeginDeployment() {ResetRestResources();lightAttacksThisTurn.Clear();map.Unlock();thunderwaveTargeting=false;spellTargeting=false;spellCenterChosen=false;tacticalMovement=false;reactionPending=false;page="deployment";panel="";draggingToken=-1;}
+    void BeginDeployment() {ResetUndeadFollowers();ResetRestResources();lightAttacksThisTurn.Clear();map.Unlock();thunderwaveTargeting=false;spellTargeting=false;spellCenterChosen=false;tacticalMovement=false;reactionPending=false;page="deployment";panel="";draggingToken=-1;}
     Vector2 BoardPointer() {return GUI.matrix.inverse.MultiplyPoint3x4(new Vector3(Input.mousePosition.x,Screen.height-Input.mousePosition.y,0));}
     Rect CellRect(Rect board,Vector2Int cell) {float size=board.width/map.Size;return new Rect(board.x+cell.x*size,board.y+cell.y*size,size,size);}
     Rect BodyRect(Rect board,Vector2Int anchor,int spaces){var rect=CellRect(board,anchor);rect.width*=spaces;rect.height*=spaces;return rect;}
@@ -50,8 +50,8 @@ public sealed partial class TrainingGame
         if(burningPreview)DrawBreathArea(board,burningTemplate,burningSource);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
-        if(draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
-        if(draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
+        if(map.BodyPresent(0)&&draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
+        if(map.BodyPresent(-1)&&draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
         if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
         DrawFlamingSphereMap(board);DrawCloudDaggersArea(board);DrawWebArea(board);DrawSpeciesSenseMap(board);DrawFaerieFireMap(board);
         DrawRetainedRemains(board);DrawGroundWeapons(board);DrawRescueMarker(board);

@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb";
-    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         Surface(new Rect(350,110,480,745),paperTexture);
         if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,635));
-        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);
+        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
         if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
         if(heatMetal.Active(worldRounds)&&GUILayout.Button("再次加热灼热金属（附赠动作）",button))panel="heatMetal";
@@ -94,7 +94,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
+        if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
+        else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
         else if(definition.Name=="Ice Storm")DrawIceStormChoices();
         else if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
@@ -193,6 +194,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
         if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")return ConjuredWeaponsError(spell.Name=="Conjure Volley");
+        if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
         if(spell.Name=="Ice Storm")return IceStormError();
         if(spell.Name=="Produce Flame")return ProduceFlameError();
@@ -292,6 +294,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
         if(spell.Name=="Ice Storm"&&IceStormError()!="")yield break;
         if(spell.Name=="Produce Flame"&&ProduceFlameError()!="")yield break;
@@ -355,6 +358,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Conjure Barrage"||conjuredVolley){yield return ResolveConjuredWeapons(true,caster,slotLevel,conjuredVolley,barrageAim,entangleAnchor,conjuredSelected);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Storm"){yield return ResolveIceStorm(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}

@@ -47,7 +47,7 @@ public sealed partial class TrainingGame
         }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty;}
         else {
             var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
-            modifier=BondBonus(target)+AcidSplash.Modifier(SummonAbility(unit,ability))+unit.Breathing.D20Penalty;
+            modifier=BondBonus(target)+SummonSaveModifier(unit,ability)+unit.Breathing.D20Penalty;
             var roll=RollSummonSavingThrow(unit,ability);value=roll.Value;shown=roll.Dice;
         }
         int cover=ability!=1?0:effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target):target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
@@ -86,7 +86,7 @@ public sealed partial class TrainingGame
     IEnumerator TryMonsterBreath(bool beforeSpell)
     {
         if(!SpeciesTurnPolicy.ShouldAttempt(monsterSpecies.BonusPriority,beforeSpell,combat.MonsterActionAvailable,SpeciesPhysicalActive(false),combat.MonsterCanAct)||!BreathReady(-1))yield break;
-        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
+        var enemies=new List<BreathBody>();foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)&&!NeutralUndead(id)){Vector2Int cell;int spaces;string name;if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));}
         BreathTemplate plan;
         if(map.IsContained(false)){if(combat.PlayerDead||!BreathTemplate.TryCreate(map.Monster.x,map.Monster.y,map.MonsterSpaces,0,map.MonsterSpaces,map.Size, map.Monster.y,false,out plan))yield break;}
         else if(!BreathWeaponRules.Choose(map.Size,map.Monster.x,map.Monster.y,map.MonsterSpaces,enemies,out plan))yield break;

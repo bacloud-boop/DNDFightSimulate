@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     bool TryPlanMonsterLightningBolt(out BreathTemplate template)
     {
         var enemies=new List<BreathBody>();
-        foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)){
+        foreach(int id in BreathActors())if((id==0||id>0)&&!Feigning(id)&&!NeutralUndead(id)){
             Vector2Int cell;int spaces;string name;
             if((id!=0||!map.IsContained(true))&&HealingHandsTarget(id,out cell,out spaces,out name))enemies.Add(new BreathBody(id,cell.x,cell.y,spaces));
         }

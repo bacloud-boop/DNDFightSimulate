@@ -33,7 +33,7 @@ public sealed partial class TrainingGame
         var sized=new RayDamage();sized.Raw=packet.LastRawTypedDamage;if(MonsterPolymorphed||combat.MonsterAttackIsWeapon)yield return ApplySizeWeaponDamage(false,sized.Raw,MonsterBaseWeaponDamageType,critical,sized);
         var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击召唤物",reduced);
         var resolved=DamageTypes.Resolve(reduced.Raw,resistance,immunity);int damage=DamageTypes.Total(resolved);
-        int actual=unit.Damage(damage,resolvedTypes:System.Array.ConvertAll(resolved,x=>(long)x));history.Insert(0,"木桩对"+unit.Name+"造成 "+actual+" 伤害（结算值 "+damage+"），"+details);
+        int actual=unit.Damage(damage,resolvedTypes:System.Array.ConvertAll(resolved,x=>(long)x),critical:critical);history.Insert(0,"木桩对"+unit.Name+"造成 "+actual+" 伤害（结算值 "+damage+"），"+details);
         RefreshBestialSpirit();
     }
 }

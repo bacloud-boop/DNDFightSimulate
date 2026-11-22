@@ -88,6 +88,7 @@ public sealed partial class TrainingGame
     }
     bool IssueSummonVerbalCommand(SummonedUnit unit,SummonCommand command)
     {
+        if(Undead(unit)!=null)return IssueUndeadOrder(unit,command);
         if(unit==null||!unit.Alive||!combat.PlayerCanAct||PlayerInBeastForm||summonTurns.Active||rolling||reactionPending)return false;
         bool registered=false;foreach(var candidate in map.Summons)if(ReferenceEquals(candidate,unit)){registered=true;break;}
         if(!registered)return false;
