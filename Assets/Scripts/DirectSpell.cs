@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Melf’s Acid Arrow","马友夫强酸箭","1动作 · 90尺 · 声音、姿势。远程法术攻击命中4d4强酸，目标下个回合末另受2d4强酸；未命中仅初始伤害减半，不留下残留。两组伤害每升环各+1d4。暴击只翻倍初始骰，多次命中独立留下残留，非专注即时。",2,90,4,attack:true,damageType:"强酸",baseDice:4,upcastDice:1),
         new DirectSpell("Dragon’s Breath","龙息术","附赠动作 · 接触自愿生物 · 声音、姿势。施法时选择强酸、寒冷、火焰、闪电或毒素；目标可反复用魔法动作喷吐15尺锥形，敏捷豁免失败3d6所选伤害，成功减半。每升环+1d6；喷吐不是再次施法，不触发额外攻击。",2,5,6,bonus:true,save:1,baseDice:3,upcastDice:1,halfSave:true),
         new DirectSpell("Dissonant Whispers","不谐低语","1动作 · 60尺可见生物 · 声音。感知豁免失败3d6心灵，并立即用可用反应沿安全路线尽量远离；成功半伤且不移动。每升环+1d6。反应移动使用独立额度，借机照常，不疾走、不消耗动作和本回合移动。非专注即时。",1,60,6,save:3,damageType:"心灵",baseDice:3,upcastDice:1,halfSave:true),
         new DirectSpell("Cone of Cold","寒冰锥","1动作 · 自身60尺锥形 · 声音、姿势。范围内所有生物体质豁免，失败8d8寒冷，成功减半；每升环+1d8。被杀死的生物遗体冻结，可免费手动解冻，重量、搬运和复活照常。非专注即时。",5,60,8,save:2,damageType:"寒冷",baseDice:8,upcastDice:1,halfSave:true),

@@ -30,17 +30,17 @@ public sealed partial class TrainingGame
         }
         return result;
     }
-    int ApplyMappedDamagePacket(int target,int caster,long[] raw)
+    int ApplyMappedDamagePacket(int target,int caster,long[] raw,bool critical=false)
     {
         if(target==0||target==-1){if(raw.Length>5&&raw[5]>0)combat.FireExposure?.Invoke(target==0);var resolved=combat.ResolveTypedPacket(target==0,raw);int amount=PacketAmount(resolved);
-            if(target==0)combat.ApplyPlayerDamage(amount,sourcePlayer:caster==0,resolvedTypes:resolved,sourceActor:caster);
+            if(target==0)combat.ApplyPlayerDamage(amount,critical,sourcePlayer:caster==0,resolvedTypes:resolved,sourceActor:caster);
             else combat.ApplyDamage(amount,sourcePlayer:caster==0,resolvedTypes:resolved,sourceActor:caster);
             return amount;
         }
         if(target==BattleMap.RescueId){int received=rescueCarrier.TakeDamagePacket(raw);if(received>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return received;}
         var unit=FindSummon(target);if(unit==null)return 0;
         var packet=(long[])raw.Clone();for(int i=0;i<packet.Length;i++){if(i==12&&SilenceUnitImmune(unit,"雷鸣"))packet[i]=0;else if(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)packet[i]/=2;}
-        int total=PacketAmount(packet);unit.Damage(total,type:raw.Length>5&&raw[5]>0?5:-1,resolvedTypes:packet);if(total>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return total;
+        int total=PacketAmount(packet);unit.Damage(total,type:raw.Length>5&&raw[5]>0?5:-1,resolvedTypes:packet,critical:critical);if(total>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return total;
     }
     static int PacketAmount(long[] packet){long total=0;foreach(long v in packet)total=System.Math.Min(int.MaxValue,total+System.Math.Max(0,v));return (int)total;}
     IEnumerator ResolveIceStorm(bool player,int caster,int slot,Vector2Int center)

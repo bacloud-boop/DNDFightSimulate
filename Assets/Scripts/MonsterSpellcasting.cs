@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         if(spell.Healing)return -1;
         int target=-2,best=int.MaxValue;
         if(!Feigning(0)&&!combat.PlayerDead&&!map.IsContained(true)&&map.DistanceFeet<=spell.Range&&(!MonsterSpellNeedsSight(spell)||MonsterSeesPlayer)){target=0;best=map.DistanceFeet;}
-        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)&&!NeutralUndead(unit.Id)){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
+        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)&&!NeutralUndead(unit.Id)&&(spell.Name!="Melf’s Acid Arrow"||!AcidArrowIsolated(-1,unit.Id))){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
         return target;
     }
     IEnumerator TryMonsterTurnSpell(MonsterSpellTurn result)
@@ -53,6 +53,7 @@ public sealed partial class TrainingGame
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
             if(storm)yield return ResolveFireStorm(false,0,stormPlan);
+            else if(spell.Name=="Melf’s Acid Arrow")yield return ResolveAcidArrow(-1,0,entry.Slot,target);
             else if(spell.Name=="Dissonant Whispers")yield return ResolveDissonantWhispers(-1,0,entry.Slot,target);
             else if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
             else if(MonsterSpellCatalog.IsLine(spell))yield return ResolveLightningBolt(false,0,entry.Slot,conePlan);

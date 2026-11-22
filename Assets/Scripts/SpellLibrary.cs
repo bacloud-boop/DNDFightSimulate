@@ -110,6 +110,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
         else if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
         else if(definition.Name=="Heroism")DrawHeroismChoices();
+        else if(definition.Name=="Melf’s Acid Arrow")DrawAcidArrowChoices();
         else if(definition.Name=="Dragon’s Breath")DrawDragonBreathChoices();
         else if(definition.Name=="Dissonant Whispers")DrawDissonantWhispersChoices();
         else if(definition.Name=="Command")DrawCommandChoices();
@@ -214,6 +215,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere")return FlamingSphereError();
         if(spell.Name=="Heat Metal")return HeatObjectError(heatObject,true);
         if(spell.Name=="Heroism")return HeroismError(directSlotLevel);
+        if(spell.Name=="Melf’s Acid Arrow")return AcidArrowError();
         if(spell.Name=="Dragon’s Breath")return DragonBreathError();
         if(spell.Name=="Dissonant Whispers")return DissonantWhispersError();
         if(spell.Name=="Command")return CommandError(directSlotLevel);
@@ -319,6 +321,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere"&&FlamingSphereError()!="")yield break;
         int heatedSelection=heatObject;if(spell.Name=="Heat Metal"&&HeatObjectError(heatedSelection,true)!="")yield break;
         var heroismSelected=new System.Collections.Generic.List<int>(heroismTargets);if(spell.Name=="Heroism"&&HeroismError(slotLevel)!="")yield break;
+        int acidSelected=acidArrowTarget;if(spell.Name=="Melf’s Acid Arrow"&&AcidArrowError()!="")yield break;
         int dragonSelected=dragonBreathTarget,dragonTypeSelected=DragonBreathTypes[dragonBreathType];if(spell.Name=="Dragon’s Breath"&&DragonBreathError()!="")yield break;
         int whispersSelected=whispersTarget;if(spell.Name=="Dissonant Whispers"&&DissonantWhispersError()!="")yield break;
         var commandSelected=new System.Collections.Generic.List<int>(commandTargets);var chosenCommand=(CommandWord)commandChoice;if(spell.Name=="Command"&&CommandError(slotLevel)!="")yield break;
@@ -388,6 +391,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere"){CastFlamingSphere(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heat Metal"){yield return CastHeatMetal(heatedSelection,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Melf’s Acid Arrow"){yield return ResolveAcidArrow(0,caster,slotLevel,acidSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dragon’s Breath"){CastDragonBreath(caster,dragonSelected,slotLevel,dragonTypeSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Dissonant Whispers"){yield return ResolveDissonantWhispers(0,caster,slotLevel,whispersSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Command"){yield return ResolveCommandCast(0,caster,chosenCommand,commandSelected);if(!embedded)rolling=false;yield break;}
