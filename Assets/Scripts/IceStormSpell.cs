@@ -30,17 +30,17 @@ public sealed partial class TrainingGame
         }
         return result;
     }
-    int ApplyIceStormDamage(int target,int caster,long[] raw)
+    int ApplyMappedDamagePacket(int target,int caster,long[] raw)
     {
-        if(target==0||target==-1){var resolved=combat.ResolveTypedPacket(target==0,raw);int amount=PacketAmount(resolved);
+        if(target==0||target==-1){if(raw.Length>5&&raw[5]>0)combat.FireExposure?.Invoke(target==0);var resolved=combat.ResolveTypedPacket(target==0,raw);int amount=PacketAmount(resolved);
             if(target==0)combat.ApplyPlayerDamage(amount,sourcePlayer:caster==0,resolvedTypes:resolved,sourceActor:caster);
             else combat.ApplyDamage(amount,sourcePlayer:caster==0,resolvedTypes:resolved,sourceActor:caster);
             return amount;
         }
-        if(target==BattleMap.RescueId)return rescueCarrier.TakeDamagePacket(raw);
+        if(target==BattleMap.RescueId){int received=rescueCarrier.TakeDamagePacket(raw);if(received>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return received;}
         var unit=FindSummon(target);if(unit==null)return 0;
-        var packet=(long[])raw.Clone();for(int i=0;i<packet.Length;i++)if(unit.ResistsType(i))packet[i]/=2;
-        int total=PacketAmount(packet);unit.Damage(total,resolvedTypes:packet);if(total>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return total;
+        var packet=(long[])raw.Clone();for(int i=0;i<packet.Length;i++){if(i==12&&SilenceUnitImmune(unit,"雷鸣"))packet[i]=0;else if(unit.ResistsType(i)||i==5&&unit.Aquatic.Submerged)packet[i]/=2;}
+        int total=PacketAmount(packet);unit.Damage(total,type:raw.Length>5&&raw[5]>0?5:-1,resolvedTypes:packet);if(total>0)BreakOrdinaryInvisibility(caster==0,"造成伤害");return total;
     }
     static int PacketAmount(long[] packet){long total=0;foreach(long v in packet)total=System.Math.Min(int.MaxValue,total+System.Math.Max(0,v));return (int)total;}
     IEnumerator ResolveIceStorm(bool player,int caster,int slot,Vector2Int center)
@@ -53,7 +53,7 @@ public sealed partial class TrainingGame
             int blunt=0,cold=0;var a=new int[count];var b=new int[4];for(int i=0;i<a.Length;i++){a[i]=Random.Range(1,11);blunt+=a[i];}for(int i=0;i<b.Length;i++){b[i]=Random.Range(1,7);cold+=b[i];}
             dice="冰雹暴 · 共享混合伤害";yield return PresentRoll(10,a,count+"d10钝击 = "+blunt);yield return PresentRoll(6,b,"4d6寒冷 = "+cold);
             var reduced=new RayDamage();yield return ReduceRayPacket(player,IceStormRules.Packet(blunt,cold),true,"冰雹暴合并伤害",reduced);
-            int playerDamage=0;foreach(int actor in targets){int amount=ApplyIceStormDamage(actor,source,IceStormRules.AfterSave(reduced.Raw,!failed.Contains(actor)));if(actor==0)playerDamage=amount;history.Insert(0,"冰雹暴："+TransitActorName(actor)+(failed.Contains(actor)?"豁免失败":"豁免成功，两类伤害减半")+"，结算 "+amount+" 点混合伤害。");}
+            int playerDamage=0;foreach(int actor in targets){int amount=ApplyMappedDamagePacket(actor,source,IceStormRules.AfterSave(reduced.Raw,!failed.Contains(actor)));if(actor==0)playerDamage=amount;history.Insert(0,"冰雹暴："+TransitActorName(actor)+(failed.Contains(actor)?"豁免失败":"豁免成功，两类伤害减半")+"，结算 "+amount+" 点混合伤害。");}
             if(!internalCast)iceStorm.Add(source,center.x,center.y,map.Size,(x,y)=>!map.IsWater(new Vector2Int(x,y)),worldRounds);
             SyncTimedBuffs();if(playerDamage>0)yield return MaintainConcentration(playerDamage);
             ReconcileFallenRescue();RefreshBestialSpirit();dice="冰雹暴 · "+targets.Count+"名目标已结算";

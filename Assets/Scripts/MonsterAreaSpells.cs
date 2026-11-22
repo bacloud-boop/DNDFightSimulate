@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     bool TryPlanMonsterArea(DirectSpell spell,out Vector2Int center)
     {
         if(spell.Name=="Conjure Volley")return TryPlanMonsterVolley(out center);
-        if(spell.Name=="Ice Storm"&&map.IsContained(false)){center=Vector2Int.zero;return false;}
+        if((spell.Name=="Flame Strike"||spell.Name=="Ice Storm")&&map.IsContained(false)){center=Vector2Int.zero;return false;}
         int x,y,radius=MonsterSpellCatalog.Radius(spell);
         if(spell.EmanationRadius>0){center=map.Monster;return MonsterAreaTargets(center,radius,map.MonsterSpaces,spell.Name=="Word of Radiance",true).Count>0;}
         bool found=MonsterAreaPlanner.Choose(map.Size,spell.Range,radius,(column,row)=>map.DistanceToCell(false,new Vector2Int(column,row)),(column,row)=>MonsterAreaTargets(new Vector2Int(column,row),radius,planning:true).Count,out x,out y);
