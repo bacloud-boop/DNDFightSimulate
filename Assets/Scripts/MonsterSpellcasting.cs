@@ -7,7 +7,7 @@ public sealed partial class TrainingGame
     {
         get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?(MonsterSpellCatalog.IsCone(spell)?(spell.Name=="Conjure Barrage"||spell.Name=="Cone of Cold"?60:15):MonsterSpellCatalog.IsLine(spell)?100:Mathf.Max(spell.Range,spell.EmanationRadius)):MonsterAttackReach;}
     }
-    bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Command"||spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
+    bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Dissonant Whispers"||spell.Name=="Command"||spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)
     {
         if(id==0)return MonsterSeesPlayer;var unit=FindSummon(id);
@@ -48,6 +48,7 @@ public sealed partial class TrainingGame
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
             if(storm)yield return ResolveFireStorm(false,0,stormPlan);
+            else if(spell.Name=="Dissonant Whispers")yield return ResolveDissonantWhispers(-1,0,entry.Slot,target);
             else if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
             else if(MonsterSpellCatalog.IsLine(spell))yield return ResolveLightningBolt(false,0,entry.Slot,conePlan);
             else if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")yield return ResolveConjuredWeapons(false,0,entry.Slot,spell.Name=="Conjure Volley",conePlan,areaCenter,MonsterConjuredSelection());

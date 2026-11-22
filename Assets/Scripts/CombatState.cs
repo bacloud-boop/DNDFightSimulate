@@ -195,6 +195,10 @@ public sealed class CombatState
         else {if(!MonsterCanAct||MonsterReactionsBlocked||!MonsterReactionAvailable)return false;MonsterReactionAvailable=false;}
         BattleStarted=true;return true;
     }
+    public bool TryUseCompelledReaction(bool player){
+        bool ready=player?PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&!PlayerReactionsBlocked&&PlayerReactionAvailable:Hp>0&&!MonsterParalyzed&&!MonsterFeignDeath&&MonsterSleepStage==0&&!MonsterReactionsBlocked&&MonsterReactionAvailable;
+        if(!ready)return false;if(player)PlayerReactionAvailable=false;else MonsterReactionAvailable=false;BattleStarted=true;return true;
+    }
     public bool CanPlayerDamageReact=>PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&!PlayerReactionsBlocked&&PlayerReactionAvailable;
     public bool TryUseDamageReaction(){if(!CanPlayerDamageReact)return false;PlayerReactionAvailable=false;BattleStarted=true;return true;}
     public bool MonsterActionAvailable {get;private set;}=true;

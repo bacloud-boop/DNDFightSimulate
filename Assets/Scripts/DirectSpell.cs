@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Dissonant Whispers","不谐低语","1动作 · 60尺可见生物 · 声音。感知豁免失败3d6心灵，并立即用可用反应沿安全路线尽量远离；成功半伤且不移动。每升环+1d6。反应移动使用独立额度，借机照常，不疾走、不消耗动作和本回合移动。非专注即时。",1,60,6,save:3,damageType:"心灵",baseDice:3,upcastDice:1,halfSave:true),
         new DirectSpell("Cone of Cold","寒冰锥","1动作 · 自身60尺锥形 · 声音、姿势。范围内所有生物体质豁免，失败8d8寒冷，成功减半；每升环+1d8。被杀死的生物遗体冻结，可免费手动解冻，重量、搬运和复活照常。非专注即时。",5,60,8,save:2,damageType:"寒冷",baseDice:8,upcastDice:1,halfSave:true),
         new DirectSpell("Finger of Death","死亡一指","1动作 · 60尺 · 声音、姿势。可见生物体质豁免，失败7d8＋30死灵，成功减半。被本法术杀死的类人生物在施法者下回合开始变为服从口头指令的僵尸。升环不增强，不需要专注；仅倒地未死不触发起尸。",7,60,8,save:2,damageType:"死灵",baseDice:7,halfSave:true),
         new DirectSpell("Fire Storm","火焰风暴","1动作 · 150尺 · 声音、姿势。布置至多10块10尺立方区域，各生物敏捷豁免；失败7d10火焰，成功减半。可单块；多块时每块至少与另一块共边，可有分离组。升环不增强，非专注即时。",7,150,10,save:1,damageType:"火焰",baseDice:7,halfSave:true),

@@ -18,13 +18,13 @@ public sealed partial class TrainingGame
         if(rolling || panel!="" || page!="battle" || !map.CanMoveMonsterTo(target))return;
         StartCoroutine(ResolveMovement(false,target,false));
     }
-    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false,bool jumping=false,bool greaseStep=false,int? prepaid=null,int? expectedSpaces=null,int? travelDistance=null)
+    IEnumerator ResolveMovement(bool movingPlayer,Vector2Int target,bool tactical,bool preserveBusy=false,bool jumping=false,bool greaseStep=false,int? prepaid=null,int? expectedSpaces=null,int? travelDistance=null,bool reactionMove=false,System.Func<bool> movementGuard=null)
     {
         if(!greaseStep&&!jumping&&GreasePathNeeded(movingPlayer,target)){yield return MoveThroughGrease(movingPlayer,target,tactical,preserveBusy);yield break;}
         Vector2Int from=movingPlayer?map.Player:map.Monster;
         if(from==target||jumping&&!CanUseJump(movingPlayer,target,tactical))yield break;
         bool proneAtStart=movingPlayer?combat.PlayerProne:combat.MonsterProne;combat.MarkBattleStarted();rolling=true;
-        if(!movingPlayer&&!combat.Aftermath){yield return ResolveMonsterMoveSummonReactions(from,target);if(combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
+        if(!movingPlayer&&!combat.Aftermath){yield return ResolveMonsterMoveSummonReactions(from,target);if(!reactionMove&&combat.BattleFinished||combat.Hp==0){rolling=false;yield break;}}
         bool defenderPlayer=!movingPlayer;
         bool reactionAvailable=!combat.Aftermath&&(defenderPlayer?PlayerWeaponReactionReady&&!combat.PlayerReactionsBlocked&&combat.PlayerReactionAvailable&&combat.PlayerCanAct&&!combat.PlayerOpportunityBlocked:MonsterCanCastAttack&&!combat.MonsterReactionsBlocked&&combat.MonsterReactionAvailable&&combat.MonsterCanAct&&!combat.MonsterOpportunityBlocked);
         int reach=defenderPlayer?5:MonsterAttackReach;
@@ -48,16 +48,16 @@ public sealed partial class TrainingGame
                 } finally {opportunitySenseDistance=null;playerSightOverride=monsterSightOverride=null;playerAttackCoverOverride=monsterAttackCoverOverride=null;}
             }else history.Insert(0,(defenderPlayer?"玩家":"木桩")+"放弃借机攻击，保留反应。");
             rolling=true;
-            if(page!="battle" || !map.Locked || combat.BattleFinished || (movingPlayer&&!combat.PlayerMovementReady) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
+            if(page!="battle" || !map.Locked || !reactionMove&&combat.BattleFinished || (movingPlayer&&!combat.PlayerMovementReady) || (!movingPlayer&&combat.Hp==0)){rolling=false;yield break;}
         }
         if(expectedSpaces.HasValue&&((movingPlayer?map.PlayerSpaces:map.MonsterSpaces)!=expectedSpaces.Value||(movingPlayer?combat.PlayerProne:combat.MonsterProne)!=proneAtStart)){if(PendingTerrainCount>0)yield return DrainGreaseEntries();if(!preserveBusy)rolling=false;yield break;}
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
         int paidMovement=prepaid.HasValue?prepaid.Value:jumping?10:movingPlayer?map.PlayerMovementCost(target):map.MonsterMovementCost(target);
-        System.Func<bool> groundMove=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
-        bool moved=jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):greaseStep?map.WithCreatureTransitStep(movingPlayer?0:-1,groundMove):groundMove();
+        System.Func<bool> groundMove=()=>reactionMove?map.MoveReactionStep(movingPlayer?0:-1,target):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
+        bool moved=(movementGuard==null||movementGuard())&&(jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):greaseStep?map.WithCreatureTransitStep(movingPlayer?0:-1,groundMove):groundMove());
         if(moved) {
             if(jumping)jumpEffect.Use(movingPlayer,worldRounds,combat.Round);
-            string mode=jumping?(tactical?"战术跳跃（免借机）":"跳跃"):tactical?"战术转进（不引发借机攻击）":"普通移动";
+            string mode=reactionMove?"反应移动（独立额度）":jumping?(tactical?"战术跳跃（免借机）":"跳跃"):tactical?"战术转进（不引发借机攻击）":"普通移动";
             movementMessage=mode+"完成"+(movingPlayer?"，剩余 "+map.MovementBudget(tactical)+" 尺。":"。");
             history.Insert(0,(movingPlayer?"玩家":"木桩")+mode+" "+BattleMap.FeetBetween(from,target)+" 尺（消耗 "+paidMovement+" 尺移动力）至("+(target.x+1)+","+(target.y+1)+")。");
         }

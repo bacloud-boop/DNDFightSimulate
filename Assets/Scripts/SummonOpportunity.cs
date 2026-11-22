@@ -46,10 +46,10 @@ public sealed partial class TrainingGame
             }else if(unit.UseReaction())yield return ResolveSpiritAttack(unit,-1,true,candidate.Target);
         }
     }
-    IEnumerator MoveSpiritWithReactions(SummonedUnit unit,Vector2Int target,bool greaseStep=false,int? prepaid=null,int? travelDistance=null)
+    IEnumerator MoveSpiritWithReactions(SummonedUnit unit,Vector2Int target,bool greaseStep=false,int? prepaid=null,int? travelDistance=null,bool reactionMove=false,System.Func<bool> movementGuard=null)
     {
         if(page!="battle"||unit==null||!unit.Alive||!CommandMoving(unit.Id)&&(combat.Aftermath||combat.BattleFinished))yield break;
-        System.Func<bool> validate=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target);
+        System.Func<bool> validate=()=>reactionMove?map.CanReactionStep(unit.Id,target):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.CanMoveSummon(unit.Id,target)):map.CanMoveSummon(unit.Id,target);
         if(!(greaseStep?map.WithCreatureTransitStep(unit.Id,validate):validate()))yield break;
         if(!greaseStep&&(grease.Any(worldRounds)||spikeGrowth.Active(worldRounds)||web.Active(worldRounds)||cloudDaggers.Active(worldRounds)||map.CreaturePathNeedsSteps(unit.Id,new Vector2Int(unit.X,unit.Y),target,unit.Spaces))){yield return MoveSpiritThroughGrease(unit,target);yield break;}
         bool previous=summonActing;summonActing=true;
@@ -65,8 +65,8 @@ public sealed partial class TrainingGame
                 }
             }
             if(!unit.Alive||!CommandMoving(unit.Id)&&(combat.BattleFinished||combat.Aftermath))yield break;
-            System.Func<bool> move=()=>prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.MoveSummon(unit.Id,target),travelDistance):map.MoveSummon(unit.Id,target);
-            if(greaseStep?map.WithCreatureTransitStep(unit.Id,move):move()){history.Insert(0,unit.Name+"移动至("+(target.x+1)+","+(target.y+1)+")，继续原指令，无需开口。");ObserveWaterBreathing();}
+            System.Func<bool> move=()=>reactionMove?map.MoveReactionStep(unit.Id,target):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>map.MoveSummon(unit.Id,target),travelDistance):map.MoveSummon(unit.Id,target);
+            if((movementGuard==null||movementGuard())&&(greaseStep?map.WithCreatureTransitStep(unit.Id,move):move())){history.Insert(0,unit.Name+"移动至("+(target.x+1)+","+(target.y+1)+")，继续原指令，无需开口。");ObserveWaterBreathing();}
             if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         }finally{summonActing=previous;reactionActorLabel="";}
     }

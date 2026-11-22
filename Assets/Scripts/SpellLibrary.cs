@@ -110,6 +110,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
         else if(definition.Name=="Heat Metal")DrawHeatMetalChoices();
         else if(definition.Name=="Heroism")DrawHeroismChoices();
+        else if(definition.Name=="Dissonant Whispers")DrawDissonantWhispersChoices();
         else if(definition.Name=="Command")DrawCommandChoices();
         else if(definition.Name=="Starry Wisp")DrawStarryChoices();
         else if(definition.Name=="Feign Death")DrawFeignDeathChoices();
@@ -212,6 +213,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere")return FlamingSphereError();
         if(spell.Name=="Heat Metal")return HeatObjectError(heatObject,true);
         if(spell.Name=="Heroism")return HeroismError(directSlotLevel);
+        if(spell.Name=="Dissonant Whispers")return DissonantWhispersError();
         if(spell.Name=="Command")return CommandError(directSlotLevel);
         if(spell.Name=="Color Spray")return ColorSprayError();
         if(spell.Name=="Burning Hands")return BurningHandsError();
@@ -315,6 +317,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere"&&FlamingSphereError()!="")yield break;
         int heatedSelection=heatObject;if(spell.Name=="Heat Metal"&&HeatObjectError(heatedSelection,true)!="")yield break;
         var heroismSelected=new System.Collections.Generic.List<int>(heroismTargets);if(spell.Name=="Heroism"&&HeroismError(slotLevel)!="")yield break;
+        int whispersSelected=whispersTarget;if(spell.Name=="Dissonant Whispers"&&DissonantWhispersError()!="")yield break;
         var commandSelected=new System.Collections.Generic.List<int>(commandTargets);var chosenCommand=(CommandWord)commandChoice;if(spell.Name=="Command"&&CommandError(slotLevel)!="")yield break;
         int starrySelected=starryTarget;if(spell.Name=="Starry Wisp"&&StarryWispError()!="")yield break;
         int feignSelected=feignTarget;if(spell.Name=="Feign Death"&&FeignDeathError()!="")yield break;
@@ -382,6 +385,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Flaming Sphere"){CastFlamingSphere(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heat Metal"){yield return CastHeatMetal(heatedSelection,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Heroism"){ApplyHeroism(caster,slotLevel,heroismSelected);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Dissonant Whispers"){yield return ResolveDissonantWhispers(0,caster,slotLevel,whispersSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Command"){yield return ResolveCommandCast(0,caster,chosenCommand,commandSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Color Spray"){yield return ResolveColorSpray(true,caster,burningAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Lightning Bolt"){yield return ResolveLightningBolt(true,caster,slotLevel,lightningAim);if(!embedded)rolling=false;yield break;}
