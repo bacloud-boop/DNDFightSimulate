@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     sealed class MonsterSpellTurn {public bool Attempted,Cast,Bonus;}
     int MonsterTurnReach
     {
-        get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?(MonsterSpellCatalog.IsCone(spell)?(spell.Name=="Conjure Barrage"?60:15):MonsterSpellCatalog.IsLine(spell)?100:Mathf.Max(spell.Range,spell.EmanationRadius)):MonsterAttackReach;}
+        get{if(MonsterBreathPreferred)return 30;var entry=monsterSpells.Next;var spell=entry==null?null:MonsterSpellCatalog.Find(entry.Name);return MonsterSpellReady&&spell!=null&&!spell.Healing?(MonsterSpellCatalog.IsCone(spell)?(spell.Name=="Conjure Barrage"||spell.Name=="Cone of Cold"?60:15):MonsterSpellCatalog.IsLine(spell)?100:Mathf.Max(spell.Range,spell.EmanationRadius)):MonsterAttackReach;}
     }
     bool MonsterSpellNeedsSight(DirectSpell spell)=>spell.Name=="Command"||spell.Name=="Sacred Flame"||spell.Name=="Toll the Dead"||spell.Name=="Magic Missile"||spell.Name=="Blight"||spell.Name=="Power Word Kill";
     bool MonsterCanSeeTarget(int id)
@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
         var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell),cone=MonsterSpellCatalog.IsCone(spell)||MonsterSpellCatalog.IsLine(spell);Vector2Int areaCenter=default(Vector2Int);BreathTemplate conePlan=default(BreathTemplate);
         System.Collections.Generic.List<FireStormRules.Block> stormPlan=null;bool storm=spell!=null&&spell.Name=="Fire Storm";
         var commandVictims=spell!=null&&spell.Name=="Command"?MonsterCommandTargets(entry.Slot):null;
-        int target=spell==null?-2:storm?(TryPlanMonsterFireStorm(out stormPlan)?-5:-2):commandVictims!=null?(commandVictims.Count>0?commandVictims[0]:-2):cone?((MonsterSpellCatalog.IsLine(spell)?TryPlanMonsterLightningBolt(out conePlan):spell.Name=="Conjure Barrage"?TryPlanMonsterBarrage(out conePlan):TryPlanMonsterBurningHands(out conePlan))?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
+        int target=spell==null?-2:storm?(TryPlanMonsterFireStorm(out stormPlan)?-5:-2):commandVictims!=null?(commandVictims.Count>0?commandVictims[0]:-2):cone?((MonsterSpellCatalog.IsLine(spell)?TryPlanMonsterLightningBolt(out conePlan):spell.Name=="Conjure Barrage"?TryPlanMonsterBarrage(out conePlan):spell.Name=="Cone of Cold"?TryPlanMonsterConeOfCold(out conePlan):TryPlanMonsterBurningHands(out conePlan))?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2||spell.Bonus&&!combat.MonsterBonusActionAvailable||!SpellVoiceAllowed(false,spell.Name)){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
         if(!(spell.Bonus?combat.TryUseMonsterBonusAction():combat.TryUseMonsterAction()))yield break;
         result.Cast=true;result.Bonus=spell.Bonus;
@@ -39,7 +39,7 @@ public sealed partial class TrainingGame
         history.Insert(0,"木桩施放"+spell.Chinese+"（"+(entry.Slot==0?"戏法":entry.Slot+"环")+"），消耗"+(spell.Bonus?"附赠动作":"动作")+"。");
         if(storm){activeFireStorm=stormPlan;monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         if(area){ShowMonsterArea(spell,areaCenter);monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
-        if(cone){burningPreview=true;burningTemplate=conePlan;burningSource=-1;monsterAreaChoosing=true;history.Insert(0,"木桩"+spell.Chinese+(MonsterSpellCatalog.IsLine(spell)?"：选择避开自身、覆盖最多敌人的100×5尺线形。":spell.Name=="Conjure Barrage"?"：选择覆盖最多可见敌人的60尺锥形，不将自身列为目标。":"：选择避开自身、覆盖最多敌人的15尺锥形。"));yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
+        if(cone){burningPreview=true;burningTemplate=conePlan;burningSource=-1;monsterAreaChoosing=true;history.Insert(0,"木桩"+spell.Chinese+(MonsterSpellCatalog.IsLine(spell)?"：选择避开自身、覆盖最多敌人的100×5尺线形。":spell.Name=="Conjure Barrage"?"：选择覆盖最多可见敌人的60尺锥形，不将自身列为目标。":spell.Name=="Cone of Cold"?"：选择避开自身、覆盖最多敌人的60尺锥形。":"：选择避开自身、覆盖最多敌人的15尺锥形。"));yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         var info=SpellInfo(spell.Name);
         if(info!=null&&System.Array.IndexOf(info.components,"声音")>=0){
             ObserveWaterBreathing();
@@ -51,6 +51,7 @@ public sealed partial class TrainingGame
             else if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
             else if(MonsterSpellCatalog.IsLine(spell))yield return ResolveLightningBolt(false,0,entry.Slot,conePlan);
             else if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")yield return ResolveConjuredWeapons(false,0,entry.Slot,spell.Name=="Conjure Volley",conePlan,areaCenter,MonsterConjuredSelection());
+            else if(cone&&spell.Name=="Cone of Cold")yield return ResolveConeOfCold(false,0,entry.Slot,conePlan);
             else if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
             else if(cone)yield return ResolveBurningHands(false,0,entry.Slot,conePlan);
             else if(spell.Name=="Flame Strike")yield return ResolveFlameStrike(false,0,entry.Slot,areaCenter);

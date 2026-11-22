@@ -1,13 +1,16 @@
 using System;
 public sealed class CorpseClock {
  public bool Dead {get;private set;}public int Type {get;private set;}public long DeathAt {get;private set;}public long Generation {get;private set;}
+ public bool Frozen {get;private set;}
+ public bool Freeze(){if(!Dead)return false;Frozen=true;return true;}
+ public void Thaw(){Frozen=false;}
  long age,last,preservedUntil=-1;
  public void Observe(bool dead,int type,long now){if(dead&&!Dead){if(Generation<long.MaxValue)Generation++;Dead=true;Type=type;DeathAt=last=now;age=0;preservedUntil=-1;}else if(!dead&&Dead)Clear();}
  public long Age(long now){if(Dead&&now>last){age+=Math.Max(0,now-Math.Max(last,preservedUntil));last=now;}return age;}
  public void Preserve(long now){Age(now);preservedUntil=now+144000;}
  public bool Preserved(long now)=>Dead&&now<preservedUntil;
  public long ProjectedAge(long now,long duration){long current=Age(now);return current+Math.Max(0,now+duration-Math.Max(now,preservedUntil));}
- public void Clear(){Dead=false;age=0;last=DeathAt=0;preservedUntil=-1;}
+ public void Clear(){Frozen=false;Dead=false;age=0;last=DeathAt=0;preservedUntil=-1;}
 }
 public static class RevivalRules {
  public static bool Supported(string name)=>name=="Reincarnate"||name=="Revivify"||name=="Raise Dead"||name=="Resurrection"||name=="Gentle Repose"||name=="True Resurrection";

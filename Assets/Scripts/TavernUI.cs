@@ -160,6 +160,7 @@ public sealed partial class TrainingGame
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
         if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))page="home";
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))ResetCombat();
+        if(HasFrozenRemains&&Btn(new Rect(1015,77,205,26),"冻结遗体 / 免费解冻",!rolling&&!spellTargeting&&panel==""&&draggingToken<0))OpenPanel("frozen");
         DrawCard(true);DrawCard(false);
         Fill(new Rect(365,105,870,445),new Color(.10f,.045f,.02f,.65f));
         DrawMap(new Rect(600,110,400,400),(combat.PlayerCanMove||(combat.Aftermath&&PlayerTurnAllowed&&combat.PlayerMovementReady))&&!spellTargeting&&!rolling&&panel=="");DrawWildShapePreview(new Rect(600,110,400,400));DrawPolymorphPreview(new Rect(600,110,400,400));DrawSizeChangePreview(new Rect(600,110,400,400));DrawEmanationPreview(new Rect(600,110,400,400));DrawDestructiveWavePreview(new Rect(600,110,400,400));DrawTeleportPreview(new Rect(600,110,400,400));DrawPointBurstPreview(new Rect(600,110,400,400));DrawIceKnifePreview(new Rect(600,110,400,400));DrawOriginalFormPreview(new Rect(600,110,400,400));DrawDashActions();DrawJumpAction();

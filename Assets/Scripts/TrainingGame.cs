@@ -306,6 +306,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="equipmentObjects"){DrawEquipmentObjectsPanel();return;}
         if(panel=="breathRescue"){DrawBreathPanel(BattleMap.RescueId);return;}
         if(panel=="originalMonster"){DrawOriginalMonster();return;}
+        if(panel=="frozen"){DrawFrozenRemainsPanel();return;}
         if(panel=="aftermath"){DrawAftermath();return;}
         if(panel=="spells"){DrawSpellPanel();return;}
         if(panel=="rest"){DrawRestPanel();return;}

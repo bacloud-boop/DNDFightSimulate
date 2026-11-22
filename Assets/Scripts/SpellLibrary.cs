@@ -77,7 +77,7 @@ public sealed partial class TrainingGame
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
         if(selectedSpellName=="Conjure Barrage"){DrawBarragePanel();return;}
         if(selectedSpellName=="Lightning Bolt"){DrawLightningBoltPanel();return;}
-        if(selectedSpellName=="Burning Hands"||selectedSpellName=="Color Spray"){DrawBurningHandsPanel();return;}
+        if(selectedSpellName=="Cone of Cold"||selectedSpellName=="Burning Hands"||selectedSpellName=="Color Spray"){DrawBurningHandsPanel();return;}
         if(selectedSpellName=="Light"){DrawLightSpellPanel();return;}
         var definition=DirectSpell.Find(selectedSpellName);var metadata=SelectedSpellMetadata();
         if(definition==null||metadata==null){selectedSpellName="";return;}
@@ -195,6 +195,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
         if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")return ConjuredWeaponsError(spell.Name=="Conjure Volley");
+        if(spell.Name=="Cone of Cold")return ConeOfColdError();
         if(spell.Name=="Finger of Death")return FingerOfDeathError(directTargetPlayer);
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
@@ -290,6 +291,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
         bool conjuredVolley=spell.Name=="Conjure Volley";var conjuredSelected=new HashSet<int>(conjuredVolley?volleySelected:barrageSelected);
+        BreathTemplate coldAim=default(BreathTemplate);if(spell.Name=="Cone of Cold"&&!PlayerBurningTemplate(out coldAim,60))yield break;
         BreathTemplate barrageAim=default(BreathTemplate);if(spell.Name=="Conjure Barrage"&&!PlayerBarrageTemplate(out barrageAim))yield break;
         if((spell.Name=="Conjure Barrage"||conjuredVolley)&&ConjuredWeaponsError(conjuredVolley)!="")yield break;
         BreathTemplate lightningAim=default(BreathTemplate);if(spell.Name=="Lightning Bolt"&&!PlayerLightningTemplate(out lightningAim))yield break;
@@ -363,6 +365,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Conjure Barrage"||conjuredVolley){yield return ResolveConjuredWeapons(true,caster,slotLevel,conjuredVolley,barrageAim,entangleAnchor,conjuredSelected);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Cone of Cold"){yield return ResolveConeOfCold(true,caster,slotLevel,coldAim);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Finger of Death"){yield return ResolveFingerOfDeath(targetPlayer,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}

@@ -68,7 +68,7 @@ public sealed partial class TrainingGame
         int formerSize=actor==0?EffectiveCreatureSize(true):actor==-1?EffectiveCreatureSize(false):rescueCarrier.Size;
         SyncWeaponInventory();var oldWeight=CurrentBodyWeight(actor);var armor=actor==0?playerArmor:actor==-1?monsterArmor:null;
         var old=map.ReincarnateAt(actor,anchor,CreatureProfile.SpacesForSize(species.BodySize),ActorName(actor)+"旧躯体",oldWeight,armor==null?0:armor.ArmorIndex,armor!=null&&armor.Shield);if(old==null)return false;
-        old.BodySize=formerSize;equipmentObjects.Archive(actor,old.Id);
+        old.Frozen=CurrentCorpse(actor).Frozen;old.BodySize=formerSize;equipmentObjects.Archive(actor,old.Id);
         if(actor==BattleMap.RescueId){
             if(!rescueCarrier.Reincarnate(species))return false;RestoreRescueBreathingAfterRevival();
             rescueSpeciesDraft=rescueCarrier.Species.Copy();rescueSize=rescueCarrier.Size;rescueSpeed=rescueCarrier.Speed.ToString();rescueEquipment="0";rescueBody=rescueCarrier.Weight.BodyPounds.Value.ToString();rescueMaxHp=rescueCarrier.BaseMaxHp.ToString();

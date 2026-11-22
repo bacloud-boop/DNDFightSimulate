@@ -5,11 +5,11 @@ public sealed partial class TrainingGame
 {
     readonly BreathChoice burningChoice=new BreathChoice();Vector2 burningScroll;
     bool burningPreview;BreathTemplate burningTemplate;int burningSource;
-    bool PlayerBurningTemplate(out BreathTemplate template)
+    bool PlayerBurningTemplate(out BreathTemplate template,int lengthFeet=15)
     {
         int spaces=map.PlayerSpaces;if(burningChoice.Offset<0)burningChoice.Offset=spaces;burningChoice.Offset=Mathf.Clamp(burningChoice.Offset,0,spaces*2);
         if(burningChoice.AimX<0){burningChoice.AimX=Mathf.Min(map.Size-1,map.Player.x+spaces+1)+.5;burningChoice.AimY=map.Player.y+.5;}
-        return BreathTemplate.TryCreate(map.Player.x,map.Player.y,spaces,burningChoice.Edge,burningChoice.Offset,burningChoice.AimX,burningChoice.AimY,false,out template,burningChoice.IncludeOrigin);
+        return BreathTemplate.TryCreate(map.Player.x,map.Player.y,spaces,burningChoice.Edge,burningChoice.Offset,burningChoice.AimX,burningChoice.AimY,false,out template,burningChoice.IncludeOrigin,lengthFeet);
     }
     string BurningHandsError(){BreathTemplate template;return PlayerBurningTemplate(out template)?"":"请选择有效的源点与朝外锥形方向。";}
     bool TryPlanMonsterBurningHands(out BreathTemplate template)
