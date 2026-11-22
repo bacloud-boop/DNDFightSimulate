@@ -5,6 +5,7 @@ public sealed class AcidArrowResidue
     public sealed class Entry
     {
         public long Id {get;internal set;}public int Source {get;internal set;}public int Target {get;internal set;}
+        public string Title {get;internal set;}
         public int Dice {get;internal set;}public long DueStart {get;internal set;}
     }
     readonly List<Entry> entries=new List<Entry>();readonly Dictionary<int,long> starts=new Dictionary<int,long>();long sequence;
@@ -20,10 +21,16 @@ public sealed class AcidArrowResidue
     }
     public long Starts(int actor){long value;return starts.TryGetValue(actor,out value)?value:0;}
     public bool CanAdd(int target)=>sequence<long.MaxValue-7&&Starts(target)<long.MaxValue;
-    public Entry Add(int source,int target,int slot)
+    public bool CanAddMany(IEnumerable<int> targets)
     {
-        if(!CanAdd(target)||LaterDice(slot)==0)return null;
-        var entry=new Entry{Id=++sequence,Source=source,Target=target,Dice=LaterDice(slot),DueStart=Starts(target)+1};entries.Add(entry);return entry;
+        if(targets==null)return false;long count=0;
+        foreach(int target in targets){if(!CanAdd(target)||++count>long.MaxValue-7-sequence)return false;}return true;
+    }
+    public Entry Add(int source,int target,int slot)=>AddDelayed(source,target,LaterDice(slot),"强酸箭");
+    public Entry AddDelayed(int source,int target,int dice,string title)
+    {
+        if(!CanAdd(target)||dice<=0||string.IsNullOrEmpty(title))return null;
+        var entry=new Entry{Id=++sequence,Source=source,Target=target,Dice=dice,Title=title,DueStart=Starts(target)+1};entries.Add(entry);return entry;
     }
     public void StartTurn(int actor){long now=Starts(actor);if(now<long.MaxValue)starts[actor]=now+1;}
     public List<Entry> Pending(int target)=>entries.FindAll(e=>e.Target==target&&Starts(target)>=e.DueStart);

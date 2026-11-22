@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
     sealed class RoundStub {public int Round=1;}sealed class RescueStub {public bool Dead=false;}
     RoundStub combat=new RoundStub();RescueStub rescueCarrier=new RescueStub();
     readonly AcidArrowResidue acidArrows=new AcidArrowResidue();object heading=new object(),button=new object(),paperTexture=new object();
-    bool cloud,sphere,greased,killOnResidue;SummonedUnit active;
+    bool cloud,sphere,greased,killOnResidue,expectSphere;SummonedUnit active;
     readonly List<string> log=new List<string>();int choices;
     string TransitActorName(int actor)=>actor.ToString();void Fill(UnityEngine.Rect r,UnityEngine.Color c){}void Surface(UnityEngine.Rect r,object t){}
     object ActorGrease(int actor)=>greased?new object():null;bool DaggersEndAvailable(int actor)=>cloud;bool SphereEndAvailable(int actor)=>sphere;
@@ -31,13 +31,13 @@ public sealed partial class TrainingGame
     {
         var stack=new Stack<IEnumerator>();stack.Push(routine);
         while(stack.Count>0){var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}var nested=top.Current as IEnumerator;if(nested!=null){stack.Push(nested);continue;}
-            if(g.unitEndOrderPending){g.choices++;int chosen=Array.FindIndex(g.unitEndOrderLabels,s=>s.Contains("#2"));if(chosen<0)chosen=g.unitEndOrderLabels.Length-1;g.unitEndOrderChoice=chosen;}
+            if(g.unitEndOrderPending){if(g.expectSphere&&g.unitEndOrderLabels.Any(s=>s.Contains("#2"))&&!g.unitEndOrderLabels.Any(s=>s.Contains("浓酸球残留 #2")))throw new Exception("mixed spell residue label lost");g.choices++;int chosen=Array.FindIndex(g.unitEndOrderLabels,s=>s.Contains("#2"));if(chosen<0)chosen=g.unitEndOrderLabels.Length-1;g.unitEndOrderChoice=chosen;}
         }
     }
     static void C(bool v,string m){if(!v)throw new Exception(m);}
     public static void Main()
     {
-        var g=new TrainingGame();var unit=new SummonedUnit();g.active=unit;var one=g.acidArrows.Add(0,7,2);var two=g.acidArrows.Add(-1,7,5);
+        var g=new TrainingGame();g.expectSphere=true;var unit=new SummonedUnit();g.active=unit;var one=g.acidArrows.Add(0,7,2);var two=g.acidArrows.AddDelayed(-1,7,5,"浓酸球");
         Run(g,g.FinishUnitEndEffects(7,unit));C(g.log.Count==0&&g.acidArrows.Pending(7).Count==0,"production end handler does not run future residue in the cast turn");
         g.acidArrows.StartTurn(7);g.cloud=g.sphere=g.greased=true;unit.SleepStage=1;unit.SleepRepeatRound=1;Run(g,g.FinishUnitEndEffects(7,unit));
         C(g.log.Count==6&&g.log[0]=="acid:"+two.Id&&g.log[1]=="acid:"+one.Id&&g.log.Distinct().Count()==6&&g.choices==5,"production end handler dispatches independently selected residue IDs among sleep, grease, daggers and sphere");

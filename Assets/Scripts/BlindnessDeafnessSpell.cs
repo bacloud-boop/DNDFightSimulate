@@ -56,7 +56,7 @@ public sealed partial class TrainingGame
         if(sensorySphereOption&&GUILayout.Button("炽焰法球 · 回合末敏捷豁免与火焰伤害",button))sensorySaveChoice=-5;
         if(sensoryDaggersOption&&GUILayout.Button("匕首之云 · 回合末挥砍伤害",button))sensorySaveChoice=-4;
         if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
-        foreach(var entry in sensoryAcidOptions)if(GUILayout.Button("强酸箭残留 #"+entry.Id+" · "+entry.Dice+"d4强酸",button))sensorySaveChoice=-(entry.Id+6);
+        foreach(var entry in sensoryAcidOptions)if(GUILayout.Button(entry.Title+"残留 #"+entry.Id+" · "+entry.Dice+"d4强酸",button))sensorySaveChoice=-(entry.Id+6);
         foreach(var effect in sensorySaveOptions)if(GUILayout.Button("#"+effect.Id+" · "+(effect.Blind?"目盲":"耳聋")+" · DC "+effect.Dc+" · 剩余"+(effect.Expires-worldRounds)+"回合",button))sensorySaveChoice=effect.Id;
         GUILayout.EndScrollView();GUILayout.EndArea();
     }

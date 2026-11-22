@@ -98,6 +98,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Vitriolic Sphere")DrawVitriolicSphereChoices();
         else if(definition.Name=="Ice Storm")DrawIceStormChoices();
         else if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
         else if(definition.Name=="Continual Flame")DrawContinualFlameChoices();
@@ -203,6 +204,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Vitriolic Sphere")return VitriolicSphereError();
         if(spell.Name=="Ice Storm")return IceStormError();
         if(spell.Name=="Produce Flame")return ProduceFlameError();
         if(spell.Name=="Continual Flame")return ContinualFlameError(continualObject);
@@ -309,6 +311,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        if(spell.Name=="Vitriolic Sphere"&&VitriolicSphereError()!="")yield break;
         if(spell.Name=="Ice Storm"&&IceStormError()!="")yield break;
         if(spell.Name=="Produce Flame"&&ProduceFlameError()!="")yield break;
         int continualSelected=continualObject;if(spell.Name=="Continual Flame"&&ContinualFlameError(continualSelected)!="")yield break;
@@ -379,6 +382,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Vitriolic Sphere"){yield return ResolveVitriolicSphere(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Storm"){yield return ResolveIceStorm(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Continual Flame"){CastContinualFlame(continualSelected,slotLevel);if(!embedded)rolling=false;yield break;}

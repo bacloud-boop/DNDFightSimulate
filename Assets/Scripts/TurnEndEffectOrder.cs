@@ -20,7 +20,7 @@ public sealed partial class TrainingGame
             if(actor==BattleMap.RescueId?rescueCarrier.Dead:unit==null||!unit.Alive)yield break;
             var keys=new List<long>();var names=new List<string>();if(sleep){keys.Add(0);names.Add("睡眠术 · 感知豁免");}if(greaseEnd!=null){keys.Add(1);names.Add("油腻术 · 敏捷豁免");}if(cloud){keys.Add(2);names.Add("匕首之云 · 挥砍伤害");}
             if(sphere){keys.Add(3);names.Add("炽焰法球 · 敏捷豁免与火焰伤害");}
-            foreach(var entry in arrows){keys.Add(entry.Id+4);names.Add("强酸箭残留 #"+entry.Id+" · "+entry.Dice+"d4强酸");}
+            foreach(var entry in arrows){keys.Add(entry.Id+4);names.Add(entry.Title+"残留 #"+entry.Id+" · "+entry.Dice+"d4强酸");}
             long choice=keys[0];if(keys.Count>1){unitEndOrderActor=actor;unitEndOrderLabels=names.ToArray();unitEndOrderChoice=-1;unitEndOrderPending=true;while(unitEndOrderChoice<0)yield return null;choice=keys[unitEndOrderChoice];unitEndOrderPending=false;}
             if(choice>=5){var entry=arrows.Find(e=>e.Id==choice-4);arrows.Remove(entry);if(entry!=null)yield return ResolveAcidArrowResidue(entry);continue;}
             if(choice==0){sleep=false;yield return RepeatSummonSleep(unit);}else if(choice==1){var field=greaseEnd;greaseEnd=null;yield return ResolveGreaseSave(actor,field,"回合末油脂");}else if(choice==2){cloud=false;yield return EndDaggersTurn(actor);}else{sphere=false;yield return EndFlamingSphereTurn(actor);}

@@ -62,6 +62,7 @@ public sealed partial class TrainingGame
             else if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
             else if(cone)yield return ResolveBurningHands(false,0,entry.Slot,conePlan);
             else if(spell.Name=="Flame Strike")yield return ResolveFlameStrike(false,0,entry.Slot,areaCenter);
+            else if(spell.Name=="Vitriolic Sphere")yield return ResolveVitriolicSphere(false,0,entry.Slot,areaCenter);
             else if(spell.Name=="Ice Storm")yield return ResolveIceStorm(false,0,entry.Slot,areaCenter);
             else if(area)yield return ResolveMonsterAreaSpell(spell,entry.Slot,areaCenter);
             else if(spell.Name=="Magic Missile")yield return MonsterMagicMissile(spell,entry.Slot,target);
