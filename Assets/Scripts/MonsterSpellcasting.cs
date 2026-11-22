@@ -29,13 +29,15 @@ public sealed partial class TrainingGame
         var entry=monsterSpells.Take();if(entry==null)yield break;
         result.Attempted=true;
         var spell=MonsterSpellCatalog.Find(entry.Name);bool area=MonsterSpellCatalog.IsArea(spell),cone=MonsterSpellCatalog.IsCone(spell)||MonsterSpellCatalog.IsLine(spell);Vector2Int areaCenter=default(Vector2Int);BreathTemplate conePlan=default(BreathTemplate);
+        System.Collections.Generic.List<FireStormRules.Block> stormPlan=null;bool storm=spell!=null&&spell.Name=="Fire Storm";
         var commandVictims=spell!=null&&spell.Name=="Command"?MonsterCommandTargets(entry.Slot):null;
-        int target=spell==null?-2:commandVictims!=null?(commandVictims.Count>0?commandVictims[0]:-2):cone?((MonsterSpellCatalog.IsLine(spell)?TryPlanMonsterLightningBolt(out conePlan):spell.Name=="Conjure Barrage"?TryPlanMonsterBarrage(out conePlan):TryPlanMonsterBurningHands(out conePlan))?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
+        int target=spell==null?-2:storm?(TryPlanMonsterFireStorm(out stormPlan)?-5:-2):commandVictims!=null?(commandVictims.Count>0?commandVictims[0]:-2):cone?((MonsterSpellCatalog.IsLine(spell)?TryPlanMonsterLightningBolt(out conePlan):spell.Name=="Conjure Barrage"?TryPlanMonsterBarrage(out conePlan):TryPlanMonsterBurningHands(out conePlan))?-4:-2):area?(TryPlanMonsterArea(spell,out areaCenter)?-3:-2):MonsterSpellTarget(spell);
         if(!MonsterSpellReady||spell==null||target==-2||spell.Bonus&&!combat.MonsterBonusActionAvailable||!SpellVoiceAllowed(false,spell.Name)){history.Insert(0,"木桩本轮法术无法施放，改用自定义攻击；循环已移至下一项。");yield break;}
         if(!(spell.Bonus?combat.TryUseMonsterBonusAction():combat.TryUseMonsterAction()))yield break;
         result.Cast=true;result.Bonus=spell.Bonus;
         combat.MarkBattleStarted();
         history.Insert(0,"木桩施放"+spell.Chinese+"（"+(entry.Slot==0?"戏法":entry.Slot+"环")+"），消耗"+(spell.Bonus?"附赠动作":"动作")+"。");
+        if(storm){activeFireStorm=stormPlan;monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         if(area){ShowMonsterArea(spell,areaCenter);monsterAreaChoosing=true;yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         if(cone){burningPreview=true;burningTemplate=conePlan;burningSource=-1;monsterAreaChoosing=true;history.Insert(0,"木桩"+spell.Chinese+(MonsterSpellCatalog.IsLine(spell)?"：选择避开自身、覆盖最多敌人的100×5尺线形。":spell.Name=="Conjure Barrage"?"：选择覆盖最多可见敌人的60尺锥形，不将自身列为目标。":"：选择避开自身、覆盖最多敌人的15尺锥形。"));yield return new WaitForSecondsRealtime(fastAnimation?.2f:1f);monsterAreaChoosing=false;}
         var info=SpellInfo(spell.Name);
@@ -45,7 +47,8 @@ public sealed partial class TrainingGame
         }
         var stopped=new SpellInterruption();yield return TryInterruptSpell(false,spell.Name,stopped);
         if(!stopped.Cancelled){
-            if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
+            if(storm)yield return ResolveFireStorm(false,0,stormPlan);
+            else if(spell.Name=="Command")yield return ResolveCommandCast(-1,0,(CommandWord)entry.CommandMode,commandVictims);
             else if(MonsterSpellCatalog.IsLine(spell))yield return ResolveLightningBolt(false,0,entry.Slot,conePlan);
             else if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")yield return ResolveConjuredWeapons(false,0,entry.Slot,spell.Name=="Conjure Volley",conePlan,areaCenter,MonsterConjuredSelection());
             else if(cone&&spell.Name=="Color Spray")yield return ResolveColorSpray(false,0,conePlan);
@@ -60,7 +63,7 @@ public sealed partial class TrainingGame
             }
             else yield return MonsterNumericSpell(spell,entry.Slot,target);
         }
-        monsterAreaPreview=false;burningPreview=false;BreakOrdinaryInvisibility(false,"施法");RefreshBestialSpirit();CheckBattleOutcome();
+        activeFireStorm=null;monsterAreaPreview=false;burningPreview=false;BreakOrdinaryInvisibility(false,"施法");RefreshBestialSpirit();CheckBattleOutcome();
     }
     IEnumerator MonsterMagicMissile(DirectSpell spell,int slot,int target)
     {

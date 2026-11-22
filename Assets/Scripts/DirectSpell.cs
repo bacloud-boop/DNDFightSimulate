@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Fire Storm","火焰风暴","1动作 · 150尺 · 声音、姿势。布置至多10块10尺立方区域，各生物敏捷豁免；失败7d10火焰，成功减半。可单块；多块时每块至少与另一块共边，可有分离组。升环不增强，非专注即时。",7,150,10,save:1,damageType:"火焰",baseDice:7,halfSave:true),
         new DirectSpell("Animate Dead","操纵死尸","持续施法1分钟 · 10尺 · 声音、姿势。小型／中型类人生物遗体成为僵尸，骨堆成为骷髅；消耗原遗体、沿用原装备，不生成武器。基础创造1只，每升环+2只；或续控4只，每升环+2只。控制24小时，60尺内附赠动作精神命令。失控后中立停留，可重施恢复控制。",3,10,0),
         new DirectSpell("Flame Strike","焰击术","1动作 · 60尺 · 声音、姿势。10尺半径、40尺高圆柱中所有生物敏捷豁免；失败5d6火焰＋5d6光耀，成功每类各减半。每升环两类伤害各增加1d6。即时、无需专注，不产生困难地形。",5,60,6,save:1,damageType:"火焰",baseDice:5,upcastDice:1,halfSave:true),
         new DirectSpell("Conjure Barrage","箭如雨下","1动作 · 自身60尺锥形 · 声音、姿势。选择范围内可见生物，敏捷豁免失败5d8力场，成功减半；每升环+1d8。不产生实体武器，无需专注。",3,60,8,save:1,damageType:"力场",baseDice:5,upcastDice:1,halfSave:true),

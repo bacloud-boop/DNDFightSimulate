@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollMappedDexteritySave(int target,int caster,long dc,HashSet<int> failed,string context)
         =>RollMappedAbilitySave(target,caster,dc,failed,context,1);
-    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null)
+    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null,int effectOriginSpaces=1)
     {
         bool automatic=false;long modifier;int value;int[] shown;
         if(target==0||target==-1){
@@ -50,7 +50,7 @@ public sealed partial class TrainingGame
             modifier=BondBonus(target)+SummonSaveModifier(unit,ability)+unit.Breathing.D20Penalty;
             var roll=RollSummonSavingThrow(unit,ability);value=roll.Value;shown=roll.Dice;
         }
-        int cover=ability!=1?0:effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target):target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
+        int cover=ability!=1?0:effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target,effectOriginSpaces):target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
         dice=context+" · "+TransitActorName(target)+PlayerAttributes.Names[ability]+"豁免";
         if(!automatic)yield return PresentRoll(20,shown,"采用 "+value+" + "+modifier+" / DC "+dc+(cover>0?"（半掩护+2）":""));
         if(automatic||(long)value+modifier<dc)failed.Add(target);
