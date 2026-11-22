@@ -4,7 +4,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly List<int> monsterAreaPreviewTargets=new List<int>();
-    bool monsterAreaPreview,monsterAreaChoosing;
+    bool monsterAreaPreview,monsterAreaChoosing,monsterVolleyPreview;
     Vector2Int monsterAreaCenter;
     int monsterAreaRadius,monsterAreaOriginSpaces=1;
     List<int> MonsterAreaTargets(Vector2Int center,int radius,int spaces=1,bool sight=false,bool planning=false)
@@ -16,6 +16,7 @@ public sealed partial class TrainingGame
     }
     bool TryPlanMonsterArea(DirectSpell spell,out Vector2Int center)
     {
+        if(spell.Name=="Conjure Volley")return TryPlanMonsterVolley(out center);
         if(spell.Name=="Ice Storm"&&map.IsContained(false)){center=Vector2Int.zero;return false;}
         int x,y,radius=MonsterSpellCatalog.Radius(spell);
         if(spell.EmanationRadius>0){center=map.Monster;return MonsterAreaTargets(center,radius,map.MonsterSpaces,spell.Name=="Word of Radiance",true).Count>0;}
@@ -24,14 +25,14 @@ public sealed partial class TrainingGame
     }
     void ShowMonsterArea(DirectSpell spell,Vector2Int center)
     {
-        monsterAreaCenter=center;monsterAreaRadius=MonsterSpellCatalog.Radius(spell);monsterAreaOriginSpaces=spell.EmanationRadius>0?map.MonsterSpaces:1;monsterAreaPreview=true;
-        monsterAreaPreviewTargets.Clear();monsterAreaPreviewTargets.AddRange(MonsterAreaTargets(center,monsterAreaRadius,monsterAreaOriginSpaces,spell.Name=="Word of Radiance"));
-        history.Insert(0,"木桩范围施法中心：第"+(center.x+1)+"列，第"+(center.y+1)+"行；半径 "+monsterAreaRadius+"尺，覆盖 "+monsterAreaPreviewTargets.Count+"名敌人，避开自身。");
+        monsterVolleyPreview=spell.Name=="Conjure Volley";monsterAreaCenter=center;monsterAreaRadius=MonsterSpellCatalog.Radius(spell);monsterAreaOriginSpaces=spell.EmanationRadius>0?map.MonsterSpaces:1;monsterAreaPreview=true;
+        monsterAreaPreviewTargets.Clear();monsterAreaPreviewTargets.AddRange(monsterVolleyPreview?ConjuredTargets(false,true,default(BreathTemplate),center,MonsterConjuredSelection()):MonsterAreaTargets(center,monsterAreaRadius,monsterAreaOriginSpaces,spell.Name=="Word of Radiance"));
+        history.Insert(0,"木桩范围施法中心：第"+(center.x+1)+"列，第"+(center.y+1)+"行；半径 "+monsterAreaRadius+"尺，覆盖 "+monsterAreaPreviewTargets.Count+"名敌人"+(monsterVolleyPreview?"，仅选择敌人受伤，不将自身列为目标。":"，避开自身。"));
     }
     void DrawMonsterArea(Rect board)
     {
         if(!monsterAreaPreview)return;
-        for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++)if(!BattleMap.Overlap(map.Monster,map.MonsterSpaces,new Vector2Int(x,y),1)&&BattleMap.BodyDistance(monsterAreaCenter,monsterAreaOriginSpaces,new Vector2Int(x,y),1)<=monsterAreaRadius)Fill(CellRect(board,new Vector2Int(x,y)),new Color(.9f,.18f,.08f,.32f));
+        for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++)if(!BattleMap.Overlap(map.Monster,map.MonsterSpaces,new Vector2Int(x,y),1)&&(monsterVolleyPreview?ConjuredWeaponRules.CylinderCell(monsterAreaCenter.x,monsterAreaCenter.y,x,y):BattleMap.BodyDistance(monsterAreaCenter,monsterAreaOriginSpaces,new Vector2Int(x,y),1)<=monsterAreaRadius))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.9f,.18f,.08f,.32f));
     }
     IEnumerator ResolveMonsterAreaSpell(DirectSpell spell,int slot,Vector2Int center)
     {

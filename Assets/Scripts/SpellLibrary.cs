@@ -75,6 +75,7 @@ public sealed partial class TrainingGame
     {
         if(RevivalRules.Supported(selectedSpellName)){selectedSpellName="";panel="aftermath";DrawAftermath();return;}
         if(selectedSpellName=="Dancing Lights"){DrawDancingLightsPanel(false);return;}
+        if(selectedSpellName=="Conjure Barrage"){DrawBarragePanel();return;}
         if(selectedSpellName=="Lightning Bolt"){DrawLightningBoltPanel();return;}
         if(selectedSpellName=="Burning Hands"||selectedSpellName=="Color Spray"){DrawBurningHandsPanel();return;}
         if(selectedSpellName=="Light"){DrawLightSpellPanel();return;}
@@ -93,7 +94,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Ice Storm")DrawIceStormChoices();
+        if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Ice Storm")DrawIceStormChoices();
         else if(definition.Name=="Produce Flame")DrawProduceFlameChoices();
         else if(definition.Name=="Continual Flame")DrawContinualFlameChoices();
         else if(definition.Name=="Pass without Trace")DrawPassTraceChoices();
@@ -189,6 +191,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Conjure Barrage"||spell.Name=="Conjure Volley")return ConjuredWeaponsError(spell.Name=="Conjure Volley");
         if(spell.Name=="Ice Storm")return IceStormError();
         if(spell.Name=="Produce Flame")return ProduceFlameError();
         if(spell.Name=="Continual Flame")return ContinualFlameError(continualObject);
@@ -279,6 +282,9 @@ public sealed partial class TrainingGame
         if(spell.Name=="Arcane Vigor"&&ArcaneVigorError(targetPlayer,slotLevel)!="")yield break;
         if(spell.Name=="Faerie Fire"&&FaerieFireError()!="")yield break;
         if(spell.Name=="Dancing Lights"&&DancingLightsError()!="")yield break;
+        bool conjuredVolley=spell.Name=="Conjure Volley";var conjuredSelected=new HashSet<int>(conjuredVolley?volleySelected:barrageSelected);
+        BreathTemplate barrageAim=default(BreathTemplate);if(spell.Name=="Conjure Barrage"&&!PlayerBarrageTemplate(out barrageAim))yield break;
+        if((spell.Name=="Conjure Barrage"||conjuredVolley)&&ConjuredWeaponsError(conjuredVolley)!="")yield break;
         BreathTemplate lightningAim=default(BreathTemplate);if(spell.Name=="Lightning Bolt"&&!PlayerLightningTemplate(out lightningAim))yield break;
         BreathTemplate burningAim=default(BreathTemplate);if((spell.Name=="Burning Hands"||spell.Name=="Color Spray")&&!PlayerBurningTemplate(out burningAim))yield break;
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
@@ -345,6 +351,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Conjure Barrage"||conjuredVolley){yield return ResolveConjuredWeapons(true,caster,slotLevel,conjuredVolley,barrageAim,entangleAnchor,conjuredSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Ice Storm"){yield return ResolveIceStorm(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Produce Flame"){CastProduceFlame(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Continual Flame"){CastContinualFlame(continualSelected,slotLevel);if(!embedded)rolling=false;yield break;}

@@ -57,14 +57,14 @@ public static class BreathWeaponRules
         }return most>0;
     }
     // Aim points include grid intersections, edge midpoints and cell centers.
-    public static bool Choose(int mapSize,int x,int y,int spaces,IReadOnlyList<BreathBody> enemies,out BreathTemplate best,bool allowLine=true)
+    public static bool Choose(int mapSize,int x,int y,int spaces,IReadOnlyList<BreathBody> enemies,out BreathTemplate best,bool allowLine=true,int coneLengthFeet=15,bool excludeSource=true)
     {
         best=default(BreathTemplate);int most=0;
-        if(enemies==null||enemies.Count==0)return false;
+        if(enemies==null||enemies.Count==0||coneLengthFeet<1)return false;
         for(int shape=0;shape<(allowLine?2:1);shape++)for(int edge=0;edge<5;edge++)for(int offset=0;offset<=(edge==4?0:spaces*2);offset++)
         for(int row=0;row<=mapSize*2;row++)for(int column=0;column<=mapSize*2;column++){
-            BreathTemplate candidate;if(!BreathTemplate.TryCreate(x,y,spaces,edge,offset,column*.5,row*.5,shape==1,out candidate))continue;
-            if(candidate.Intersects(x,y,spaces))continue;
+            BreathTemplate candidate;if(!BreathTemplate.TryCreate(x,y,spaces,edge,offset,column*.5,row*.5,shape==1,out candidate,false,shape==1?30:coneLengthFeet))continue;
+            if(excludeSource&&candidate.Intersects(x,y,spaces))continue;
             int count=0;foreach(var body in enemies)if(candidate.Intersects(body.X,body.Y,body.Spaces))count++;
             if(count>most){most=count;best=candidate;}
         }return most>0;
