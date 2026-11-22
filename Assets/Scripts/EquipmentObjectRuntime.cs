@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
     sealed class EquipmentPose
     {
         public double X,Y;
-        public int? Carrier,ScaleActor;
+        public int? Carrier,ScaleActor,InternalContainer;
         public bool Submerged,Melded,Hidden;
         public string Location;
     }
@@ -49,7 +49,7 @@ public sealed partial class TrainingGame
                 if(weapon.Location==WeaponLocation.Carried)return EquipmentOnActor(0,out pose);
                 if(weapon.Location==WeaponLocation.Remains)return EquipmentOnRemains(weapon.RemainsId,out pose);ground=weapon.Ground;
             }else {if(!monsterGroundWeapon.Dropped){if(!combat.MonsterWeaponIsHeld)return false;return EquipmentOnActor(-1,out pose);}ground=monsterGroundWeapon;}
-            if(!ground.Dropped)return false;pose=new EquipmentPose{X=(ground.CenterX2-1)*2.5,Y=(ground.CenterY2-1)*2.5,Submerged=ground.Submerged,Location=ground.Submerged?"水下落地武器":"落地武器"};return true;
+            if(!ground.Dropped)return false;pose=new EquipmentPose{X=(ground.CenterX2-1)*2.5,Y=(ground.CenterY2-1)*2.5,InternalContainer=ground.ContainedBy,Hidden=ground.ContainedBy.HasValue,Submerged=ground.Submerged,Location=ground.ContainedBy.HasValue?"吞咽体内掉落武器":ground.Submerged?"水下落地武器":"落地武器"};return true;
         }
         if(item.Place==EquipmentObjectPlace.Unavailable)return false;
         if(item.Place==EquipmentObjectPlace.Remains)return EquipmentOnRemains(item.RemainsId,out pose);
@@ -65,6 +65,8 @@ public sealed partial class TrainingGame
     {
         if(pose==null||pose.Melded)return false;
         if(pose.Carrier==0)return true;
+        if(pose.InternalContainer.HasValue)return map.IsContained(true)&&pose.InternalContainer.Value==-1;
+        if(map.IsContained(true))return false;
         if(pose.Hidden||pose.Submerged&&!map.PlayerAquatic.Submerged)return false;
         double x=Math.Max(map.Player.x,Math.Min(map.Player.x+map.PlayerSpaces-1,pose.X/5)),y=Math.Max(map.Player.y,Math.Min(map.Player.y+map.PlayerSpaces-1,pose.Y/5));
         return Math.Round(VisionState.Distance(x*5,y*5,pose.X,pose.Y),MidpointRounding.ToEven)<=5;

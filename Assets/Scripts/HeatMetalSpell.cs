@@ -50,8 +50,8 @@ public sealed partial class TrainingGame
     bool DropHeatedWeapon(EquipmentObjectRecord item,int actor)
     {
         if(item.Kind!=EquipmentObjectKind.Weapon||HeatContact(item)!=actor)return false;
-        if(actor==0){carriedWeapons.BeginBattle();if(!carriedWeapons.Drop(item.InventoryKey,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces)))return false;weaponGrip.DropHeld();RefreshShillelagh();}
-        else monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces));
+        if(actor==0){carriedWeapons.BeginBattle();if(!carriedWeapons.Drop(item.InventoryKey,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces),WeaponContainer(true)))return false;weaponGrip.DropHeld();RefreshShillelagh();}
+        else monsterGroundWeapon.Drop(map.Monster.x,map.Monster.y,map.MonsterSpaces,WeaponFallsInWater(map.Monster,map.MonsterSpaces),WeaponContainer(false));
         SyncWeaponInventory();return !HeatContact(item).HasValue;
     }
     IEnumerator HeatDropSave(EquipmentObjectRecord item,int actor,long dc)

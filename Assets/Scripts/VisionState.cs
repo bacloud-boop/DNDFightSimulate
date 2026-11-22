@@ -22,7 +22,9 @@ public sealed class VisionState
     public bool SetLightGroup(int group,IEnumerable<double[]> points,int brightRadius,int radius,int slot,long end,long now)
     {
         Refresh(now);Zones.RemoveAll(z=>z.LightGroup==group);
-        if(group<1||brightRadius<0||brightRadius>radius||radius<1||slot<0||slot>9||end<=now||dispelledLightGroups.Remove(group))return false;
+        // -1 is an ongoing spell with no timed expiry, rather than a large
+        // artificial timestamp that would eventually remove its illumination.
+        if(group<1||brightRadius<0||brightRadius>radius||radius<1||slot<0||slot>9||end<-1||end!=-1&&end<=now||dispelledLightGroups.Remove(group))return false;
         var added=new List<VisionZone>();
         foreach(var point in points){
             if(slot<=2&&Zones.Exists(z=>z.Dark&&Distance(z.X,z.Y,point[0],point[1])<=z.Radius+radius))return false;
@@ -35,7 +37,7 @@ public sealed class VisionState
     public int Range(bool player,long now)=>Math.Max(player?PlayerRange:MonsterRange,SpellRange(player,now));
     static bool Contains(VisionZone z,double x,double y,double radius)=>Distance(z.X,z.Y,x,y)<=radius+.000001;
     public static double Distance(double ax,double ay,double bx,double by)=>Math.Sqrt((ax-bx)*(ax-bx)+(ay-by)*(ay-by));
-    public void Refresh(long now){Zones.RemoveAll(z=>now>=z.End);}
+    public void Refresh(long now){Zones.RemoveAll(z=>z.End!=-1&&now>=z.End);}
     public void AddFog(double x,double y,int slot,long now){Refresh(now);Zones.Add(new VisionZone{X=x,Y=y,Fog=true,FogRadius=20*slot,Level=slot,End=now+600});}
     public void EndFog(){Zones.RemoveAll(z=>z.Fog);}
     public bool FogAt(double x,double y,long now){Refresh(now);return Zones.Exists(z=>z.Fog&&Contains(z,x,y,z.Radius));}

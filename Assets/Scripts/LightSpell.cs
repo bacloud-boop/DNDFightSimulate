@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
     }
     void RefreshLightSpell()
     {
-        SyncEquipmentObjects();
+        SyncContainedWeapons();SyncEquipmentObjects();RefreshContinualFlames();
         if(!objectLight.Active(worldRounds)){if(objectLight.ObjectId>0)EndLightSpell("持续时间结束");else vision.ClearLightGroup(ObjectLightGroup);return;}
         if(vision.ConsumeDispelledLightGroup(ObjectLightGroup)){EndLightSpell("与黑暗术重叠，被驱散");return;}
         var item=equipmentObjects.Find(objectLight.ObjectId);EquipmentPose pose;

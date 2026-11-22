@@ -4,6 +4,7 @@ public sealed partial class BattleMap
 {
     // Only two participants currently exist, so nesting and multiple passengers are impossible.
     int containedActor=-1;
+    public System.Action<bool> ContainmentEnded;
     public bool HasContainedCreature=>containedActor>=0;
     public bool IsContained(bool player)=>containedActor==(player?0:1);
     public int OccupiedSpaces(bool player)=>IsContained(player)||IsCarried(player)?0:player?PlayerSpaces:MonsterSpaces;
@@ -31,7 +32,7 @@ public sealed partial class BattleMap
         if(!CanReleaseContainedAt(anchor,rangeFeet))return false;
         bool player=IsContained(true);containedActor=-1;
         if(player)Player=anchor;else Monster=anchor;
-        return true;
+        ContainmentEnded?.Invoke(!player);return true;
     }
     // Mandatory release may exceed the normal range, but only to the nearest legal footprint.
     public int MandatoryReleaseRange(int nearbyFeet=5)
@@ -89,6 +90,7 @@ public sealed partial class BattleMap
         foreach(var plan in MandatoryReleasePlans(nearbyFeet))if(plan.Host==chosen.Host&&plan.Target==chosen.Target){
             bool player=IsContained(true);containedActor=-1;
             if(player){Monster=plan.Host;Player=plan.Target;}else{Player=plan.Host;Monster=plan.Target;}
+            ContainmentEnded?.Invoke(!player);
             return true;
         }
         return false;
@@ -96,7 +98,7 @@ public sealed partial class BattleMap
     void ClearContainment()
     {
         if(!HasContainedCreature)return;
-        containedActor=-1;
+        bool hostPlayer=!IsContained(true);containedActor=-1;ContainmentEnded?.Invoke(hostPlayer);
         // Only called when leaving combat for deployment; reset both legal starting anchors.
         Player=Vector2Int.zero;Monster=new Vector2Int(Size-MonsterSpaces,Size-MonsterSpaces);
     }

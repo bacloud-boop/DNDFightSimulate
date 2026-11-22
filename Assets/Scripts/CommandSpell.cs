@@ -84,7 +84,7 @@ public sealed partial class TrainingGame
     {
         if(actor==BattleMap.RescueId&&rescueCarrier.Load.Loaded&&map.ForceReleaseRescueCargo()){rescueCarrier.Load.Clear();rescueDropMode=false;}
         if(actor==-1)DropSleepingMonsterWeapon();
-        if(actor==0&&!PlayerInBeastForm&&!weaponGrip.Stowed){carriedWeapons.BeginBattle();if(carriedWeapons.Drop(selectedWeapon.Name,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces))){weaponGrip.DropHeld();RefreshShillelagh();}}
+        if(actor==0&&!PlayerInBeastForm&&!weaponGrip.Stowed){carriedWeapons.BeginBattle();if(carriedWeapons.Drop(selectedWeapon.Name,map.Player.x,map.Player.y,map.PlayerSpaces,WeaponFallsInWater(map.Player,map.PlayerSpaces),WeaponContainer(true))){weaponGrip.DropHeld();RefreshShillelagh();}}
         SyncWeaponInventory();
     }
     IEnumerator FollowCommand(int actor,CommandResolution result)
