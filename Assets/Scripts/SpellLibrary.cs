@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate";
-    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement";
+    static bool AftermathLightSpell(string name)=>name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -93,7 +93,8 @@ public sealed partial class TrainingGame
         GUILayout.Label("施法调整值 "+modifier+" · 法术命中 +"+(classes.ProficiencyBonus+modifier+PlayerAquaticD20Penalty)+" · 豁免DC "+(8+classes.ProficiencyBonus+modifier),small);
         DrawSpeciesSpellResource(definition);
         if(definition.Level>0){bool slotEnabled=GUI.enabled;GUI.enabled=slotEnabled&&!(directCastingClass==SpeciesSpellRules.Caster&&useSpeciesFreeCast);GUILayout.Label("施法环阶（法术位资源暂不扣除）",small);directSlotLevel=GUILayout.SelectionGrid(directSlotLevel-definition.Level,System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(System.Linq.Enumerable.Range(definition.Level,10-definition.Level),x=>x.ToString())),Math.Min(9,10-definition.Level),new GUIStyle(button){fontSize=16,fixedHeight=34})+definition.Level;GUI.enabled=slotEnabled;}
-        if(definition.Name=="Freedom of Movement")DrawFreedomMovementChoices();
+        if(definition.Name=="Aura of Vitality")DrawAuraVitalityChoices();
+        else if(definition.Name=="Freedom of Movement")DrawFreedomMovementChoices();
         else if(definition.Name=="Water Walk")DrawWaterWalkChoices();
         else if(definition.Name=="Warding Bond")DrawWardingBondChoices();
         else if(definition.Name=="Flaming Sphere")DrawFlamingSphereChoices();
@@ -183,6 +184,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights")return DancingLightsError();
         if(spell.Name=="Cloud of Daggers")return CloudDaggersError();
         if(spell.Name=="Web")return WebError();
+        if(spell.Name=="Aura of Vitality")return AuraVitalityError();
         if(spell.Name=="Freedom of Movement")return FreedomMovementError(directSlotLevel);
         if(spell.Name=="Water Walk")return WaterWalkError();
         if(spell.Name=="Warding Bond")return WardingBondError();
@@ -272,6 +274,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Color Spray"&&ColorSprayError()!="")yield break;
         if(spell.Name=="Web"&&WebError()!="")yield break;
         if(spell.Name=="Cloud of Daggers"&&CloudDaggersError()!="")yield break;
+        if(spell.Name=="Aura of Vitality"&&AuraVitalityError()!="")yield break;
         var freedomSelected=new List<int>(freedomTargets);if(spell.Name=="Freedom of Movement"&&FreedomMovementError(slotLevel)!="")yield break;
         var walkSelected=new List<int>(waterWalkTargets);if(spell.Name=="Water Walk"&&WaterWalkError()!="")yield break;
         int bondedSelection=bondTarget;if(spell.Name=="Warding Bond"&&WardingBondError()!="")yield break;
@@ -306,7 +309,7 @@ public sealed partial class TrainingGame
         if(!embedded){spellCastSequence++;ConsumeSpeciesSpell(spell.Name,caster);PlayerCastWhileSubmerged(spell.Name);}
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -326,6 +329,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Dancing Lights"){ApplyDancingLights();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Cloud of Daggers"){yield return CastCloudDaggers(entangleAnchor,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Web"){ApplyWeb(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Aura of Vitality"){yield return CastAuraVitality();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Freedom of Movement"){CastFreedomMovement(freedomSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Water Walk"){CastWaterWalk(walkSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Warding Bond"){CastWardingBond(bondedSelection);if(!embedded)rolling=false;yield break;}

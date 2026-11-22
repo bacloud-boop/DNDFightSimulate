@@ -86,6 +86,8 @@ public sealed partial class TrainingGame
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(heatPromptPending){DrawHeatMetalPrompt();return;}
         if(temporaryHpPending){DrawTemporaryHpChoice();return;}
+        if(auraOrderPending){DrawAuraVitalityOrder();return;}
+        if(auraChoicePending){DrawAuraVitalityHealingChoice();return;}
         if(heroismOrderPending){DrawHeroismStartOrder();return;}
         if(webOrderPending){DrawWebOrder();return;}
         if(terrainEntryOrderPending){DrawTerrainEntryOrder();return;}
