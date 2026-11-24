@@ -75,7 +75,7 @@ public sealed partial class TrainingGame
         ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
-        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
+        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWitchBolt();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath){knownFormReplacement=false;highElfCantripReplacement=false;}
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
