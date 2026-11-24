@@ -31,7 +31,7 @@ public sealed class SummonedUnit
     public int X {get;internal set;}
     public int Y {get;internal set;}
     public int Spaces=>CreatureProfile.SpacesForSize(Size);
-    public bool Banished;
+    bool banished;public bool Banished {get=>banished;set{banished=value;if(value){Dodging=false;AttacksRemaining=0;}}}
     public bool Alive=>Hp>0;
     public bool TurnActive {get;private set;}
     public bool ReactionAvailable {get;private set;}
@@ -51,7 +51,7 @@ public sealed class SummonedUnit
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
-    public int EffectiveSpeed=>Banished?0:!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
+    public int EffectiveSpeed=>!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}

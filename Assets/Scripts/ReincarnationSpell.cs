@@ -70,7 +70,7 @@ public sealed partial class TrainingGame
         var old=map.ReincarnateAt(actor,anchor,CreatureProfile.SpacesForSize(species.BodySize),ActorName(actor)+"旧躯体",oldWeight,armor==null?0:armor.ArmorIndex,armor!=null&&armor.Shield);if(old==null)return false;
         old.Frozen=CurrentCorpse(actor).Frozen;old.BodySize=formerSize;equipmentObjects.Archive(actor,old.Id);
         if(actor==BattleMap.RescueId){
-            if(!rescueCarrier.Reincarnate(species))return false;RestoreRescueBreathingAfterRevival();
+            if(!rescueCarrier.Reincarnate(species))return false;regeneration.RestoreBody(actor);RestoreRescueBreathingAfterRevival();
             rescueSpeciesDraft=rescueCarrier.Species.Copy();rescueSize=rescueCarrier.Size;rescueSpeed=rescueCarrier.Speed.ToString();rescueEquipment="0";rescueBody=rescueCarrier.Weight.BodyPounds.Value.ToString();rescueMaxHp=rescueCarrier.BaseMaxHp.ToString();
         }
         else {
@@ -79,7 +79,7 @@ public sealed partial class TrainingGame
             else {monsterSpecies=species.Copy();monsterProfile.TryApply(9,species.BodySize);monsterTypeDraft=9;monsterSizeDraft=species.BodySize;combat.UpdateMonsterBaseSpeed(species.Speed);monsterSpeedInput=species.Speed.ToString();monsterArmor.Apply(0,false,monsterArmor.Custom,combat.MonsterBaseArmorClass);monsterArmorDraft=0;monsterShieldDraft=false;}
             oldWeight.SetStoredGear(0);oldWeight.SetArmorWeight(0);oldWeight.SetWeaponWeight(0);oldWeight.TryApply(mass.ToString(),"0");
             var weightDraft=actor==0?playerWeight:monsterWeight;weightDraft.Equipment="0";weightDraft.Body=mass.ToString();ApplySpeciesHp(actor==0,false);
-            combat.Revive(actor==0,ReincarnationRules.RestoredHp(actor==0?combat.PlayerMaxHp:combat.MaxHp),false);CurrentCorpse(actor).Clear();RestoreBreathingAfterRevival(actor==0);
+            combat.Revive(actor==0,ReincarnationRules.RestoredHp(actor==0?combat.PlayerMaxHp:combat.MaxHp),false);regeneration.RestoreBody(actor);CurrentCorpse(actor).Clear();RestoreBreathingAfterRevival(actor==0);
         }
         stableRecoveryAt=-1;SyncWeaponInventory();SyncTimedBuffs();ObserveDeaths();return true;
     }

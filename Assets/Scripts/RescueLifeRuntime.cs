@@ -64,7 +64,7 @@ public sealed partial class TrainingGame
             if(!external&&(!aftermathAdvanceCompleted||!CanPlayerAftermathCast))error="施法者失能，复活失败。";
             if(error==""){
                 if(name=="Gentle Repose")rescueCarrier.Corpse.Preserve(worldRounds);
-                else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if((name!="True Resurrection"||RestoreMissingBody(BattleMap.RescueId,external))&&rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name))){RecordResurrectionExertion(external,taxed);RestoreRescueBreathingAfterRevival();}}
+                else {bool taxed=ResurrectionCasterState.RequiresExertion(name,rescueCarrier.Corpse,worldRounds);if((name!="True Resurrection"||RestoreMissingBody(BattleMap.RescueId,external))&&rescueCarrier.Revive(RevivalRules.FullHp(name)?rescueCarrier.MaxHp:1,RevivalRules.Ordeal(name))){if(name=="Resurrection"||name=="True Resurrection")regeneration.RestoreBody(BattleMap.RescueId);RecordResurrectionExertion(external,taxed);RestoreRescueBreathingAfterRevival();}}
                 history.Insert(0,DirectSpell.Find(name).Chinese+"对救援者结算完成；当前"+rescueCarrier.LifeLabel+"，保留战后状态。");
             }else history.Insert(0,"救援者复活失败："+error);
         }finally{if(!external)BreakOrdinaryInvisibility(true,"施法",invisibilityToken);rolling=busy;}

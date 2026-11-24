@@ -81,12 +81,12 @@ public sealed partial class TrainingGame
             }
             int continuing=steed!=null&&steed.TurnActive&&!ControlledSteed?steed.Id:0;
             var followers=new System.Collections.Generic.List<SummonedUnit>();
-            foreach(var follower in map.Summons){if(follower==steed&&ControlledSteed&&!follower.Banished){follower.EndTurn();continue;}followers.Add(follower);}
+            foreach(var follower in map.Summons){if(map.SceneOf(follower.Id)<0)continue;if(follower==steed&&ControlledSteed&&!follower.Banished){follower.EndTurn();continue;}followers.Add(follower);}
             web.ExpireMissingSummonOwners(id=>FindSummon(id)!=null);SyncTimedBuffs();summonTurns.Begin(followers,combat.Round,combat.Aftermath,continuing);
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;if(PendingTerrainCount>0)yield return DrainGreaseEntries();summonEndRequested=false;
                 var commanded=new CommandResolution();yield return FollowCommand(unit.Id,commanded);
-                if(unit.Banished||NeutralUndead(unit.Id)||commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
+                if(NeutralUndead(unit.Id)||commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.FeignDeath){panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}

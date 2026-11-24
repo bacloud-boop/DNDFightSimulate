@@ -95,14 +95,14 @@ public sealed class CombatState
     public int MonsterSleepStage {get;set;}
     public bool MonsterHelpless=>MonsterParalyzed||MonsterSleepStage==2;
     public Action MonsterDamaged {get;set;}
-    public bool MonsterCanMove => !MonsterBanished&&!MonsterDeparted&& !Aftermath&&Hp>0&&!MonsterParalyzed&&(!MonsterFeignDeath||HasMovementFreedom(false))&&MonsterSleepStage<2;
+    public bool MonsterCanMove => !MonsterDeparted&& !Aftermath&&Hp>0&&!MonsterParalyzed&&(!MonsterFeignDeath||HasMovementFreedom(false))&&MonsterSleepStage<2;
     public bool MonsterCanAct => !MonsterBanished&&!MonsterDeparted&& MonsterSleepStage==0&& !Aftermath&&Hp>0&&!MonsterParalyzed&&!MonsterFeignDeath;
     public bool PlayerDead {get;private set;}
     public bool PlayerStable {get;private set;}
     public int DeathSuccesses {get;private set;}
     public int DeathFailures {get;private set;}
     public bool NeedsDeathSave => PlayerHp==0&&!PlayerDead&&!PlayerStable;
-    public bool PlayerMovementReady=>!PlayerBanished&&PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&(!PlayerFeignDeath||HasMovementFreedom(true));
+    public bool PlayerMovementReady=>PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&(!PlayerFeignDeath||HasMovementFreedom(true));
     public bool PlayerCanMove=>!Aftermath&&Hp>0&&PlayerMovementReady;
     public bool PlayerCanAct => !PlayerBanished&&!MonsterDeparted&& !Aftermath&&PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&Hp>0;
     public bool BattleFinished => MonsterDeparted||PlayerDead || (Hp==0 && (PlayerHp>0||PlayerStable));

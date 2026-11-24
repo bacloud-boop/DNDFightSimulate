@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb";
-    static bool AftermathLightSpell(string name)=>name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
+    static bool AftermathLightSpell(string name)=>name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         Surface(new Rect(350,110,480,745),paperTexture);
         if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,635));
-        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();
+        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();DrawRegenerateChannel();
         if(VampiricTouchActive&&GUILayout.Button("使用现存吸血之触（魔法动作）",button))selectedSpellName="Vampiric Touch";
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
         if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
@@ -99,6 +99,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Regenerate")DrawRegenerateChoices();
         else if(definition.Name=="Banishment")DrawBanishmentChoices();
         else if(definition.Name=="Vampiric Touch")DrawVampiricTouchChoices();
         else if(definition.Name=="Vitriolic Sphere")DrawVitriolicSphereChoices();
@@ -208,6 +209,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Regenerate")return RegenerateError();
         if(spell.Name=="Banishment")return BanishmentError(directSlotLevel);
         if(spell.Name=="Vampiric Touch")return VampiricTouchError();
         if(spell.Name=="Vitriolic Sphere")return VitriolicSphereError();
@@ -317,6 +319,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        int regenerateSelected=regenerateTarget;if(spell.Name=="Regenerate"&&RegenerateError()!="")yield break;
         var banishSelected=new List<int>(banishTargets);if(spell.Name=="Banishment"&&BanishmentError(slotLevel)!="")yield break;
         int vampiricSelected=vampiricTarget;if(spell.Name=="Vampiric Touch"&&VampiricTouchError()!="")yield break;
         if(spell.Name=="Vitriolic Sphere"&&VitriolicSphereError()!="")yield break;
@@ -390,6 +393,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Regenerate"){BeginRegenerate(regenerateSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Banishment"){yield return ResolveBanishment(caster,slotLevel,banishSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Vampiric Touch"){yield return CastVampiricTouch(caster,slotLevel,vampiricSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Vitriolic Sphere"){yield return ResolveVitriolicSphere(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}

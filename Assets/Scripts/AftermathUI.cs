@@ -58,7 +58,7 @@ public sealed partial class TrainingGame {
    else {
     bool full=RevivalRules.FullHp(name);
     if(name=="True Resurrection"&&!player&&monsterCorpse.Type==13)RestoreOriginalMonster();
-    if((name!="True Resurrection"||RestoreMissingBody(player?0:-1,external))&&combat.Revive(player,full?(player?combat.PlayerMaxHp:combat.MaxHp):1,RevivalRules.Ordeal(name))){RecordResurrectionExertion(external,taxesCaster);(player?playerCorpse:monsterCorpse).Clear();survivedRevival=RestoreBreathingAfterRevival(player);}
+    if((name!="True Resurrection"||RestoreMissingBody(player?0:-1,external))&&combat.Revive(player,full?(player?combat.PlayerMaxHp:combat.MaxHp):1,RevivalRules.Ordeal(name))){if(name=="Resurrection"||name=="True Resurrection")regeneration.RestoreBody(player?0:-1);RecordResurrectionExertion(external,taxesCaster);(player?playerCorpse:monsterCorpse).Clear();survivedRevival=RestoreBreathingAfterRevival(player);}
     if(name=="True Resurrection"){combat.ClearPoison(player);if(mark.Active&&mark.Hex&&mark.Applies(player))EndConcentration("完全复生术解除诅咒");}
     if(RevivalRules.Ordeal(name))combat.ClearPoison(player);stableRecoveryAt=-1;ObserveDeaths();}
    history.Insert(0,(external?"外部救援：":"战后施法：")+chinese+"对"+(player?"玩家":"木桩")+"生效，耗时 "+RevivalRules.Duration(name)*6+" 秒。"+(RevivalRules.Ordeal(name)?"复活者d20检定减4，每次完成长休减轻1。":""));dice=chinese+(survivedRevival?" · 已完成":" · 复活后窒息再次死亡");if(!survivedRevival)history.Insert(0,"复活后的致死窒息仍在，目标立即再次死亡；本次施法耗时已经推进。");
