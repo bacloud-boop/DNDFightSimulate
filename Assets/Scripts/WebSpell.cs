@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
     }
     bool WebBody(int actor,out Vector2Int cell,out int spaces)
     {
-        string name;if(!HealingHandsTarget(actor,out cell,out spaces,out name))return false;
+        cell=Vector2Int.zero;spaces=0;string name;if(map.SceneOf(actor)!=0||!HealingHandsTarget(actor,out cell,out spaces,out name))return false;
         return !((actor==0||actor==-1)&&(map.IsContained(actor==0)||map.IsCarried(actor==0)));
     }
     bool InWeb(int actor){Vector2Int p;int n;return WebBody(actor,out p,out n)&&web.Intersects(p.x,p.y,n,worldRounds);}
@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
     void StartWebTurn(int actor)=>StartTerrainTurn(actor,false);
     void StartTerrainTurn(int actor,bool independent)
     {
-        acidArrows.StartTurn(actor);if(actor==0){StartFingerCasterTurn();heatMetal.CasterTurnStarts();}
+        map.ViewActorScene(actor);acidArrows.StartTurn(actor);if(actor==0){StartFingerCasterTurn();heatMetal.CasterTurnStarts();}
         bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
         if(!shared){terrainActor=actor;terrainTurn++;}web.StartTurn(actor);SyncWeb();
         QueueWebEntry(actor,true);QueueHeroismStart(actor);QueueAuraVitalityStart(actor);SyncTimedBuffs();

@@ -71,6 +71,7 @@ public sealed partial class TrainingGame
         if(!rolling&&undeadSaves.Count>0&&!drainingUndeadSaves)StartCoroutine(DrainUndeadSaves());
         if(!rolling&&!drainingUndeadSaves&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
         BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
+        if(!rolling&&!spellTargeting&&draggingToken<0)map.ViewActorScene(summonTurns.Active?summonTurns.Current.Id:combat.Aftermath&&RescueTurnAllowed?BattleMap.RescueId:0);
         ClearUnavailableAcidArrows();RefreshAnimateDead();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
@@ -157,6 +158,7 @@ public sealed partial class TrainingGame
     void OpenPanel(string value){if(draggingToken>=0 || reactionPending || spellTargeting)return;panel=value;panelScroll=Vector2.zero;drawerProgress=0;}
     void DrawBattle()
     {
+        DrawPlanarStatus();
         GUI.Label(new Rect(540,25,520,45),"木桩训练场 · 第 "+combat.Round+" 回合",lightTitle);
         if(Btn(new Rect(35,25,250,48),"← 酒馆桌面",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))page="home";
         if(Btn(new Rect(1310,25,250,48),"重置战斗",!spellTargeting&&!rolling&&panel==""&&draggingToken<0))ResetCombat();

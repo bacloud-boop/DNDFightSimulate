@@ -31,6 +31,7 @@ public sealed class SummonedUnit
     public int X {get;internal set;}
     public int Y {get;internal set;}
     public int Spaces=>CreatureProfile.SpacesForSize(Size);
+    public bool Banished;
     public bool Alive=>Hp>0;
     public bool TurnActive {get;private set;}
     public bool ReactionAvailable {get;private set;}
@@ -50,16 +51,16 @@ public sealed class SummonedUnit
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
-    public int EffectiveSpeed=>!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
+    public int EffectiveSpeed=>Banished?0:!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}
     bool actionAvailable;
-    public bool ActionAvailable=>ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
+    public bool ActionAvailable=>!Banished&&ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
     public bool Dodging {get;private set;}
     public bool Disengaged {get;private set;}
     public bool BonusAvailable {get;private set;}
-    public bool TryUseBonus(){if(!ControllerReady||!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
+    public bool TryUseBonus(){if(Banished||!ControllerReady||!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
     public bool Disengage(){if(!TryUseAction())return false;Disengaged=true;return true;}
     public SummonCommand Orders {get;private set;}
     public bool HasVerbalOrders=>Orders.Kind!=SummonCommandKind.None;
@@ -68,7 +69,7 @@ public sealed class SummonedUnit
     {
         changed=false;
         if(FeignDeath||SleepStage==2)return false;
-        if(!Alive||(command.Kind!=SummonCommandKind.AssistCombat&&command.Kind!=SummonCommandKind.Dodge))return false;
+        if(Banished||!Alive||(command.Kind!=SummonCommandKind.AssistCombat&&command.Kind!=SummonCommandKind.Dodge))return false;
         changed=!Orders.Equals(command);if(changed)Orders=command;
         return true;
     }
@@ -96,14 +97,14 @@ public sealed class SummonedUnit
     public bool SwitchWaterState(bool submerged,int waterCells)=>Aquatic.TrySwitch(submerged,waterCells,Spaces*Spaces,SpendMovement);
     public bool Attack()
     {
-        if(!ControllerReady||!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
+        if(Banished||!ControllerReady||!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
         if(AttacksRemaining==0){if(!ActionAvailable)return false;actionAvailable=false;AttacksRemaining=AttacksPerAction;}
         AttacksRemaining--;return true;
     }
-    public bool Dodge(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;Dodging=true;return true;}
-    public bool Dash(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;dashes++;return true;}
-    public bool TryUseAction(){if(!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
-    public bool UseReaction(){if(!ControllerReady||!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
+    public bool Dodge(){if(Banished||!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;Dodging=true;return true;}
+    public bool Dash(){if(Banished||!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;dashes++;return true;}
+    public bool TryUseAction(){if(Banished||!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
+    public bool UseReaction(){if(Banished||!ControllerReady||!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
     public int Damage(int amount,int type=-1,long[] resolvedTypes=null,bool critical=false){
         if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));bool wasAlive=Alive;

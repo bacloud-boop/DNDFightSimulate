@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     }
     bool HealingHandsTarget(int id,out Vector2Int cell,out int spaces,out string name)
     {
-        cell=Vector2Int.zero;spaces=1;name="";
+        cell=Vector2Int.zero;spaces=1;name="";if(!map.OnScene(id))return false;
         if(id==0&&!combat.PlayerDead){cell=map.Player;spaces=map.PlayerSpaces;name="玩家";return true;}
         if(id==-1&&combat.Hp>0){cell=map.Monster;spaces=map.MonsterSpaces;name="木桩";return true;}
         if(id==BattleMap.RescueId&&map.RescuePosition.HasValue&&!rescueCarrier.Dead){cell=map.RescuePosition.Value;spaces=map.RescueSpaces;name="救援者";return true;}
@@ -61,7 +61,7 @@ public sealed partial class TrainingGame
     void DrawHealingHandsChoices(int caster)
     {
         GUILayout.Label("治愈之手：魔法动作，接触一个生物，恢复熟练加值数量的d4生命；每长休1次。不是施法，不消耗法术位。",small);
-        var ids=new List<int>{0,-1};if(map.RescuePosition.HasValue)ids.Add(BattleMap.RescueId);foreach(var unit in map.Summons)if(unit.Alive)ids.Add(unit.Id);
+        var ids=new List<int>{0,-1};if(map.RescuePosition.HasValue)ids.Add(BattleMap.RescueId);foreach(var unit in map.SceneSummons)if(unit.Alive)ids.Add(unit.Id);
         int target=caster==0?playerHealingTarget:rescueHealingTarget;bool enabled=GUI.enabled;
         foreach(int id in ids){Vector2Int cell;int spaces;string name;if(!HealingHandsTarget(id,out cell,out spaces,out name))continue;
             GUI.enabled=enabled&&!rolling;bool near=HealingHandsCanTouch(caster,id);

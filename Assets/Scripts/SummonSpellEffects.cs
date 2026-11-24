@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
 {
     List<SummonedUnit> SummonsInBurst(Vector2Int center,int radius)
     {
-        var found=new List<SummonedUnit>();foreach(var unit in map.Summons)if(unit.Alive&&BattleMap.BodyDistance(center,1,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius)found.Add(unit);return found;
+        var found=new List<SummonedUnit>();foreach(var unit in map.SceneSummons)if(unit.Alive&&BattleMap.BodyDistance(center,1,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius)found.Add(unit);return found;
     }
     sealed class SummonSave {public bool Failed;}
     ArmorSaveRoll RollSummonSavingThrow(SummonedUnit unit,int ability,bool advantage=false,bool disadvantage=false)

@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
         if(!produceFlame.Active(worldRounds))return;
         GUILayout.Label("当前火焰剩余 "+((produceFlame.Expires-worldRounds)*6)+" 秒",small);
         foreach(int actor in new[]{0,-1})if(GUILayout.Button((produceTarget==actor?"✓ ":"")+TransitActorName(actor),button))produceTarget=actor;
-        foreach(var unit in map.Summons)if(unit.Alive&&GUILayout.Button((produceTarget==unit.Id?"✓ ":"")+unit.Name,button))produceTarget=unit.Id;
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&GUILayout.Button((produceTarget==unit.Id?"✓ ":"")+unit.Name,button))produceTarget=unit.Id;
         string error=ProduceHurlError();GUILayout.Label(error==""?"消耗1个魔法动作，保留火焰。":error,small);
         bool previous=GUI.enabled;GUI.enabled=previous&&error=="";
         if(GUILayout.Button("投射火焰 · 魔法动作",button)){panel="";StartCoroutine(HurlProduceFlame());}GUI.enabled=previous;

@@ -50,8 +50,8 @@ public sealed partial class TrainingGame
         if(burningPreview)DrawBreathArea(board,burningTemplate,burningSource);
         var playerRect=BodyRect(board,map.Player,map.PlayerSpaces);var monsterRect=BodyRect(board,map.Monster,map.MonsterSpaces);
         if(monsterMoving)monsterRect=new Rect(board.x+monsterVisualCell.x*size,board.y+monsterVisualCell.y*size,size*map.MonsterSpaces,size*map.MonsterSpaces);
-        if(map.BodyPresent(0)&&draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
-        if(map.BodyPresent(-1)&&draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
+        if(map.OnScene(0)&&draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
+        if(map.OnScene(-1)&&draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
         if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
         DrawFlamingSphereMap(board);DrawCloudDaggersArea(board);DrawWebArea(board);DrawSpeciesSenseMap(board);DrawFaerieFireMap(board);
         DrawRetainedRemains(board);DrawGroundWeapons(board);DrawRescueMarker(board);
@@ -59,7 +59,7 @@ public sealed partial class TrainingGame
         if(!allowDrag || (map.Locked&&!moving)||(page=="deployment"&&terrainBrush>0))return;
         int id=GUIUtility.GetControlID(23891,FocusType.Passive);
         var e=Event.current;Vector2 point=BoardPointer();
-        bool playerCanDrag=!map.IsContained(true)&&!map.IsCarried(true)&&playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
+        bool playerCanDrag=map.OnScene(0)&&!combat.PlayerBanished&&!map.IsContained(true)&&!map.IsCarried(true)&&playerRect.Contains(point)&&(!moving||map.MovementBudget(tacticalMovement)>0);
         if(e.type==EventType.MouseDown && e.button==0 && (playerCanDrag||(!moving&&monsterRect.Contains(point)))) {
             draggingToken=playerCanDrag?0:1;var grabbed=playerCanDrag?playerRect:monsterRect;dragOffset=new Vector2((point.x-grabbed.x)/size,(point.y-grabbed.y)/size);dragControl=id;GUIUtility.hotControl=id;e.Use();
         }

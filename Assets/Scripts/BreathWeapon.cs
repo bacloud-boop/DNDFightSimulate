@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
     }
     List<int> BreathActors()
     {
-        var ids=new List<int>();if(!combat.PlayerDead)ids.Add(0);if(combat.Hp>0)ids.Add(-1);if(map.RescuePosition.HasValue&&!rescueCarrier.Dead)ids.Add(BattleMap.RescueId);foreach(var unit in map.Summons)if(unit.Alive)ids.Add(unit.Id);return ids;
+        var ids=new List<int>();if(!combat.PlayerDead&&map.OnScene(0))ids.Add(0);if(combat.Hp>0&&map.OnScene(-1))ids.Add(-1);if(map.OnScene(BattleMap.RescueId)&&map.RescuePosition.HasValue&&!rescueCarrier.Dead)ids.Add(BattleMap.RescueId);foreach(var unit in map.SceneSummons)if(unit.Alive)ids.Add(unit.Id);return ids;
     }
     List<int> BreathTargets(int caster,BreathTemplate template)
     {

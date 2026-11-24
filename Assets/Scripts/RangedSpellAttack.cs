@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
         if(!melee&&playerSource)disadvantage|=combat.MonsterCanAct&&MonsterSeesPlayer&&map.DistanceFeet<=5;
         else if(!melee){
             disadvantage|=combat.PlayerCanAct&&PlayerSeesMonster&&map.DistanceFeet<=5;
-            foreach(var ally in map.Summons)if(ally.Alive&&ally.ControllerReady&&!ally.FeignDeath&&ally.SleepStage==0&&BattleMap.BodyDistance(origin,n,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,source,origin,n))disadvantage=true;
+            foreach(var ally in map.SceneSummons)if(ally.Alive&&ally.ControllerReady&&!ally.FeignDeath&&ally.SleepStage==0&&BattleMap.BodyDistance(origin,n,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,source,origin,n))disadvantage=true;
         }
         int first=UnityEngine.Random.Range(1,21),second=advantage!=disadvantage?UnityEngine.Random.Range(1,21):0,value=second==0?first:advantage?Math.Max(first,second):Math.Min(first,second);
         int bless=(playerSource?combat.PlayerBlessed:combat.MonsterBlessed)?UnityEngine.Random.Range(1,5):0,bane=(playerSource?combat.PlayerBaned:combat.MonsterBaned)?UnityEngine.Random.Range(1,5):0,ward=player&&combat.PlayerBladeWard?UnityEngine.Random.Range(1,5):0;

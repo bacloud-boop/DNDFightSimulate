@@ -60,15 +60,18 @@ public sealed partial class BattleMap
     }
     void SyncWaterPositions()
     {
-        if(RescuePosition.HasValue)RescueAquatic.ObservePosition(WaterCells(RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);
-        if(IsCarried(true))PlayerAquatic.TrySetSubmerged(RescueAquatic.Submerged,WaterCells(RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);else PlayerAquatic.ObservePosition(WaterCells(Player,PlayerSpaces),PlayerSpaces*PlayerSpaces);
-        if(IsCarried(false))MonsterAquatic.TrySetSubmerged(RescueAquatic.Submerged,WaterCells(RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);else MonsterAquatic.ObservePosition(WaterCells(Monster,MonsterSpaces),MonsterSpaces*MonsterSpaces);
-        foreach(var unit in summons)unit.Aquatic.ObservePosition(WaterCells(new Vector2Int(unit.X,unit.Y),unit.Spaces),unit.Spaces*unit.Spaces);SyncRiderWater();
+        if(RescuePosition.HasValue)RescueAquatic.ObservePosition(ActorWaterCells(RescueId,RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);
+        if(IsCarried(true))PlayerAquatic.TrySetSubmerged(RescueAquatic.Submerged,ActorWaterCells(RescueId,RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);else PlayerAquatic.ObservePosition(ActorWaterCells(0,Player,PlayerSpaces),PlayerSpaces*PlayerSpaces);
+        if(IsCarried(false))MonsterAquatic.TrySetSubmerged(RescueAquatic.Submerged,ActorWaterCells(RescueId,RescuePosition.Value,RescueSpaces),RescueSpaces*RescueSpaces);else MonsterAquatic.ObservePosition(ActorWaterCells(-1,Monster,MonsterSpaces),MonsterSpaces*MonsterSpaces);
+        foreach(var unit in summons)unit.Aquatic.ObservePosition(ActorWaterCells(unit.Id,new Vector2Int(unit.X,unit.Y),unit.Spaces),unit.Spaces*unit.Spaces);SyncRiderWater();
     }
-    public bool IsWater(Vector2Int cell)=>Inside(cell,1)&&water[Selected,cell.x,cell.y];
+    public void RestoreSceneWater(int actor,bool submerged){Vector2Int p;int n;if(SceneBody(actor,out p,out n)){var state=ActorAquatic(actor);if(state!=null)state.TrySetSubmerged(submerged,ActorWaterCells(actor,p,n),n*n);}}
+    public bool IsWater(Vector2Int cell)=>Scene==0&&Inside(cell,1)&&water[Selected,cell.x,cell.y];
     public bool SetWater(Vector2Int cell,bool value){if(Locked||!Inside(cell,1))return false;water[Selected,cell.x,cell.y]=value;return true;}
     public bool ClearWater(){if(Locked)return false;for(int y=0;y<Size;y++)for(int x=0;x<Size;x++)water[Selected,x,y]=false;return true;}
-    public int WaterCells(Vector2Int anchor,int spaces)
+    public int ActorWaterCells(int actor,Vector2Int anchor,int spaces)=>SceneOf(actor)==0?BaseWaterCells(anchor,spaces):0;
+    public int WaterCells(Vector2Int anchor,int spaces)=>Scene==0?BaseWaterCells(anchor,spaces):0;
+    int BaseWaterCells(Vector2Int anchor,int spaces)
     {
         if(spaces<1||spaces>4||!Inside(anchor,spaces))return -1;
         int count=0;for(int y=anchor.y;y<anchor.y+spaces;y++)for(int x=anchor.x;x<anchor.x+spaces;x++)if(water[Selected,x,y])count++;

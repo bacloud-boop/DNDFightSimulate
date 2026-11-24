@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
     {
         if(!wardingBond.Active(worldRounds))return 0;
         Vector2Int target;int n;
-        if(!map.MovementBody(wardingBond.Target,out target,out n)||!wardingBond.Validate(worldRounds,combat.PlayerHp>0&&!combat.PlayerDead,BattleMap.BodyDistance(map.Player,map.PlayerSpaces,target,n)))return 0;
+        if(!map.SameScene(0,wardingBond.Target)||!map.SceneBody(wardingBond.Target,out target,out n)||!wardingBond.Validate(worldRounds,combat.PlayerHp>0&&!combat.PlayerDead,BattleMap.BodyDistance(map.Player,map.PlayerSpaces,target,n)))return 0;
         return wardingBond.Protects(actor,worldRounds)?1:0;
     }
     void TransferBondSingle(int actor,int amount,int type){var packet=new long[14];packet[type>=0&&type<13?type:13]=amount;TransferBondDamage(actor,packet);}

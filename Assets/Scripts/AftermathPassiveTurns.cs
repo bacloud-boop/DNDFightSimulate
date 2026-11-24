@@ -7,7 +7,7 @@ public sealed partial class TrainingGame
         // No manual AI/actions for paused units; Command alone may compel movement.
         web.ExpireMissingSummonOwners(id=>FindSummon(id)!=null);
         foreach(var unit in new List<SummonedUnit>(map.Summons)){
-            if(!unit.Alive)continue;
+            if(!unit.Alive||map.SceneOf(unit.Id)<0)continue;
             StartTerrainTurn(unit.Id,true);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
             bool compelled=commandEffect.Next(unit.Id)!=null;
             if(compelled){unit.BeginTurn(combat.Round,false);var result=new CommandResolution();yield return FollowCommand(unit.Id,result);}
@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
         }
         // A dead monster has no effects to resolve, but its initiative point still
         // expires burning web cells started on its former turn.
-        if(combat.Hp==0){web.StartTurn(-1);iceStorm.EndTurn(-1,++terrainTurn);yield break;}
+        if(combat.Hp==0||combat.MonsterDeparted){web.StartTurn(-1);iceStorm.EndTurn(-1,++terrainTurn);yield break;}
         StartTerrainTurn(-1,true);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         if(combat.Hp>0&&commandEffect.Next(-1)!=null){combat.StartMonsterTurn(false);map.StartMonsterMovementTurn(combat.MonsterSpeed);var result=new CommandResolution();yield return FollowCommand(-1,result);}
         if(combat.Hp>0){yield return RepeatHoldPersonSave();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();}

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 public sealed class IceStormFields
 {
-    sealed class Field {public int Caster,Size;public long Begins,EndWorld,EndTurn;public HashSet<int> Cells;}
+    sealed class Field {public int Caster,Size,Scene;public long Begins,EndWorld,EndTurn;public HashSet<int> Cells;}
     readonly List<Field> fields=new List<Field>();
     readonly Dictionary<int,long> ended=new Dictionary<int,long>();
     readonly Dictionary<int,long> lastEnd=new Dictionary<int,long>();
@@ -15,13 +15,13 @@ public sealed class IceStormFields
         long dx=Math.Max(0,Math.Max((long)cx-x-spaces+1,(long)x-cx)),dy=Math.Max(0,Math.Max((long)cy-y-spaces+1,(long)y-cy));
         return dx<=4&&dy<=4&&dx*dx+dy*dy<=16;
     }
-    public bool Add(int caster,int cx,int cy,int size,Func<int,int,bool> land,long now)
+    public bool Add(int caster,int cx,int cy,int size,Func<int,int,bool> land,long now,int scene=0)
     {
         if(!CanAdd(caster,now)||size<1||size>20||cx<0||cy<0||cx>=size||cy>=size||land==null)return false;
         var cells=new HashSet<int>();for(int y=0;y<size;y++)for(int x=0;x<size;x++)if(Covers(cx,cy,x,y)&&land(x,y))cells.Add(y*size+x);
-        Refresh(now);fields.Add(new Field{Caster=caster,Size=size,Cells=cells,Begins=now,EndWorld=now+2,EndTurn=Turns(caster)+2});return true;
+        Refresh(now);fields.Add(new Field{Caster=caster,Size=size,Scene=scene,Cells=cells,Begins=now,EndWorld=now+2,EndTurn=Turns(caster)+2});return true;
     }
-    public bool Cell(int x,int y,long now){Refresh(now);return fields.Exists(f=>Active(f,now)&&x>=0&&y>=0&&x<f.Size&&y<f.Size&&f.Cells.Contains(y*f.Size+x));}
+    public bool Cell(int x,int y,long now,int scene=0){Refresh(now);return fields.Exists(f=>f.Scene==scene&&Active(f,now)&&x>=0&&y>=0&&x<f.Size&&y<f.Size&&f.Cells.Contains(y*f.Size+x));}
     public void EndTurn(int caster,long stamp=-1){long previous;if(stamp>=0){if(lastEnd.TryGetValue(caster,out previous)&&stamp<=previous)return;lastEnd[caster]=stamp;}long count=Turns(caster);if(count<long.MaxValue)ended[caster]=count+1;fields.RemoveAll(f=>f.Caster==caster&&Turns(caster)>=f.EndTurn);}
     public void Refresh(long now){fields.RemoveAll(f=>now>=f.EndWorld||Turns(f.Caster)>=f.EndTurn);}
     public void Clear(){fields.Clear();ended.Clear();lastEnd.Clear();}

@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
     }
     bool WhispersSafeCell(int actor,Vector2Int p,int n)
     {
-        if(grease.Current(p.x,p.y,n,worldRounds)!=null||spikeGrowth.Intersects(p.x,p.y,n,worldRounds)||cloudDaggers.Intersects(p.x,p.y,n,worldRounds)||web.Intersects(p.x,p.y,n,worldRounds)||entangle.Intersects(p.x,p.y,n,worldRounds))return false;
+        if(grease.Current(p.x,p.y,n,worldRounds,map.Scene)!=null||spikeGrowth.Intersects(p.x,p.y,n,worldRounds)||cloudDaggers.Intersects(p.x,p.y,n,worldRounds)||web.Intersects(p.x,p.y,n,worldRounds)||entangle.Intersects(p.x,p.y,n,worldRounds))return false;
         if(flamingSphere.Active(worldRounds)&&BattleMap.BodyDistance(p,n,SphereCell,1)<=5)return false;
         int water=map.WaterCells(p,n);var unit=actor>0?FindSummon(actor):null;
         bool underwater=(actor==0?map.PlayerAquatic.Submerged:actor==-1?map.MonsterAquatic.Submerged:actor==BattleMap.RescueId?map.RescueAquatic.Submerged:unit!=null&&unit.Aquatic.Submerged)&&water==n*n;

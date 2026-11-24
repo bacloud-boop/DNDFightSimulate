@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
     }
     void DrawSharedPositions(Rect board)
     {
-        var actors=new List<int>{0,-1};if(map.RescuePosition.HasValue)actors.Add(BattleMap.RescueId);foreach(var u in map.Summons)if(u.Alive)actors.Add(u.Id);
+        var actors=new List<int>{0,-1};if(map.RescuePosition.HasValue)actors.Add(BattleMap.RescueId);foreach(var u in map.SceneSummons)if(u.Alive)actors.Add(u.Id);
         var names=new List<string>();foreach(int actor in actors)if(map.HasSharedPosition(actor))names.Add(TransitActorName(actor)+(ActorProne(actor)?"（倒地）":""));
         if(names.Count==0)return;
         var rect=new Rect(board.x,board.y,board.width,42);Fill(rect,new Color(.16f,.08f,.03f,.94f));GUI.Label(rect,"被迫共占："+string.Join("、",names)+"\n移动终点须空闲；非微型且未大于共占者，回合末倒地",new GUIStyle(centered){fontSize=12,wordWrap=true,normal={textColor=Color.white}});

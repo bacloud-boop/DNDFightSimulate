@@ -5,7 +5,7 @@ public sealed partial class TrainingGame {
  readonly CorpseClock playerCorpse=new CorpseClock(),monsterCorpse=new CorpseClock();
  bool hasMonsterLongRest;long lastMonsterLongRestStart;
  bool revivalWilling;string aftermathMessage="",waitMinutes="1";Vector2 aftermathScroll;
- void ObserveDeaths(){if(map.RescuePosition.HasValue)rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();playerCorpse.Observe(combat.PlayerDead,9,worldRounds);monsterCorpse.Observe(combat.Hp==0,monsterProfile.TypeIndex,worldRounds);if(playerCorpse.Dead||monsterCorpse.Dead)combat.Aftermath=true;EnsureAftermathTurns();SuspendSummonControlAftermath();}
+ void ObserveDeaths(){if(map.RescuePosition.HasValue)rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();playerCorpse.Observe(combat.PlayerDead,9,worldRounds);monsterCorpse.Observe(combat.Hp==0,monsterProfile.TypeIndex,worldRounds);if(playerCorpse.Dead||monsterCorpse.Dead||combat.MonsterDeparted)combat.Aftermath=true;EnsureAftermathTurns();SuspendSummonControlAftermath();}
  void AdvanceAftermathClock(long rounds){ObserveDeaths();worldRounds+=rounds;playerCorpse.Age(worldRounds);monsterCorpse.Age(worldRounds);if(rounds>1)combat.ClearShortDurationEffects();RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();UpdateStableRecovery();ObserveDeaths();}
  bool CanPlayerAftermathCast=>combat.Aftermath&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&CanCastInCurrentForm&&playerResurrectionCaster.CanCast&&combat.AftermathMagicActionAvailable;
  bool KnowsRevival(string name){if(spellMetadata==null)spellMetadata=JsonUtility.FromJson<SpellMetadataSet>(Resources.Load<TextAsset>("Rules2024/Spells").text);var metadata=spellMetadata.spells.FirstOrDefault(x=>x.name==name);return metadata!=null&&EligibleCasters(metadata).Any();}
@@ -68,9 +68,9 @@ public sealed partial class TrainingGame {
  IEnumerator ResumeAftermath(){
   if(!PlayerTurnAllowed){aftermathMessage="请先结束救援者回合。";yield break;}
   if(!RescueDepartureReady||rescueCarrier.Load.Loaded){aftermathMessage="请先让救援者恢复清醒并放下搬运对象。";yield break;}
-  if(combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0)yield break;
+  if(combat.MonsterDeparted||combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0)yield break;
   yield return AdvanceAftermathRounds(1);
-  if(combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0||!RescueDepartureReady){aftermathMessage="回合结算后仍有伤亡，保留战后现场。";yield break;}
+  if(combat.MonsterDeparted||combat.PlayerHp<=0||combat.PlayerDead||combat.Hp<=0||!RescueDepartureReady){aftermathMessage="回合结算后仍有伤亡，保留战后现场。";yield break;}
   map.RemoveRescue();rescueCarrier.Reset();rescueDropMode=false;combat.Aftermath=false;ExitAftermathTurns();combat.StartMonsterTurn(false);map.StartMonsterMovementTurn(combat.MonsterSpeed);tacticalMovement=false;outcomeRecorded=false;history.Insert(0,"继续战斗：新玩家回合已开始，保留HP、职业消耗和持续法术。");
  }
 }

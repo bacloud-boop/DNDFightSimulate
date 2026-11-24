@@ -4,7 +4,7 @@ public sealed partial class TrainingGame
     Vector2 summonScroll;
     void DrawSummonMarkers(Rect board)
     {
-        foreach(var unit in map.Summons)if(unit.Alive){var rect=BodyRect(board,new Vector2Int(unit.X,unit.Y),unit.Spaces);Fill(rect,new Color(.22f,.48f,.25f,.95f));GUI.Label(rect,IsSteed(unit)?(map.Riding?"骑手／驹":"驹"):Undead(unit)!=null?(Undead(unit).Rules.Skeleton?"骷":"尸"):"兽",new GUIStyle(centered){fontSize=Mathf.Max(12,(int)(rect.width*.6f)),normal={textColor=Color.white}});}
+        foreach(var unit in map.SceneSummons)if(unit.Alive){var rect=BodyRect(board,new Vector2Int(unit.X,unit.Y),unit.Spaces);Fill(rect,new Color(.22f,.48f,.25f,.95f));GUI.Label(rect,IsSteed(unit)?(map.Riding?"骑手／驹":"驹"):Undead(unit)!=null?(Undead(unit).Rules.Skeleton?"骷":"尸"):"兽",new GUIStyle(centered){fontSize=Mathf.Max(12,(int)(rect.width*.6f)),normal={textColor=Color.white}});}
     }
     void DrawSummonControl()
     {
@@ -16,7 +16,7 @@ public sealed partial class TrainingGame
         GUILayout.Label(phase?"召唤物回合":"召唤物指令",heading);
         GUILayout.Label("协助战斗指令跨回合保留；骑乘时在玩家回合操控坐骑移动、疾走、撤离或闪避。坐骑以心灵感应接受指挥，不需开口。",small);
         DrawRidingControls();
-        foreach(var unit in map.Summons)if(unit.Alive){
+        foreach(var unit in map.SceneSummons)if(unit.Alive){
             GUILayout.Label(unit.Name+(NeutralUndead(unit.Id)?" · 中立失控":"")+(PassTraceBenefit(unit.Id)?" · 无踪步":"")+(BeaconHope(unit.Id)?" · 希望信标":"")+(MovementFreedom(unit.Id)?" · 行动自如":"")+(ActorBlinded(unit.Id)?" · 目盲":"")+(unit.SleepStage==2?" · 昏迷":unit.SleepStage==1?" · 失能":"")+(unit.Prone?" · 倒地":"")+(unit.Restrained?" · 束缚":"")+(SteedFear(unit.Id)?" · 恐慌":"")+" · HP "+unit.Hp+" / "+unit.MaxHp+" · 临时生命 "+unit.TemporaryHp+" · AC "+unit.Armor,heading);
             if(!phase&&unit.SleepStage>0){bool enabled=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&BattleMap.BodyDistance(map.Player,map.PlayerSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=5;if(GUILayout.Button("摇醒 "+unit.Name+"（动作）",button)&&combat.TryUseAction()){unit.SleepStage=0;RefreshSleepConcentration();}GUI.enabled=enabled;}
             if(!phase&&unit!=steed){bool old=GUI.enabled;GUI.enabled=!rolling&&combat.PlayerCanAct&&!NeutralUndead(unit.Id)&&(!PlayerInBeastForm||Undead(unit)!=null&&!Undead(unit).Verbal);
@@ -32,7 +32,7 @@ public sealed partial class TrainingGame
                 if(GUILayout.Button((summonTarget==-1?"✓ ":"")+"攻击目标：木桩",button))summonTarget=-1;
                 if(GUILayout.Button((summonTarget==0?"✓ ":"")+"攻击目标：玩家",button))summonTarget=0;
                 if(IsSteed(unit)&&GUILayout.Button((summonTarget==unit.Id?"✓ ":"")+"能力目标：坐骑自身",button))summonTarget=unit.Id;
-                foreach(var other in map.Summons)if(other.Alive&&other.Id!=unit.Id&&GUILayout.Button((summonTarget==other.Id?"✓ ":"")+"目标："+other.Name,button))summonTarget=other.Id;
+                foreach(var other in map.SceneSummons)if(other.Alive&&other.Id!=unit.Id&&GUILayout.Button((summonTarget==other.Id?"✓ ":"")+"目标："+other.Name,button))summonTarget=other.Id;
                 Vector2Int target;int spaces;string name;bool legal=SummonTarget(summonTarget,out target,out spaces,out name)&&BattleMap.BodyDistance(new Vector2Int(unit.X,unit.Y),unit.Spaces,target,spaces)<=(Undead(unit)==null?5:UndeadReach(Undead(unit)));
                 GUI.enabled=!summonActing&&summonTarget!=unit.Id&&legal&&(!IsSteed(unit)||OtherworldlySteedRules.CanAttack(map.Riding,combat.PlayerHp==0||combat.PlayerParalyzed))&&(unit.ActionAvailable||unit.AttacksRemaining>0);
                 if(GUILayout.Button(legal?(IsSteed(unit)?"异界猛击 · 逐次结算":Undead(unit)!=null?"亡灵攻击 · 逐次结算":"撕裂攻击 · 逐次结算"):"无法攻击 · 目标不合法或超过5尺",button))StartCoroutine(ResolveSpiritAttack(unit,summonTarget));

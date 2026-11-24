@@ -40,12 +40,13 @@ public sealed partial class TrainingGame
     }
     bool WaterBreathingAllowed(bool player)
     {
+        if(map.SceneOf(player?0:-1)>0)return true;
         BeastRecord form=player?(PlayerInBeastForm?PlayerBeast:null):(MonsterPolymorphed?PolymorphBeast:null);
         bool amphibious=form!=null&&form.actionNames!=null&&Array.IndexOf(form.actionNames,"Amphibious")>=0;
         bool onlyWater=form!=null&&form.actionNames!=null&&Array.IndexOf(form.actionNames,"Water Breathing")>=0;
         var aquatic=player?map.PlayerAquatic:map.MonsterAquatic;var cell=player?map.Player:map.Monster;int spaces=player?map.PlayerSpaces:map.MonsterSpaces;
-        if(map.IsCarried(player)&&map.RescuePosition.HasValue)return map.RescueAquatic.CanBreathe(!onlyWater||amphibious,onlyWater||amphibious||WaterBreathingActive(player),map.WaterCells(map.RescuePosition.Value,map.RescueSpaces));
-        return aquatic.CanBreathe(!onlyWater||amphibious,onlyWater||amphibious||WaterBreathingActive(player),map.WaterCells(cell,spaces));
+        if(map.IsCarried(player)&&map.RescuePosition.HasValue)return map.RescueAquatic.CanBreathe(!onlyWater||amphibious,onlyWater||amphibious||WaterBreathingActive(player),map.ActorWaterCells(BattleMap.RescueId,map.RescuePosition.Value,map.RescueSpaces));
+        return aquatic.CanBreathe(!onlyWater||amphibious,onlyWater||amphibious||WaterBreathingActive(player),map.ActorWaterCells(player?0:-1,cell,spaces));
     }
     void ObserveWaterBreathing()
     {
@@ -55,9 +56,9 @@ public sealed partial class TrainingGame
         if(!combat.PlayerDead)playerBreathing.Observe(WaterBreathingAllowed(true),worldRounds,EffectivePlayerAbility(2));
         if(combat.Hp>0)monsterBreathing.Observe(WaterBreathingAllowed(false),worldRounds,EffectiveMonsterAbility(2));
         foreach(var unit in map.Summons)if(unit.Alive){
-            int cells=map.WaterCells(new Vector2Int(unit.X,unit.Y),unit.Spaces);
+            int cells=map.ActorWaterCells(unit.Id,new Vector2Int(unit.X,unit.Y),unit.Spaces);
             unit.Aquatic.ObservePosition(cells,unit.Spaces*unit.Spaces);unit.Breathing.ExhaustionImmune=unit.ExhaustionImmune;
-            unit.Breathing.Observe(unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater||worldRounds<unit.WaterBreathingExpires,cells),worldRounds,SummonAbility(unit,2));
+            unit.Breathing.Observe(map.SceneOf(unit.Id)>0||unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater||worldRounds<unit.WaterBreathingExpires,cells),worldRounds,SummonAbility(unit,2));
         }
     }
     bool RestoreBreathingAfterRevival(bool player)
@@ -89,7 +90,7 @@ public sealed partial class TrainingGame
     bool IssueSummonVerbalCommand(SummonedUnit unit,SummonCommand command)
     {
         if(Undead(unit)!=null&&!Undead(unit).Verbal)return IssueUndeadOrder(unit,command);
-        if(unit==null||!unit.Alive||!combat.PlayerCanAct||PlayerInBeastForm||summonTurns.Active||rolling||reactionPending)return false;
+        if(unit==null||!map.SameScene(0,unit.Id)||!unit.Alive||!combat.PlayerCanAct||PlayerInBeastForm||summonTurns.Active||rolling||reactionPending)return false;
         bool registered=false;foreach(var candidate in map.Summons)if(ReferenceEquals(candidate,unit)){registered=true;break;}
         if(!registered)return false;
         if(!unit.Orders.Equals(command)&&!SilenceHearCommand(unit)){history.Insert(0,"沉默术阻止口头指令传达，保留旧指令。");return false;}

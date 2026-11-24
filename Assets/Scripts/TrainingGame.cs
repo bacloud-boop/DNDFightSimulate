@@ -190,7 +190,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.PlayerDead){rolling=false;yield break;}
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
-            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
+            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();if(combat.MonsterDeparted){CheckBattleOutcome();rolling=false;yield break;}shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
             var commandTurn=new CommandResolution();yield return FollowCommand(-1,commandTurn);if(commandTurn.Consumed){yield return FinishMonsterSpellTurn();yield break;}
             if(map.NearestEnemyInReach(!combat.PlayerDead,int.MaxValue)<0){history.Insert(0,"木桩没有可攻击的非假死敌人，跳过行动。");yield return FinishMonsterSpellTurn();yield break;}
             if(Entangled(false)&&combat.MonsterCanAct&&combat.MonsterActionAvailable){

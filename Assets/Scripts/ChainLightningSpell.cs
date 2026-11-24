@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
 {
     int chainFirst=-1;
     readonly HashSet<int> chainSecondary=new HashSet<int>();
-    List<int> LivingSpellTargets(){var ids=new List<int>();Vector2Int p;int n;string name;if(SummonTarget(0,out p,out n,out name))ids.Add(0);if(SummonTarget(-1,out p,out n,out name))ids.Add(-1);foreach(var unit in map.Summons)if(unit.Alive)ids.Add(unit.Id);return ids;}
+    List<int> LivingSpellTargets(){var ids=new List<int>();Vector2Int p;int n;string name;if(SummonTarget(0,out p,out n,out name))ids.Add(0);if(SummonTarget(-1,out p,out n,out name))ids.Add(-1);foreach(var unit in map.SceneSummons)if(unit.Alive)ids.Add(unit.Id);return ids;}
     int SpellTargetDistance(int a,int b){Vector2Int p,q;int n,m;string name;return SummonTarget(a,out p,out n,out name)&&SummonTarget(b,out q,out m,out name)?BattleMap.BodyDistance(p,n,q,m):int.MaxValue;}
     bool LivingSpellTarget(int id){Vector2Int p;int n;string name;return SummonTarget(id,out p,out n,out name);}
     bool PlayerSeesSpellTarget(int id){Vector2Int p;int n;string name;if(!SummonTarget(id,out p,out n,out name))return false;return id==0?CanSeeOwnBody():id==-1?PlayerSeesMonster:VisibilityAt(true,p,n)<2;}

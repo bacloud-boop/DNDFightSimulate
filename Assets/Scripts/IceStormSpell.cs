@@ -54,7 +54,7 @@ public sealed partial class TrainingGame
             dice="冰雹暴 · 共享混合伤害";yield return PresentRoll(10,a,count+"d10钝击 = "+blunt);yield return PresentRoll(6,b,"4d6寒冷 = "+cold);
             var reduced=new RayDamage();yield return ReduceRayPacket(player,IceStormRules.Packet(blunt,cold),true,"冰雹暴合并伤害",reduced);
             int playerDamage=0;foreach(int actor in targets){int amount=ApplyMappedDamagePacket(actor,source,IceStormRules.AfterSave(reduced.Raw,!failed.Contains(actor)));if(actor==0)playerDamage=amount;history.Insert(0,"冰雹暴："+TransitActorName(actor)+(failed.Contains(actor)?"豁免失败":"豁免成功，两类伤害减半")+"，结算 "+amount+" 点混合伤害。");}
-            if(!internalCast)iceStorm.Add(source,center.x,center.y,map.Size,(x,y)=>!map.IsWater(new Vector2Int(x,y)),worldRounds);
+            if(!internalCast)iceStorm.Add(source,center.x,center.y,map.Size,(x,y)=>!map.IsWater(new Vector2Int(x,y)),worldRounds,map.Scene);
             SyncTimedBuffs();if(playerDamage>0)yield return MaintainConcentration(playerDamage);
             ReconcileFallenRescue();RefreshBestialSpirit();dice="冰雹暴 · "+targets.Count+"名目标已结算";
             history.Insert(0,internalCast?"冰雹暴受吞咽内外隔离限制，不在体外留下地形。":"冰雹暴：陆地困难地形持续至施法者下个回合结束，水域不留下困难地形。");
@@ -65,7 +65,7 @@ public sealed partial class TrainingGame
         Vector2Int center=Vector2Int.zero;bool preview=panel=="spells"&&selectedSpellName=="Ice Storm"&&VisionPoint(out center);
         if(preview&&map.IsContained(true)){Fill(BodyRect(board,map.Monster,map.MonsterSpaces),new Color(.65f,.85f,1,.28f));preview=false;}
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){
-            if(iceStorm.Cell(x,y,worldRounds))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.4f,.65f,.85f,.28f));
+            if(iceStorm.Cell(x,y,worldRounds,map.Scene))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.4f,.65f,.85f,.28f));
             if(preview&&IceStormFields.Covers(center.x,center.y,x,y))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.65f,.85f,1,.28f));
         }
     }

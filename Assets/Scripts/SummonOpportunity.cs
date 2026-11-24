@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
             double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,map.Player.x,map.Player.y,map.PlayerSpaces,5);
             candidates.Add(new SummonOpportunity{Id=0,At=at,Target=MovingBodyAt(from,to,map.MonsterSpaces,at)});
         }
-        foreach(var unit in map.Summons)if(unit.Alive&&unit.ControllerReady&&(!IsSteed(unit)||!ControlledSteed)&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),UndeadOpportunityReach(unit),map.MonsterSpaces,unit.Spaces)){
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&unit.ControllerReady&&(!IsSteed(unit)||!ControlledSteed)&&unit.ReactionAvailable&&BattleMap.LeavesReach(from,to,new Vector2Int(unit.X,unit.Y),UndeadOpportunityReach(unit),map.MonsterSpaces,unit.Spaces)){
             double at=VisionState.ReachExit(from.x,from.y,to.x,to.y,map.MonsterSpaces,unit.X,unit.Y,unit.Spaces,UndeadOpportunityReach(unit));
             var target=MovingBodyAt(from,to,map.MonsterSpaces,at);
             if(at>=0&&SpiritSeesAt(unit,-1,unit.X,unit.Y,target.X,target.Y,map.MonsterSpaces))candidates.Add(new SummonOpportunity{Id=unit.Id,Reach=UndeadOpportunityReach(unit),At=at,Target=target});

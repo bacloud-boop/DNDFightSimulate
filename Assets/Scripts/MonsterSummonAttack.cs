@@ -12,7 +12,7 @@ public sealed partial class TrainingGame
         bool advantage=FaerieAdvantage(unit.Id,sees)||unit.SleepStage==2||unit.Prone&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=5||unit.Restrained||!targetSees,disadvantage=FearDisadvantage(false)||Entangled(false)|RayAttackDisadvantage(false,MonsterCustomAttackAbility)||unit.Prone&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)>5||MonsterArmorAttackDisadvantage||!sees||MonsterUnderwaterDisadvantage()||combat.MonsterPoisoned||combat.MonsterProne||(unit.Dodging&&targetSees&&unit.Speed>unit.Breathing.SpeedPenalty);
         if(!MonsterMeleeAttack){
             if(combat.PlayerHp>0&&!combat.PlayerParalyzed&&map.DistanceFeet<=5&&PlayerSeesMonster)disadvantage=true;
-            foreach(var ally in map.Summons)if(ally.Alive&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,-1,map.Monster,map.MonsterSpaces))disadvantage=true;
+            foreach(var ally in map.SceneSummons)if(ally.Alive&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,-1,map.Monster,map.MonsterSpaces))disadvantage=true;
         }
         int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
         long bonus=(MonsterPolymorphed?BeastAttack.Find(polymorph.Form).HitBonus+combat.MonsterRevivalPenalty:MonsterCustomHitBonus)+monsterBreathing.D20Penalty;

@@ -2,6 +2,43 @@ using UnityEngine;
 
 public sealed partial class BattleMap
 {
+    readonly System.Collections.Generic.Dictionary<int,int> actorScenes=new System.Collections.Generic.Dictionary<int,int>();
+    public int Scene {get;private set;}
+    public int SceneOf(int actor){int scene;return actorScenes.TryGetValue(actor,out scene)?scene:0;}
+    public bool SameScene(int a,int b)=>SceneOf(a)>=0&&SceneOf(a)==SceneOf(b);
+    public bool OnScene(int actor)=>BodyPresent(actor)&&SceneOf(actor)>=0&&SceneOf(actor)==Scene;
+    public void ViewScene(int scene){if(scene>=0)Scene=scene;}
+    public void ViewActorScene(int actor){ViewScene(SceneOf(actor));}
+    public void SetActorScene(int actor,int scene){if(scene==0)actorScenes.Remove(actor);else actorScenes[actor]=scene;}
+    public void ClearScenes(){actorScenes.Clear();Scene=0;}
+    public System.Collections.Generic.IEnumerable<SummonedUnit> SceneSummons {get{foreach(var u in summons)if(OnScene(u.Id))yield return u;}}
+    public bool SceneBody(int actor,out Vector2Int cell,out int spaces)
+    {
+        if(actor==0){cell=Player;spaces=playerBodySpaces;return BodyPresent(0);}
+        if(actor==-1){cell=Monster;spaces=MonsterSpaces;return BodyPresent(-1);}
+        if(actor==RescueId){cell=RescuePosition??Vector2Int.zero;spaces=RescueSpaces;return BodyPresent(actor)&&RescuePosition.HasValue;}
+        foreach(var u in summons)if(u.Id==actor){cell=new Vector2Int(u.X,u.Y);spaces=u.Spaces;return true;}
+        cell=Vector2Int.zero;spaces=0;return false;
+    }
+    public bool RestoreSceneBody(int actor,int scene,Vector2Int home,out bool shared)
+    {
+        shared=false;Vector2Int old;int n;if(!SceneBody(actor,out old,out n)||scene<0)return false;
+        int viewed=Scene;Scene=scene;Vector2Int landing=home;long best=long.MaxValue;
+        try{
+            for(int y=0;y<=Size-n;y++)for(int x=0;x<=Size-n;x++){
+                var cell=new Vector2Int(x,y);if(!CanPlaceSummon(cell,n,actor))continue;
+                long dx=x-home.x,dy=y-home.y,d=dx*dx+dy*dy;
+                if(d<best){best=d;landing=cell;}
+            }
+            if(best==long.MaxValue){landing=new Vector2Int(System.Math.Max(0,System.Math.Min(Size-n,home.x)),System.Math.Max(0,System.Math.Min(Size-n,home.y)));shared=true;}
+            SetActorScene(actor,scene);
+            if(actor==0)Player=landing;else if(actor==-1)Monster=landing;else if(actor==RescueId)RescuePosition=landing;
+            else foreach(var u in summons)if(u.Id==actor){u.X=landing.x;u.Y=landing.y;break;}
+            SyncContainedPosition();SyncWaterPositions();return true;
+        }finally{Scene=viewed;}
+    }
+    public void SeparatePlanarContainment(){if(HasContainedCreature){bool hostPlayer=!IsContained(true);containedActor=-1;ContainmentEnded?.Invoke(hostPlayer);}}
+    public void SeparatePlanarRider(){riderMountId=0;}
     readonly System.Collections.Generic.HashSet<int> consumedBodies=new System.Collections.Generic.HashSet<int>();
     public bool BodyPresent(int actor)=>!consumedBodies.Contains(actor);
     public bool CanRestoreBodyAt(int actor,Vector2Int cell,int spaces){if(BodyPresent(actor)||!Inside(cell,spaces)||!CanPlaceSummon(cell,spaces,actor))return false;Vector2Int old;int n;if(actor==0){old=Player;n=PlayerSpaces;}else if(actor==-1){old=Monster;n=MonsterSpaces;}else if(actor==RescueId&&RescuePosition.HasValue){old=RescuePosition.Value;n=RescueSpaces;}else return false;SetReincarnationBody(actor,cell,spaces);consumedBodies.Remove(actor);try{return RecoverySafe(Player,Monster);}finally{consumedBodies.Add(actor);SetReincarnationBody(actor,old,n);}}
@@ -63,7 +100,7 @@ public sealed partial class BattleMap
         }
         return false;
     }
-    public int DistanceToCell(bool player,Vector2Int cell) => BodyDistance(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,cell,1);
+    public int DistanceToCell(bool player,Vector2Int cell) => !OnScene(player?0:-1)?int.MaxValue:BodyDistance(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,cell,1);
     public bool Inside(Vector2Int cell,int spaces) => cell.x>=0&&cell.y>=0&&cell.x+spaces<=Size&&cell.y+spaces<=Size;
     public bool CanPlace(bool player,Vector2Int cell) => !IsContained(player)&&!IsCarried(player)&&Inside(cell,player?PlayerSpaces:MonsterSpaces)&&SummonFootprintClear(cell,player?PlayerSpaces:MonsterSpaces,player?riderMountId:0)&&!Overlap(cell,player?PlayerSpaces:MonsterSpaces,player?Monster:Player,OccupiedSpaces(!player));
     // Open-rectangle intersection: touching a boundary is legal, crossing occupied space is not.
@@ -88,7 +125,7 @@ public sealed partial class BattleMap
             double dx=x+recovery*.5-body.x-bodySpaces*.5,dy=y+recovery*.5-body.y-bodySpaces*.5,d=dx*dx+dy*dy;if(d<best){best=d;result=cell;}
         }return best<double.MaxValue;
     }
-    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (!BodyPresent(0)||IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored,riderMountId))&&(!BodyPresent(-1)||IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
+    bool RecoverySafe(Vector2Int player,Vector2Int monster){Vector2Int ignored;return (!OnScene(0)||IsContained(true)||FindRecovery(player,PlayerSpaces,playerRecoverySpaces,monster,OccupiedSpaces(false),out ignored,riderMountId))&&(!OnScene(-1)||IsContained(false)||FindRecovery(monster,MonsterSpaces,monsterRecoverySpaces,player,OccupiedSpaces(true),out ignored));}
     bool RecoveryPathSafe(bool player,Vector2Int from,Vector2Int to){
         if(playerRecoverySpaces==0&&monsterRecoverySpaces==0)return true;
         int steps=System.Math.Max(System.Math.Abs(to.x-from.x),System.Math.Abs(to.y-from.y))*2;
@@ -101,7 +138,7 @@ public sealed partial class BattleMap
     {
         if(!Locked||spaces<1||spaces>4||recoverySpaces<1||recoverySpaces>4)return false;
         var body=player?Player:Monster;int oldSpaces=player?PlayerSpaces:MonsterSpaces;
-        var other=player?Monster:Player;int otherSpaces=player?MonsterSpaces:PlayerSpaces;
+        var other=player?Monster:Player;int otherSpaces=OccupiedSpaces(!player);
         Vector2Int mountedCell;if(player&&Riding&&spaces>=RiderMount.Spaces)return MountedSizeChange(spaces,out mountedCell);
         if(HasContainedCreature||!Inside(anchor,spaces)||!SummonFootprintClear(anchor,spaces,player?riderMountId:0)||!Overlap(anchor,spaces,body,oldSpaces)||Overlap(anchor,spaces,other,otherSpaces))return false;
         Vector2Int ignored;
@@ -124,14 +161,14 @@ public sealed partial class BattleMap
         if(HasContainedCreature)return false;
         int spaces=player?playerRecoverySpaces:monsterRecoverySpaces;if(spaces==0)return false;
         Vector2Int anchor;if(!FindRecoveryPlacement(player,out anchor))return false;
-        var other=player?Monster:Player;int otherSpaces=player?MonsterSpaces:PlayerSpaces;Vector2Int ignored;
+        var other=player?Monster:Player;int otherSpaces=OccupiedSpaces(!player);Vector2Int ignored;
         if(!FindRecovery(other,otherSpaces,player?monsterRecoverySpaces:playerRecoverySpaces,anchor,spaces,out ignored))return false;
         if(player){CommitMountedBody(spaces,ref anchor);Player=anchor;PlayerSpaces=spaces;playerRecoverySpaces=0;}
         else {Monster=anchor;MonsterSpaces=spaces;monsterRecoverySpaces=0;}
         SyncWaterPositions();
         MovementObserved?.Invoke(player?0:-1,observedFrom,anchor,observedSpaces,player?PlayerSpaces:MonsterSpaces,true);return true;
     }
-    public bool CanMoveTo(Vector2Int cell,bool tactical=false) => Locked&&VoluntaryMovementAllowed(0,cell)&&!Riding&&!ActorRestrained(true)&&!IsContained(true)&&cell!=Player&&MovementBudget(tactical)>0&&CanOccupyForMove(0,Player,cell,PlayerSpaces)&&RecoveryPathSafe(true,Player,cell)&&PlayerMovementCost(cell)<=MovementBudget(tactical)&&CreaturePathClear(0,Player,cell,PlayerSpaces);
+    public bool CanMoveTo(Vector2Int cell,bool tactical=false) => OnScene(0)&&Locked&&VoluntaryMovementAllowed(0,cell)&&!Riding&&!ActorRestrained(true)&&!IsContained(true)&&cell!=Player&&MovementBudget(tactical)>0&&CanOccupyForMove(0,Player,cell,PlayerSpaces)&&RecoveryPathSafe(true,Player,cell)&&PlayerMovementCost(cell)<=MovementBudget(tactical)&&CreaturePathClear(0,Player,cell,PlayerSpaces);
     public bool MovePlayer(Vector2Int cell,bool tactical=false) {
         if(!CanMoveTo(cell,tactical))return false;
         if(tactical)TacticalMovementRemaining-=PlayerMovementCost(cell);else {int cost=PlayerMovementCost(cell);MovementSpent+=cost;MovementRemaining-=cost;}
@@ -139,10 +176,10 @@ public sealed partial class BattleMap
     }
     public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&VoluntaryMovementAllowed(0,cell)&&!IsContained(true)&&Inside(cell,playerBodySpaces)&&SummonFootprintClear(cell,playerBodySpaces)&&!Overlap(cell,playerBodySpaces,Monster,OccupiedSpaces(false))&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
     public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;int old=PlayerSpaces;riderMountId=0;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,old,PlayerSpaces,true);return true;}
-    public bool CanMoveMonsterTo(Vector2Int cell) => Locked&&VoluntaryMovementAllowed(-1,cell)&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanOccupyForMove(-1,Monster,cell,MonsterSpaces)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&CreaturePathClear(-1,Monster,cell,MonsterSpaces);
+    public bool CanMoveMonsterTo(Vector2Int cell) =>OnScene(-1)&& Locked&&VoluntaryMovementAllowed(-1,cell)&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanOccupyForMove(-1,Monster,cell,MonsterSpaces)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&CreaturePathClear(-1,Monster,cell,MonsterSpaces);
     public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncWaterWalkRoute(-1,observedFrom,cell,MonsterSpaces);SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
     public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
-    public int DistanceFeet => HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
+    public int DistanceFeet => !SameScene(0,-1)?int.MaxValue:HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)
     {
         if(Locked||spaces<1||spaces>4)return false;
@@ -208,5 +245,5 @@ public sealed partial class BattleMap
         if(player)Player=cell;else Monster=cell;return true;
     }
     public bool Lock() {if(!CanPlace(true,Player)||!CanPlace(false,Monster))return false;Locked=true;RefreshMovement();StartMonsterMovementTurn();return true;}
-    public void Unlock(){consumedBodies.Clear();riderMountId=0;RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
+    public void Unlock(){ClearScenes();consumedBodies.Clear();riderMountId=0;RemoveRescue(true);PlayerAquatic.TrySetSubmerged(false,0,1);MonsterAquatic.TrySetSubmerged(false,0,1);ClearSummons();PlayerCrawling=false;ClearContainment();ClearRecoveryConstraints();Locked=false;TacticalMovementRemaining=0;MonsterMovementRemaining=30;}
 }

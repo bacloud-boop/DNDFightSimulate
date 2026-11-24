@@ -19,7 +19,7 @@ public sealed partial class TrainingGame
         var points=new List<double[]>();
         if(FaerieOutlined(0)&&!map.IsContained(true))AddFaeriePoints(points,map.IsCarried(true)?map.RescuePosition.Value:map.Player,map.IsCarried(true)?map.RescueSpaces:map.PlayerSpaces);
         if(FaerieOutlined(-1)&&!map.IsContained(false))AddFaeriePoints(points,map.IsCarried(false)?map.RescuePosition.Value:map.Monster,map.IsCarried(false)?map.RescueSpaces:map.MonsterSpaces);
-        foreach(var unit in map.Summons)if(FaerieOutlined(unit.Id))AddFaeriePoints(points,new Vector2Int(unit.X,unit.Y),unit.Spaces);
+        foreach(var unit in map.SceneSummons)if(FaerieOutlined(unit.Id))AddFaeriePoints(points,new Vector2Int(unit.X,unit.Y),unit.Spaces);
         if(map.RescuePosition.HasValue&&FaerieOutlined(BattleMap.RescueId))AddFaeriePoints(points,map.RescuePosition.Value,map.RescueSpaces);
         if(!vision.SetDimLightGroup(FaerieLightGroup,points,10,faerieFire.Slot,faerieFire.Expires,worldRounds)){
             EndFaerieFire();if(concentrationSpell=="妖火")EndConcentration("妖火的光照与黑暗术重叠，低环光照法术被驱散");
@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         var actors=new List<int>();if(!combat.PlayerDead&&!map.IsContained(true)&&!map.IsCarried(true)&&FaerieFireEffect.Intersects(anchor.x,anchor.y,map.Player.x,map.Player.y,map.PlayerSpaces))actors.Add(0);
         if(combat.Hp>0&&!map.IsContained(false)&&!map.IsCarried(false)&&FaerieFireEffect.Intersects(anchor.x,anchor.y,map.Monster.x,map.Monster.y,map.MonsterSpaces))actors.Add(-1);
-        foreach(var unit in map.Summons)if(unit.Alive&&FaerieFireEffect.Intersects(anchor.x,anchor.y,unit.X,unit.Y,unit.Spaces))actors.Add(unit.Id);
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&FaerieFireEffect.Intersects(anchor.x,anchor.y,unit.X,unit.Y,unit.Spaces))actors.Add(unit.Id);
         if(map.RescuePosition.HasValue&&!rescueCarrier.Dead&&FaerieFireEffect.Intersects(anchor.x,anchor.y,map.RescuePosition.Value.x,map.RescuePosition.Value.y,map.RescueSpaces))actors.Add(BattleMap.RescueId);
         foreach(int actor in actors){
             if(!faerieFire.Active(worldRounds))break;
@@ -54,6 +54,6 @@ public sealed partial class TrainingGame
         Color glow=activeFaerieColor==0?new Color(.2f,.5f,1,.3f):activeFaerieColor==1?new Color(.2f,1,.4f,.3f):new Color(.8f,.3f,1,.3f);
         if(FaerieOutlined(0)&&!map.IsContained(true)&&!map.IsCarried(true))Fill(BodyRect(board,map.Player,map.PlayerSpaces),glow);
         if(FaerieOutlined(-1)&&!map.IsContained(false)&&!map.IsCarried(false))Fill(BodyRect(board,map.Monster,map.MonsterSpaces),glow);
-        foreach(var unit in map.Summons)if(FaerieOutlined(unit.Id))Fill(BodyRect(board,new Vector2Int(unit.X,unit.Y),unit.Spaces),glow);
+        foreach(var unit in map.SceneSummons)if(FaerieOutlined(unit.Id))Fill(BodyRect(board,new Vector2Int(unit.X,unit.Y),unit.Spaces),glow);
     }
 }

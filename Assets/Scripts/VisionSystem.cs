@@ -8,6 +8,7 @@ public sealed partial class TrainingGame
     int PlayerDarkvision=>PlayerPolymorphed?Mathf.Max(vision.SpellRange(true,worldRounds),polymorph.Darkvision):IsWildShaped?Mathf.Max(vision.SpellRange(true,worldRounds),wildForm.darkvision):Mathf.Max(vision.Range(true,worldRounds),playerSpecies.Darkvision);
     int PlayerBlindsight=>PlayerPolymorphed?polymorph.Blindsight:IsWildShaped?wildForm.blindsight:0;
     int Visibility(bool viewerPlayer,bool targetPlayer){
+        if(!map.SameScene(viewerPlayer?0:-1,targetPlayer?0:-1))return 2;
         if(viewerPlayer==targetPlayer)return 0;
         int? snapshot=viewerPlayer?playerSightOverride:monsterSightOverride;if(snapshot.HasValue)return snapshot.Value;
         var from=viewerPlayer?map.Player:map.Monster;var target=targetPlayer?map.Player:map.Monster;return VisibilityBetween(viewerPlayer,from.x,from.y,viewerPlayer?map.PlayerSpaces:map.MonsterSpaces,target.x,target.y,targetPlayer?map.PlayerSpaces:map.MonsterSpaces,InvisibleWithFaerie(targetPlayer));
@@ -22,7 +23,7 @@ public sealed partial class TrainingGame
         if(!viewerPlayer&&combat.MonsterSleepStage==2)return 2;
         bool viewerBlinded=ActorBlinded(viewerPlayer?0:-1);
         for(int fy=0;fy<fromSize;fy++)for(int fx=0;fx<fromSize;fx++)for(int ty=0;ty<targetSize;ty++)for(int tx=0;tx<targetSize;tx++){
-            double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(SensoryAfflictions.BlocksSight(viewerBlinded,blind,distance))quality=2;if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
+            double ax=(fromX+fx)*5,ay=(fromY+fy)*5,bx=(targetX+tx)*5,by=(targetY+ty)*5,distance=VisionState.Distance(ax,ay,bx,by);bool trueSight=senses.TrueSight(viewerPlayer,worldRounds)&&System.Math.Round(distance)<=120;int quality=map.SceneOf(viewerPlayer?0:-1)>0?0:vision.Quality(ax,ay,bx,by,range,worldRounds,blind,trueSight);if(SensoryAfflictions.BlocksSight(viewerBlinded,blind,distance))quality=2;if(invisible&&!senses.RevealsInvisible(viewerPlayer,distance,worldRounds,blind))quality=2;best=Mathf.Min(best,quality);if(best==0)return 0;
         }return best;
     }
     bool OpportunitySight(bool movingPlayer,Vector2Int from,Vector2Int to,int reach,out int playerSight,out int monsterSight){
@@ -42,6 +43,7 @@ public sealed partial class TrainingGame
     }
     bool VisionInputValid(bool player,out int range)=>int.TryParse(player?playerVisionInput:monsterVisionInput,out range)&&range>=0;
     void DrawVisionMap(Rect board){
+        if(map.Scene!=0)return;
         for(int y=0;y<map.Size;y++)for(int x=0;x<map.Size;x++){
             if(vision.FogAt(x*5,y*5,worldRounds))Fill(CellRect(board,new Vector2Int(x,y)),new Color(.55f,.62f,.65f,.62f));
             int light=vision.Light(x*5,y*5,worldRounds);if(light>0)Fill(CellRect(board,new Vector2Int(x,y)),new Color(.025f,.025f,.07f,light==2?.63f:.26f));

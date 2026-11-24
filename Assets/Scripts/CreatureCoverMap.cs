@@ -5,7 +5,7 @@ public sealed partial class BattleMap
 {
     bool CoverBody(int id,out CreatureCover.Body body)
     {
-        if(!BodyPresent(id)){body=default(CreatureCover.Body);return false;}
+        if(!OnScene(id)){body=default(CreatureCover.Body);return false;}
         if(id==0){body=new CreatureCover.Body(Player.x,Player.y,PlayerSpaces);return !IsContained(true)&&!IsCarried(true);}
         if(id==-1){body=new CreatureCover.Body(Monster.x,Monster.y,MonsterSpaces);return !IsContained(false)&&!IsCarried(false);}
         if(id==RescueId&&RescuePosition.HasValue){var p=RescuePosition.Value;body=new CreatureCover.Body(p.x,p.y,RescueSpaces);return true;}
@@ -21,7 +21,7 @@ public sealed partial class BattleMap
         if(sourceId!=0&&targetId!=0&&sourceId!=riderMountId&&targetId!=riderMountId&&CoverBody(0,out body))bodies.Add(body);
         if(sourceId!=-1&&targetId!=-1&&CoverBody(-1,out body))bodies.Add(body);
         if(sourceId!=RescueId&&targetId!=RescueId&&CoverBody(RescueId,out body))bodies.Add(body);
-        foreach(var unit in summons)if(unit.Alive&&unit.Id!=sourceId&&unit.Id!=targetId&&!(unit.Id==riderMountId&&(sourceId==0||targetId==0)))bodies.Add(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces));
+        foreach(var unit in summons)if(unit.Alive&&OnScene(unit.Id)&&unit.Id!=sourceId&&unit.Id!=targetId&&!(unit.Id==riderMountId&&(sourceId==0||targetId==0)))bodies.Add(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces));
         foreach(var old in AllRemains())if(old.Id!=sourceId&&old.Id!=targetId&&RemainsSpaces(old)>0)bodies.Add(new CreatureCover.Body(old.X,old.Y,old.Spaces));
         return bodies;
     }

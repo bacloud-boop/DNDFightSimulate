@@ -6,7 +6,7 @@ public sealed partial class BattleMap
     public bool RescueCargoDragging {get;private set;}
     Vector2Int rescueCargoOffset;
     public bool IsCarried(bool player)=>RescueCargoId==(player?0:-1)&&!RescueCargoDragging;
-    bool CargoBody(int id,out Vector2Int body,out int spaces){if(!BodyPresent(id)){body=Vector2Int.zero;spaces=0;return false;}if(id==0){body=Player;spaces=PlayerSpaces;return true;}if(id==-1){body=Monster;spaces=MonsterSpaces;return true;}if(id==RescueId){body=RescuePosition??Vector2Int.zero;spaces=RescueSpaces;return RescuePosition.HasValue;}var old=Remains.Find(id);body=old==null?Vector2Int.zero:new Vector2Int(old.X,old.Y);spaces=old==null?0:old.Spaces;return old!=null;}
+    bool CargoBody(int id,out Vector2Int body,out int spaces){if(!OnScene(id)){body=Vector2Int.zero;spaces=0;return false;}if(id==0){body=Player;spaces=PlayerSpaces;return true;}if(id==-1){body=Monster;spaces=MonsterSpaces;return true;}if(id==RescueId){body=RescuePosition??Vector2Int.zero;spaces=RescueSpaces;return RescuePosition.HasValue;}var old=Remains.Find(id);body=old==null?Vector2Int.zero:new Vector2Int(old.X,old.Y);spaces=old==null?0:old.Spaces;return old!=null;}
     void SetCargoBody(int id,Vector2Int body){if(id==0)Player=body;else if(id==-1)Monster=body;else{var old=Remains.Find(id);if(old!=null){old.X=body.x;old.Y=body.y;}}}
     public bool CanAttachRescueCorpse(bool player)=>CanAttachRescueRemains(player?0:-1);
     public bool CanAttachRescueRemains(int id){Vector2Int body;int spaces;return id!=RescueId&&RescuePosition.HasValue&&!RescueCargoId.HasValue&&(id!=0&&id!=-1||!IsContained(id==0))&&CargoBody(id,out body,out spaces)&&BodyDistance(RescuePosition.Value,RescueSpaces,body,spaces)<=5;}
@@ -43,6 +43,6 @@ public sealed partial class BattleMap
         Vector2Int from;int spaces;if(!CargoBody(id,out from,out spaces))return false;var dragged=new Vector2Int(cell.x+rescueCargoOffset.x,cell.y+rescueCargoOffset.y);
         if(!CargoPlacement(id,dragged,spaces,cell,true)||CrossesRemains(from,dragged,spaces,id))return false;
         if(id!=0&&SegmentCrossesBody(from,dragged,spaces,Player,OccupiedSpaces(true))||id!=-1&&SegmentCrossesBody(from,dragged,spaces,Monster,OccupiedSpaces(false)))return false;
-        foreach(var unit in summons)if(unit.Alive&&SegmentCrossesBody(from,dragged,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;return true;
+        foreach(var unit in summons)if(unit.Alive&&OnScene(unit.Id)&&SegmentCrossesBody(from,dragged,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;return true;
     }
 }

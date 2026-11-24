@@ -34,7 +34,7 @@ public sealed partial class TrainingGame
             ContinualFlameEffect.Source source;
             while((source=continualFlame.Effective(target))!=null){
                 var item=equipmentObjects.Find(target);EquipmentPose pose;
-                if(!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(-source.Group);break;}
+                if(EquipmentScene(item)!=map.Scene||!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(-source.Group);break;}
                 if(vision.SetLightGroup(-source.Group,new[]{new[]{pose.X,pose.Y}},20,40,source.Slot,-1,worldRounds))break;
                 continualFlame.Remove(source.Group);vision.ClearLightGroup(-source.Group);history.Insert(0,"不灭明焰与黑暗术重叠，被驱散。");
             }
@@ -44,7 +44,7 @@ public sealed partial class TrainingGame
     {
         float step=board.width/map.Size;
         foreach(int target in continualFlame.Objects){var item=equipmentObjects.Find(target);EquipmentPose p;
-            if(!EquipmentObjectPose(item,out p)||item.Covered||p.Melded||p.Hidden)continue;
+            if(EquipmentScene(item)!=map.Scene||!EquipmentObjectPose(item,out p)||item.Covered||p.Melded||p.Hidden)continue;
             Fill(new Rect(board.x+((float)p.X/5+.5f)*step-5,board.y+((float)p.Y/5+.5f)*step-5,10,10),new Color(1,.62f,.12f));
         }
     }

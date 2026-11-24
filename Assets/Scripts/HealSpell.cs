@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
     {
         if(GUILayout.Button((healTarget==0?"✓ ":"")+"目标：玩家",button))healTarget=0;
         if(GUILayout.Button((healTarget==-1?"✓ ":"")+"目标：木桩",button))healTarget=-1;
-        foreach(var unit in map.Summons)if(unit.Alive&&GUILayout.Button((healTarget==unit.Id?"✓ ":"")+"目标："+unit.Name,button))healTarget=unit.Id;
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&GUILayout.Button((healTarget==unit.Id?"✓ ":"")+"目标："+unit.Name,button))healTarget=unit.Id;
         GUILayout.Label("固定恢复 "+HealRules.Amount(directSlotLevel)+" HP，不加施法调整值。解除目盲、耳聋和中毒；不解除麻痹、恐慌或睡眠昏迷。",small);
     }
     string HealSpellError()=>FixedHealingTargetError(healTarget);

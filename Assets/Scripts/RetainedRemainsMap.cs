@@ -6,7 +6,7 @@ public sealed partial class BattleMap
     public readonly RemainsArchive Remains=new RemainsArchive();
     RetainedRemains pendingRemains;
     IEnumerable<RetainedRemains> AllRemains(){foreach(var body in Remains.Bodies)yield return body;if(pendingRemains!=null)yield return pendingRemains;}
-    public int RemainsSpaces(RetainedRemains body)=>!BodyPresent(body.Id)||RescueCargoId==body.Id&&!RescueCargoDragging?0:body.Spaces;
+    public int RemainsSpaces(RetainedRemains body)=>!OnScene(body.Id)||RescueCargoId==body.Id&&!RescueCargoDragging?0:body.Spaces;
     bool RemainsFootprintClear(Vector2Int anchor,int spaces,int exceptId=0)
     {
         foreach(var body in AllRemains())if(body.Id!=exceptId&&Overlap(anchor,spaces,new Vector2Int(body.X,body.Y),RemainsSpaces(body)))return false;

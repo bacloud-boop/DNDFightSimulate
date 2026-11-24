@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     void DrawStarryChoices()
     {
         foreach(int id in new[]{0,-1})if(GUILayout.Button((starryTarget==id?"✓ ":"")+(id==0?"玩家（自身）":"木桩"),button))starryTarget=id;
-        foreach(var unit in map.Summons)if(unit.Alive&&GUILayout.Button((starryTarget==unit.Id?"✓ ":"")+unit.Name,button))starryTarget=unit.Id;
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&GUILayout.Button((starryTarget==unit.Id?"✓ ":"")+unit.Name,button))starryTarget=unit.Id;
         GUILayout.Label("命中后发出10尺微光，至施法者下个回合结束不能获得隐形收益；不额外给予攻击优势。物件攻击等待环境物件受损系统。",small);
     }
     void BindStarryWisp(int caster,int target)

@@ -9,6 +9,7 @@ public sealed partial class TrainingGame
     bool HeatDisadvantage(int actor)=>heatMetal.Disadvantage(actor,worldRounds);
     int HeatDistance(EquipmentPose pose)
     {
+        if(pose.Scene!=map.SceneOf(0))return int.MaxValue;
         double x=Math.Max(map.Player.x,Math.Min(map.Player.x+map.PlayerSpaces-1,pose.X/5)),y=Math.Max(map.Player.y,Math.Min(map.Player.y+map.PlayerSpaces-1,pose.Y/5));
         return (int)Math.Round(VisionState.Distance(x*5,y*5,pose.X,pose.Y));
     }

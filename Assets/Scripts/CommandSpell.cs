@@ -47,7 +47,7 @@ public sealed partial class TrainingGame
     List<int> MonsterCommandTargets(int slot)
     {
         var result=new List<int>();if(!Feigning(0)&&CommandTargetAllowed(-1,0))result.Add(0);
-        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)&&CommandTargetAllowed(-1,unit.Id))result.Add(unit.Id);
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&!Feigning(unit.Id)&&CommandTargetAllowed(-1,unit.Id))result.Add(unit.Id);
         result.Sort((a,b)=>{Vector2Int pa,pb;int na,nb;CommandBody(a,out pa,out na);CommandBody(b,out pb,out nb);int d=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,pa,na).CompareTo(BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,pb,nb));return d!=0?d:a.CompareTo(b);});
         int limit=CommandEffect.TargetLimit(slot);if(result.Count>limit)result.RemoveRange(limit,result.Count-limit);return result;
     }

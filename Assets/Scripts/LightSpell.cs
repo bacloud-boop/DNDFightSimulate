@@ -36,13 +36,13 @@ public sealed partial class TrainingGame
         if(vision.ConsumeDispelledLightGroup(ObjectLightGroup)){EndLightSpell("与黑暗术重叠，被驱散");return;}
         var item=equipmentObjects.Find(objectLight.ObjectId);EquipmentPose pose;
         if(!EquipmentObjectPose(item,out pose)){EndLightSpell("附着的装备已离场");return;}
-        if(item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(ObjectLightGroup);return;}
+        if(EquipmentScene(item)!=map.Scene||item.Covered||pose.Melded||pose.Hidden){vision.HideLightGroup(ObjectLightGroup);return;}
         if(!vision.SetLightGroup(ObjectLightGroup,new[]{new[]{pose.X,pose.Y}},20,40,0,objectLight.Expires,worldRounds))EndLightSpell("与黑暗术重叠，被驱散");
     }
     void DrawObjectLightMap(Rect board)
     {
         if(!objectLight.Active(worldRounds))return;var item=equipmentObjects.Find(objectLight.ObjectId);EquipmentPose pose;
-        if(!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden)return;
+        if(EquipmentScene(item)!=map.Scene||!EquipmentObjectPose(item,out pose)||item.Covered||pose.Melded||pose.Hidden)return;
         float step=board.width/map.Size;var point=new Rect(board.x+((float)pose.X/5+.5f)*step-7,board.y+((float)pose.Y/5+.5f)*step-7,14,14);
         Fill(point,new Color(objectLight.Red/255f,objectLight.Green/255f,objectLight.Blue/255f,.95f));
     }

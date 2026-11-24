@@ -7,7 +7,7 @@ public sealed partial class BattleMap
     public System.Action<bool> ContainmentEnded;
     public bool HasContainedCreature=>containedActor>=0;
     public bool IsContained(bool player)=>containedActor==(player?0:1);
-    public int OccupiedSpaces(bool player)=>!BodyPresent(player?0:-1)||IsContained(player)||IsCarried(player)?0:player?PlayerSpaces:MonsterSpaces;
+    public int OccupiedSpaces(bool player)=>!OnScene(player?0:-1)||IsContained(player)||IsCarried(player)?0:player?PlayerSpaces:MonsterSpaces;
     void SyncContainedPosition(){if(IsContained(true))Player=Monster;else if(IsContained(false))Monster=Player;SyncWaterPositions();}
     public bool BeginContainment(bool targetPlayer)
     {

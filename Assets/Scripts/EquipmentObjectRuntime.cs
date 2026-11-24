@@ -5,7 +5,7 @@ public sealed partial class TrainingGame
     readonly EquipmentObjectCatalog equipmentObjects=new EquipmentObjectCatalog();
     sealed class EquipmentPose
     {
-        public double X,Y;
+        public int Scene;public double X,Y;
         public int? Carrier,ScaleActor,InternalContainer;
         public bool Submerged,Melded,Hidden;
         public string Location;
@@ -43,7 +43,16 @@ public sealed partial class TrainingGame
         else {EquipmentCenter(pose,new Vector2Int(body.X,body.Y),body.Spaces);pose.Submerged=WeaponFallsInWater(new Vector2Int(body.X,body.Y),body.Spaces);pose.Location=body.Name+"上的装备";}
         return true;
     }
-    bool EquipmentObjectPose(EquipmentObjectRecord item,out EquipmentPose pose)
+    int EquipmentScene(EquipmentObjectRecord item)
+    {
+        if(item==null)return -1;if(item.Follower.HasValue)return map.SceneOf(item.Follower.Value);
+        if(item.Kind==EquipmentObjectKind.Weapon){if(item.Owner==-1&&monsterGroundWeapon.Dropped)return monsterGroundWeapon.Scene;
+            if(item.Owner==0){var weapon=carriedWeapons.Find(item.InventoryKey);if(weapon!=null){if(weapon.Location==WeaponLocation.Ground)return weapon.Ground.Scene;if(weapon.Location==WeaponLocation.Remains)return map.SceneOf(weapon.RemainsId);}}}
+        if(item.Place==EquipmentObjectPlace.Remains)return map.SceneOf(item.RemainsId);
+        return map.SceneOf(item.Place==EquipmentObjectPlace.Carried?item.Carrier:item.Owner);
+    }
+    bool EquipmentObjectPose(EquipmentObjectRecord item,out EquipmentPose pose){bool found=EquipmentObjectPoseCore(item,out pose);if(found)pose.Scene=EquipmentScene(item);return found;}
+    bool EquipmentObjectPoseCore(EquipmentObjectRecord item,out EquipmentPose pose)
     {
         pose=null;if(item==null)return false;
         if(item.Follower.HasValue)return UndeadEquipmentPose(item,out pose);
@@ -67,7 +76,7 @@ public sealed partial class TrainingGame
     }
     bool EquipmentInTouch(EquipmentPose pose)
     {
-        if(pose==null||pose.Melded)return false;
+        if(pose==null||pose.Scene<0||pose.Scene!=map.SceneOf(0)||pose.Melded)return false;
         if(pose.Carrier==0)return true;
         if(pose.InternalContainer.HasValue)return map.IsContained(true)&&pose.InternalContainer.Value==-1;
         if(map.IsContained(true))return false;

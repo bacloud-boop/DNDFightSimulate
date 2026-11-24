@@ -8,7 +8,7 @@ public sealed partial class TrainingGame
     SummonedUnit FindSummon(int id){foreach(var unit in map.Summons)if(unit.Id==id&&unit.Alive)return unit;return null;}
     bool SummonTarget(int id,out Vector2Int cell,out int spaces,out string name)
     {
-        cell=Vector2Int.zero;spaces=1;name="";
+        cell=Vector2Int.zero;spaces=1;name="";if(!map.OnScene(id))return false;
         if(id==0&&!combat.PlayerDead&&!map.IsContained(true)&&!map.IsCarried(true)){cell=map.Player;spaces=map.PlayerSpaces;name="玩家";return true;}
         if(id==-1&&combat.Hp>0&&!map.IsContained(false)&&!map.IsCarried(false)){cell=map.Monster;spaces=map.MonsterSpaces;name="木桩";return true;}
         var unit=FindSummon(id);if(unit==null)return false;cell=new Vector2Int(unit.X,unit.Y);spaces=unit.Spaces;name=unit.Name;return true;
@@ -17,12 +17,12 @@ public sealed partial class TrainingGame
         =>SpiritSeesAt(unit,id,unit.X,unit.Y,target.x,target.y,targetSpaces);
     bool SpiritSeesAt(SummonedUnit unit,int id,double fromX,double fromY,double targetX,double targetY,int targetSpaces)
     {
-        if(ActorBlinded(unit.Id)||unit.SleepStage==2)return false;
+        if(!map.SameScene(unit.Id,id)||ActorBlinded(unit.Id)||unit.SleepStage==2)return false;
         bool invisible=(id==0||id==-1)&&InvisibleWithFaerie(id==0);
         if(invisible)return false;
         for(int dy=0;dy<unit.Spaces;dy++)for(int dx=0;dx<unit.Spaces;dx++)
         for(int y=0;y<targetSpaces;y++)for(int x=0;x<targetSpaces;x++)
-            if(vision.Quality((fromX+dx)*5,(fromY+dy)*5,(targetX+x)*5,(targetY+y)*5,IsSteed(unit)?0:BestialSpiritRules.Darkvision,worldRounds,0,false)<2)return true;
+            if((map.SceneOf(unit.Id)>0?0:vision.Quality((fromX+dx)*5,(fromY+dy)*5,(targetX+x)*5,(targetY+y)*5,IsSteed(unit)?0:BestialSpiritRules.Darkvision,worldRounds,0,false))<2)return true;
         return false;
     }
     bool TargetSeesSpirit(int target,SummonedUnit attacker)
@@ -81,12 +81,12 @@ public sealed partial class TrainingGame
             }
             int continuing=steed!=null&&steed.TurnActive&&!ControlledSteed?steed.Id:0;
             var followers=new System.Collections.Generic.List<SummonedUnit>();
-            foreach(var follower in map.Summons){if(follower==steed&&ControlledSteed){follower.EndTurn();continue;}followers.Add(follower);}
+            foreach(var follower in map.Summons){if(follower==steed&&ControlledSteed&&!follower.Banished){follower.EndTurn();continue;}followers.Add(follower);}
             web.ExpireMissingSummonOwners(id=>FindSummon(id)!=null);SyncTimedBuffs();summonTurns.Begin(followers,combat.Round,combat.Aftermath,continuing);
             while(summonTurns.Active&&!combat.Aftermath&&!combat.BattleFinished){
                 var unit=summonTurns.Current;if(PendingTerrainCount>0)yield return DrainGreaseEntries();summonEndRequested=false;
                 var commanded=new CommandResolution();yield return FollowCommand(unit.Id,commanded);
-                if(NeutralUndead(unit.Id)||commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
+                if(unit.Banished||NeutralUndead(unit.Id)||commanded.Consumed||unit.FeignDeath&&!MovementFreedom(unit.Id)||unit.SleepStage==2)summonEndRequested=true;
                 else if(unit.FeignDeath){panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}
                 else if(unit.Orders.Kind!=SummonCommandKind.AssistCombat){unit.Dodge();history.Insert(0,unit.Name+"本回合闪避并尝试避险。");Vector2Int retreat;if(map.ChooseSummonRetreat(unit.Id,out retreat))yield return MoveSpiritWithReactions(unit,retreat);summonEndRequested=true;}
                 else {panel="summons";while(!summonEndRequested&&unit.Alive&&!combat.Aftermath&&!combat.BattleFinished)yield return null;}

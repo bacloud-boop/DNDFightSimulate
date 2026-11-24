@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
         DrawMassHealEntry(0,"玩家 · HP "+combat.PlayerHp+" / "+combat.PlayerMaxHp);
         DrawMassHealEntry(-1,"木桩 · HP "+combat.Hp+" / "+combat.MaxHp);
         var present=new HashSet<int>{0,-1};
-        foreach(var unit in map.Summons)if(unit.Alive){present.Add(unit.Id);DrawMassHealEntry(unit.Id,unit.Name+" · HP "+unit.Hp+" / "+unit.MaxHp);}
+        foreach(var unit in map.SceneSummons)if(unit.Alive){present.Add(unit.Id);DrawMassHealEntry(unit.Id,unit.Name+" · HP "+unit.Hp+" / "+unit.MaxHp);}
         foreach(int id in new List<int>(massHealAllocation.Keys))if(!present.Contains(id))DrawMassHealEntry(id,"已失效目标 #"+id+"（请清零）");
         int total;if(MassHealRules.ValidAllocation(massHealAllocation.Values,out total))GUILayout.Label("已分配 "+total+" / 700，未分配 "+(700-total),small);
         if(GUILayout.Button("清空分配",button))foreach(int id in new List<int>(massHealAllocation.Keys))massHealAllocation[id]="0";

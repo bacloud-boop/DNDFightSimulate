@@ -10,8 +10,8 @@ public sealed partial class BattleMap
     public IReadOnlyList<SummonedUnit> Summons=>summons.ToArray();
     public bool SummonFootprintClear(Vector2Int anchor,int spaces,int exceptId=0,int exceptRemains=0)
     {
-        if(exceptId!=RescueId&&BodyPresent(RescueId)&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
-        foreach(var unit in summons)if(unit.Alive&&unit.Id!=exceptId&&Overlap(anchor,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;
+        if(exceptId!=RescueId&&OnScene(RescueId)&&RescuePosition.HasValue&&Overlap(anchor,spaces,RescuePosition.Value,RescueSpaces))return false;
+        foreach(var unit in summons)if(unit.Alive&&OnScene(unit.Id)&&unit.Id!=exceptId&&Overlap(anchor,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return false;
         return RemainsFootprintClear(anchor,spaces,exceptRemains!=0?exceptRemains:exceptId);
     }
     public bool CanPlaceSummon(Vector2Int anchor,int spaces,int exceptId=0)=>spaces>=1&&spaces<=4&&Inside(anchor,spaces)&&SummonFootprintClear(anchor,spaces,exceptId)
@@ -21,7 +21,7 @@ public sealed partial class BattleMap
         if(!Locked||unit==null||!unit.Alive||!CanPlaceSummon(anchor,unit.Spaces))return false;
         foreach(var existing in summons)if(existing.Id==unit.Id)return false;
         int oldX=unit.X,oldY=unit.Y;
-        unit.X=anchor.x;unit.Y=anchor.y;summons.Add(unit);
+        unit.X=anchor.x;unit.Y=anchor.y;SetActorScene(unit.Id,Scene);summons.Add(unit);
         if(!RecoverySafe(Player,Monster)){summons.Remove(unit);unit.X=oldX;unit.Y=oldY;return false;}
         unit.TurnEnded=()=>ActorTurnEnded?.Invoke(unit.Id);unit.TurnStarted=()=>ActorTurnStarted?.Invoke(unit.Id);SummonAdded?.Invoke(unit);SyncWaterPositions();return true;
     }
@@ -30,13 +30,13 @@ public sealed partial class BattleMap
         if(!Locked||unit==null||!unit.Alive||!CanPlaceSummon(anchor,unit.Spaces))return false;
         foreach(var existing in summons)if(existing.Id==unit.Id)return false;
         int oldX=unit.X,oldY=unit.Y;
-        try{unit.X=anchor.x;unit.Y=anchor.y;summons.Add(unit);return RecoverySafe(Player,Monster);}
+        try{unit.X=anchor.x;unit.Y=anchor.y;SetActorScene(unit.Id,Scene);summons.Add(unit);return RecoverySafe(Player,Monster);}
         finally{summons.Remove(unit);unit.X=oldX;unit.Y=oldY;}
     }
     // The dummy cannot walk through the player's allied summons.
     bool CrossesEnemySummon(Vector2Int from,Vector2Int to,int spaces)
     {
-        foreach(var unit in summons)if(unit.Alive&&SegmentCrossesBody(from,to,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return true;
+        foreach(var unit in summons)if(unit.Alive&&OnScene(unit.Id)&&SegmentCrossesBody(from,to,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces))return true;
         return false;
     }
     public bool CanMoveSummon(int id,Vector2Int cell)
@@ -61,7 +61,7 @@ public sealed partial class BattleMap
     public bool ChooseSummonRetreat(int id,out Vector2Int destination)
     {
         destination=Vector2Int.zero;
-        foreach(var unit in summons)if(unit.Id==id&&unit.Alive&&unit.TurnActive){
+        foreach(var unit in summons)if(unit.Id==id&&unit.Alive&&OnScene(unit.Id)&&unit.TurnActive){
             var from=new Vector2Int(unit.X,unit.Y);destination=from;
             int bestDistance=BodyDistance(from,unit.Spaces,Monster,MonsterSpaces),bestCost=0;
             bool bestBreath=unit.Aquatic.CanBreathe(unit.BreathesAir,unit.BreathesWater,WaterCells(from,unit.Spaces));
@@ -87,8 +87,8 @@ public sealed partial class BattleMap
     public int NearestEnemyFrom(Vector2Int from,int spaces,bool playerAlive,int reachFeet,out int best)
     {
         int chosen=-1;best=int.MaxValue;
-        if(playerAlive&&EnemyAllowed(0)&&!IsContained(true)&&!IsCarried(true)){int distance=BodyDistance(from,spaces,Player,PlayerSpaces);if(distance<=reachFeet){chosen=0;best=distance;}}
-        foreach(var unit in summons){if(!unit.Alive||!EnemyAllowed(unit.Id))continue;int distance=BodyDistance(from,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);
+        if(playerAlive&&OnScene(0)&&EnemyAllowed(0)&&!IsContained(true)&&!IsCarried(true)){int distance=BodyDistance(from,spaces,Player,PlayerSpaces);if(distance<=reachFeet){chosen=0;best=distance;}}
+        foreach(var unit in summons){if(!unit.Alive||!OnScene(unit.Id)||!EnemyAllowed(unit.Id))continue;int distance=BodyDistance(from,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);
             if(distance<=reachFeet&&distance<best){chosen=unit.Id;best=distance;}
         }
         return chosen;

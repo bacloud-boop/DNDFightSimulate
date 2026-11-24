@@ -3,7 +3,7 @@ public sealed partial class TrainingGame
 {
     // All currently available rescue species breathe air. Surface state retains
     // the project's floating convention; Water Walk grants no underwater breath.
-    bool RescueCanBreathe=>!map.RescueAquatic.Submerged;
+    bool RescueCanBreathe=>map.SceneOf(BattleMap.RescueId)>0||!map.RescueAquatic.Submerged;
     void ObserveRescueBreathing()
     {
         if(!map.RescuePosition.HasValue||rescueCarrier.Dead)return;

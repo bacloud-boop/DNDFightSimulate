@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         if(spell.Healing)return -1;
         int target=-2,best=int.MaxValue;
         if(!Feigning(0)&&!combat.PlayerDead&&!map.IsContained(true)&&map.DistanceFeet<=spell.Range&&(!MonsterSpellNeedsSight(spell)||MonsterSeesPlayer)){target=0;best=map.DistanceFeet;}
-        foreach(var unit in map.Summons)if(unit.Alive&&!Feigning(unit.Id)&&!NeutralUndead(unit.Id)&&(spell.Name!="Melf’s Acid Arrow"||!AcidArrowIsolated(-1,unit.Id))){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&!Feigning(unit.Id)&&!NeutralUndead(unit.Id)&&(spell.Name!="Melf’s Acid Arrow"||!AcidArrowIsolated(-1,unit.Id))){int distance=BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(unit.X,unit.Y),unit.Spaces);if(distance<=spell.Range&&distance<best&&(!MonsterSpellNeedsSight(spell)||MonsterCanSeeTarget(unit.Id))){target=unit.Id;best=distance;}}
         return target;
     }
     IEnumerator TryMonsterTurnSpell(MonsterSpellTurn result)
@@ -100,7 +100,7 @@ public sealed partial class TrainingGame
             if(player)advantage=combat.ConsumeGuidingLight(true)||advantage;
             if(!spell.Melee){
                 if(combat.PlayerCanAct&&map.DistanceFeet<=5&&PlayerSeesMonster)disadvantage=true;
-                foreach(var ally in map.Summons)if(ally.Alive&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,-1,map.Monster,map.MonsterSpaces))disadvantage=true;
+                foreach(var ally in map.SceneSummons)if(ally.Alive&&BattleMap.BodyDistance(map.Monster,map.MonsterSpaces,new Vector2Int(ally.X,ally.Y),ally.Spaces)<=5&&SpiritSees(ally,-1,map.Monster,map.MonsterSpaces))disadvantage=true;
             }
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0,value=second==0?first:advantage?Mathf.Max(first,second):Mathf.Min(first,second);
             BreakOrdinaryInvisibility(false,"进行攻击检定");

@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
     {
         var targets=new List<int>();
         if((!planning||!Feigning(0))&&!combat.PlayerDead&&!map.IsContained(true)&&BattleMap.BodyDistance(center,spaces,map.Player,map.PlayerSpaces)<=radius&&(!sight||MonsterSeesPlayer))targets.Add(0);
-        foreach(var unit in map.Summons)if(unit.Alive&&(!planning||!Feigning(unit.Id)&&!NeutralUndead(unit.Id))&&BattleMap.BodyDistance(center,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius&&(!sight||MonsterCanSeeTarget(unit.Id)))targets.Add(unit.Id);
+        foreach(var unit in map.SceneSummons)if(unit.Alive&&(!planning||!Feigning(unit.Id)&&!NeutralUndead(unit.Id))&&BattleMap.BodyDistance(center,spaces,new Vector2Int(unit.X,unit.Y),unit.Spaces)<=radius&&(!sight||MonsterCanSeeTarget(unit.Id)))targets.Add(unit.Id);
         return targets;
     }
     bool TryPlanMonsterArea(DirectSpell spell,out Vector2Int center)
