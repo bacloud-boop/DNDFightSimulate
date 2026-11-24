@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
  readonly SpikeGrowthEffect spikeGrowth=new SpikeGrowthEffect();
  sealed class SpikeEntry {public int Actor;public int Count;}
  readonly Queue<SpikeEntry> spikeEntries=new Queue<SpikeEntry>();
- int PendingTerrainCount=>greaseEntries.Count+spikeEntries.Count+webEntries.Count+daggerEntries.Count+heroismEntries.Count+auraStarts.Count;
+ int PendingTerrainCount=>greaseEntries.Count+spikeEntries.Count+webEntries.Count+daggerEntries.Count+heroismEntries.Count+auraStarts.Count+startStatuses.Count;
  string SpikeGrowthError(){Vector2Int cell;if(!VisionPoint(out cell))return "荆棘中心必须位于地图内。";if(map.DistanceToCell(true,cell)>150)return "中心超出150尺。";return worldRounds<0||worldRounds>long.MaxValue-100?"世界时间超出范围。":"";}
  void DrawSpikeGrowthChoices(){GUILayout.Label("指定20尺半径球形地面区域的中心列／行；水面与潜水均受影响。每实际经过5尺掷2d4穿刺，不按移动力消耗计伤；跳跃与传送不计地面路程。",small);visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);}
  void ResolveSpikeGrowth(Vector2Int cell,int caster){spikeGrowth.Begin(cell.x,cell.y,8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),worldRounds);concentrationSpell="荆棘丛生";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+100;history.Insert(0,"荆棘丛生：地面困难地形，专注至多10分钟；出现与静止不造成伤害，经过每5尺分别掷2d4穿刺。木桩照常追击。");}

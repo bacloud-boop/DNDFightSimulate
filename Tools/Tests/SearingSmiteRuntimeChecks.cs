@@ -1,0 +1,71 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+namespace UnityEngine {
+ public struct Rect {public Rect(float a,float b,float c,float d){}}public struct Vector2 {}
+ public static class Random {public static int Range(int min,int max)=>max-1;}
+ public static class GUI {public static bool enabled=true;}
+ public static class GUILayout {
+  public static void BeginArea(Rect r){}public static void EndArea(){}public static void Label(string s,object style){}
+  public static Vector2 BeginScrollView(Vector2 p)=>p;public static void EndScrollView(){}public static bool Button(string text,object style)=>false;
+  public static int SelectionGrid(int selected,string[] options,int columns,object style)=>selected;
+ }
+}
+public static class AcidSplash {public static int Modifier(int score)=>(int)Math.Floor((score-10)/2.0);}
+public sealed partial class TrainingGame
+{
+ sealed class ClassStub {public int ProficiencyBonus=2;public int this[int id]=>id==9?1:0;}
+ sealed class CombatStub {public bool PlayerCanAct=true,BonusActionAvailable=true;public bool TryUseBonusAction(){if(!PlayerCanAct||!BonusActionAvailable)return false;BonusActionAvailable=false;return true;}}
+ sealed class TurnsStub {public bool Active=false;}sealed class SpellInterruption {public bool Cancelled;}
+ sealed class RayDamage {public int Amount;}
+ readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
+ sealed class GreaseEntry {public int Actor=0,Field=1;}
+readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
+readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();
+ readonly List<string> history=new List<string>();readonly int[] attributes={10,10,10,10,10,10};
+ bool CanCastInCurrentForm=true,voice=true,countered,saveSuccess,alive=true,preferFire,chooseOther;int terrainActor=0,spellCastSequence,chosenCast=1,damage,saveCalls,turnHp=5,outcomeDeferDepth;long worldRounds=0,terrainTurn=1;
+ object paperTexture=new object(),heading=new object(),label=new object(),small=new object(),button=new object();
+ bool ArmorSpellAllowed(string name)=>voice;bool SpellVoiceAllowed(bool player,string name)=>voice;int SpellAbilityIndex(int caster)=>5;
+ void Surface(Rect r,object style){}string TransitActorName(int actor)=>actor.ToString();void PlayerCastWhileSubmerged(string name){}
+ IEnumerator TryInterruptSpell(bool player,string name,SpellInterruption result){result.Cancelled=countered;yield break;}
+ IEnumerator PresentRoll(int sides,int[] values,string text){yield break;}
+ bool BanishLiving(int target)=>alive;
+ IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
+ int ApplyMappedDamagePacket(int target,int source,long[] raw){damage+=(int)raw[5];turnHp=Math.Max(0,turnHp-(int)raw[5]);return (int)raw[5];}
+ IEnumerator MaintainConcentration(int amount){yield break;}
+ IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability){if(damage==0)throw new Exception("save occurred before ongoing damage");saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
+ void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){}
+ int HealRegenerationTarget(int actor,int amount){turnHp+=amount;return amount;}void ApplySteedLifeBond(int actual,int level){}
+ bool rolling,greaseResolving,auraFirst=true,heroismFirst=true,terrainDaggersFirst=false;
+ readonly List<string> drainLog=new List<string>();
+ IEnumerator ChooseAuraVitalityOrder(){auraFirst=true;yield break;}IEnumerator ChooseHeroismStartOrder(){heroismFirst=true;yield break;}IEnumerator ChooseDaggersEntryOrder(){terrainDaggersFirst=false;yield break;}
+ IEnumerator ResolveAuraVitalityHealing(int value){drainLog.Add("aura");yield break;}IEnumerator ResolveHeroismStart(int value){drainLog.Add("heroism");yield break;}
+ IEnumerator ResolveDaggersEntry(int value){drainLog.Add("daggers");yield break;}IEnumerator ResolveSpikeEntry(int value){drainLog.Add("spike");yield break;}IEnumerator ResolveWebEntry(int value){drainLog.Add("web");yield break;}
+ IEnumerator ResolveGreaseSave(int actor,int field,string label){drainLog.Add("grease");yield break;}
+ static void C(bool v,string text){if(!v)throw new Exception(text);}
+ static void Run(TrainingGame g,IEnumerator routine){var stack=new Stack<IEnumerator>();stack.Push(routine);while(stack.Count>0){var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}if(top.Current is IEnumerator){stack.Push((IEnumerator)top.Current);continue;}
+   if(g.searingPromptPending)g.searingPromptChoice=g.chosenCast;
+   if(g.startStatusOrderPending){int fire=g.startStatuses.FindIndex(e=>e.Kind==1);g.startStatusChoice=g.chooseOther&&g.OtherTerrainCount>0?g.startStatuses.Count:g.preferFire&&fire>=0?fire:0;}
+  }}
+ public static void Main()
+ {
+  var g=new TrainingGame();g.searingSlot=3;var initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Fire==36&&!g.combat.BonusActionAvailable&&g.searingSmite.Pending(-1,0)[0].Dice==3&&g.spellCastSequence==1,"production on-hit offer pays bonus and doubles only initial dice");
+  g=new TrainingGame();g.chosenCast=2;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.Fire==0&&g.combat.BonusActionAvailable&&g.searingSmite.Pending(-1,0).Count==0,"declining leaves original weapon hit and bonus resource untouched");
+  g=new TrainingGame();g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.Fire==0&&!g.combat.BonusActionAvailable&&g.searingSmite.Pending(-1,0).Count==0,"counterspell consumes bonus but creates no fire or ongoing effect");
+  g=new TrainingGame();g.terrainActor=-1;Run(g,g.OfferSearingSmite(-1,false,new SmiteHitResult()));C(g.combat.BonusActionAvailable&&!g.searingPromptPending,"cannot use on another creature's turn even for an opportunity hit");
+  g.terrainActor=0;g.voice=false;Run(g,g.OfferSearingSmite(-1,false,new SmiteHitResult()));C(g.combat.BonusActionAvailable,"silence or unavailable casting blocks the offer");
+  g=new TrainingGame();g.searingSmite.Add(-1,1,10,0);g.searingSmite.Add(-1,3,12,0);Run(g,g.ResolveSearingStart(-1));C(g.damage==18&&g.saveCalls==2,"one strongest damage event then separate saves for all independent casts");
+  g.saveSuccess=true;Run(g,g.ResolveSearingStart(-1));C(g.searingSmite.Pending(-1,0).Count==0&&g.outcomeDeferDepth==0,"successful saves remove their own sources and outcome scope closes");
+  foreach(bool fireFirst in new[]{true,false}){
+   g=new TrainingGame();g.preferFire=fireFirst;g.regeneration.Begin(0,0);g.searingSmite.Add(0,1,10,0);g.startStatuses.Add(new StartStatus{Actor=0,Kind=0});g.QueueSearingStart(0);
+   while(g.startStatuses.Count>0){Run(g,g.ChooseStartStatusOrder());C(g.startStatusFirst,"without terrain an actual status must be selected");Run(g,g.ResolveStartStatus());}
+   C(g.turnHp==(fireFirst?1:0),"production turn-start order allows fire-before-regeneration or regeneration-before-fire");
+  }
+  g=new TrainingGame();g.startStatuses.Add(new StartStatus{Actor=0,Kind=0});g.greaseEntries.Enqueue(new GreaseEntry());g.chooseOther=true;Run(g,g.ChooseStartStatusOrder());C(!g.startStatusFirst&&g.startStatuses.Count==1&&g.greaseEntries.Count==1,"terrain-first choice preserves both queues for the shared dispatcher");
+  g=new TrainingGame();g.chooseOther=true;g.preferFire=true;g.regeneration.Begin(0,0);g.searingSmite.Add(0,1,10,0);g.startStatuses.Add(new StartStatus{Actor=0,Kind=0});g.QueueSearingStart(0);g.greaseEntries.Enqueue(new GreaseEntry());
+  Run(g,g.DrainGreaseEntries());C(g.drainLog.Count==1&&g.drainLog[0]=="grease"&&g.turnHp==1&&g.PendingTerrainCount==0&&!g.greaseResolving&&!g.rolling,"actual production terrain dispatcher integrates terrain-first then fire/regeneration without empty dequeue or stuck modal");
+  Run(g,g.DrainGreaseEntries());C(g.drainLog.Count==1&&g.turnHp==1,"repeated drain cannot duplicate consumed effects");
+  Console.WriteLine("PASS: production Searing Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
+ }
+}

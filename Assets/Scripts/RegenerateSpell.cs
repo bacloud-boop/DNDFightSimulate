@@ -70,7 +70,6 @@ public sealed partial class TrainingGame
     void RegenerationTurnStarts(int actor,long stamp)
     {
         if(!regeneration.StartTurn(actor,stamp,worldRounds))return;
-        int actual=HealRegenerationTarget(actor,1);if(actor==0)ApplySteedLifeBond(actual,7);
-        if(actual>0)history.Insert(0,"再生术："+TransitActorName(actor)+"回合开始恢复1HP。");
+        startStatuses.Add(new StartStatus{Actor=actor,Kind=0});
     }
 }

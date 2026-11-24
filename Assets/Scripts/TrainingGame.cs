@@ -146,6 +146,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string hitLabel=critical?"暴击（伤害骰数量翻倍）":"命中";
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
+        var searingHit=new SmiteHitResult();if(attackWeapon.IsMelee)yield return OfferSearingSmite(-1,critical,searingHit);
         int damageModifier=attackWeapon.DiceCount==0&&!trueStrike?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
         int damageSides=shillelaghAttack?ShillelaghEffect.Sides(classes.TotalLevel):attackWeapon.DiceSides;
         int damageCount=shillelaghAttack?ShillelaghEffect.Count(classes.TotalLevel,critical):attackWeapon.DiceCount*(critical?2:1);
@@ -158,6 +159,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+damageSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
         int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
         var sizedWeapon=new RayDamage();var rawWeapon=new long[weaponDamageByType.Length];for(int i=0;i<rawWeapon.Length;i++)rawWeapon[i]=weaponDamageByType[i];
+        rawWeapon[5]+=searingHit.Fire;
         yield return ApplySizeWeaponDamage(true,rawWeapon,DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType),critical,sizedWeapon);
         for(int i=0;i<weaponDamageByType.Length;i++)weaponDamageByType[i]=(int)sizedWeapon.Raw[i];
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
