@@ -26,6 +26,7 @@ public sealed partial class TrainingGame
  sealed class RayDamage {public int Amount;}
  sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public bool Shown=true,Contained;public Vector2Int? RescuePosition=null;public int RescueSpaces=1;public bool OnScene(int actor)=>Shown;public bool IsContained(bool player)=>Contained;public bool IsCarried(bool player)=>false;public bool Same=true;public bool SameScene(int a,int b)=>Same;public bool SceneBody(int a,out Vector2Int cell,out int n){cell=new Vector2Int(a==0?0:5,0);n=1;return true;}public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
  sealed class GreaseFieldStub {public long Dc=10;}sealed class EnfeeblementStub {public long Dc=10;}sealed class SaveAdjustment {public int Value=0;}sealed class RollStub {public int Value=20;public int[] Dice=new[]{20};}
+ readonly TurnBoundConditions turnConditions=new TurnBoundConditions();readonly FeignDeathEffect feignDeath=new FeignDeathEffect();
  readonly SensoryAfflictions sensory=new SensoryAfflictions();readonly AcidArrowResidue acidArrows=new AcidArrowResidue();readonly EnfeeblementStub enfeeblement=new EnfeeblementStub();
  bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption,endAcidFirst;long sensorySaveChoice;int sleepRepeatRound=1;string dice;
  List<WrathfulSmiteEffects.Entry> sensoryWrathOptions;WrathfulSmiteEffects.Entry wrathfulSaveSelected;List<AcidArrowResidue.Entry> sensoryAcidOptions;List<SensoryAffliction> sensorySaveOptions;
@@ -57,7 +58,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedDamagePacket(int target,int source,long[] raw){damage+=(int)raw[5];turnHp=Math.Max(0,turnHp-(int)raw[5]);return (int)raw[5];}
  IEnumerator MaintainConcentration(int amount){yield break;}
- IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability,bool avoidsFrightened=false){if(title!="雷鸣斩"&&!title.StartsWith("激愤斩")&&damage==0)throw new Exception("save occurred before ongoing damage");if(title.StartsWith("激愤斩")){C(avoidsFrightened,"fear saves must enable halfling Brave advantage");endLog.Add("fear:"+dc);}saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
+ IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability,bool avoidsFrightened=false){if(title!="雷鸣斩"&&!title.StartsWith("激愤斩")&&!title.StartsWith("致盲斩")&&damage==0)throw new Exception("save occurred before ongoing damage");if(title.StartsWith("致盲斩"))endLog.Add("blind:"+dc);if(title.StartsWith("激愤斩")){C(avoidsFrightened,"fear saves must enable halfling Brave advantage");endLog.Add("fear:"+dc);}saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
  void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){}
  int HealRegenerationTarget(int actor,int amount){turnHp+=amount;return amount;}void ApplySteedLifeBond(int actual,int level){}
  bool rolling,greaseResolving,auraFirst=true,heroismFirst=true,terrainDaggersFirst=false;
@@ -70,6 +71,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  static void Run(TrainingGame g,IEnumerator routine){var stack=new Stack<IEnumerator>();stack.Push(routine);while(stack.Count>0){var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}if(top.Current is IEnumerator){stack.Push((IEnumerator)top.Current);continue;}
    if(g.sensoryOrderPending){
     if(g.endAcidFirst&&g.sensoryAcidOptions.Count>0)g.sensorySaveChoice=-(g.sensoryAcidOptions[0].Id+6);
+    else if(g.blindingSaveOptions.Count>0){g.blindingSaveSelected=g.blindingSaveOptions[g.blindingSaveOptions.Count-1];g.sensorySaveChoice=BlindingSmiteSaveChoice;}
     else if(g.sensoryWrathOptions.Count>0){g.wrathfulSaveSelected=g.sensoryWrathOptions[g.sensoryWrathOptions.Count-1];g.sensorySaveChoice=-6;}
     else g.sensorySaveChoice=-(g.sensoryAcidOptions[0].Id+6);
    }
@@ -127,6 +129,17 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
   g=new TrainingGame();g.concentrationSpell="闪耀斩";g.BeginShiningSmite(-1,new SmiteHitResult{ShiningSlot=3});g.vision.AddZone(true,25,0,2,0);g.RefreshShiningSmite();C(g.ShiningOutlined(-1)&&g.vision.Light(25,0,0)==0,"third-level Shining Smite light survives and illuminates within Darkness");
   g=new TrainingGame();g.concentrationSpell="旧法术";g.smiteKind=4;g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.ShiningSlot==0&&initial.Radiant==0&&g.concentrationSpell==""&&g.endedConcentrations==1&&!g.combat.BonusActionAvailable,"countered Shining Smite still loses prior concentration and spends bonus but preserves original weapon hit");
   C(ShiningSmiteEffect.Dice(1)==0&&ShiningSmiteEffect.Dice(9,true)==18,"Shining Smite minimum slot and high-slot critical bound");
-  Console.WriteLine("PASS: production five on-hit smites, Shining light/reveal/concentration on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
+  g=new TrainingGame();g.smiteKind=5;g.searingSlot=3;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Radiant==48&&initial.Blinding&&initial.BlindingDc==10&&!g.combat.BonusActionAvailable,"third-slot Blinding Smite rolls six d8 on critical and snapshots DC");
+  g.ApplyBlindingSmiteHit(-1,initial);C(g.ActorBlinded(-1)&&g.saveCalls==0&&g.concentrationSpell=="","Blinding Smite applies blindness directly, without initial save or concentration");
+  g.blindingSmite.Add(false,true,12,0);g.saveSuccess=true;Run(g,g.RepeatSensorySaves(false));C(!g.ActorBlinded(-1)&&g.saveCalls==2&&g.endLog[0]=="blind:12"&&g.endLog[1]=="blind:10","actual turn-end dispatcher can choose individual blinding casts and clears each success independently");
+  g=new TrainingGame();g.ApplyBlindingSmiteHit(-1,new SmiteHitResult{Blinding=true,BlindingDc=10});g.saveSuccess=false;Run(g,g.RepeatSensorySaves(false));C(g.ActorBlinded(-1)&&g.saveCalls==1,"failed repeat save preserves blindness");g.worldRounds=10;C(!g.ActorBlinded(-1),"blindness expires at exactly one minute");
+  foreach(bool acidFirst in new[]{false,true}){
+   g=new TrainingGame();g.endAcidFirst=acidFirst;g.saveSuccess=true;g.blindingSmite.Add(false,true,11,0);g.wrathfulSmite.Add(-1,12,0);g.acidArrows.Add(0,-1,2);g.acidArrows.StartTurn(-1);Run(g,g.RepeatSensorySaves(false));
+   C(g.endLog.Count==3&&g.endLog[0]==(acidFirst?"acid:1":"blind:11")&&!g.sensoryOrderPending,"actual mixed end ordering keeps blind/fear/residue choices independent with no ID collision");
+  }
+  g=new TrainingGame();g.blindingSmite.Add(false,true,10,0);g.blindingSmite.Add(false,true,12,0);g.sensory.Add(false,true,13,0);g.sensory.Add(false,false,15,0);g.feignDeath.Cast(-1,0);g.turnConditions.Add(0,-1,0,0);int cleared=g.sensory.EndCondition(false,true,0)+g.EndAuxiliaryCondition(-1,0,0);C(cleared==5&&!g.ActorBlinded(-1)&&g.sensory.Deafened(false,0)&&g.feignDeath.Active(-1,0),"actual restoration hook clears all blinding sources and suppressed old casts while preserving deafness and remaining feign death");
+  g=new TrainingGame();g.smiteKind=5;g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));g.ApplyBlindingSmiteHit(-1,initial);C(initial.Radiant==0&&!g.ActorBlinded(-1)&&!g.combat.BonusActionAvailable,"countered Blinding Smite creates neither radiant damage nor blindness");
+  g=new TrainingGame();g.smiteKind=5;g.searingSlot=9;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.Radiant==72&&BlindingSmiteDice(2,false)==0,"upcast uses nine d8 and rejects below third slot");
+  Console.WriteLine("PASS: production six on-hit smites, Shining light/reveal/concentration on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
  }
 }

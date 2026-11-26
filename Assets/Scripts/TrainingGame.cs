@@ -173,7 +173,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
-        BeginShiningSmite(-1,searingHit);
+        ApplyBlindingSmiteHit(-1,searingHit);BeginShiningSmite(-1,searingHit);
         yield return ResolveThunderousSmiteHit(-1,searingHit);
         yield return ResolveWrathfulSmiteHit(-1,searingHit);
         CheckBattleOutcome();

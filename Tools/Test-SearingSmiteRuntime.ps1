@@ -22,9 +22,14 @@ foreach($method in @('FaerieOutlined','InvisibleWithFaerie','FaerieAdvantage')){
  if(!$part){throw 'Production visibility adapter not found'}
  $adapters+=$part
 }
+$conditionSource=Get-Content -LiteralPath Assets/Scripts/ColorSpraySpell.cs -Raw -Encoding utf8
+$conditionBegin=$conditionSource.IndexOf('    bool ActorBlinded(')
+$conditionEnd=$conditionSource.IndexOf('    string ColorSprayError()',$conditionBegin)
+if($conditionBegin -lt 0 -or $conditionEnd -lt 0){throw 'Production auxiliary condition methods not found'}
+$adapters+=$conditionSource.Substring($conditionBegin,$conditionEnd-$conditionBegin)
 $queueFile=Join-Path $env:TEMP 'DNDFight_SearingSmiteProductionQueue.cs'
 Set-Content -LiteralPath $queueFile -Encoding utf8 -Value ('using System.Collections; public sealed partial class TrainingGame {'+$count+$queueSource.Substring($queueBegin,$queueEnd-$queueBegin)+$endSource.Substring($endBegin,$endEnd-$endBegin)+$adapters+'}')
-& $mono $csc -nologo "-out:$out" Tools/Tests/SearingSmiteRuntimeChecks.cs Assets/Scripts/SearingSmiteEffects.cs Assets/Scripts/DivineSmiteRules.cs Assets/Scripts/ShiningSmiteEffect.cs Assets/Scripts/ShiningSmiteSpell.cs Assets/Scripts/VisionState.cs Assets/Scripts/FaerieFireEffect.cs Assets/Scripts/StarryWispEffect.cs Assets/Scripts/ThunderousSmiteSpell.cs Assets/Scripts/SensoryAfflictions.cs Assets/Scripts/AcidArrowResidue.cs Assets/Scripts/WrathfulSmiteEffects.cs Assets/Scripts/WrathfulSmiteSpell.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/SearingSmiteSpell.cs Assets/Scripts/StartStatusOrder.cs Assets/Scripts/RegenerationEffects.cs $queueFile
+& $mono $csc -nologo "-out:$out" Tools/Tests/SearingSmiteRuntimeChecks.cs Assets/Scripts/SearingSmiteEffects.cs Assets/Scripts/DivineSmiteRules.cs Assets/Scripts/ShiningSmiteEffect.cs Assets/Scripts/ShiningSmiteSpell.cs Assets/Scripts/VisionState.cs Assets/Scripts/FaerieFireEffect.cs Assets/Scripts/StarryWispEffect.cs Assets/Scripts/ThunderousSmiteSpell.cs Assets/Scripts/SensoryAfflictions.cs Assets/Scripts/BlindingSmiteSpell.cs Assets/Scripts/FeignDeathEffect.cs Assets/Scripts/TurnBoundConditions.cs Assets/Scripts/AcidArrowResidue.cs Assets/Scripts/WrathfulSmiteEffects.cs Assets/Scripts/WrathfulSmiteSpell.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/SearingSmiteSpell.cs Assets/Scripts/StartStatusOrder.cs Assets/Scripts/RegenerationEffects.cs $queueFile
 if($LASTEXITCODE -ne 0){throw 'Searing Smite runtime harness compile failed'}
 & $mono $out
 if($LASTEXITCODE -ne 0){throw 'Searing Smite runtime checks failed'}
