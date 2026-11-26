@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb"||name=="Control Water";
-    static bool AftermathLightSpell(string name)=>name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
+    static bool AftermathLightSpell(string name)=>name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -40,6 +40,7 @@ public sealed partial class TrainingGame
         if(witchBolt.Active(worldRounds)&&concentrationSpell=="巫术箭"&&GUILayout.Button("巫术箭放电（附赠动作）",button))selectedSpellName="Witch Bolt";
         if(VampiricTouchActive&&GUILayout.Button("使用现存吸血之触（魔法动作）",button))selectedSpellName="Vampiric Touch";
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
+        if(flameBlade.Active(worldRounds)&&GUILayout.Button("使用／重召焰刃",button))selectedSpellName="Flame Blade";
         if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
         if(heatMetal.Active(worldRounds)&&GUILayout.Button("再次加热灼热金属（附赠动作）",button))panel="heatMetal";
         if(cloudDaggers.Active(worldRounds)&&GUILayout.Button("传送现存匕首之云（魔法动作）",button))OpenCloudDaggersControl();
@@ -100,6 +101,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Flame Blade")DrawFlameBladeChoices();
         else if(definition.Name=="Chromatic Orb")DrawChromaticOrbChoices();
         else if(definition.Name=="Spiritual Weapon")DrawSpiritualWeaponChoices();
         else if(definition.Name=="Blinding Smite")GUILayout.Label("自身回合近战命中后选择致盲斩；三环3d8光耀，每升环＋1d8。目标直接目盲，回合末体质豁免成功结束；无需专注。不能直接从法术书施放。",small);
@@ -203,7 +205,7 @@ public sealed partial class TrainingGame
         if(!CanCastInCurrentForm)return PlayerPolymorphed?"变形术形态不能施法。":"荒野形态不能施法（德鲁伊18级解锁兽形施法）。";
         if(!SpellVoiceAllowed(true,spell.Name))return "单位中心位于沉默范围，不能进行声音施法。";
         if(MockeryTargetError(spell,directTargetPlayer)!="")return MockeryTargetError(spell,directTargetPlayer);
-        if(!ArmorSpellAllowed(spell.Name))return PlayerArmorUntrained?"未受训护甲使玩家不能施法。":"盾牌与武器占用双手，请先收起武器执行姿势成分。";
+        if(!ArmorSpellAllowed(spell.Name))return PlayerArmorUntrained?"未受训护甲使玩家不能施法。":"双手被武器／盾牌／焰刃占用，请先空出一只手执行姿势成分。";
         if(spell.Name=="True Strike"&&(weaponGrip.Stowed||WeaponHandError(selectedWeapon)!=""))return "克敌机先需要可使用的已持握武器。";
         if(spell.Bonus?!combat.BonusActionAvailable:!(aftermathLight?combat.AftermathMagicActionAvailable:combat.MagicActionAvailable))return "没有可用的"+(spell.Bonus?"附赠动作":"施法动作")+"。";
         if(spell.Name=="Shillelagh")return !directTargetPlayer?"橡棍术只作用于自身持有的武器。":ShillelaghError();
@@ -220,6 +222,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Flame Blade")return FlameBladeError();
         if(spell.Name=="Chromatic Orb")return ChromaticOrbError();
         if(spell.Name=="Spiritual Weapon")return SpiritualWeaponError();
         if(spell.Name=="Witch Bolt")return WitchBoltError();
@@ -334,6 +337,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        if(spell.Name=="Flame Blade"&&FlameBladeError()!="")yield break;
         int orbSelected=orbTarget,orbSelectedType=ChromaticOrbRules.Types[orbType];if(spell.Name=="Chromatic Orb"&&ChromaticOrbError()!="")yield break;
         Vector2Int spiritualPoint;SpiritualInput(out spiritualPoint);int spiritualSelected=spiritualTarget,spiritualSelectedHost=SpiritualCreationHost(spiritualPoint);bool spiritualSelectedAttack=spiritualAttack;if(spell.Name=="Spiritual Weapon"&&SpiritualWeaponError()!="")yield break;
         int witchSelected=witchTarget;if(spell.Name=="Witch Bolt"&&WitchBoltError()!="")yield break;
@@ -385,7 +389,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -411,6 +415,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Flame Blade"){CastFlameBlade(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Chromatic Orb"){yield return ResolveChromaticOrb(caster,slotLevel,orbSelected,orbSelectedType);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Spiritual Weapon"){yield return CastSpiritualWeapon(spiritualPoint,caster,slotLevel,spiritualSelected,spiritualSelectedAttack,spiritualSelectedHost);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Witch Bolt"){yield return CastWitchBolt(caster,slotLevel,witchSelected);if(!embedded)rolling=false;yield break;}

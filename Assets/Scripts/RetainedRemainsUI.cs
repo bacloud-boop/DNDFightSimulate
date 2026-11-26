@@ -29,12 +29,12 @@ public sealed partial class TrainingGame
             if(!map.BodyPresent(body.Id))continue;
             GUILayout.Space(10);GUILayout.Label(body.Name+" · 总重 "+WeightUnits.Format(body.Weight.TotalOunces),label);
             bool enabled=GUI.enabled;bool ready=page=="battle"&&!rolling&&!PlayerInBeastForm&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&RemainsLootReach(body);
-            GUI.enabled=enabled&&ready&&body.NonWeaponGearOunces>0&&(!PlayerHasShield||weaponGrip.Stowed);
+            GUI.enabled=enabled&&ready&&body.NonWeaponGearOunces>0&&PlayerFreeHand;
             if(GUILayout.Button("回收护甲、盾牌与其他装备 · "+WeightUnits.Format(body.NonWeaponGearOunces),button)){
                 if(body.RecoverGear(playerWeight.Weight,extra=>CarryingRules.CanCarryOunces(EffectivePlayerAbility(0),CarryingCreatureSize(true),playerWeight.Weight.GearOunces,extra),()=>weaponGrip.TryInteract(combat.Round,worldRounds,()=>combat.TryUseObjectAction()))){RefreshRemainsWeight(body);remainsMessage="装备已放入背包；没有改变当前穿戴与AC。";}else remainsMessage="回收失败：负重或物件交互额度不足。";
             }
             foreach(var item in carriedWeapons.Items.Where(i=>i.Location==WeaponLocation.Remains&&i.RemainsId==body.Id).ToArray()){
-                GUI.enabled=enabled&&ready&&weaponGrip.Stowed;
+                GUI.enabled=enabled&&ready&&weaponGrip.Stowed&&PlayerCanDrawOrdinaryWeapon;
                 if(GUILayout.Button("拾取 "+item.Key+" · "+WeightUnits.Format(item.WeightOunces),button)){
                     if(carriedWeapons.PickUpFromRemains(item.Key,body.Id,PlayerWeaponLoadFits,()=>weaponGrip.TryInteract(combat.Round,worldRounds,()=>combat.TryUseObjectAction()))){selectedWeapon=Weapon.Available.First(w=>w.InventoryKey==item.Key);weaponGrip.TrySetStowed(false,combat.Round,worldRounds,()=>true,true);RefreshRemainsWeight(body);SyncWeaponInventory();remainsMessage="已拾取 "+item.Key+"。";}else remainsMessage="拾取失败：负重或交互额度不足。";
                 }

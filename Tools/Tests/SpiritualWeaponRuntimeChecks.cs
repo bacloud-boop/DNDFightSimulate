@@ -34,9 +34,9 @@ public sealed partial class TrainingGame {
   public int CreatureCoverFromPoint(Vector2Int p,int target){PointCalls++;LastPoint=p;return 2;}
  }
  sealed class CombatStub {
-  public int Round=1,PlayerHp=100,PlayerArmorClass=10,MonsterArmorClass=10,MonsterProficiencyBonus=0,MonsterRevivalPenalty=0;public bool PlayerBanished=false;public bool BonusActionAvailable=true,PlayerCanAct=true,MonsterCanAct=true;
+  public int Round=1,PlayerHp=100,PlayerArmorClass=10,MonsterArmorClass=10,MonsterProficiencyBonus=0,MonsterRevivalPenalty=0;public bool PlayerDead=false,PlayerFeignDeath=false,MagicActionAvailable=true;public bool PlayerBanished=false;public bool BonusActionAvailable=true,PlayerCanAct=true,MonsterCanAct=true;
   public bool PlayerBlessed=false,MonsterBlessed=false,PlayerBaned=false,MonsterBaned=false,PlayerBladeWard=false,PlayerParalyzed=false,MonsterHelpless=false,PlayerProne=false,MonsterProne=false,PlayerPoisoned=false,MonsterPoisoned=false;
-  public bool TryUseBonusAction(){if(!BonusActionAvailable||!PlayerCanAct)return false;BonusActionAvailable=false;return true;}public bool ConsumeGuidingLight(bool player)=>false;
+  public bool TryUseMagicAction(){if(!MagicActionAvailable)return false;MagicActionAvailable=false;return true;}public bool TryUseAftermathBonusAction()=>TryUseBonusAction();public bool TryUseBonusAction(){if(!BonusActionAvailable||!PlayerCanAct)return false;BonusActionAvailable=false;return true;}public bool ConsumeGuidingLight(bool player)=>false;
  }
  sealed class ClassStub {public int ProficiencyBonus=2;public int this[int n]=>0;}sealed class FighterStub {public int Misses;public bool ConsumeAdvantage(int level)=>false;public void RecordMiss(int level){Misses++;}}
  sealed class TurnsStub {public bool Active=false;}sealed class MonsterSpellsStub {public int Ability=4;}sealed class BreathStub {public int D20Penalty=0;}

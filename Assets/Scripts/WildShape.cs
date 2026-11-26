@@ -71,7 +71,7 @@ public sealed partial class TrainingGame
         var reference=FormReferenceCell;bool wasRiding=map.Riding;Vector2Int anchor;if(!BeginSizedWildShape(form,out anchor,reference))return;
         if(wasRiding&&!map.Riding)reference=map.Player;
         wildNormalOffset=reference-anchor;wildForm=form;wildShapeEndsAt=worldRounds+DruidFeatures.DurationRounds(classes[11]);
-        RefreshShillelagh();
+        RefreshShillelagh();RefreshFlameBlade();
         combat.SetPlayerArmorOverride(form.armor);map.SetPlayerSpeed(form.walk);combat.GrantPlayerTemporaryHp(classes[11]);
         history.Insert(0,"荒野形态："+BeastAttack.Find(form.name).Chinese+"，消耗附赠动作与1次使用；获得"+classes[11]+"临时生命（不叠加），速度"+form.walk+"尺。武器融入形态。");
         panel="";dice="荒野形态 · "+BeastAttack.Find(form.name).Chinese;wildShapeMessage="";

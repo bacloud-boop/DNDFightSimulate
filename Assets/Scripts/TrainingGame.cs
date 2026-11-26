@@ -110,7 +110,7 @@ public sealed partial class TrainingGame : MonoBehaviour
     {
         rolling=true;logScroll=Vector2.zero;
         bool shillelaghAttack=shillelagh.Applies(attackWeapon.Name,worldRounds);
-        if(!ammunition.Fire(attackWeapon.Name,!PlayerHasShield)){dice="无法攻击：缺少装填所需的空手。";rolling=false;yield break;}
+        if(!ammunition.Fire(attackWeapon.Name,PlayerReloadHandFree)){dice="无法攻击：缺少装填所需的空手。";rolling=false;yield break;}
         bool forceWeapon=shillelaghAttack&&shillelaghForce;
         if(shillelaghAttack&&!trueStrike&&shillelaghUseCasting){abilityModifier=AcidSplash.Modifier(attributes[shillelagh.Ability]);abilityLabel=PlayerAttributes.Names[shillelagh.Ability]+"修正（橡棍术）";}
         proficiencyBonus+=PlayerAquaticD20Penalty;

@@ -22,11 +22,12 @@ public sealed partial class TrainingGame
  void DrawCarriedWeapons()
  {
   if(GUILayout.Button("物件体型与遮盖／揭开",button)&&!rolling)OpenEquipmentObjects("weapons");
+  if(FlameBladeHeld)GUILayout.Label("焰刃占用一只手；可在法术书中放开或使用。",small);
   GUILayout.Label("随身武器："+WeightUnits.Format(carriedWeapons.CarriedOunces)+"；场外武器不能在战斗中取用。",small);
   if(!combat.BattleStarted)foreach(var item in carriedWeapons.Items){bool current=item.Location==WeaponLocation.Carried;bool next=GUILayout.Toggle(current,item.Key+" · "+WeightUnits.Format(item.WeightOunces),label);if(next!=current&&!carriedWeapons.TrySetCarried(item.Key,next,PlayerWeaponLoadFits))dice="拒绝配置：携带武器后超过负重上限。";}
   foreach(var item in carriedWeapons.Items)if(item.Location==WeaponLocation.Ground&&item.FollowerId==0){
    bool old=GUI.enabled;bool near=item.Ground.Scene==map.SceneOf(0)&&(item.Ground.ContainedBy.HasValue?item.Ground.AccessibleFrom(WeaponContainer(true)):item.Ground.WithinReach(map.Player.x,map.Player.y,map.PlayerSpaces,WeaponContainer(true)))&&(!item.Ground.Submerged||map.PlayerAquatic.Submerged);
-   GUI.enabled=old&&!rolling&&near&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!PlayerInBeastForm&&weaponGrip.Stowed;
+   GUI.enabled=old&&!rolling&&near&&PlayerTurnAllowed&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!PlayerInBeastForm&&weaponGrip.Stowed&&PlayerCanDrawOrdinaryWeapon;
    if(GUILayout.Button("拾取 "+item.Key+(item.Ground.ContainedBy.HasValue?"（吞咽体内，需空手）":item.Ground.Submerged?"（水下，须潜水，5尺内）":"（5尺内，需空手）"),button)){
     if(carriedWeapons.PickUp(item.Key,PlayerWeaponLoadFits,()=>weaponGrip.TryInteract(combat.Round,worldRounds,()=>combat.TryUseObjectAction()),map.PlayerAquatic.Submerged,WeaponContainer(true))){selectedWeapon=Weapon.Available.First(w=>w.InventoryKey==item.Key);weaponGrip.TrySetStowed(false,combat.Round,worldRounds,()=>true,true);SyncWeaponInventory();history.Insert(0,"拾回 "+item.Key+"。");}else dice="拾取失败：负重或交互额度不足。";
    }GUI.enabled=old;

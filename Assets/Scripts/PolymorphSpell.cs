@@ -69,7 +69,7 @@ public sealed partial class TrainingGame
         else history.Insert(0,"变形术：目标自愿放弃感知豁免。");
         if(!polymorphFailSave&&value+modifier>=dc){history.Insert(0,"变形术：目标豁免成功。");yield break;}
         if(!map.TransformAt(player,BeastSpaces(form),polymorphAnchor,original)){history.Insert(0,"变形术：占地失效，未替换形态。");yield break;}
-        polymorph.Begin(player,form.name,worldRounds,form.armor,form.walk,form.darkvision,form.blindsight,BeastSpaces(form),form.abilities,form.saves,form.skillModifiers);
+        polymorph.Begin(player,form.name,worldRounds,form.armor,form.walk,form.darkvision,form.blindsight,BeastSpaces(form),form.abilities,form.saves,form.skillModifiers);if(player)RefreshFlameBlade();
         if(player)RefreshShillelagh();
         concentrationSpell="变形术";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+600;
         fighter.CancelAttackAction();actionWeapon=null;
