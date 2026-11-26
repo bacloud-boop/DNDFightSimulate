@@ -5,10 +5,10 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly SearingSmiteEffects searingSmite=new SearingSmiteEffects();
-    sealed class SmiteHitResult {public int Fire,Radiant;}
+    sealed class SmiteHitResult {public int Fire,Radiant,Thunder;public long ThunderDc;public bool ThunderPush;}
     bool searingPromptPending;int searingPromptChoice,searingSlot=1,smiteKind;
-    string OnHitSmiteName=>smiteKind==1?"Divine Smite":"Searing Smite";
-    bool SearingSmiteReady=>classes[9]>0&&terrainActor==0&&!summonTurns.Active&&combat.PlayerCanAct&&combat.BonusActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed(OnHitSmiteName)&&SpellVoiceAllowed(true,OnHitSmiteName)&&(smiteKind==1||searingSmite.CanAdd(worldRounds));
+    string OnHitSmiteName=>smiteKind==2?"Thunderous Smite":smiteKind==1?"Divine Smite":"Searing Smite";
+    bool SearingSmiteReady=>classes[9]>0&&terrainActor==0&&!summonTurns.Active&&combat.PlayerCanAct&&combat.BonusActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed(OnHitSmiteName)&&SpellVoiceAllowed(true,OnHitSmiteName)&&(smiteKind!=0||searingSmite.CanAdd(worldRounds));
     void DrawSearingSmiteInfo()
     {
         GUILayout.Label("仅在自身回合使用近战武器或徒手／自然攻击命中后，立即选择是否消耗附赠动作施放。不能直接从法术书施放。初始伤害并入该次命中，持续火焰每目标回合开始先伤害、后体质豁免，成功结束。",small);
@@ -17,8 +17,8 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(440,170,720,545),paperTexture);GUILayout.BeginArea(new Rect(470,200,660,485));
         GUILayout.Label("近战命中 · 选择斩击法术",heading);
-        smiteKind=GUILayout.SelectionGrid(smiteKind,new[]{"炽焰斩","神圣斩"},2,button);
-        GUILayout.Label(smiteKind==1?"神圣斩：一环2d8光耀，每升环＋1d8；目标为邪魔或亡灵另＋1d8，暴击翻倍所有附加骰。即时，不留下持续伤害。":"炽焰斩：初始每环1d6火焰（暴击翻倍），后续每目标回合开始每环1d6火焰，体质豁免成功结束。",label);
+        smiteKind=GUILayout.SelectionGrid(smiteKind,new[]{"炽焰斩","神圣斩","雷鸣斩"},3,button);
+        GUILayout.Label(smiteKind==2?"雷鸣斩：一环2d6雷鸣，每升环＋1d6；暴击翻倍。力量豁免失败推离10尺并倒地；遇阻停在最后合法位置。":smiteKind==1?"神圣斩：一环2d8光耀，每升环＋1d8；目标为邪魔或亡灵另＋1d8，暴击翻倍所有附加骰。即时，不留下持续伤害。":"炽焰斩：初始每环1d6火焰（暴击翻倍），后续每目标回合开始每环1d6火焰，体质豁免成功结束。",label);
         searingSlot=GUILayout.SelectionGrid(searingSlot-1,new[]{"1","2","3","4","5","6","7","8","9"},9,button)+1;
         if(GUILayout.Button("施放所选法术（附赠动作）",button))searingPromptChoice=1;
         if(GUILayout.Button("跳过，继续原攻击",button))searingPromptChoice=2;
@@ -32,7 +32,13 @@ public sealed partial class TrainingGame
         if(searingPromptChoice!=1||!SearingSmiteReady||!combat.TryUseBonusAction())yield break;
         int slot=searingSlot,kind=smiteKind;string spell=OnHitSmiteName;spellCastSequence++;PlayerCastWhileSubmerged(spell);
         var stopped=new SpellInterruption();yield return TryInterruptSpell(true,spell,stopped);
-        if(stopped.Cancelled){history.Insert(0,(kind==1?"神圣斩":"炽焰斩")+"被反制，附赠动作已消耗；原武器命中继续结算。");yield break;}
+        if(stopped.Cancelled){history.Insert(0,(kind==2?"雷鸣斩":kind==1?"神圣斩":"炽焰斩")+"被反制，附赠动作已消耗；原武器命中继续结算。");yield break;}
+        if(kind==2){
+            int thunderCount=ThunderousSmiteRules.Dice(slot,critical),thunderSum=0;var thunderRolls=new int[thunderCount];
+            for(int i=0;i<thunderCount;i++){thunderRolls[i]=UnityEngine.Random.Range(1,7);thunderSum+=thunderRolls[i];}
+            yield return PresentRoll(6,thunderRolls,"雷鸣斩："+thunderCount+"d6 = "+thunderSum+" 雷鸣，合并至本次命中；随后力量豁免");
+            result.Thunder=thunderSum;result.ThunderDc=8L+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(9)]);result.ThunderPush=true;yield break;
+        }
         if(kind==1){
             int divineCount=DivineSmiteRules.Dice(slot,BanishType(target),critical),divineSum=0;var divineRolls=new int[divineCount];
             for(int i=0;i<divineCount;i++){divineRolls[i]=UnityEngine.Random.Range(1,9);divineSum+=divineRolls[i];}

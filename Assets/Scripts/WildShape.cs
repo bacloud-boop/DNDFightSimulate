@@ -150,10 +150,11 @@ public sealed partial class TrainingGame
         if(count>0)yield return PresentRoll(attack.Sides,values,"野兽伤害骰 + 固定 "+attack.Fixed+(critical?"（暴击，伤害骰翻倍）":""));
         int poisonDamage=0;int extra=attack.ExtraCount*(critical?2:1);if(extra>0){int[] poison=new int[extra];for(int i=0;i<extra;i++){poison[i]=UnityEngine.Random.Range(1,attack.ExtraSides+1);poisonDamage+=poison[i];}yield return PresentRoll(attack.ExtraSides,poison,"额外毒素伤害骰");}
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
-        var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(attack.DamageType)]=Math.Max(0,damage);raw[5]+=searingHit.Fire;raw[11]+=searingHit.Radiant;raw[DamageTypes.Index("毒素")]+=poisonDamage;var sized=new RayDamage();yield return ApplySizeWeaponDamage(true,raw,DamageTypes.Index(attack.DamageType),critical,sized);raw=sized.Raw;if(markDamage.Raw>0)raw[mark.DamageType]+=markDamage.Raw;
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||searingHit.Fire>0||searingHit.Radiant>0||markDamage.Rolled||sizeChange.Applies(true)&&sizeChange.Delta>0,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
+        var raw=new long[DamageTypes.Names.Length];raw[DamageTypes.Index(attack.DamageType)]=Math.Max(0,damage);raw[5]+=searingHit.Fire;raw[11]+=searingHit.Radiant;raw[12]+=searingHit.Thunder;raw[DamageTypes.Index("毒素")]+=poisonDamage;var sized=new RayDamage();yield return ApplySizeWeaponDamage(true,raw,DamageTypes.Index(attack.DamageType),critical,sized);raw=sized.Raw;if(markDamage.Raw>0)raw[mark.DamageType]+=markDamage.Raw;
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||markDamage.Rolled||sizeChange.Applies(true)&&sizeChange.Delta>0,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
         if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:EffectiveCreatureSize(false)<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
+        yield return ResolveThunderousSmiteHit(-1,searingHit);
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;
     }
 }

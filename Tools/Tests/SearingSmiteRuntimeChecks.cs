@@ -19,6 +19,8 @@ public sealed partial class TrainingGame
  sealed class CombatStub {public bool PlayerCanAct=true,BonusActionAvailable=true;public bool TryUseBonusAction(){if(!PlayerCanAct||!BonusActionAvailable)return false;BonusActionAvailable=false;return true;}}
  sealed class TurnsStub {public bool Active=false;}sealed class SpellInterruption {public bool Cancelled;}
  sealed class RayDamage {public int Amount;}
+ sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
+ readonly MapStub map=new MapStub();bool knockedProne;void SetActorProne(int target){knockedProne=true;}void SyncTimedBuffs(){}
  readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
  sealed class GreaseEntry {public int Actor=0,Field=1;}
 readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
@@ -35,7 +37,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedDamagePacket(int target,int source,long[] raw){damage+=(int)raw[5];turnHp=Math.Max(0,turnHp-(int)raw[5]);return (int)raw[5];}
  IEnumerator MaintainConcentration(int amount){yield break;}
- IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability){if(damage==0)throw new Exception("save occurred before ongoing damage");saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
+ IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability){if(title!="雷鸣斩"&&damage==0)throw new Exception("save occurred before ongoing damage");saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
  void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){}
  int HealRegenerationTarget(int actor,int amount){turnHp+=amount;return amount;}void ApplySteedLifeBond(int actual,int level){}
  bool rolling,greaseResolving,auraFirst=true,heroismFirst=true,terrainDaggersFirst=false;
@@ -70,6 +72,12 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
   g=new TrainingGame();g.smiteKind=1;g.searingSlot=1;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.Fire==0&&initial.Radiant==16&&!g.combat.BonusActionAvailable&&g.searingSmite.Pending(-1,0).Count==0,"Divine Smite shares the on-hit window but creates only radiant damage and no ongoing fire");
   g=new TrainingGame();g.smiteKind=1;g.searingSlot=3;g.creatureType=13;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Radiant==80&&initial.Fire==0,"third-slot Divine Smite against undead doubles all five d8 to ten on critical");
   for(int slot=1;slot<=9;slot++)foreach(int type in new[]{0,7,9,13})C(DivineSmiteRules.Dice(slot,type)==slot+1+(type==7||type==13?1:0),"Divine Smite slot scaling and exact fiend/undead bonus");
-  Console.WriteLine("PASS: production Searing Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
+  g=new TrainingGame();g.smiteKind=2;g.searingSlot=3;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Thunder==48&&initial.ThunderDc==10&&initial.ThunderPush&&initial.Fire==0&&initial.Radiant==0&&!g.combat.BonusActionAvailable,"Thunderous Smite merges critical upcast thunder and snapshots save DC without creating ongoing fire");
+  g.map.Limit=5;Run(g,g.ResolveThunderousSmiteHit(-1,initial));C(g.map.PushCalls==1&&g.knockedProne,"failed Strength save pushes only legal distance but knocks prone even when blocked");
+  g=new TrainingGame();g.saveSuccess=true;initial=new SmiteHitResult{Thunder=12,ThunderDc=10,ThunderPush=true};Run(g,g.ResolveThunderousSmiteHit(-1,initial));C(g.map.PushCalls==0&&!g.knockedProne&&initial.Thunder==12,"successful Strength save prevents movement/prone but does not halve extra damage");
+  g=new TrainingGame();g.alive=false;Run(g,g.ResolveThunderousSmiteHit(-1,initial));C(g.saveCalls==0&&g.map.PushCalls==0,"dead target does not roll or move after combined weapon damage");
+  g=new TrainingGame();g.smiteKind=2;g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(!initial.ThunderPush&&initial.Thunder==0&&!g.combat.BonusActionAvailable,"countered Thunderous Smite creates neither extra damage nor a push while consuming the bonus");
+  for(int slot=1;slot<=9;slot++)C(ThunderousSmiteRules.Dice(slot,true)==2*(slot+1),"Thunderous Smite exact upcast and critical dice");
+  Console.WriteLine("PASS: production Searing/Divine/Thunderous Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
  }
 }

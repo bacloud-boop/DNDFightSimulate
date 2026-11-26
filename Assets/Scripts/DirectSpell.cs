@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Thunderous Smite","雷鸣斩","附赠动作 · 自身回合近战武器或徒手／自然攻击命中后立即选择 · 声音。此次命中额外2d6雷鸣，每升环＋1d6，暴击翻倍。目标力量豁免失败推离10尺并倒地，成功不影响附加伤害；300尺声响保留说明。即时，无需专注。",1,0,6,bonus:true),
         new DirectSpell("Divine Smite","神圣斩","附赠动作 · 自身回合的近战武器或徒手／自然攻击命中后立即选择 · 声音。此次攻击额外2d8光耀，每升环增加1d8；目标为邪魔或亡灵再增加1d8。所有附加骰均受暴击翻倍；即时生效，无需专注。",1,0,8,bonus:true),
         new DirectSpell("Searing Smite","炽焰斩","附赠动作 · 在自身回合用近战武器或徒手／自然攻击命中后立即选择 · 声音。此次命中额外1d6火焰；之后每目标回合开始先受1d6火焰，再进行体质豁免，成功结束。每升环初始与持续伤害各增加1d6；暴击仅翻倍初始附加骰。",1,0,6,bonus:true),
         new DirectSpell("Witch Bolt","巫术箭","1动作 · 60尺 · 声音、姿势。远程法术攻击命中2d12闪电，每升环初始伤害增加1d12。无论初始未命中或被镜像拦截，后续自身回合均可用附赠动作自动造成1d12闪电；后续伤害不升环、不暴击。距离超过60尺、形成全身掩护或专注结束时断开绑定。",1,60,12,attack:true,damageType:"闪电",baseDice:2,upcastDice:1),
