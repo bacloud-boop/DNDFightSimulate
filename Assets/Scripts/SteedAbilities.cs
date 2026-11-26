@@ -9,12 +9,14 @@ public sealed partial class TrainingGame
     bool FearDisadvantage(bool player)=>FearDisadvantage(player?0:-1);
     bool FearDisadvantage(int id)
     {
+        if(WrathfulFearVisible(id))return true;
         if(!SteedFear(id))return false;
         if(id==0||id==-1){var p=id==0?map.Player:map.Monster;return VisibilityBetween(id==0,p.x,p.y,id==0?map.PlayerSpaces:map.MonsterSpaces,steed.X,steed.Y,steed.Spaces)<2;}
         var unit=FindSummon(id);return unit!=null&&SpiritSees(unit,steed.Id,new Vector2Int(steed.X,steed.Y),steed.Spaces);
     }
     bool FearAllowsMovement(int id,Vector2Int cell)
     {
+        if(!WrathfulMovementAllowed(id,cell))return false;
         if(!SteedFear(id))return true;
         Vector2Int from;int spaces;string name;if(!SummonTarget(id,out from,out spaces,out name))return false;
         var source=new Vector2Int(steed.X,steed.Y);int start=BattleMap.BodyDistance(from,spaces,source,steed.Spaces);

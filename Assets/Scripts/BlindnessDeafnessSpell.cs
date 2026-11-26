@@ -6,6 +6,7 @@ public sealed partial class TrainingGame
     int blindnessPlayerMode,blindnessMonsterMode;
     bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption;
     long sensorySaveChoice;
+    System.Collections.Generic.List<WrathfulSmiteEffects.Entry> sensoryWrathOptions;WrathfulSmiteEffects.Entry wrathfulSaveSelected;
     System.Collections.Generic.List<SensoryAffliction> sensorySaveOptions;
     System.Collections.Generic.List<AcidArrowResidue.Entry> sensoryAcidOptions;
     Vector2 sensorySaveScroll;
@@ -56,6 +57,7 @@ public sealed partial class TrainingGame
         if(sensorySphereOption&&GUILayout.Button("炽焰法球 · 回合末敏捷豁免与火焰伤害",button))sensorySaveChoice=-5;
         if(sensoryDaggersOption&&GUILayout.Button("匕首之云 · 回合末挥砍伤害",button))sensorySaveChoice=-4;
         if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
+        foreach(var effect in sensoryWrathOptions)if(GUILayout.Button("激愤斩 #"+effect.Id+" · 感知豁免 · DC "+effect.Dc,button)){wrathfulSaveSelected=effect;sensorySaveChoice=-6;}
         foreach(var entry in sensoryAcidOptions)if(GUILayout.Button(entry.Title+"残留 #"+entry.Id+" · "+entry.Dice+"d4强酸",button))sensorySaveChoice=-(entry.Id+6);
         foreach(var effect in sensorySaveOptions)if(GUILayout.Button("#"+effect.Id+" · "+(effect.Blind?"目盲":"耳聋")+" · DC "+effect.Dc+" · 剩余"+(effect.Expires-worldRounds)+"回合",button))sensorySaveChoice=effect.Id;
         GUILayout.EndScrollView();GUILayout.EndArea();
@@ -65,13 +67,15 @@ public sealed partial class TrainingGame
         if(PendingTerrainCount>0)yield return DrainGreaseEntries();
         if(player?combat.PlayerDead:combat.Hp==0)yield break;
         bool sleepPending=!player&&combat.MonsterSleepStage==1&&combat.Round>=sleepRepeatRound;
-        var arrows=acidArrows.Pending(player?0:-1);
+        var arrows=acidArrows.Pending(player?0:-1);var wrath=wrathfulSmite.Pending(player?0:-1,worldRounds);
         bool spherePending=SphereEndAvailable(player?0:-1);bool daggersPending=DaggersEndAvailable(player?0:-1);var pending=sensory.Pending(player,worldRounds);bool rayPending=RayWeakened(player);var greasePending=ActorGrease(player?0:-1);
-        while(pending.Count>0||rayPending||greasePending!=null||sleepPending||daggersPending||spherePending||arrows.Count>0){
+        while(pending.Count>0||rayPending||greasePending!=null||sleepPending||daggersPending||spherePending||arrows.Count>0||wrath.Count>0){
             if(player?combat.PlayerDead:combat.Hp==0)yield break;
-            long choice=pending.Count>0?pending[0].Id:rayPending?-1:greasePending!=null?-2:sleepPending?-3:daggersPending?-4:spherePending?-5:-(arrows[0].Id+6);
-            if(pending.Count+(rayPending?1:0)+(greasePending!=null?1:0)+(sleepPending?1:0)+(daggersPending?1:0)+(spherePending?1:0)+arrows.Count>1){sensoryAcidOptions=arrows;sensorySphereOption=spherePending;sensoryDaggersOption=daggersPending;sensorySaveOptions=pending;sensoryRayOption=rayPending;sensoryGreaseOption=greasePending!=null;sensorySleepOption=sleepPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
+            long choice=pending.Count>0?pending[0].Id:rayPending?-1:greasePending!=null?-2:sleepPending?-3:daggersPending?-4:spherePending?-5:arrows.Count>0?-(arrows[0].Id+6):-6;
+            wrathfulSaveSelected=wrath.Count>0?wrath[0]:null;
+            if(pending.Count+(rayPending?1:0)+(greasePending!=null?1:0)+(sleepPending?1:0)+(daggersPending?1:0)+(spherePending?1:0)+arrows.Count+wrath.Count>1){sensoryWrathOptions=wrath;sensoryAcidOptions=arrows;sensorySphereOption=spherePending;sensoryDaggersOption=daggersPending;sensorySaveOptions=pending;sensoryRayOption=rayPending;sensoryGreaseOption=greasePending!=null;sensorySleepOption=sleepPending;sensorySavePlayer=player;sensorySaveChoice=0;sensoryOrderPending=true;while(sensorySaveChoice==0)yield return null;sensoryOrderPending=false;choice=sensorySaveChoice;}
             if(choice<=-7){var entry=arrows.Find(e=>e.Id==-choice-6);arrows.Remove(entry);if(entry!=null)yield return ResolveAcidArrowResidue(entry);continue;}
+            if(choice==-6){var wrathEffect=wrathfulSaveSelected;wrath.Remove(wrathEffect);yield return RepeatWrathfulSave(wrathEffect);continue;}
             if(choice==-5){spherePending=false;yield return EndFlamingSphereTurn(player?0:-1);continue;}
             if(choice==-4){daggersPending=false;yield return EndDaggersTurn(player?0:-1);continue;}
             if(choice==-3){sleepPending=false;yield return RepeatSleepSave();continue;}

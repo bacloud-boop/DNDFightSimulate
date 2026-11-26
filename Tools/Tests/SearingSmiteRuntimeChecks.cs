@@ -12,14 +12,29 @@ namespace UnityEngine {
   public static int SelectionGrid(int selected,string[] options,int columns,object style)=>selected;
  }
 }
-public static class AcidSplash {public static int Modifier(int score)=>(int)Math.Floor((score-10)/2.0);}
+public static class BattleMap {
+ public static int BodyDistance(Vector2Int a,int n,Vector2Int b,int m)=>Math.Max(0,Math.Abs(a.x-b.x)-Math.Max(n,m)+1)*5;
+ public static List<Vector2Int> MovementAnchors(Vector2Int a,Vector2Int b)=>new List<Vector2Int>{b};
+}
+public static class PlayerAttributes {public static readonly string[] Names={"力量","敏捷","体质","感知","智力","魅力"};}
+public static class AcidSplash {public static readonly string[] Names={"力量","敏捷","体质","感知","智力","魅力"};public static int Modifier(int score)=>(int)Math.Floor((score-10)/2.0);}
 public sealed partial class TrainingGame
 {
  sealed class ClassStub {public int ProficiencyBonus=2;public int this[int id]=>id==9?1:0;}
- sealed class CombatStub {public bool PlayerCanAct=true,BonusActionAvailable=true;public bool TryUseBonusAction(){if(!PlayerCanAct||!BonusActionAvailable)return false;BonusActionAvailable=false;return true;}}
+ sealed class CombatStub {public int Hp=10,Round=1,MonsterSleepStage=0;public bool PlayerDead=false;public bool PlayerCanAct=true,BonusActionAvailable=true;public bool TryUseBonusAction(){if(!PlayerCanAct||!BonusActionAvailable)return false;BonusActionAvailable=false;return true;}}
  sealed class TurnsStub {public bool Active=false;}sealed class SpellInterruption {public bool Cancelled;}
  sealed class RayDamage {public int Amount;}
- sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
+ sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public bool Same=true;public bool SameScene(int a,int b)=>Same;public bool SceneBody(int a,out Vector2Int cell,out int n){cell=new Vector2Int(a==0?0:5,0);n=1;return true;}public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
+ sealed class GreaseFieldStub {public long Dc=10;}sealed class EnfeeblementStub {public long Dc=10;}sealed class SaveAdjustment {public int Value=0;}sealed class RollStub {public int Value=20;public int[] Dice=new[]{20};}
+ readonly SensoryAfflictions sensory=new SensoryAfflictions();readonly AcidArrowResidue acidArrows=new AcidArrowResidue();readonly EnfeeblementStub enfeeblement=new EnfeeblementStub();
+ bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption,endAcidFirst;long sensorySaveChoice;int sleepRepeatRound=1;string dice;
+ List<WrathfulSmiteEffects.Entry> sensoryWrathOptions;WrathfulSmiteEffects.Entry wrathfulSaveSelected;List<AcidArrowResidue.Entry> sensoryAcidOptions;List<SensoryAffliction> sensorySaveOptions;
+ readonly List<string> endLog=new List<string>();
+ GreaseFieldStub ActorGrease(int actor)=>null;bool RayWeakened(bool player)=>false;bool SphereEndAvailable(int actor)=>false;bool DaggersEndAvailable(int actor)=>false;
+ IEnumerator ResolveGreaseSave(int actor,GreaseFieldStub field,string context){yield break;}IEnumerator EndFlamingSphereTurn(int actor){yield break;}IEnumerator EndDaggersTurn(int actor){yield break;}IEnumerator RepeatSleepSave(){yield break;}IEnumerator RepeatEnfeeblementSave(bool player){yield break;}
+ IEnumerator ResolveAcidArrowResidue(AcidArrowResidue.Entry e){C(acidArrows.Take(e.Id),"residue claimed once");endLog.Add("acid:"+e.Id);yield break;}
+ RollStub RollD20Test(bool player,int ability)=>new RollStub();int PlayerSavingThrowModifier(int ability)=>0;int MonsterSavingThrowModifier(int ability)=>0;
+ IEnumerator ApplySaveAdjustments(bool player,bool automatic,SaveAdjustment result){yield break;}
  readonly MapStub map=new MapStub();bool knockedProne;void SetActorProne(int target){knockedProne=true;}void SyncTimedBuffs(){}
  readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
  sealed class GreaseEntry {public int Actor=0,Field=1;}
@@ -28,6 +43,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  readonly List<string> history=new List<string>();readonly int[] attributes={10,10,10,10,10,10};
  bool CanCastInCurrentForm=true,voice=true,countered,saveSuccess,alive=true,preferFire,chooseOther;int terrainActor=0,spellCastSequence,chosenCast=1,damage,saveCalls,turnHp=5,outcomeDeferDepth;long worldRounds=0,terrainTurn=1;
  object paperTexture=new object(),heading=new object(),label=new object(),small=new object(),button=new object();
+ bool heroImmune,sourceVisible=true;bool HeroismImmune(int target)=>heroImmune;bool SteedFear(int target)=>false;bool ConjuredTargetVisible(bool player,int actor)=>sourceVisible;
  bool ArmorSpellAllowed(string name)=>voice;bool SpellVoiceAllowed(bool player,string name)=>voice;int SpellAbilityIndex(int caster)=>5;
  void Surface(Rect r,object style){}string TransitActorName(int actor)=>actor.ToString();void PlayerCastWhileSubmerged(string name){}
  IEnumerator TryInterruptSpell(bool player,string name,SpellInterruption result){result.Cancelled=countered;yield break;}
@@ -37,7 +53,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedDamagePacket(int target,int source,long[] raw){damage+=(int)raw[5];turnHp=Math.Max(0,turnHp-(int)raw[5]);return (int)raw[5];}
  IEnumerator MaintainConcentration(int amount){yield break;}
- IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability){if(title!="雷鸣斩"&&damage==0)throw new Exception("save occurred before ongoing damage");saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
+ IEnumerator RollMappedAbilitySave(int target,int source,long dc,HashSet<int> failed,string title,int ability,bool avoidsFrightened=false){if(title!="雷鸣斩"&&!title.StartsWith("激愤斩")&&damage==0)throw new Exception("save occurred before ongoing damage");if(title.StartsWith("激愤斩")){C(avoidsFrightened,"fear saves must enable halfling Brave advantage");endLog.Add("fear:"+dc);}saveCalls++;if(!saveSuccess)failed.Add(target);yield break;}
  void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){}
  int HealRegenerationTarget(int actor,int amount){turnHp+=amount;return amount;}void ApplySteedLifeBond(int actual,int level){}
  bool rolling,greaseResolving,auraFirst=true,heroismFirst=true,terrainDaggersFirst=false;
@@ -48,6 +64,11 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  IEnumerator ResolveGreaseSave(int actor,int field,string label){drainLog.Add("grease");yield break;}
  static void C(bool v,string text){if(!v)throw new Exception(text);}
  static void Run(TrainingGame g,IEnumerator routine){var stack=new Stack<IEnumerator>();stack.Push(routine);while(stack.Count>0){var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}if(top.Current is IEnumerator){stack.Push((IEnumerator)top.Current);continue;}
+   if(g.sensoryOrderPending){
+    if(g.endAcidFirst&&g.sensoryAcidOptions.Count>0)g.sensorySaveChoice=-(g.sensoryAcidOptions[0].Id+6);
+    else if(g.sensoryWrathOptions.Count>0){g.wrathfulSaveSelected=g.sensoryWrathOptions[g.sensoryWrathOptions.Count-1];g.sensorySaveChoice=-6;}
+    else g.sensorySaveChoice=-(g.sensoryAcidOptions[0].Id+6);
+   }
    if(g.searingPromptPending)g.searingPromptChoice=g.chosenCast;
    if(g.startStatusOrderPending){int fire=g.startStatuses.FindIndex(e=>e.Kind==1);g.startStatusChoice=g.chooseOther&&g.OtherTerrainCount>0?g.startStatuses.Count:g.preferFire&&fire>=0?fire:0;}
   }}
@@ -78,6 +99,20 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
   g=new TrainingGame();g.alive=false;Run(g,g.ResolveThunderousSmiteHit(-1,initial));C(g.saveCalls==0&&g.map.PushCalls==0,"dead target does not roll or move after combined weapon damage");
   g=new TrainingGame();g.smiteKind=2;g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(!initial.ThunderPush&&initial.Thunder==0&&!g.combat.BonusActionAvailable,"countered Thunderous Smite creates neither extra damage nor a push while consuming the bonus");
   for(int slot=1;slot<=9;slot++)C(ThunderousSmiteRules.Dice(slot,true)==2*(slot+1),"Thunderous Smite exact upcast and critical dice");
-  Console.WriteLine("PASS: production Searing/Divine/Thunderous Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
+  g=new TrainingGame();g.smiteKind=3;g.searingSlot=3;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Necrotic==36&&initial.Wrathful&&initial.WrathfulDc==10&&!g.combat.BonusActionAvailable,"Wrathful Smite critical and upcast damage uses necrotic without preapplying fear");
+  Run(g,g.ResolveWrathfulSmiteHit(-1,initial));C(g.WrathfulFear(-1)&&g.WrathfulFearVisible(-1),"failed Wisdom save applies nonconcentration fear from the caster");
+  C(!g.WrathfulMovementAllowed(-1,new Vector2Int(4,0))&&g.WrathfulMovementAllowed(-1,new Vector2Int(6,0)),"fear prohibits approaching while allowing movement away");
+  g.sourceVisible=false;C(!g.WrathfulFearVisible(-1)&&!g.WrathfulMovementAllowed(-1,new Vector2Int(4,0)),"an unseen source removes attack disadvantage but not the approach prohibition");
+  g.map.Same=false;C(g.WrathfulMovementAllowed(-1,new Vector2Int(4,0)),"a source on another plane imposes no geometric approach restriction");
+  g.map.Same=true;g.heroImmune=true;C(!g.WrathfulFear(-1)&&g.WrathfulMovementAllowed(-1,new Vector2Int(4,0)),"Heroism suppresses fear penalties without deleting independent spell timers");
+  g.heroImmune=false;g.wrathfulSmite.Add(-1,12,0);g.saveSuccess=true;var fears=g.wrathfulSmite.Pending(-1,0);Run(g,g.RepeatWrathfulSave(fears[0]));C(g.wrathfulSmite.Pending(-1,0).Count==1,"successful repeat save ends only its own cast");Run(g,g.RepeatWrathfulSave(fears[1]));C(!g.WrathfulFear(-1),"last successful save removes the condition");
+  g=new TrainingGame();g.heroImmune=true;initial=new SmiteHitResult{Wrathful=true,WrathfulDc=12,Necrotic=6};Run(g,g.ResolveWrathfulSmiteHit(-1,initial));C(g.saveCalls==0&&!g.wrathfulSmite.Active(-1,0)&&initial.Necrotic==6,"fear immunity does not remove necrotic hit damage");
+  g=new TrainingGame();g.wrathfulSmite.Add(-1,12,0);C(g.wrathfulSmite.Active(-1,9)&&!g.wrathfulSmite.Active(-1,10),"fear expires exactly at one minute");g.wrathfulSmite.Clear();C(!g.wrathfulSmite.Active(-1,0),"reset clears lingering fear");
+  foreach(bool acidFirst in new[]{false,true}){
+   g=new TrainingGame();g.endAcidFirst=acidFirst;g.saveSuccess=true;g.wrathfulSmite.Add(-1,10,0);g.wrathfulSmite.Add(-1,12,0);g.acidArrows.Add(0,-1,2);g.acidArrows.StartTurn(-1);Run(g,g.RepeatSensorySaves(false));
+   C(g.endLog.Count==3&&g.endLog[0]==(acidFirst?"acid:1":"fear:12")&&g.endLog[2]==(acidFirst?"fear:10":"acid:1"),"actual end dispatcher allows selecting either residue or an individual fear save first");
+   C(!g.sensoryOrderPending&&!g.wrathfulSmite.Active(-1,0)&&g.acidArrows.Pending(-1).Count==0,"all actual turn-end choices are consumed and modal closes");
+  }
+  Console.WriteLine("PASS: production Searing/Divine/Thunderous/Wrathful Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
  }
 }

@@ -159,7 +159,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string damageDice=damageRolls.Length==0?"固定伤害 "+attackWeapon.FixedDamage:damageRolls.Length+"d"+damageSides+"="+string.Join("+",damageRolls)+(attackWeapon.FixedDamage!=0?"，固定加值 "+attackWeapon.FixedDamage:"");
         int[] weaponDamageByType=new int[DamageTypes.Names.Length];weaponDamageByType[DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType)]=Mathf.Max(0,result+damageModifier);
         var sizedWeapon=new RayDamage();var rawWeapon=new long[weaponDamageByType.Length];for(int i=0;i<rawWeapon.Length;i++)rawWeapon[i]=weaponDamageByType[i];
-        rawWeapon[5]+=searingHit.Fire;rawWeapon[11]+=searingHit.Radiant;rawWeapon[12]+=searingHit.Thunder;
+        rawWeapon[5]+=searingHit.Fire;rawWeapon[11]+=searingHit.Radiant;rawWeapon[12]+=searingHit.Thunder;rawWeapon[8]+=searingHit.Necrotic;
         yield return ApplySizeWeaponDamage(true,rawWeapon,DamageTypes.Index(trueStrike&&radiantWeapon?"光耀":forceWeapon?"力场":attackWeapon.DamageType),critical,sizedWeapon);
         for(int i=0;i<weaponDamageByType.Length;i++)weaponDamageByType[i]=(int)sizedWeapon.Raw[i];
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
@@ -167,13 +167,14 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
         var rawPacket=new long[DamageTypes.Names.Length];for(int i=0;i<rawPacket.Length;i++)rawPacket[i]=weaponDamageByType[i];if(markDamage.Raw>0)rawPacket[mark.DamageType]+=markDamage.Raw;
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
         int damage=ResolveRayPacket(false,reduced.Raw);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
         yield return ResolveThunderousSmiteHit(-1,searingHit);
+        yield return ResolveWrathfulSmiteHit(-1,searingHit);
         CheckBattleOutcome();
         rolling=false;
     }

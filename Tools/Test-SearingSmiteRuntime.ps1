@@ -11,9 +11,13 @@ if($queueBegin -lt 0 -or $queueEnd -lt 0){throw 'Production queue method not fou
 $countSource=Get-Content -LiteralPath Assets/Scripts/SpikeGrowthSpell.cs -Raw -Encoding utf8
 $count=[regex]::Match($countSource,'int PendingTerrainCount=>[^;]+;').Value
 if(!$count){throw 'Production queue count not found'}
+$endSource=Get-Content -LiteralPath Assets/Scripts/BlindnessDeafnessSpell.cs -Raw -Encoding utf8
+$endBegin=$endSource.IndexOf('    IEnumerator RepeatSensorySaves(bool player)')
+$endEnd=$endSource.IndexOf('    IEnumerator EndPlayerTurnWithSensorySaves()',$endBegin)
+if($endBegin -lt 0 -or $endEnd -lt 0){throw 'Production turn-end method not found'}
 $queueFile=Join-Path $env:TEMP 'DNDFight_SearingSmiteProductionQueue.cs'
-Set-Content -LiteralPath $queueFile -Encoding utf8 -Value ('using System.Collections; public sealed partial class TrainingGame {'+$count+$queueSource.Substring($queueBegin,$queueEnd-$queueBegin)+'}')
-& $mono $csc -nologo "-out:$out" Tools/Tests/SearingSmiteRuntimeChecks.cs Assets/Scripts/SearingSmiteEffects.cs Assets/Scripts/DivineSmiteRules.cs Assets/Scripts/ThunderousSmiteSpell.cs Assets/Scripts/SearingSmiteSpell.cs Assets/Scripts/StartStatusOrder.cs Assets/Scripts/RegenerationEffects.cs $queueFile
+Set-Content -LiteralPath $queueFile -Encoding utf8 -Value ('using System.Collections; public sealed partial class TrainingGame {'+$count+$queueSource.Substring($queueBegin,$queueEnd-$queueBegin)+$endSource.Substring($endBegin,$endEnd-$endBegin)+'}')
+& $mono $csc -nologo "-out:$out" Tools/Tests/SearingSmiteRuntimeChecks.cs Assets/Scripts/SearingSmiteEffects.cs Assets/Scripts/DivineSmiteRules.cs Assets/Scripts/ThunderousSmiteSpell.cs Assets/Scripts/SensoryAfflictions.cs Assets/Scripts/AcidArrowResidue.cs Assets/Scripts/WrathfulSmiteEffects.cs Assets/Scripts/WrathfulSmiteSpell.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/SearingSmiteSpell.cs Assets/Scripts/StartStatusOrder.cs Assets/Scripts/RegenerationEffects.cs $queueFile
 if($LASTEXITCODE -ne 0){throw 'Searing Smite runtime harness compile failed'}
 & $mono $out
 if($LASTEXITCODE -ne 0){throw 'Searing Smite runtime checks failed'}

@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
         if(!rolling&&!drainingUndeadSaves&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
         BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
         if(!rolling&&!spellTargeting&&draggingToken<0)map.ViewActorScene(summonTurns.Active?summonTurns.Current.Id:combat.Aftermath&&RescueTurnAllowed?BattleMap.RescueId:0);
-        searingSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();SyncWeaponInventory();ObserveWaterBreathing();
+        searingSmite.Refresh(worldRounds);wrathfulSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWitchBolt();RefreshWildShape();RefreshPolymorph();RefreshSteed();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
