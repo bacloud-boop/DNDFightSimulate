@@ -167,7 +167,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
         var rawPacket=new long[DamageTypes.Names.Length];for(int i=0;i<rawPacket.Length;i++)rawPacket[i]=weaponDamageByType[i];if(markDamage.Raw>0)rawPacket[mark.DamageType]+=markDamage.Raw;
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
+        yield return AddCrusaderMantleDamage(0,critical,rawPacket);
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,CrusaderMantleBenefits(0)||damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
         int damage=ResolveRayPacket(false,reduced.Raw);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);

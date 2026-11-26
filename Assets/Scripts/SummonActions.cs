@@ -65,9 +65,10 @@ public sealed partial class TrainingGame
             int[] rolls=new int[critical?2:1];int damage=SummonDamageBonus(unit),type=SummonDamageType(unit);string damageName=DamageTypes.Names[type];
             for(int i=0;i<rolls.Length;i++){rolls[i]=Random.Range(1,9);damage+=rolls[i];}
             yield return PresentRoll(8,rolls,(IsSteed(unit)?"异界猛击":"撕裂")+(critical?"暴击":"")+"：骰值 + "+SummonDamageBonus(unit)+" = "+damage+" "+damageName);
-            if(targetId==0){var retaliation=CaptureHitRetaliation(unit.Id,true,targetAt.HasValue?(int?)SummonGeometry.Distance(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces),targetAt.Value):null);damage=combat.AdjustTypedDamage(true,damage,type);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(damage);}
-            else if(targetId==-1){damage=combat.AdjustTypedDamage(false,damage,type);combat.ApplyDamage(damage,sourcePlayer:null);}
-            else other.Damage(damage,type,critical:critical);
+            var packet=new long[13];packet[type]=System.Math.Max(0,damage);yield return AddCrusaderMantleDamage(unit.Id,critical,packet);
+            if(targetId==0){var retaliation=CaptureHitRetaliation(unit.Id,true,targetAt.HasValue?(int?)SummonGeometry.Distance(new CreatureCover.Body(unit.X,unit.Y,unit.Spaces),targetAt.Value):null);var resolved=combat.ResolveTypedPacket(true,packet);damage=PacketAmount(resolved);combat.ApplyPlayerDamage(damage,critical,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(damage);}
+            else if(targetId==-1){var resolved=combat.ResolveTypedPacket(false,packet);damage=PacketAmount(resolved);combat.ApplyDamage(damage,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);}
+            else {var resolved=(long[])packet.Clone();for(int i=0;i<resolved.Length;i++)if(other.ResistsType(i)||i==5&&other.Aquatic.Submerged)resolved[i]/=2;damage=PacketAmount(resolved);other.Damage(damage,resolvedTypes:resolved,critical:critical);}
             history.Insert(0,unit.Name+"对"+target+"造成 "+damage+" "+damageName+"伤害。");RefreshBestialSpirit();CheckBattleOutcome();
         }finally{summonActing=previousBusy;}
     }

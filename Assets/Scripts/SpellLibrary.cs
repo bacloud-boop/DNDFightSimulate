@@ -101,6 +101,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Crusader's Mantle")GUILayout.Label("30尺光环随玩家移动，自己与范围内受控盟友的武器或徒手命中额外1d4光耀；暴击2d4。兽形自然攻击可受益，法术攻击不受益。专注至多1分钟；升环不增强。吞咽隔离内外，其他位面不受益。",small);
         else if(definition.Name=="Fire Shield")DrawFireShieldChoices();
         else if(definition.Name=="Flame Blade")DrawFlameBladeChoices();
         else if(definition.Name=="Chromatic Orb")DrawChromaticOrbChoices();
@@ -223,6 +224,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Crusader's Mantle")return CrusaderMantleError();
         if(spell.Name=="Fire Shield")return FireShieldError();
         if(spell.Name=="Flame Blade")return FlameBladeError();
         if(spell.Name=="Chromatic Orb")return ChromaticOrbError();
@@ -339,6 +341,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        if(spell.Name=="Crusader's Mantle"&&CrusaderMantleError()!="")yield break;
         bool fireShieldSelected=fireShieldCold;if(spell.Name=="Fire Shield"&&FireShieldError()!="")yield break;
         if(spell.Name=="Flame Blade"&&FlameBladeError()!="")yield break;
         int orbSelected=orbTarget,orbSelectedType=ChromaticOrbRules.Types[orbType];if(spell.Name=="Chromatic Orb"&&ChromaticOrbError()!="")yield break;
@@ -392,7 +395,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -418,6 +421,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Crusader's Mantle"){CastCrusaderMantle();if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Fire Shield"){CastFireShield(slotLevel,fireShieldSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Blade"){CastFlameBlade(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Chromatic Orb"){yield return ResolveChromaticOrb(caster,slotLevel,orbSelected,orbSelectedType);if(!embedded)rolling=false;yield break;}

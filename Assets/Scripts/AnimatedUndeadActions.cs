@@ -83,6 +83,7 @@ public sealed partial class TrainingGame
                 if(sides>0){var rolls=new int[count*(critical?2:1)];for(int i=0;i<rolls.Length;i++){rolls[i]=UnityEngine.Random.Range(1,sides+1);damage+=rolls[i];}yield return PresentRoll(sides,rolls,"伤害骰合计 "+damage+(critical?"（暴击骰翻倍）":""));}
                 raw[type]=Math.Max(0,damage+(bonusAttack?Math.Min(0,modifier):modifier));
             }
+            yield return AddCrusaderMantleDamage(unit.Id,critical,raw);
             var reduced=new RayDamage{Raw=raw};
             if(target==0||target==-1){var resolved=combat.ResolveTypedPacket(target==0,reduced.Raw);int amount=PacketAmount(resolved);if(target==0){var retaliation=CaptureHitRetaliation(unit.Id,melee,distance);combat.ApplyPlayerDamage(amount,critical,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);}
             else{var resolved=(long[])reduced.Raw.Clone();for(int i=0;i<resolved.Length;i++)if(other.ResistsType(i)||i==5&&other.Aquatic.Submerged)resolved[i]/=2;other.Damage(PacketAmount(resolved),resolvedTypes:resolved,critical:critical);}
