@@ -229,7 +229,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool critical=hitRoll==20 || ((combat.PlayerHp==0||combat.PlayerParalyzed)&&map.DistanceFeet<=5&&hitRoll!=1&&hitTotal>=targetArmor);
         if(mirrorIntercepted){dice="镜像术拦截 · 本体伤害0";history.Insert(0,hitDetails+"，攻击转移至镜像，本体伤害0。");}
         else if(hitRoll!=1 && (critical || hitTotal>=targetArmor)) {
-            int frostRetaliation=AgathysRetaliation(MonsterMeleeAttack);
+            var retaliation=CaptureHitRetaliation(-1,MonsterMeleeAttack,opportunitySenseDistance??map.DistanceFeet);
             string details;
             var sides=new List<int>();var results=new List<int[]>();var counts=new List<int>();
             var damagePacket=CurrentMonsterDamage();
@@ -247,7 +247,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);
             if(MonsterPolymorphed&&BeastAttack.Find(polymorph.Form).KnockProne&&map.PlayerSpaces==1&&combat.PlayerHp>0)combat.PlayerProne=true;
-            ApplyAgathysRetaliation(frostRetaliation,false);
+            yield return ResolveHitRetaliation(-1,retaliation);
             yield return MaintainConcentration(damage);
             dice=(critical?"木桩暴击":"木桩命中")+" · 伤害 "+damage;
             history.Insert(0,hitDetails+(critical?"，暴击；":"，命中；")+details);

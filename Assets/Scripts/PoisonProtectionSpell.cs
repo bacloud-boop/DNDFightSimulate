@@ -1,7 +1,7 @@
 public sealed partial class TrainingGame
 {
     readonly PoisonProtectionEffect poisonProtection=new PoisonProtectionEffect();
-    void InitializePoisonProtection(){combat.DamageResistance=(player,type)=>(type==9&&poisonProtection.Active(player,worldRounds))||StoneskinResists(player,type)||SpeciesResistance(player,type);combat.PoisonConditionSaveAdvantage=player=>poisonProtection.Active(player,worldRounds)||SpeciesSaveAdvantage(player,-1,poison:true);}
+    void InitializePoisonProtection(){combat.DamageResistance=(player,type)=>(type==9&&poisonProtection.Active(player,worldRounds))||FireShieldResists(player,type)||StoneskinResists(player,type)||SpeciesResistance(player,type);combat.PoisonConditionSaveAdvantage=player=>poisonProtection.Active(player,worldRounds)||SpeciesSaveAdvantage(player,-1,poison:true);}
     string PoisonProtectionError(bool player)
     {
         if(player?combat.PlayerDead:combat.Hp==0)return "死亡目标不能接受防护毒素。";

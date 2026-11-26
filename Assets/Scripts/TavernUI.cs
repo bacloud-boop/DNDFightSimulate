@@ -75,7 +75,7 @@ public sealed partial class TrainingGame
         searingSmite.Refresh(worldRounds);wrathfulSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
-        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWitchBolt();RefreshWildShape();RefreshPolymorph();RefreshFlameBlade();RefreshSteed();RefreshSpiritualWeapon();RefreshShiningSmite();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
+        agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWitchBolt();RefreshWildShape();RefreshPolymorph();RefreshFireShield();RefreshFlameBlade();RefreshSteed();RefreshSpiritualWeapon();RefreshShiningSmite();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
         if(combat.BattleStarted&&!combat.BattleFinished&&!combat.Aftermath){knownFormReplacement=false;highElfCantripReplacement=false;}
         drawerProgress=Mathf.MoveTowards(drawerProgress,panel==""?0:1,Time.unscaledDeltaTime*6);
     }
@@ -91,6 +91,7 @@ public sealed partial class TrainingGame
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(heatPromptPending){DrawHeatMetalPrompt();return;}
         if(temporaryHpPending){DrawTemporaryHpChoice();return;}
+        if(retaliationOrderPending){DrawRetaliationOrder();return;}
         if(orbBouncePending){DrawOrbBounce();return;}
         if(searingPromptPending){DrawSearingSmitePrompt();return;}
         if(startStatusOrderPending){DrawStartStatusOrder();return;}

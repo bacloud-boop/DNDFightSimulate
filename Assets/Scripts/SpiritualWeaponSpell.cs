@@ -108,7 +108,7 @@ public sealed partial class TrainingGame
         var raw=new long[13];raw[6]=Math.Max(0,sum+modifier);
         if(target==0||target==-1){var extra=new ExtraMarkDamage();yield return RollMarkDamage(target==0,hit.Critical,extra);if(extra.Raw>0)raw[mark.DamageType]+=extra.Raw;}
         var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,true,"灵体武器",reduced);
-        outcomeDeferDepth++;try{int frost=target==0?AgathysRetaliation(true):0;int amount=ApplyMappedDamagePacket(target,0,reduced.Raw,hit.Critical);frost=ApplyAgathysRetaliation(frost,true);history.Insert(0,"灵体武器对"+TransitActorName(target)+"造成 "+amount+" 点结算伤害。");yield return MaintainConcentration(target==0?amount:0);if(frost>0)yield return MaintainConcentration(frost);RefreshBestialSpirit();ReconcileFallenRescue();}finally{outcomeDeferDepth--;CheckBattleOutcome();}
+        outcomeDeferDepth++;try{var retaliation=target==0?CaptureHitRetaliation(0,true):null;int amount=ApplyMappedDamagePacket(target,0,reduced.Raw,hit.Critical);if(retaliation!=null)yield return ResolveHitRetaliation(0,retaliation);history.Insert(0,"灵体武器对"+TransitActorName(target)+"造成 "+amount+" 点结算伤害。");yield return MaintainConcentration(target==0?amount:0);if(retaliation!=null)yield return MaintainRetaliationConcentration(retaliation);RefreshBestialSpirit();ReconcileFallenRescue();}finally{outcomeDeferDepth--;CheckBattleOutcome();}
     }
     void DrawSpiritualWeaponMap(Rect board)
     {

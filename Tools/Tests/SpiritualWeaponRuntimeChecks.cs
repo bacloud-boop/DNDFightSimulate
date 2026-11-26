@@ -23,7 +23,7 @@ public static class MonsterSpellSequence {public static int AttackBonus(int pb,i
 public sealed partial class TrainingGame {
  sealed class Unit {public int Id=0,X=0,Y=0,Spaces=1,Armor=10,EffectiveSpeed=30,SleepStage=0;public bool Prone=false,Restrained=false,Dodging=false,Alive=true,ControllerReady=true,FeignDeath=false;}
  sealed class MapStub {
-  public int Size=20,PlayerSpaces=1,MonsterSpaces=1,Scene=0,PlayerScene=0,MonsterScene=0,PointCalls,BodyCalls;public bool Locked=true,PlayerContained=false,MonsterContained=false;public Vector2Int LastPoint,Player=new Vector2Int(0,0),Monster=new Vector2Int(5,0);
+  public int Size=20,PlayerSpaces=1,MonsterSpaces=1,Scene=0,PlayerScene=0,MonsterScene=0,PointCalls,BodyCalls;public Vector2Int? RescuePosition=null;public int RescueSpaces=1;public bool CarriedPlayer=false;public bool IsCarried(bool player)=>player&&CarriedPlayer;public bool Locked=true,PlayerContained=false,MonsterContained=false;public Vector2Int LastPoint,Player=new Vector2Int(0,0),Monster=new Vector2Int(5,0);
   public bool HasContainedCreature=>PlayerContained||MonsterContained;public readonly List<Unit> SceneSummons=new List<Unit>();
   public int DistanceFeet=>BattleMap.BodyDistance(Player,1,Monster,1);public int SceneOf(int actor)=>actor==0?PlayerScene:MonsterScene;public bool SameScene(int a,int b)=>SceneOf(a)>=0&&SceneOf(a)==SceneOf(b);public bool OnScene(int actor)=>SceneOf(actor)==Scene;
   public bool IsContained(bool player)=>player?PlayerContained:MonsterContained;
@@ -34,7 +34,7 @@ public sealed partial class TrainingGame {
   public int CreatureCoverFromPoint(Vector2Int p,int target){PointCalls++;LastPoint=p;return 2;}
  }
  sealed class CombatStub {
-  public int Round=1,PlayerHp=100,PlayerArmorClass=10,MonsterArmorClass=10,MonsterProficiencyBonus=0,MonsterRevivalPenalty=0;public bool PlayerDead=false,PlayerFeignDeath=false,MagicActionAvailable=true;public bool PlayerBanished=false;public bool BonusActionAvailable=true,PlayerCanAct=true,MonsterCanAct=true;
+  public int Round=1,PlayerHp=100,PlayerArmorClass=10,MonsterArmorClass=10,MonsterProficiencyBonus=0,MonsterRevivalPenalty=0;public bool PlayerReactionAvailable=true;public bool PlayerDead=false,PlayerFeignDeath=false,MagicActionAvailable=true;public bool PlayerBanished=false;public bool BonusActionAvailable=true,PlayerCanAct=true,MonsterCanAct=true;
   public bool PlayerBlessed=false,MonsterBlessed=false,PlayerBaned=false,MonsterBaned=false,PlayerBladeWard=false,PlayerParalyzed=false,MonsterHelpless=false,PlayerProne=false,MonsterProne=false,PlayerPoisoned=false,MonsterPoisoned=false;
   public bool TryUseMagicAction(){if(!MagicActionAvailable)return false;MagicActionAvailable=false;return true;}public bool TryUseAftermathBonusAction()=>TryUseBonusAction();public bool TryUseBonusAction(){if(!BonusActionAvailable||!PlayerCanAct)return false;BonusActionAvailable=false;return true;}public bool ConsumeGuidingLight(bool player)=>false;
  }
@@ -61,11 +61,18 @@ public sealed partial class TrainingGame {
  IEnumerator PresentRoll(int sides,int[] values,string text){yield break;}
  IEnumerator RollMarkDamage(bool target,bool critical,ExtraMarkDamage result){yield break;}
  IEnumerator ReduceRayPacket(bool player,long[] raw,bool rolled,string title,RayDamage result){result.Raw=zeroPacket?new long[raw.Length]:raw;yield break;}
- int ApplyMappedDamagePacket(int target,int source,long[] raw,bool critical){int amount=(int)raw.Sum();damage+=amount;hitTargets.Add(target);lastRaw=(long[])raw.Clone();if(killMonster&&target==-1)deadMonster=true;if(killCaster)combat.PlayerHp=0;return amount;}
+ int ApplyMappedDamagePacket(int target,int source,long[] raw,bool critical=false){int amount=packetResolver==null?(int)raw.Sum():packetResolver(target,raw);damage+=amount;hitTargets.Add(target);packetTypes.Add(Array.FindIndex(raw,v=>v>0));lastRaw=(long[])raw.Clone();if(killMonster&&target==-1)deadMonster=true;if(killCaster)combat.PlayerHp=0;return amount;}
+ readonly List<int> packetTypes=new List<int>(),maintainedDamages=new List<int>();Func<int,long[],int> packetResolver=null;
  bool deadMonster=false,killMonster=false,killCaster=false,zeroPacket=false;int outcomes;readonly List<int> hitTargets=new List<int>();long[] lastRaw;
  bool PlayerCanSustainCast=>combat.PlayerHp>0&&!combat.PlayerParalyzed;bool AcidArrowIsolated(int source,int target)=>AcidArrowResidue.CrossesBoundary(source,target,map.PlayerContained,map.MonsterContained);void RefreshUndeadFollowers(){}
- int AgathysRetaliation(bool melee)=>0;int ApplyAgathysRetaliation(int frost,bool source)=>0;
- IEnumerator MaintainConcentration(int amount){yield break;}void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){outcomes++;}
+ int agathysValue=0;int AgathysRetaliation(bool melee)=>melee?agathysValue:0;int ApplyAgathysRetaliation(int frost,bool source)=>0;
+ IEnumerator MaintainConcentration(int amount){maintainedDamages.Add(amount);yield break;}void RefreshBestialSpirit(){}void ReconcileFallenRescue(){}void CheckBattleOutcome(){outcomes++;}
+#if !FIRE_SHIELD_RUNTIME
+ sealed class HitRetaliation {}
+ HitRetaliation CaptureHitRetaliation(int attacker,bool melee,int? distance=null)=>new HitRetaliation();
+ IEnumerator ResolveHitRetaliation(int attacker,HitRetaliation result){yield break;}
+ IEnumerator MaintainRetaliationConcentration(HitRetaliation result){yield break;}
+#endif
  static void C(bool v,string message){if(!v)throw new Exception(message);}
  static void Run(IEnumerator r){var stack=new Stack<IEnumerator>();stack.Push(r);while(stack.Count>0){var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}if(top.Current is IEnumerator)stack.Push((IEnumerator)top.Current);}}
  static TrainingGame Cast(int slot=2,bool attack=true,int target=-1){var g=new TrainingGame();Run(g.CastSpiritualWeapon(new Vector2Int(4,0),8,slot,target,attack,int.MaxValue));return g;}

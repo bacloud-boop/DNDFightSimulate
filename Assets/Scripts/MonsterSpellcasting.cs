@@ -137,10 +137,10 @@ public sealed partial class TrainingGame
         if(spell.Healing){history.Insert(0,"木桩"+spell.Chinese+"实际恢复 "+combat.HealMonster(amount)+" HP。");yield break;}
         var rayDamage=new RayDamage();yield return ReduceRayDamage(false,amount,spell.DamageType,"木桩法术",rayDamage);amount=rayDamage.Amount;
         if(half)amount/=2;
-        int frost=player&&spell.Melee?AgathysRetaliation(true):0;
+        var retaliation=player&&spell.Attack&&spell.Melee?CaptureHitRetaliation(-1,true):null;
         if(spell.Name=="Starry Wisp")BindStarryWisp(-1,target);
         yield return ApplyMonsterSpellDamage(target,amount,spell.DamageType,critical);
-        if(frost>0)ApplyAgathysRetaliation(frost,false);
+        if(retaliation!=null)yield return ResolveHitRetaliation(-1,retaliation);
     }
     IEnumerator ApplyMonsterSpellDamage(int target,int raw,string type,bool critical)
     {

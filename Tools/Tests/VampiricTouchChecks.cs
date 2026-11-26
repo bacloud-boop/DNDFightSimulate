@@ -36,6 +36,10 @@ public sealed partial class TrainingGame
     IEnumerator RollMarkDamage(bool player,bool crit,ExtraMarkDamage result){yield break;}
     IEnumerator ReduceRayPacket(bool player,long[] raw,bool rolled,string label,RayDamage result){result.Raw=raw;yield break;}
     int ApplyMappedDamagePacket(int target,int source,long[] raw,bool crit){damageEvents++;var resolved=combat.ResolveTypedPacket(target==0,raw);if(target==0){combat.PlayerHp=killSelf?0:Math.Max(0,combat.PlayerHp-(int)resolved[8]);}return (int)resolved[8];}
+    sealed class HitRetaliation {}
+    HitRetaliation CaptureHitRetaliation(int attacker,bool melee,int? distance=null)=>new HitRetaliation();
+    IEnumerator ResolveHitRetaliation(int attacker,HitRetaliation result){yield break;}
+    IEnumerator MaintainRetaliationConcentration(HitRetaliation result){yield break;}
     int AgathysRetaliation(bool melee)=>0;int ApplyAgathysRetaliation(int raw,bool player)=>0;
     void RefreshConcentration(){if(combat.PlayerHp<=0){vampiricTouch.Clear();concentrationSpell="";}}
     void ApplySteedLifeBond(int actual,int level){lifeBond+=actual;}

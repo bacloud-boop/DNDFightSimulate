@@ -51,13 +51,13 @@ public sealed partial class TrainingGame
         if(target==0||target==-1)necrotic=combat.ResolveTypedPacket(target==0,reduced.Raw)[8];
         else {var unit=FindSummon(target);necrotic=unit.ResistsType(8)?reduced.Raw[8]/2:reduced.Raw[8];}
         outcomeDeferDepth++;try{
-            int frost=target==0?AgathysRetaliation(true):0;
-            int damage=ApplyMappedDamagePacket(target,0,reduced.Raw,attack.Critical);frost=ApplyAgathysRetaliation(frost,true);
+            var retaliation=target==0?CaptureHitRetaliation(0,true):null;
+            int damage=ApplyMappedDamagePacket(target,0,reduced.Raw,attack.Critical);if(retaliation!=null)yield return ResolveHitRetaliation(0,retaliation);
             // Incapacitation ends concentration even if the ensuing healing
             // restores consciousness during this same resolution.
             RefreshConcentration();int requested=VampiricTouchEffect.Healing(necrotic),actual=combat.HealPlayer(requested);ApplySteedLifeBond(actual,3);
             history.Insert(0,"吸血之触："+TransitActorName(target)+"结算 "+damage+" 点伤害，其中死灵 "+necrotic+"；治疗 "+requested+"，实际恢复 "+actual+" HP。");
-            dice="吸血之触 · 实际恢复 "+actual+" HP";yield return MaintainConcentration(target==0?damage:0);if(frost>0)yield return MaintainConcentration(frost);RefreshUndeadFollowers();RefreshBestialSpirit();ReconcileFallenRescue();
+            dice="吸血之触 · 实际恢复 "+actual+" HP";yield return MaintainConcentration(target==0?damage:0);if(retaliation!=null)yield return MaintainRetaliationConcentration(retaliation);RefreshUndeadFollowers();RefreshBestialSpirit();ReconcileFallenRescue();
         }finally{outcomeDeferDepth--;CheckBattleOutcome();}
     }
 }

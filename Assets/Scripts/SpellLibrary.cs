@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb"||name=="Control Water";
-    static bool AftermathLightSpell(string name)=>name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
+    static bool AftermathLightSpell(string name)=>name=="Fire Shield"||name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -101,6 +101,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Fire Shield")DrawFireShieldChoices();
         else if(definition.Name=="Flame Blade")DrawFlameBladeChoices();
         else if(definition.Name=="Chromatic Orb")DrawChromaticOrbChoices();
         else if(definition.Name=="Spiritual Weapon")DrawSpiritualWeaponChoices();
@@ -222,6 +223,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Fire Shield")return FireShieldError();
         if(spell.Name=="Flame Blade")return FlameBladeError();
         if(spell.Name=="Chromatic Orb")return ChromaticOrbError();
         if(spell.Name=="Spiritual Weapon")return SpiritualWeaponError();
@@ -337,6 +339,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        bool fireShieldSelected=fireShieldCold;if(spell.Name=="Fire Shield"&&FireShieldError()!="")yield break;
         if(spell.Name=="Flame Blade"&&FlameBladeError()!="")yield break;
         int orbSelected=orbTarget,orbSelectedType=ChromaticOrbRules.Types[orbType];if(spell.Name=="Chromatic Orb"&&ChromaticOrbError()!="")yield break;
         Vector2Int spiritualPoint;SpiritualInput(out spiritualPoint);int spiritualSelected=spiritualTarget,spiritualSelectedHost=SpiritualCreationHost(spiritualPoint);bool spiritualSelectedAttack=spiritualAttack;if(spell.Name=="Spiritual Weapon"&&SpiritualWeaponError()!="")yield break;
@@ -395,7 +398,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
         int modifier=AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]),bonus=classes.ProficiencyBonus+modifier;
         string damageType=spell.Name=="Sorcerous Burst"?BurstTypes[burstType]:spell.DamageType;
-        string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;int selfFrostRetaliation=0;
+        string target=targetPlayer?"玩家":"木桩";bool critical=false,saveSucceeded=false;HitRetaliation selfHitRetaliation=null;
         if(spell.Name=="Shillelagh"){ApplyShillelagh(caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mage Armor"){ApplyMageArmor(targetPlayer);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Detect Evil and Good"){ApplyDetectEvilGood();if(!embedded)rolling=false;yield break;}
@@ -415,6 +418,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Fire Shield"){CastFireShield(slotLevel,fireShieldSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Blade"){CastFlameBlade(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Chromatic Orb"){yield return ResolveChromaticOrb(caster,slotLevel,orbSelected,orbSelectedType);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Spiritual Weapon"){yield return CastSpiritualWeapon(spiritualPoint,caster,slotLevel,spiritualSelected,spiritualSelectedAttack,spiritualSelectedHost);if(!embedded)rolling=false;yield break;}
@@ -510,7 +514,7 @@ public sealed partial class TrainingGame
             if(mirrorIntercepted){dice="镜像术拦截 · 本体伤害0";if(!embedded)rolling=false;yield break;}
             if(value==1||(!critical&&value+bonus<armor)){history.Insert(0,spell.Chinese+"对"+target+"：D20="+value+" + "+bonus+"，未命中。");fighter.RecordMiss(classes[0]);if(!embedded)rolling=false;yield break;}
         }
-        if(spell.Attack&&targetPlayer&&spell.Melee)selfFrostRetaliation=AgathysRetaliation(true);
+        if(spell.Attack&&targetPlayer&&spell.Melee)selfHitRetaliation=CaptureHitRetaliation(0,true);
         if(spell.Attack&&!targetPlayer&&combat.MonsterHelpless&&map.DistanceFeet<=5)critical=true;
         if(spell.SaveAbility>=0){
             int targetModifier=AcidSplash.Modifier((targetPlayer?attributes:monsterAttributes)[spell.SaveAbility]);
@@ -545,7 +549,7 @@ public sealed partial class TrainingGame
             amount=ResolveRayPacket(targetPlayer,reduced.Raw);
         }
         if(spell.Healing){amount=RollHealingAmount(targetPlayer?0:-1,amount,(long)count*damageSides+modifier);amount=targetPlayer?combat.HealPlayer(amount):combat.HealMonster(amount);if(targetPlayer)ApplySteedLifeBond(amount,spell.Level);}
-        else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);int frost=ApplyAgathysRetaliation(selfFrostRetaliation,true);yield return MaintainConcentration(amount);if(frost>0)yield return MaintainConcentration(frost);}else combat.ApplyDamage(amount);
+        else if(targetPlayer){combat.ApplyPlayerDamage(amount,critical,sourcePlayer:true);if(selfHitRetaliation!=null)yield return ResolveHitRetaliation(0,selfHitRetaliation);yield return MaintainConcentration(amount);if(selfHitRetaliation!=null)yield return MaintainRetaliationConcentration(selfHitRetaliation);}else combat.ApplyDamage(amount);
         if(spell.Name=="Harm"&&!saveSucceeded){int reduced=combat.ReduceMaxHp(targetPlayer,amount);history.Insert(0,"伤害术："+target+"生命上限减少 "+reduced+"，上限最低1；不恢复生命。");}
         if(spell.Name=="Guiding Bolt"){combat.ApplyGuidingLight(targetPlayer);history.Insert(0,"对"+target+"的下一次攻击具有优势，最迟在施法者下一回合结束失效。");}
         if(spell.Name=="Ray of Frost"){combat.ApplyFrostSlow(targetPlayer);history.Insert(0,target+"速度降低10尺，至玩家下一回合开始。");}

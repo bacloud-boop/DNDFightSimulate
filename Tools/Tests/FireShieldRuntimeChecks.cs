@@ -1,0 +1,34 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+class FireShieldChecksMain {public static void Main()=>TrainingGame.CheckFireShield();}
+public sealed partial class TrainingGame {
+ readonly VisionState vision=new VisionState{BaseLight=2};bool preferFire,reviveOnDrain;int retaliationPrompts,undeadDrains;
+ bool BanishLiving(int actor)=>actor==0?!combat.PlayerDead:actor==-1?!deadMonster:FindSummon(actor)?.Alive??false;
+ IEnumerator DrainUndeadSaves(){undeadDrains++;if(reviveOnDrain)foreach(var unit in map.SceneSummons)unit.Alive=true;yield break;}
+ void EndConcentration(string reason){concentrationSpell="";concentrationExpiresWorld=-1;}
+ static void RunShield(TrainingGame g,IEnumerator r){var stack=new Stack<IEnumerator>();stack.Push(r);int limit=0;while(stack.Count>0){if(++limit>10000)throw new Exception("stuck retaliation modal");var top=stack.Peek();if(!top.MoveNext()){stack.Pop();continue;}if(top.Current is IEnumerator){stack.Push((IEnumerator)top.Current);continue;}if(g.retaliationOrderPending){g.retaliationPrompts++;g.retaliationFireFirst=g.preferFire;g.retaliationOrderReady=true;}}}
+ static TrainingGame ShieldGame(bool cold=false){UnityEngine.Random.D20=10;UnityEngine.Random.D8.Clear();var g=new TrainingGame();g.map.Monster=new Vector2Int(1,0);g.CastFireShield(4,cold);return g;}
+ public static void CheckFireShield(){
+  var g=ShieldGame();C(g.FireShieldResists(true,4)&&!g.FireShieldResists(true,5)&&!g.FireShieldResists(false,4),"warm shield grants only player cold resistance");g.CastFireShield(9,true);C(g.FireShieldResists(true,5)&&!g.FireShieldResists(true,4),"cold mode replaces equal-potency prior mode rather than stacking resistances");var latest=g.fireShield.Current(0);g.fireShield.End(latest.Id);C(g.FireShieldResists(true,4),"suppressed independent old cast retains its own duration");
+  g=ShieldGame();var hit=g.CaptureHitRetaliation(-1,true);RunShield(g,g.ResolveHitRetaliation(-1,hit));C(g.damage==16&&g.packetTypes.SequenceEqual(new[]{5})&&g.retaliationPrompts==0&&g.combat.PlayerReactionAvailable,"warm shield is two-d8 fire without reaction or unnecessary ordering prompt");
+  g=ShieldGame(true);g.combat.PlayerReactionAvailable=false;hit=g.CaptureHitRetaliation(-1,true);RunShield(g,g.ResolveHitRetaliation(-1,hit));C(g.damage==16&&g.packetTypes.Single()==4&&!g.combat.PlayerReactionAvailable,"cold shield works with an already spent reaction");
+  g=ShieldGame();g.agathysValue=5;hit=g.CaptureHitRetaliation(-1,true,10);C(hit.FireType<0&&hit.Frost==5,"ten-foot melee reach triggers Agathys but not five-foot Fire Shield");hit=g.CaptureHitRetaliation(-1,false,5);RunShield(g,g.ResolveHitRetaliation(-1,hit));C(g.damage==0,"ranged attack never triggers either melee retaliation");
+  foreach(bool fireFirst in new[]{true,false}){
+   g=ShieldGame();g.agathysValue=5;g.preferFire=fireFirst;hit=g.CaptureHitRetaliation(-1,true);g.agathysValue=0;RunShield(g,g.ResolveHitRetaliation(-1,hit));
+   C(g.damage==21&&g.packetTypes.SequenceEqual(fireFirst?new[]{5,4}:new[]{4,5})&&g.retaliationPrompts==1&&!g.retaliationOrderPending&&g.outcomeDeferDepth==0,"both on-hit snapshots survive loss of temp HP and permit either independent order");
+  }
+  g=ShieldGame();g.agathysValue=5;g.zeroPacket=true;hit=g.CaptureHitRetaliation(-1,true);RunShield(g,g.ResolveHitRetaliation(-1,hit));C(g.damage==5&&g.packetTypes.Contains(4),"damage-roll reduction affects Fire Shield roll but never fixed Agathys damage");
+  g=ShieldGame();g.agathysValue=5;g.preferFire=true;g.packetResolver=(target,raw)=>{var resistance=new bool[13];for(int i=0;i<13;i++)resistance[i]=g.FireShieldResists(target==0,i);return DamageTypes.Total(DamageTypes.Resolve(raw,resistance,new bool[13]));};hit=g.CaptureHitRetaliation(0,true);RunShield(g,g.ResolveHitRetaliation(0,hit));RunShield(g,g.MaintainRetaliationConcentration(hit));C(g.damage==18&&hit.PlayerDamage.SequenceEqual(new[]{16,2})&&g.maintainedDamages.SequenceEqual(new[]{16,2}),"self-hit retaliation honors typed resistance and keeps each damage source's concentration save separate");
+  g=ShieldGame();g.map.SceneSummons.Add(new Unit{Id=7,X=1,Y=0});g.agathysValue=5;g.preferFire=true;g.reviveOnDrain=true;g.packetResolver=(target,raw)=>{g.map.SceneSummons[0].Alive=false;return (int)raw.Sum();};hit=g.CaptureHitRetaliation(7,true);RunShield(g,g.ResolveHitRetaliation(7,hit));C(g.hitTargets.SequenceEqual(new[]{7,7})&&g.undeadDrains==2&&g.map.SceneSummons[0].Alive,"undead survival resolves between separate retaliation sources");
+  g=ShieldGame();g.agathysValue=5;g.preferFire=true;g.killMonster=true;hit=g.CaptureHitRetaliation(-1,true);RunShield(g,g.ResolveHitRetaliation(-1,hit));C(g.hitTargets.Count==1,"a dead attacker is not hit again by a later retaliation source");
+  g=ShieldGame();g.map.Monster=new Vector2Int(3,0);C(g.CaptureHitRetaliation(-1,true).FireType<0&&g.CaptureHitRetaliation(-1,true,5).FireType==5,"opportunity snapshot distance overrides an uncommitted map anchor");g.map.MonsterScene=1;C(g.CaptureHitRetaliation(-1,true,5).FireType<0,"separate plane cannot supply a new on-hit trigger");
+  g=ShieldGame();g.concentrationSpell="焰刃";g.CastFireShield(4,true);C(g.concentrationSpell=="焰刃","casting nonconcentration Fire Shield preserves existing concentration");g.EndConcentration("test");C(g.fireShield.Current(0)!=null,"ending other concentration does not end Fire Shield");
+  g=ShieldGame();C(g.vision.Light(0,0,0)==0&&g.vision.Light(10,0,0)==0&&g.vision.Light(15,0,0)==1&&g.vision.Light(21,0,0)==2,"exact bright and dim radii");g.vision.AddZone(true,0,0,2,0);g.RefreshFireShield();C(g.fireShield.Current(0)!=null&&g.vision.Light(0,0,0)==0,"fourth-level light is not dispelled by Darkness");g.map.Scene=1;g.RefreshFireShield();C(g.vision.Zones.All(z=>z.LightGroup!=FireShieldLightGroup)&&g.FireShieldResists(true,4),"another plane view hides light but retains attached resistance");g.map.Scene=0;g.map.PlayerContained=true;g.RefreshFireShield();C(g.vision.Zones.All(z=>z.LightGroup!=FireShieldLightGroup),"swallowing hides external light");
+  g=ShieldGame();g.map.CarriedPlayer=true;g.map.RescuePosition=new Vector2Int(4,0);g.RefreshFireShield();C(g.vision.Light(20,0,0)==0&&g.vision.Light(0,0,0)==1,"light follows the carried body");
+  g=ShieldGame();g.worldRounds=100;g.RefreshFireShield();C(!g.FireShieldResists(true,4)&&g.CaptureHitRetaliation(-1,true).FireType<0&&g.vision.Zones.Count==0,"ten-minute expiry removes resistance, retaliation and light");g.ClearFireShield();C(g.fireShield.Current(0)==null,"reset clears archived same-name casts");
+  Console.WriteLine("PASS: production Fire Shield modes/resistance, fixed 2d8 automatic retaliation, five-foot and opportunity ranges, selectable Agathys order, snapshot/temp-HP loss, typed mitigation, independent concentration, undead survival, planes, carried light and cleanup");
+ }
+}
