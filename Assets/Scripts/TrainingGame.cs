@@ -114,7 +114,8 @@ public sealed partial class TrainingGame : MonoBehaviour
         bool forceWeapon=shillelaghAttack&&shillelaghForce;
         if(shillelaghAttack&&!trueStrike&&shillelaghUseCasting){abilityModifier=AcidSplash.Modifier(attributes[shillelagh.Ability]);abilityLabel=PlayerAttributes.Names[shillelagh.Ability]+"修正（橡棍术）";}
         proficiencyBonus+=PlayerAquaticD20Penalty;
-        int magicBonus=timedBuffs.WeaponBonus(attackWeapon.Name,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+blessing-bane;
+        int attackObject=PlayerWeaponObject(attackWeapon),elementalBonus=elementalWeapon.AttackBonus(attackObject,worldRounds);
+        int magicBonus=timedBuffs.MagicObjectBonus(attackObject,worldRounds),blessing=combat.PlayerBlessed?Random.Range(1,5):0;int bane=combat.PlayerBaned?Random.Range(1,5):0;proficiencyBonus+=magicBonus+elementalBonus+blessing-bane;
         bool underwaterMiss=UnderwaterCombatRules.AutoMiss(map.PlayerAquatic.Submerged,true,attackWeapon.IsMelee,opportunity?(opportunitySenseDistance??map.DistanceFeet):map.DistanceFeet,attackWeapon.ReachFeet);
         int targetArmor=AttackArmor(true,false);
         LogAttackCover(true,false);
@@ -164,11 +165,13 @@ public sealed partial class TrainingGame : MonoBehaviour
         for(int i=0;i<weaponDamageByType.Length;i++)weaponDamageByType[i]=(int)sizedWeapon.Raw[i];
         if(trueStrike){int count=(AcidSplash.DiceCount(classes.TotalLevel)-1)*(critical?2:1);if(count>0){int[] extra=new int[count];int radiant=0;for(int i=0;i<count;i++){extra[i]=Random.Range(1,7);radiant+=extra[i];}yield return PresentRoll(6,extra,"克敌机先强化：额外 "+radiant+" 光耀");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;}}
         if(timedBuffs.DivineActive(worldRounds)){int[] favor=new int[critical?2:1];int radiant=0;for(int i=0;i<favor.Length;i++){favor[i]=Random.Range(1,5);radiant+=favor[i];}yield return PresentRoll(4,favor,"神恩额外 "+radiant+" 光耀伤害");weaponDamageByType[DamageTypes.Index("光耀")]+=radiant;history.Insert(0,"神恩：额外"+radiant+"光耀伤害。");}
+        if(elementalBonus>0)history.Insert(0,"元素武器：本次攻击检定＋"+elementalBonus+"，额外能量骰见投骰记录。");
         if(magicBonus>0)history.Insert(0,"魔化武器：本次命中与伤害 +"+magicBonus+"（固定加值不因暴击翻倍）。");
         var markDamage=new ExtraMarkDamage();yield return RollMarkDamage(false,critical,markDamage);
         var rawPacket=new long[DamageTypes.Names.Length];for(int i=0;i<rawPacket.Length;i++)rawPacket[i]=weaponDamageByType[i];if(markDamage.Raw>0)rawPacket[mark.DamageType]+=markDamage.Raw;
+        yield return AddEnchantedWeaponDamage(attackObject,-1,critical,rawPacket,false);
         yield return AddCrusaderMantleDamage(0,critical,rawPacket);
-        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,CrusaderMantleBenefits(0)||damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
+        var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,elementalBonus>0||CrusaderMantleBenefits(0)||damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
         int damage=ResolveRayPacket(false,reduced.Raw);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         combat.ApplyDamage(damage);
@@ -243,7 +246,8 @@ public sealed partial class TrainingGame : MonoBehaviour
             }
             var sized=new RayDamage();sized.Raw=damagePacket.LastRawTypedDamage;
             if(MonsterPolymorphed||combat.MonsterAttackIsWeapon)yield return ApplySizeWeaponDamage(false,sized.Raw,MonsterBaseWeaponDamageType,critical,sized);
-            var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击",reduced);
+            yield return AddEnchantedWeaponDamage(MonsterWeaponObject,MonsterBaseWeaponDamageType,critical,sized.Raw);
+            var reduced=new RayDamage();yield return ReduceRayPacket(false,sized.Raw,elementalWeapon.AttackBonus(MonsterWeaponObject,worldRounds)>0||sides.Count>0||sizeChange.Applies(false)&&sizeChange.Delta>0&&(MonsterPolymorphed||combat.MonsterAttackIsWeapon),"木桩攻击",reduced);
             int rawDamage=damage;damage=ResolveRayPacket(true,reduced.Raw);
             if(damage!=rawDamage)details+="；抗性后伤害 "+damage;
             combat.ApplyPlayerDamage(damage,critical);

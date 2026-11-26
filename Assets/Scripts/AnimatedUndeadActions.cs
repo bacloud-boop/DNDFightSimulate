@@ -71,7 +71,7 @@ public sealed partial class TrainingGame
             disadvantage|=UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,melee,SummonSwimSpeed(unit),type==1);
             if(target==0)disadvantage|=senses.Blurred(worldRounds);if(other!=null)disadvantage|=other.Dodging&&other.EffectiveSpeed>0&&targetSees;
             int first=UnityEngine.Random.Range(1,21),second=advantage!=disadvantage?UnityEngine.Random.Range(1,21):0,value=second==0?first:advantage?Math.Max(first,second):Math.Min(first,second);
-            int modifier=weapon==null?AcidSplash.Modifier(f.Rules.Ability(0)):UndeadWeaponModifier(f),bonus=2+modifier+unit.Breathing.D20Penalty;
+            int modifier=weapon==null?AcidSplash.Modifier(f.Rules.Ability(0)):UndeadWeaponModifier(f),bonus=2+modifier+unit.Breathing.D20Penalty+EnchantedWeaponAttack(weapon==null?0:weapon.Object.Id);
             int cover=targetAt.HasValue?map.CreatureCoverAt(unit.Id,target,new CreatureCover.Body(unit.X,unit.Y,1),targetAt.Value):map.CreatureCoverBonus(unit.Id,target),armor=(target==0?combat.PlayerArmorClass:target==-1?combat.MonsterArmorClass:other.Armor)+cover;
             mirrorIntercepted=false;if(target==0&&value!=1&&(value==20||(long)value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,(long)value+bonus,sees,false,cover);armor=combat.PlayerArmorClass+cover;}
             dice=unit.Name+" · "+(weapon==null?"徒手／猛击":weapon.Object.Name);yield return PresentRoll(20,second==0?new[]{first}:new[]{first,second},"采用 "+value+" + "+bonus+" / AC "+armor);
@@ -81,8 +81,9 @@ public sealed partial class TrainingGame
             else{
                 int sides=definition!=null?definition.DiceSides:f.Rules.Skeleton?0:8,count=definition!=null?definition.DiceCount:f.Rules.Skeleton?0:1,damage=definition!=null?definition.FixedDamage:f.Rules.Skeleton?1:0;
                 if(sides>0){var rolls=new int[count*(critical?2:1)];for(int i=0;i<rolls.Length;i++){rolls[i]=UnityEngine.Random.Range(1,sides+1);damage+=rolls[i];}yield return PresentRoll(sides,rolls,"伤害骰合计 "+damage+(critical?"（暴击骰翻倍）":""));}
-                raw[type]=Math.Max(0,damage+(bonusAttack?Math.Min(0,modifier):modifier));
+                raw[type]=Math.Max(0,damage+(bonusAttack?Math.Min(0,modifier):modifier)+timedBuffs.MagicObjectBonus(weapon==null?0:weapon.Object.Id,worldRounds));
             }
+            yield return AddEnchantedWeaponDamage(weapon==null?0:weapon.Object.Id,type,critical,raw,weapon!=null&&weapon.Custom);
             yield return AddCrusaderMantleDamage(unit.Id,critical,raw);
             var reduced=new RayDamage{Raw=raw};
             if(target==0||target==-1){var resolved=combat.ResolveTypedPacket(target==0,reduced.Raw);int amount=PacketAmount(resolved);if(target==0){var retaliation=CaptureHitRetaliation(unit.Id,melee,distance);combat.ApplyPlayerDamage(amount,critical,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);}
