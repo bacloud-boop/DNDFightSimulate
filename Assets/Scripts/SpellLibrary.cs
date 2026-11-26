@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Divine Smite")GUILayout.Label("在自身回合近战命中后，从斩击弹窗选择神圣斩；一环2d8光耀，每升环＋1d8，邪魔／亡灵另＋1d8。不能直接从法术书施放。",small);
         else if(definition.Name=="Searing Smite")DrawSearingSmiteInfo();
         else if(definition.Name=="Witch Bolt")DrawWitchBoltChoices();
         else if(definition.Name=="Regenerate")DrawRegenerateChoices();
@@ -183,7 +184,7 @@ public sealed partial class TrainingGame
     string DirectSpellInvalidReason(DirectSpell spell,bool eligible)
     {
         if(!eligible)return "当前职业与种族不可施放。";
-        if(spell.Name=="Searing Smite")return "仅在自身回合的近战命中后立即触发，不能直接施放。";
+        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite")return "仅在自身回合的近战命中后立即触发，不能直接施放。";
         if(banishment.Concentrating&&map.SceneOf(0)>0&&SelectedSpellMetadata()?.concentration==true&&spell.Name!="Banishment")return "请先结束放逐术专注，再选择返回场景中的新法术目标。";
         string speciesError=SpeciesSpellCastError(spell.Name,directCastingClass,directSlotLevel);if(speciesError!="")return speciesError;
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
@@ -296,7 +297,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
-        if(spell.Name=="Searing Smite")yield break;
+        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite")yield break;
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
         if(SpeciesSpellCastError(spell.Name,caster,slotLevel)!="")yield break;
         Vector2Int entangleAnchor;VisionPoint(out entangleAnchor);

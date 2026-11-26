@@ -30,6 +30,7 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
  void Surface(Rect r,object style){}string TransitActorName(int actor)=>actor.ToString();void PlayerCastWhileSubmerged(string name){}
  IEnumerator TryInterruptSpell(bool player,string name,SpellInterruption result){result.Cancelled=countered;yield break;}
  IEnumerator PresentRoll(int sides,int[] values,string text){yield break;}
+ int creatureType=9;int BanishType(int target)=>creatureType;
  bool BanishLiving(int target)=>alive;
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedDamagePacket(int target,int source,long[] raw){damage+=(int)raw[5];turnHp=Math.Max(0,turnHp-(int)raw[5]);return (int)raw[5];}
@@ -66,6 +67,9 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
   g=new TrainingGame();g.chooseOther=true;g.preferFire=true;g.regeneration.Begin(0,0);g.searingSmite.Add(0,1,10,0);g.startStatuses.Add(new StartStatus{Actor=0,Kind=0});g.QueueSearingStart(0);g.greaseEntries.Enqueue(new GreaseEntry());
   Run(g,g.DrainGreaseEntries());C(g.drainLog.Count==1&&g.drainLog[0]=="grease"&&g.turnHp==1&&g.PendingTerrainCount==0&&!g.greaseResolving&&!g.rolling,"actual production terrain dispatcher integrates terrain-first then fire/regeneration without empty dequeue or stuck modal");
   Run(g,g.DrainGreaseEntries());C(g.drainLog.Count==1&&g.turnHp==1,"repeated drain cannot duplicate consumed effects");
+  g=new TrainingGame();g.smiteKind=1;g.searingSlot=1;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.Fire==0&&initial.Radiant==16&&!g.combat.BonusActionAvailable&&g.searingSmite.Pending(-1,0).Count==0,"Divine Smite shares the on-hit window but creates only radiant damage and no ongoing fire");
+  g=new TrainingGame();g.smiteKind=1;g.searingSlot=3;g.creatureType=13;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Radiant==80&&initial.Fire==0,"third-slot Divine Smite against undead doubles all five d8 to ten on critical");
+  for(int slot=1;slot<=9;slot++)foreach(int type in new[]{0,7,9,13})C(DivineSmiteRules.Dice(slot,type)==slot+1+(type==7||type==13?1:0),"Divine Smite slot scaling and exact fiend/undead bonus");
   Console.WriteLine("PASS: production Searing Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
  }
 }
