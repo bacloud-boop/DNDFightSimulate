@@ -269,6 +269,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="armor"||panel=="monsterArmor"){DrawArmorPanel(panel=="armor");return;}
         if(panel=="summons"){DrawSummonControl();return;}
         if(panel=="rescue"){DrawRescueControl();return;}
+        if(panel=="spiritualWeapon"){DrawSpiritualWeaponControl();return;}
         if(panel=="flamingSphere"){DrawFlamingSphereControl();return;}
         if(panel=="heatMetal"){DrawHeatMetalControl();return;}
         if(panel=="cloudDaggers"){DrawCloudDaggersControl();return;}

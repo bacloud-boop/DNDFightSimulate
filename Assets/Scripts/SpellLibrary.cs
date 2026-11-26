@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Spiritual Weapon")DrawSpiritualWeaponChoices();
         else if(definition.Name=="Shining Smite")GUILayout.Label("自身回合近战命中后选择闪耀斩；二环2d6光耀，每升环＋1d6。专注至多1分钟，目标5尺明亮光照、被攻击有优势、不能受益于隐形。不能直接从法术书施放。",small);
         else if(definition.Name=="Wrathful Smite")GUILayout.Label("自身回合近战命中后选择激愤斩；每环1d6暗蚀，感知豁免失败恐慌，每回合末重复豁免成功结束。不能直接从法术书施放。",small);
         else if(definition.Name=="Thunderous Smite")GUILayout.Label("在自身回合近战命中后选择雷鸣斩；额外2d6雷鸣，每升环＋1d6。力量豁免失败推离10尺并倒地，成功不减伤。不能直接从法术书施放。",small);
@@ -217,6 +218,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Spiritual Weapon")return SpiritualWeaponError();
         if(spell.Name=="Witch Bolt")return WitchBoltError();
         if(spell.Name=="Regenerate")return RegenerateError();
         if(spell.Name=="Banishment")return BanishmentError(directSlotLevel);
@@ -329,6 +331,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        Vector2Int spiritualPoint;SpiritualInput(out spiritualPoint);int spiritualSelected=spiritualTarget,spiritualSelectedHost=SpiritualCreationHost(spiritualPoint);bool spiritualSelectedAttack=spiritualAttack;if(spell.Name=="Spiritual Weapon"&&SpiritualWeaponError()!="")yield break;
         int witchSelected=witchTarget;if(spell.Name=="Witch Bolt"&&WitchBoltError()!="")yield break;
         int regenerateSelected=regenerateTarget;if(spell.Name=="Regenerate"&&RegenerateError()!="")yield break;
         var banishSelected=new List<int>(banishTargets);if(spell.Name=="Banishment"&&BanishmentError(slotLevel)!="")yield break;
@@ -378,7 +381,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -404,6 +407,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Spiritual Weapon"){yield return CastSpiritualWeapon(spiritualPoint,caster,slotLevel,spiritualSelected,spiritualSelectedAttack,spiritualSelectedHost);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Witch Bolt"){yield return CastWitchBolt(caster,slotLevel,witchSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Regenerate"){BeginRegenerate(regenerateSelected);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Banishment"){yield return ResolveBanishment(caster,slotLevel,banishSelected);if(!embedded)rolling=false;yield break;}
