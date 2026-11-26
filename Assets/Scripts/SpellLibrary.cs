@@ -13,7 +13,7 @@ public sealed partial class TrainingGame
     int energyChoice=2;bool energyTargetWilling;
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
-    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb";
+    static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb"||name=="Control Water";
     static bool AftermathLightSpell(string name)=>name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
