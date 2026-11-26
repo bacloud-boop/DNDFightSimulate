@@ -154,6 +154,7 @@ public sealed partial class TrainingGame
         var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,count>0||extra>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||markDamage.Rolled||sizeChange.Applies(true)&&sizeChange.Delta>0,attack.Chinese+attack.AttackName,reduced);damage=ResolveRayPacket(false,reduced.Raw);combat.ApplyDamage(damage);
         if(attack.KnockProne&&combat.Hp>0&&(MonsterPolymorphed?polymorph.Spaces==1:EffectiveCreatureSize(false)<=2)){combat.MonsterProne=true;history.Insert(0,"狼啮咬使中型或更小目标倒地。");}
         history.Insert(0,attack.Chinese+attack.AttackName+"："+damage+"点"+attack.DamageType+(extra>0?"及毒素":"")+"伤害"+(critical?"（暴击）":"")+"。");
+        BeginShiningSmite(-1,searingHit);
         yield return ResolveThunderousSmiteHit(-1,searingHit);
         yield return ResolveWrathfulSmiteHit(-1,searingHit);
         dice=attack.Chinese+attack.AttackName+" · "+damage;CheckBattleOutcome();rolling=false;

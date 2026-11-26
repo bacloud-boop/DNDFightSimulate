@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Shining Smite","闪耀斩","附赠动作 · 自身回合近战命中后立即选择 · 声音。此次攻击额外2d6光耀，每升环＋1d6，暴击翻倍。目标发出5尺明亮光照，所有对其攻击检定具有优势，且无法受益于隐形；专注至多1分钟。",2,0,6,bonus:true),
         new DirectSpell("Wrathful Smite","激愤斩","附赠动作 · 自身回合近战武器或徒手／自然攻击命中后立即选择 · 声音。此次命中额外1d6暗蚀，每升环＋1d6，暴击翻倍。目标感知豁免失败恐慌至多1分钟，回合末重复豁免成功结束；无需专注。",1,0,6,bonus:true),
         new DirectSpell("Thunderous Smite","雷鸣斩","附赠动作 · 自身回合近战武器或徒手／自然攻击命中后立即选择 · 声音。此次命中额外2d6雷鸣，每升环＋1d6，暴击翻倍。目标力量豁免失败推离10尺并倒地，成功不影响附加伤害；300尺声响保留说明。即时，无需专注。",1,0,6,bonus:true),
         new DirectSpell("Divine Smite","神圣斩","附赠动作 · 自身回合的近战武器或徒手／自然攻击命中后立即选择 · 声音。此次攻击额外2d8光耀，每升环增加1d8；目标为邪魔或亡灵再增加1d8。所有附加骰均受暴击翻倍；即时生效，无需专注。",1,0,8,bonus:true),

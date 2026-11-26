@@ -5,10 +5,10 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     readonly SearingSmiteEffects searingSmite=new SearingSmiteEffects();
-    sealed class SmiteHitResult {public int Fire,Radiant,Thunder,Necrotic;public long ThunderDc,WrathfulDc;public bool ThunderPush,Wrathful;}
+    sealed class SmiteHitResult {public int Fire,Radiant,Thunder,Necrotic,ShiningSlot;public long ThunderDc,WrathfulDc;public bool ThunderPush,Wrathful;}
     bool searingPromptPending;int searingPromptChoice,searingSlot=1,smiteKind;
-    string OnHitSmiteName=>smiteKind==3?"Wrathful Smite":smiteKind==2?"Thunderous Smite":smiteKind==1?"Divine Smite":"Searing Smite";
-    bool SearingSmiteReady=>classes[9]>0&&terrainActor==0&&!summonTurns.Active&&combat.PlayerCanAct&&combat.BonusActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed(OnHitSmiteName)&&SpellVoiceAllowed(true,OnHitSmiteName)&&(smiteKind!=0||searingSmite.CanAdd(worldRounds))&&(smiteKind!=3||wrathfulSmite.CanAdd(worldRounds));
+    string OnHitSmiteName=>smiteKind==4?"Shining Smite":smiteKind==3?"Wrathful Smite":smiteKind==2?"Thunderous Smite":smiteKind==1?"Divine Smite":"Searing Smite";
+    bool SearingSmiteReady=>classes[9]>0&&terrainActor==0&&!summonTurns.Active&&combat.PlayerCanAct&&combat.BonusActionAvailable&&CanCastInCurrentForm&&ArmorSpellAllowed(OnHitSmiteName)&&SpellVoiceAllowed(true,OnHitSmiteName)&&(smiteKind!=0||searingSmite.CanAdd(worldRounds))&&(smiteKind!=3||wrathfulSmite.CanAdd(worldRounds))&&(smiteKind!=4||ShiningSmiteEffect.ValidTime(worldRounds));
     void DrawSearingSmiteInfo()
     {
         GUILayout.Label("仅在自身回合使用近战武器或徒手／自然攻击命中后，立即选择是否消耗附赠动作施放。不能直接从法术书施放。初始伤害并入该次命中，持续火焰每目标回合开始先伤害、后体质豁免，成功结束。",small);
@@ -17,9 +17,10 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(440,170,720,545),paperTexture);GUILayout.BeginArea(new Rect(470,200,660,485));
         GUILayout.Label("近战命中 · 选择斩击法术",heading);
-        smiteKind=GUILayout.SelectionGrid(smiteKind,new[]{"炽焰斩","神圣斩","雷鸣斩","激愤斩"},2,button);
-        GUILayout.Label(smiteKind==3?"激愤斩：每环1d6暗蚀，暴击翻倍。感知豁免失败恐慌至多1分钟，回合末重复豁免；无需专注。":smiteKind==2?"雷鸣斩：一环2d6雷鸣，每升环＋1d6；暴击翻倍。力量豁免失败推离10尺并倒地；遇阻停在最后合法位置。":smiteKind==1?"神圣斩：一环2d8光耀，每升环＋1d8；目标为邪魔或亡灵另＋1d8，暴击翻倍所有附加骰。即时，不留下持续伤害。":"炽焰斩：初始每环1d6火焰（暴击翻倍），后续每目标回合开始每环1d6火焰，体质豁免成功结束。",label);
-        searingSlot=GUILayout.SelectionGrid(searingSlot-1,new[]{"1","2","3","4","5","6","7","8","9"},9,button)+1;
+        smiteKind=GUILayout.SelectionGrid(smiteKind,new[]{"炽焰斩","神圣斩","雷鸣斩","激愤斩","闪耀斩"},3,button);
+        GUILayout.Label(smiteKind==4?"闪耀斩：二环2d6光耀，每升环＋1d6，暴击翻倍；专注1分钟。目标发出5尺明亮光照，所有对其攻击有优势，无法受益于隐形。":smiteKind==3?"激愤斩：每环1d6暗蚀，暴击翻倍。感知豁免失败恐慌至多1分钟，回合末重复豁免；无需专注。":smiteKind==2?"雷鸣斩：一环2d6雷鸣，每升环＋1d6；暴击翻倍。力量豁免失败推离10尺并倒地；遇阻停在最后合法位置。":smiteKind==1?"神圣斩：一环2d8光耀，每升环＋1d8；目标为邪魔或亡灵另＋1d8，暴击翻倍所有附加骰。即时，不留下持续伤害。":"炽焰斩：初始每环1d6火焰（暴击翻倍），后续每目标回合开始每环1d6火焰，体质豁免成功结束。",label);
+        int minimum=smiteKind==4?2:1;if(searingSlot<minimum)searingSlot=minimum;
+        searingSlot=GUILayout.SelectionGrid(searingSlot-minimum,minimum==2?new[]{"2","3","4","5","6","7","8","9"}:new[]{"1","2","3","4","5","6","7","8","9"},10-minimum,button)+minimum;
         if(GUILayout.Button("施放所选法术（附赠动作）",button))searingPromptChoice=1;
         if(GUILayout.Button("跳过，继续原攻击",button))searingPromptChoice=2;
         GUILayout.EndArea();
@@ -30,9 +31,16 @@ public sealed partial class TrainingGame
         searingPromptChoice=0;searingPromptPending=true;
         try{while(searingPromptChoice==0)yield return null;}finally{searingPromptPending=false;}
         if(searingPromptChoice!=1||!SearingSmiteReady||!combat.TryUseBonusAction())yield break;
-        int slot=searingSlot,kind=smiteKind;string spell=OnHitSmiteName;spellCastSequence++;PlayerCastWhileSubmerged(spell);
+        int kind=smiteKind,slot=System.Math.Max(kind==4?2:1,searingSlot);string spell=OnHitSmiteName;spellCastSequence++;if(kind==4)EndConcentration("开始新的专注法术：闪耀斩");PlayerCastWhileSubmerged(spell);
         var stopped=new SpellInterruption();yield return TryInterruptSpell(true,spell,stopped);
-        if(stopped.Cancelled){history.Insert(0,(kind==3?"激愤斩":kind==2?"雷鸣斩":kind==1?"神圣斩":"炽焰斩")+"被反制，附赠动作已消耗；原武器命中继续结算。");yield break;}
+        if(stopped.Cancelled){history.Insert(0,(kind==4?"闪耀斩":kind==3?"激愤斩":kind==2?"雷鸣斩":kind==1?"神圣斩":"炽焰斩")+"被反制，附赠动作已消耗；原武器命中继续结算。");yield break;}
+        if(kind==4){
+            concentrationSpell="闪耀斩";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=worldRounds+10;
+            int shiningCount=ShiningSmiteEffect.Dice(slot,critical),shiningSum=0;var shiningRolls=new int[shiningCount];
+            for(int i=0;i<shiningCount;i++){shiningRolls[i]=UnityEngine.Random.Range(1,7);shiningSum+=shiningRolls[i];}
+            yield return PresentRoll(6,shiningRolls,"闪耀斩："+shiningCount+"d6 = "+shiningSum+" 光耀，合并至本次命中；随后附着光照与显形");
+            result.Radiant=shiningSum;result.ShiningSlot=slot;yield break;
+        }
         if(kind==3){
             int wrathCount=WrathfulSmiteEffects.Dice(slot,critical),wrathSum=0;var wrathRolls=new int[wrathCount];
             for(int i=0;i<wrathCount;i++){wrathRolls[i]=UnityEngine.Random.Range(1,7);wrathSum+=wrathRolls[i];}

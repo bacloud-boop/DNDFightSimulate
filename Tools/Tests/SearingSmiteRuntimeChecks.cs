@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
  sealed class CombatStub {public int Hp=10,Round=1,MonsterSleepStage=0;public bool PlayerDead=false;public bool PlayerCanAct=true,BonusActionAvailable=true;public bool TryUseBonusAction(){if(!PlayerCanAct||!BonusActionAvailable)return false;BonusActionAvailable=false;return true;}}
  sealed class TurnsStub {public bool Active=false;}sealed class SpellInterruption {public bool Cancelled;}
  sealed class RayDamage {public int Amount;}
- sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public bool Same=true;public bool SameScene(int a,int b)=>Same;public bool SceneBody(int a,out Vector2Int cell,out int n){cell=new Vector2Int(a==0?0:5,0);n=1;return true;}public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
+ sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public bool Shown=true,Contained;public Vector2Int? RescuePosition=null;public int RescueSpaces=1;public bool OnScene(int actor)=>Shown;public bool IsContained(bool player)=>Contained;public bool IsCarried(bool player)=>false;public bool Same=true;public bool SameScene(int a,int b)=>Same;public bool SceneBody(int a,out Vector2Int cell,out int n){cell=new Vector2Int(a==0?0:5,0);n=1;return true;}public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
  sealed class GreaseFieldStub {public long Dc=10;}sealed class EnfeeblementStub {public long Dc=10;}sealed class SaveAdjustment {public int Value=0;}sealed class RollStub {public int Value=20;public int[] Dice=new[]{20};}
  readonly SensoryAfflictions sensory=new SensoryAfflictions();readonly AcidArrowResidue acidArrows=new AcidArrowResidue();readonly EnfeeblementStub enfeeblement=new EnfeeblementStub();
  bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption,endAcidFirst;long sensorySaveChoice;int sleepRepeatRound=1;string dice;
@@ -35,6 +35,10 @@ public sealed partial class TrainingGame
  IEnumerator ResolveAcidArrowResidue(AcidArrowResidue.Entry e){C(acidArrows.Take(e.Id),"residue claimed once");endLog.Add("acid:"+e.Id);yield break;}
  RollStub RollD20Test(bool player,int ability)=>new RollStub();int PlayerSavingThrowModifier(int ability)=>0;int MonsterSavingThrowModifier(int ability)=>0;
  IEnumerator ApplySaveAdjustments(bool player,bool automatic,SaveAdjustment result){yield break;}
+ readonly VisionState vision=new VisionState{BaseLight=2};readonly FaerieFireEffect faerieFire=new FaerieFireEffect();readonly StarryWispEffect starryWisp=new StarryWispEffect();
+ sealed class SenseStub {public bool Invisible(bool player,long world)=>true;}readonly SenseStub senses=new SenseStub();string concentrationSpell="";int concentrationExpiresRound,endedConcentrations;long concentrationExpiresWorld=-1;
+ void EndConcentration(string reason){if(concentrationSpell!="")endedConcentrations++;concentrationSpell="";concentrationExpiresWorld=-1;EndShiningSmite();}
+ static void AddFaeriePoints(List<double[]> points,Vector2Int cell,int n){for(int y=0;y<n;y++)for(int x=0;x<n;x++)points.Add(new[]{5.0*(cell.x+x),5.0*(cell.y+y)});}
  readonly MapStub map=new MapStub();bool knockedProne;void SetActorProne(int target){knockedProne=true;}void SyncTimedBuffs(){}
  readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
  sealed class GreaseEntry {public int Actor=0,Field=1;}
@@ -113,6 +117,16 @@ readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),da
    C(g.endLog.Count==3&&g.endLog[0]==(acidFirst?"acid:1":"fear:12")&&g.endLog[2]==(acidFirst?"fear:10":"acid:1"),"actual end dispatcher allows selecting either residue or an individual fear save first");
    C(!g.sensoryOrderPending&&!g.wrathfulSmite.Active(-1,0)&&g.acidArrows.Pending(-1).Count==0,"all actual turn-end choices are consumed and modal closes");
   }
-  Console.WriteLine("PASS: production Searing/Divine/Thunderous/Wrathful Smite on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
+  g=new TrainingGame();g.concentrationSpell="猎人印记";g.smiteKind=4;g.searingSlot=3;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,true,initial));C(initial.Radiant==36&&initial.ShiningSlot==3&&g.endedConcentrations==1&&g.concentrationSpell=="闪耀斩"&&g.concentrationExpiresWorld==10&&g.concentrationExpiresRound==int.MaxValue,"Shining Smite replaces old concentration at cast start and doubles scaled radiant dice");
+  g.BeginShiningSmite(-1,initial);C(g.ShiningOutlined(-1)&&g.vision.Light(25,0,0)==0&&g.vision.Light(30,0,0)==0&&g.vision.Light(31,0,0)==2,"Shining Smite emits exactly five-foot bright light after damage without an invented dim-light ring");
+  C(g.FaerieAdvantage(-1,false)&&!g.InvisibleWithFaerie(false),"actual attack/visibility adapters grant advantage even unseen and suppress invisibility benefits");
+  g.map.Shown=false;g.RefreshShiningSmite();C(g.ShiningOutlined(-1)&&g.vision.Zones.Count==0,"changing the viewed plane hides illumination without deleting attached magic");g.map.Shown=true;g.RefreshShiningSmite();C(g.vision.Light(25,0,0)==0,"returning the view restores active illumination");
+  g.map.Contained=true;g.RefreshShiningSmite();C(g.vision.Zones.Count==0&&g.ShiningOutlined(-1),"swallowing hides external light but retains attached reveal state");g.map.Contained=false;
+  g.EndConcentration("test");C(!g.ShiningOutlined(-1)&&g.InvisibleWithFaerie(false)&&!g.FaerieAdvantage(-1,true),"ending concentration restores underlying invisibility without destroying its source");
+  g=new TrainingGame();g.concentrationSpell="闪耀斩";g.BeginShiningSmite(-1,new SmiteHitResult{ShiningSlot=2});g.vision.AddZone(true,25,0,2,0);g.RefreshShiningSmite();C(!g.ShiningOutlined(-1)&&g.concentrationSpell=="","Darkness dispels an overlapping second-level Shining Smite");
+  g=new TrainingGame();g.concentrationSpell="闪耀斩";g.BeginShiningSmite(-1,new SmiteHitResult{ShiningSlot=3});g.vision.AddZone(true,25,0,2,0);g.RefreshShiningSmite();C(g.ShiningOutlined(-1)&&g.vision.Light(25,0,0)==0,"third-level Shining Smite light survives and illuminates within Darkness");
+  g=new TrainingGame();g.concentrationSpell="旧法术";g.smiteKind=4;g.countered=true;initial=new SmiteHitResult();Run(g,g.OfferSearingSmite(-1,false,initial));C(initial.ShiningSlot==0&&initial.Radiant==0&&g.concentrationSpell==""&&g.endedConcentrations==1&&!g.combat.BonusActionAvailable,"countered Shining Smite still loses prior concentration and spends bonus but preserves original weapon hit");
+  C(ShiningSmiteEffect.Dice(1)==0&&ShiningSmiteEffect.Dice(9,true)==18,"Shining Smite minimum slot and high-slot critical bound");
+  Console.WriteLine("PASS: production five on-hit smites, Shining light/reveal/concentration on-hit choice, bonus/turn/voice gates, critical dice, counterspell isolation, strongest ongoing damage, independent saves and selectable regeneration/terrain order");
  }
 }

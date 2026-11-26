@@ -45,6 +45,7 @@ public sealed partial class TrainingGame
     {
         string text=ActorBlinded(player?0:-1)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
         if(player&&playerResurrectionCaster.Taxed)text+=(text==""?"":" · ")+"复生疲惫";
+        if(ShiningOutlined(player?0:-1))text+=(text==""?"":" · ")+"闪耀斩显形";
         if(ActorFrightened(player?0:-1))text+=(text==""?"":" · ")+"恐慌";
         if(PassTraceBenefit(player?0:-1))text+=(text==""?"":" · ")+"无踪步";
         if(BeaconHope(player?0:-1))text+=(text==""?"":" · ")+"希望信标";

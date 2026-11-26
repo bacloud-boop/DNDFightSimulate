@@ -100,6 +100,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Shining Smite")GUILayout.Label("自身回合近战命中后选择闪耀斩；二环2d6光耀，每升环＋1d6。专注至多1分钟，目标5尺明亮光照、被攻击有优势、不能受益于隐形。不能直接从法术书施放。",small);
         else if(definition.Name=="Wrathful Smite")GUILayout.Label("自身回合近战命中后选择激愤斩；每环1d6暗蚀，感知豁免失败恐慌，每回合末重复豁免成功结束。不能直接从法术书施放。",small);
         else if(definition.Name=="Thunderous Smite")GUILayout.Label("在自身回合近战命中后选择雷鸣斩；额外2d6雷鸣，每升环＋1d6。力量豁免失败推离10尺并倒地，成功不减伤。不能直接从法术书施放。",small);
         else if(definition.Name=="Divine Smite")GUILayout.Label("在自身回合近战命中后，从斩击弹窗选择神圣斩；一环2d8光耀，每升环＋1d8，邪魔／亡灵另＋1d8。不能直接从法术书施放。",small);
@@ -186,7 +187,7 @@ public sealed partial class TrainingGame
     string DirectSpellInvalidReason(DirectSpell spell,bool eligible)
     {
         if(!eligible)return "当前职业与种族不可施放。";
-        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite"||spell.Name=="Thunderous Smite"||spell.Name=="Wrathful Smite")return "仅在自身回合的近战命中后立即触发，不能直接施放。";
+        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite"||spell.Name=="Thunderous Smite"||spell.Name=="Wrathful Smite"||spell.Name=="Shining Smite")return "仅在自身回合的近战命中后立即触发，不能直接施放。";
         if(banishment.Concentrating&&map.SceneOf(0)>0&&SelectedSpellMetadata()?.concentration==true&&spell.Name!="Banishment")return "请先结束放逐术专注，再选择返回场景中的新法术目标。";
         string speciesError=SpeciesSpellCastError(spell.Name,directCastingClass,directSlotLevel);if(speciesError!="")return speciesError;
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
@@ -299,7 +300,7 @@ public sealed partial class TrainingGame
     }
     IEnumerator ResolveDirectSpellCore(DirectSpell spell,bool targetPlayer,int caster,int slotLevel,bool embedded)
     {
-        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite"||spell.Name=="Thunderous Smite"||spell.Name=="Wrathful Smite")yield break;
+        if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite"||spell.Name=="Thunderous Smite"||spell.Name=="Wrathful Smite"||spell.Name=="Shining Smite")yield break;
         if(RevivalRules.Supported(spell.Name)){yield return CastRevival(spell.Name,targetPlayer,false);yield break;}
         if(SpeciesSpellCastError(spell.Name,caster,slotLevel)!="")yield break;
         Vector2Int entangleAnchor;VisionPoint(out entangleAnchor);
