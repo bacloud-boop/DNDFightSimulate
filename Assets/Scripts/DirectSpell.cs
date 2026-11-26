@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Chromatic Orb","繁彩球","1动作 · 90尺 · 声音、姿势。选择强酸／寒冷／火焰／闪电／毒素／雷鸣，远程法术攻击命中3d8，每升环＋1d8。该次法术d8有重复骰值时可选前一目标30尺内新目标，最多弹射等同环阶次数，同一生物每次施法只选一次；可射向环境直接结束。",1,90,8,attack:true,baseDice:3,upcastDice:1),
         new DirectSpell("Spiritual Weapon","灵体武器","附赠动作 · 60尺 · 声音、姿势。创造一个不占格的浮空灵体，可立即对它5尺内的一个生物进行近战法术攻击，命中1d8＋施法调整值力场伤害，每升环＋1d8。后续自身回合可用附赠动作移动至多20尺并攻击一次；跨位面暂停操控，持续时间照常。",2,60,8,bonus:true,attack:true,damageType:"力场",baseDice:1,upcastDice:1,melee:true),
         new DirectSpell("Shining Smite","闪耀斩","附赠动作 · 自身回合近战命中后立即选择 · 声音。此次攻击额外2d6光耀，每升环＋1d6，暴击翻倍。目标发出5尺明亮光照，所有对其攻击检定具有优势，且无法受益于隐形；专注至多1分钟。",2,0,6,bonus:true),
         new DirectSpell("Wrathful Smite","激愤斩","附赠动作 · 自身回合近战武器或徒手／自然攻击命中后立即选择 · 声音。此次命中额外1d6暗蚀，每升环＋1d6，暴击翻倍。目标感知豁免失败恐慌至多1分钟，回合末重复豁免成功结束；无需专注。",1,0,6,bonus:true),

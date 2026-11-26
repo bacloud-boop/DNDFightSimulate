@@ -4,7 +4,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     sealed class SpellAttackResult {public bool Hit,Critical,Intercepted;}
-    IEnumerator RollMappedSpellAttack(int source,int target,int caster,string title,SpellAttackResult result,bool melee=false,Vector2Int? effectOrigin=null)
+    IEnumerator RollMappedSpellAttack(int source,int target,int caster,string title,SpellAttackResult result,bool melee=false,Vector2Int? effectOrigin=null,int effectOriginSpaces=1,int? effectSource=null)
     {
         Vector2Int origin,p;int n,m;string name;if(!CommandBody(source,out origin,out n))yield break;
         if(effectOrigin.HasValue?!HealingHandsTarget(target,out p,out m,out name):!SummonTarget(target,out p,out m,out name))yield break;
@@ -30,7 +30,7 @@ public sealed partial class TrainingGame
         long bonus=(playerSource?(long)classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)])+PlayerAquaticD20Penalty:MonsterSpellSequence.AttackBonus(combat.MonsterProficiencyBonus,EffectiveMonsterAbility(monsterSpells.Ability))+combat.MonsterRevivalPenalty+monsterBreathing.D20Penalty)+bless-bane-ward;
         // Conditions keyed to the attacker (Prone and helpless criticals) still use
         // the caster distance; only cover originates at the remote force.
-        int cover=effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target):map.CreatureCoverBonus(source,target),armor=(primary?(player?combat.PlayerArmorClass:combat.MonsterArmorClass):unit.Armor)+cover;
+        int cover=effectOrigin.HasValue?(effectSource.HasValue?map.CreatureCoverAt(effectSource.Value,target,new CreatureCover.Body(effectOrigin.Value.x,effectOrigin.Value.y,effectOriginSpaces),new CreatureCover.Body(p.x,p.y,m)):map.CreatureCoverFromPoint(effectOrigin.Value,target)):map.CreatureCoverBonus(source,target),armor=(primary?(player?combat.PlayerArmorClass:combat.MonsterArmorClass):unit.Armor)+cover;
         BreakOrdinaryInvisibility(playerSource,"进行攻击检定");mirrorIntercepted=false;
         if(player&&value!=1&&(value==20||(long)value+bonus>=armor)){yield return ResolvePlayerHitDefense(value,(long)value+bonus,sees,PerceivesWithSpecialSense(playerSource,true),cover);armor=combat.PlayerArmorClass+cover;}
         result.Intercepted=mirrorIntercepted;result.Hit=!result.Intercepted&&value!=1&&(value==20||(long)value+bonus>=armor);result.Critical=result.Hit&&(value==20||helpless&&distance<=5);
