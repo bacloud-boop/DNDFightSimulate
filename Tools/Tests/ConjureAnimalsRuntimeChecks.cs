@@ -15,10 +15,12 @@ public static class AcidSplash {public static int Modifier(int score)=>(int)Math
 public static class PlayerAttributes {public static readonly string[] Names={"力量","敏捷","体质","感知","智力","魅力"};}
 public sealed partial class TrainingGame
 {
+ sealed class Aquatic {public bool Submerged;}
  sealed class Breath {public int D20Penalty;}
- sealed class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public bool Alive=true,Prone;public readonly Breath Breathing=new Breath();}
- sealed class Rescue {public Func<int,int> SpeedTransform;public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
+ sealed class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public readonly Aquatic Aquatic=new Aquatic();public bool Alive=true,Prone;public readonly Breath Breathing=new Breath();}
+ sealed class Rescue {public Func<bool> ActionBlock;public Func<int,int> SpeedTransform;public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
  sealed partial class MapStub {
+  public readonly Aquatic PlayerAquatic=new Aquatic(),MonsterAquatic=new Aquatic(),RescueAquatic=new Aquatic();
   public Vector2Int Player=new Vector2Int(0,0),Monster=new Vector2Int(7,0);public int PlayerSpaces=1,MonsterSpaces=1,Size=30,Scene,PlayerScene,MonsterScene,LastCoverSpaces,Cover;public bool Contained;public bool? RescueCargoPlayer=null;public Vector2Int LastCover;
   public readonly HashSet<Vector2Int> Water=new HashSet<Vector2Int>();public bool IsWater(Vector2Int p)=>Water.Contains(p);
   public readonly List<Unit> Units=new List<Unit>();public bool IsContained(bool player)=>player&&Contained;public int SceneOf(int actor)=>actor==0?PlayerScene:MonsterScene;public bool SameScene(int a,int b)=>SceneOf(a)==SceneOf(b);public bool OnScene(int actor)=>SceneOf(actor)==Scene;
@@ -50,13 +52,16 @@ public sealed partial class TrainingGame
  IEnumerator MaintainConcentration(int damage){if(combat.PlayerHp<=0){EndAnimalPack();concentrationSpell="";}yield break;}
  void ReconcileFallenRescue(){}void RefreshBestialSpirit(){}void NoticeCastingInterruption(){}void CheckBattleOutcome(){}
  bool SpeciesSaveAdvantage(bool p,int ability)=>false;bool BeaconHope(int actor)=>false;bool ResurrectionD20Disadvantage(bool player)=>weak;
- ArmorSaveRoll RollArmorSave(bool player,int ability,bool avoidsOrEndsFrightened=false)=>RollD20Test(player,ability:ability);
+ ArmorSaveRoll RollArmorSave(bool player,int ability,bool avoidsOrEndsFrightened=false,bool avoidsOrEndsPoisoned=false)=>RollD20Test(player,advantage:avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player),ability:ability);
  int PlayerSavingThrowModifier(int a)=>2;int MonsterSavingThrowModifier(int a)=>0;int BondBonus(int actor)=>0;int SummonSaveModifier(Unit unit,int a)=>0;
  ArmorSaveRoll RollRescueSave(int a)=>RollSavingThrowDice(false,false);ArmorSaveRoll RollSummonSavingThrow(Unit u,int a)=>RollSavingThrowDice(false,false);
  IEnumerator ApplySaveAdjustments(bool player,bool automatic,SaveAdjustment result,int ability=-1,bool ignoreCover=false){yield break;}
  IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){var entry=startStatuses[0];startStatuses.RemoveAt(0);
 #if SLEET_RUNTIME
  if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
+#endif
+#if STINKING_RUNTIME
+ if(entry.Kind==4)yield return ResolveStinkingSave(entry.Actor,entry.Revision);
 #endif
 #if GUARDIANS_RUNTIME
  if(entry.Kind==3)yield return ResolveGuardianSave(entry.Actor,entry.Revision,entry.Origin,entry.Spaces);

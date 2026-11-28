@@ -11,7 +11,9 @@ public sealed class CombatState
     public int MonsterRevivalPenalty {get;private set;}
     public int RevivalPenalty(bool player)=>player?PlayerRevivalPenalty:MonsterRevivalPenalty;
     public void CompleteLongRest(bool player){if(player)PlayerMaxHpReduction=0;else MonsterMaxHpReduction=0;if(player)PlayerRevivalPenalty=Math.Min(0,PlayerRevivalPenalty+1);else MonsterRevivalPenalty=Math.Min(0,MonsterRevivalPenalty+1);}
-    public void ClearPoison(bool player){if(player)playerPoisonUntil=0;else monsterPoisonUntil=0;}
+    public Func<bool,bool> ExternalPoisoned,ActionBlock;public Action<bool> ExternalPoisonClear;
+    bool ActionsBlocked(bool player)=>ActionBlock!=null&&ActionBlock(player);
+    public void ClearPoison(bool player){ExternalPoisonClear?.Invoke(player);if(player)playerPoisonUntil=0;else monsterPoisonUntil=0;}
     public bool Revive(bool player,int hp,bool ordeal){
         if(hp<1)return false;
         if(player){if(!PlayerDead)return false;PlayerDead=false;PlayerStable=false;DeathFailures=DeathSuccesses=0;PlayerHp=Math.Min(PlayerMaxHp,hp);if(ordeal)PlayerRevivalPenalty=-4;}
@@ -49,8 +51,8 @@ public sealed class CombatState
     public bool PlayerBlessed {get;set;}
     public bool MonsterBlessed {get;set;}
     int playerPoisonUntil,monsterPoisonUntil;
-    public bool PlayerPoisoned=>!PlayerFeignDeath&&playerPoisonUntil>0;
-    public bool MonsterPoisoned=>!MonsterFeignDeath&&monsterPoisonUntil>0;
+    public bool PlayerPoisoned=>!PlayerFeignDeath&&(playerPoisonUntil>0||ExternalPoisoned!=null&&ExternalPoisoned(true));
+    public bool MonsterPoisoned=>!MonsterFeignDeath&&(monsterPoisonUntil>0||ExternalPoisoned!=null&&ExternalPoisoned(false));
     public void ApplyPoison(bool player){if(player?PlayerFeignDeath:MonsterFeignDeath)return;if(player)playerPoisonUntil=Round+1;else monsterPoisonUntil=Round+1;}
     int playerSliverUntil,monsterSliverUntil;
     public void ApplySliver(bool player){if(player)playerSliverUntil=Round+1;else monsterSliverUntil=Round+1;}
@@ -204,26 +206,26 @@ public sealed class CombatState
     }
     public bool CanPlayerDamageReact=>PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&!PlayerReactionsBlocked&&PlayerReactionAvailable;
     public bool TryUseDamageReaction(){if(!CanPlayerDamageReact)return false;PlayerReactionAvailable=false;BattleStarted=true;return true;}
-    public bool MonsterActionAvailable {get;private set;}=true;
+    bool monsterActionAvailable=true;public bool MonsterActionAvailable {get=>monsterActionAvailable&&!ActionsBlocked(false);private set=>monsterActionAvailable=value;}
     public bool TryUseMonsterAction(){if(!MonsterCanAct||!MonsterActionAvailable)return false;MonsterActionAvailable=false;BattleStarted=true;return true;}
-    public bool MonsterBonusActionAvailable {get;private set;}=true;
+    bool monsterBonusAvailable=true;public bool MonsterBonusActionAvailable {get=>monsterBonusAvailable&&!ActionsBlocked(false);private set=>monsterBonusAvailable=value;}
     public bool TryUseMonsterBonusAction(){if(!MonsterCanAct||!MonsterBonusActionAvailable)return false;MonsterBonusActionAvailable=false;BattleStarted=true;return true;}
     public void StartMonsterTurn(bool notify=true) {MonsterActionAvailable=true;MonsterBonusActionAvailable=true;MonsterReactionsBlocked=false;MonsterOpportunityBlocked=false;MonsterReactionAvailable=true;if(notify)TurnStarted?.Invoke(-1);}
     public void MarkBattleStarted() { BattleStarted=true; }
     public int ActionsRemaining { get; private set; } = 1;
     public int ActionsThisRound { get; private set; } = 1;
     public int RestrictedActionsRemaining {get;private set;}
-    public bool MagicActionAvailable => PlayerCanAct&&ActionsRemaining>RestrictedActionsRemaining;
+    public bool MagicActionAvailable => !ActionsBlocked(true)&&PlayerCanAct&&ActionsRemaining>RestrictedActionsRemaining;
     public bool TryUseMagicAction(){if(!MagicActionAvailable)return false;BattleStarted=true;ActionsRemaining--;return true;}
-    public bool AftermathMagicActionAvailable=>Aftermath&&AftermathPlayerTurn&&PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&ActionsRemaining>RestrictedActionsRemaining;
+    public bool AftermathMagicActionAvailable=>!ActionsBlocked(true)&&Aftermath&&AftermathPlayerTurn&&PlayerHp>0&&!PlayerDead&&!PlayerParalyzed&&!PlayerFeignDeath&&ActionsRemaining>RestrictedActionsRemaining;
     public bool TryUseAftermathMagicAction(){if(!Aftermath)return TryUseMagicAction();if(!AftermathMagicActionAvailable)return false;ActionsRemaining--;BattleStarted=true;return true;}
-    public bool ActionAvailable => PlayerCanAct&&ActionsRemaining>0;
-    public bool BonusActionAvailable { get; private set; } = true;
+    public bool ActionAvailable => !ActionsBlocked(true)&&PlayerCanAct&&ActionsRemaining>0;
+    bool bonusAvailable=true;public bool BonusActionAvailable {get=>bonusAvailable&&!ActionsBlocked(true);private set=>bonusAvailable=value;}
     public bool TryUseAction() {
         if(!ActionAvailable) return false;
         BattleStarted=true;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;return true;
     }
-    public bool TryUseObjectAction(){if(!Aftermath)return TryUseAction();if(!AftermathPlayerTurn||PlayerHp<=0||PlayerDead||PlayerParalyzed||PlayerFeignDeath||ActionsRemaining<1)return false;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;BattleStarted=true;return true;}
+    public bool TryUseObjectAction(){if(!Aftermath)return TryUseAction();if(ActionsBlocked(true)||!AftermathPlayerTurn||PlayerHp<=0||PlayerDead||PlayerParalyzed||PlayerFeignDeath||ActionsRemaining<1)return false;ActionsRemaining--;if(RestrictedActionsRemaining>0)RestrictedActionsRemaining--;BattleStarted=true;return true;}
     public bool TryUseBonusAction() {
         if(!PlayerCanAct||!BonusActionAvailable) return false;
         BattleStarted=true;BonusActionAvailable=false;return true;

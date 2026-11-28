@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(350,110,900,745),paperTexture);if(Btn(new Rect(1140,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,390,630));rescueScroll=GUILayout.BeginScrollView(rescueScroll);
-        GUILayout.Label("救援搬运者",heading);DrawAftermathPhaseControls();GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
+        GUILayout.Label("救援搬运者",heading);if(Nauseated(BattleMap.RescueId))GUILayout.Label("臭云中毒：不能动作或附赠动作，仍可移动和反应。",small);DrawAftermathPhaseControls();GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
         bool old=GUI.enabled;GUI.enabled=!rolling&&combat.Aftermath&&PlayerTurnAllowed&&!map.RescuePosition.HasValue;
         GUILayout.Label("力量（3～20整数）",small);rescueStrength=IntegerField(rescueStrength,false);
         GUILayout.Label("敏捷（3～20整数，豁免无熟练）",small);rescueDexterity=IntegerField(rescueDexterity,false);

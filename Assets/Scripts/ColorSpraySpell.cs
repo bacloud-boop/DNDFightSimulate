@@ -7,7 +7,7 @@ public sealed partial class TrainingGame
     bool ActorBlinded(int actor)=>SmiteBlinded(actor)||turnConditions.Has(actor,0,worldRounds)||feignDeath.Blind(actor,worldRounds)||((actor==0||actor==-1)&&sensory.Blinded(actor==0,worldRounds));
     int EndAuxiliaryCondition(int actor,int condition,long now)
     {
-        int ended=turnConditions.End(actor,condition,now);if(condition==0)ended+=EndBlindingSmite(actor,now);if(condition==0&&feignDeath.EndBlind(actor,now))ended++;return ended;
+        int ended=turnConditions.End(actor,condition,now);if(condition==3&&stinkingCloud.ClearPoison(actor))ended++;if(condition==0)ended+=EndBlindingSmite(actor,now);if(condition==0&&feignDeath.EndBlind(actor,now))ended++;return ended;
     }
     string ColorSprayError()=>!TurnBoundConditions.ValidTime(worldRounds)?"世界时间超出可用范围。":BurningHandsError();
     IEnumerator ResolveColorSpray(bool player,int casterClass,BreathTemplate template)

@@ -36,12 +36,12 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollMappedDexteritySave(int target,int caster,long dc,HashSet<int> failed,string context)
         =>RollMappedAbilitySave(target,caster,dc,failed,context,1);
-    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null,int effectOriginSpaces=1,bool avoidsFrightened=false)
+    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null,int effectOriginSpaces=1,bool avoidsFrightened=false,bool avoidsPoisoned=false)
     {
         bool automatic=false;long modifier;int value;int[] shown;
         if(target==0||target==-1){
             bool player=target==0;automatic=(ability==0||ability==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterHelpless);
-            var roll=RollArmorSave(player,ability,avoidsOrEndsFrightened:avoidsFrightened);shown=roll.Dice;value=roll.Value;
+            var roll=RollArmorSave(player,ability,avoidsOrEndsFrightened:avoidsFrightened,avoidsOrEndsPoisoned:avoidsPoisoned);shown=roll.Dice;value=roll.Value;
             modifier=player?PlayerSavingThrowModifier(ability):MonsterSavingThrowModifier(ability);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,ability,ignoreCover:true);modifier+=adjustment.Value;
         }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty;}

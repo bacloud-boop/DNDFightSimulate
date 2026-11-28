@@ -58,10 +58,11 @@ public sealed class SummonedUnit
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}
     bool actionAvailable;
-    public bool ActionAvailable=>!Banished&&ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
+    public Func<bool> ActionBlock,Poisoned;bool ActionsBlocked=>ActionBlock!=null&&ActionBlock();
+    public bool ActionAvailable=>!ActionsBlocked&&!Banished&&ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
     public bool Dodging {get;private set;}
     public bool Disengaged {get;private set;}
-    public bool BonusAvailable {get;private set;}
+    bool bonusAvailable;public bool BonusAvailable {get=>bonusAvailable&&!ActionsBlocked;private set=>bonusAvailable=value;}
     public bool TryUseBonus(){if(Banished||!ControllerReady||!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
     public bool Disengage(){if(!TryUseAction())return false;Disengaged=true;return true;}
     public SummonCommand Orders {get;private set;}
@@ -99,7 +100,7 @@ public sealed class SummonedUnit
     public bool SwitchWaterState(bool submerged,int waterCells)=>Aquatic.TrySwitch(submerged,waterCells,Spaces*Spaces,SpendMovement);
     public bool Attack()
     {
-        if(Banished||!ControllerReady||!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
+        if(ActionsBlocked||Banished||!ControllerReady||!Alive||FeignDeath||SleepStage>0||!TurnActive)return false;
         if(AttacksRemaining==0){if(!ActionAvailable)return false;actionAvailable=false;AttacksRemaining=AttacksPerAction;}
         AttacksRemaining--;return true;
     }

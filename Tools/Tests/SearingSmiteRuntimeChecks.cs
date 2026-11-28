@@ -26,6 +26,7 @@ public sealed partial class TrainingGame
  sealed class RayDamage {public int Amount;}
  sealed class MapStub {public int Player=0,PlayerSpaces=1,PushCalls;public bool Shown=true,Contained;public Vector2Int? RescuePosition=null;public int RescueSpaces=1;public bool OnScene(int actor)=>Shown;public bool IsContained(bool player)=>Contained;public bool IsCarried(bool player)=>false;public bool Same=true;public bool SameScene(int a,int b)=>Same;public bool SceneBody(int a,out Vector2Int cell,out int n){cell=new Vector2Int(a==0?0:5,0);n=1;return true;}public int Limit=10;public int ForceMoveAway(bool player,int origin,int spaces,int feet){PushCalls++;return Math.Min(Limit,feet);}}
  sealed class GreaseFieldStub {public long Dc=10;}sealed class EnfeeblementStub {public long Dc=10;}sealed class SaveAdjustment {public int Value=0;}sealed class RollStub {public int Value=20;public int[] Dice=new[]{20};}
+ sealed class CloudStub {public bool ClearPoison(int actor)=>false;}readonly CloudStub stinkingCloud=new CloudStub();
  readonly TurnBoundConditions turnConditions=new TurnBoundConditions();readonly FeignDeathEffect feignDeath=new FeignDeathEffect();
  readonly SensoryAfflictions sensory=new SensoryAfflictions();readonly AcidArrowResidue acidArrows=new AcidArrowResidue();readonly EnfeeblementStub enfeeblement=new EnfeeblementStub();
  bool sensoryOrderPending,sensorySavePlayer,sensoryRayOption,sensoryGreaseOption,sensorySleepOption,sensoryDaggersOption,sensorySphereOption,endAcidFirst;long sensorySaveChoice;int sleepRepeatRound=1;string dice;
@@ -44,7 +45,7 @@ public sealed partial class TrainingGame
  readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
  sealed class GreaseEntry {public int Actor=0,Field=1;}
 readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
-readonly Queue<int> packEntries=new Queue<int>();bool packFirst;IEnumerator ChoosePackEntryOrder(){packFirst=true;yield break;}IEnumerator ResolvePackEntry(int entry){yield break;}IEnumerator ResolveSleetSave(int actor,long revision){yield break;}IEnumerator ResolveGuardianSave(int actor,long revision,Vector2Int origin,int spaces){yield break;}
+readonly Queue<int> packEntries=new Queue<int>();bool packFirst;IEnumerator ChoosePackEntryOrder(){packFirst=true;yield break;}IEnumerator ResolvePackEntry(int entry){yield break;}IEnumerator ResolveSleetSave(int actor,long revision){yield break;}IEnumerator ResolveGuardianSave(int actor,long revision,Vector2Int origin,int spaces){yield break;}IEnumerator ResolveStinkingSave(int actor,long revision){yield break;}
 readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();
  readonly List<string> history=new List<string>();readonly int[] attributes={10,10,10,10,10,10};
  bool CanCastInCurrentForm=true,voice=true,countered,saveSuccess,alive=true,preferFire,chooseOther;int terrainActor=0,spellCastSequence,chosenCast=1,damage,saveCalls,turnHp=5,outcomeDeferDepth;long worldRounds=0,terrainTurn=1;

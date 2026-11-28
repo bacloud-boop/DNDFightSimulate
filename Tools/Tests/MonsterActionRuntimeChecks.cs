@@ -22,7 +22,7 @@ public sealed partial class TrainingGame
     MonsterSpellSequence monsterSpells=new MonsterSpellSequence();bool rolling;string page="battle";
     object small=new object(),heading=new object(),label=new object(),button=new object();
     int MonsterAttackReach=>5;bool MonsterSpellReady=true;
-    bool speciesAction,speciesBonus,granted,drop,invalidSpell,killOnMove;
+    bool speciesAction,speciesBonus,granted,drop,invalidSpell,killOnMove,nauseated;bool Nauseated(int actor)=>nauseated;
     int attacks,breaths,spells,raceActions,raceBonuses;readonly List<string> log=new List<string>();
     bool MonsterCanCastAttack=>!drop;
     bool BreathReady(int actor)=>false;
@@ -55,6 +55,7 @@ public sealed partial class TrainingGame
         g=New();for(int i=0;i<4;i++)g.monsterActions.SetEnabled(i,false);Run(g.RunMonsterPriorityTurn());C(g.combat.MonsterActionAvailable&&g.combat.MonsterBonusActionAvailable&&g.log.Count==0,"disabled categories cause no movement or action expenditure");
         g=New();g.killOnMove=true;g.granted=true;Run(g.RunMonsterPriorityTurn());C(g.attacks==0&&g.breaths==0&&g.combat.Hp==0,"death while moving prevents all later action categories");
         g=New();g.map.Victim=4;g.monsterActions.SetEnabled(1,false);Run(g.RunMonsterPriorityTurn());C(g.attacks==1&&g.log.Contains("summon attacked"),"custom attack still targets nearest summon instead of always attacking player");
+        g=New();g.nauseated=true;Run(g.RunMonsterPriorityTurn());C(g.log.Contains("move:True")&&g.attacks==0&&g.spells==0&&g.breaths==0,"nauseated monster still pursues without spending action or bonus");
         Console.WriteLine("PASS: production monster priority coroutine, action/bonus isolation, ordered fallback, spell cursor retention, dropped weapon recovery, target selection, category disable and movement death");
     }
 }

@@ -79,7 +79,7 @@ public sealed partial class RescueCarrier
     public readonly BodyWeight Weight=new BodyWeight();
     public readonly CorpseCarryingState Load=new CorpseCarryingState();
     public bool TurnActive {get;private set;}
-    public int ActionsRemaining {get;private set;}
+    public Func<bool> ActionBlock;int actionBudget;public int ActionsRemaining {get=>ActionBlock!=null&&ActionBlock()?0:actionBudget;private set=>actionBudget=value;}
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;

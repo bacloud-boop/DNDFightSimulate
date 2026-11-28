@@ -65,7 +65,7 @@ public sealed partial class TrainingGame
             bool prone=target==0?combat.PlayerProne:target==-1?combat.MonsterProne:other!=null&&other.Prone;
             bool restrained=target==0||target==-1?Entangled(target==0):other!=null&&other.Restrained;
             bool advantage=FaerieAdvantage(target,sees)||!targetSees||helpless||restrained||prone&&distance<=5;
-            bool disadvantage=HeatDisadvantage(unit.Id)||!sees||unit.Prone||unit.Restrained||FearDisadvantage(unit.Id)||prone&&distance>5||f.ArmorIndex>0;
+            bool disadvantage=unit.Poisoned!=null&&unit.Poisoned()||HeatDisadvantage(unit.Id)||!sees||unit.Prone||unit.Restrained||FearDisadvantage(unit.Id)||prone&&distance>5||f.ArmorIndex>0;
             if(!melee){disadvantage|=definition!=null&&definition.HasRangeDisadvantage(distance);disadvantage|=combat.MonsterCanAct&&BattleMap.BodyDistance(new Vector2Int(unit.X,unit.Y),1,map.Monster,map.MonsterSpaces)<=5&&VisibilityBetween(false,map.Monster.x,map.Monster.y,map.MonsterSpaces,unit.X,unit.Y,1)<2;}
             int type=weapon==null?0:weapon.Type,normal=definition==null?reach:definition.ReachFeet;
             disadvantage|=UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,melee,SummonSwimSpeed(unit),type==1);

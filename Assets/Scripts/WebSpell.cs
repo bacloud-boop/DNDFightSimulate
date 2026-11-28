@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     }
     void InitializeWeb()
     {
-        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);unit.SpeedTransform=speed=>GuardianSpeed(unit.Id,speed);};
+        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);unit.SpeedTransform=speed=>GuardianSpeed(unit.Id,speed);unit.ActionBlock=()=>Nauseated(unit.Id);unit.Poisoned=()=>Nauseated(unit.Id);};
         combat.FireExposure=player=>IgniteWebActor(player?0:-1);rescueCarrier.FireExposure=()=>IgniteWebActor(BattleMap.RescueId);
         rescueCarrier.TurnStarted=()=>StartWebTurn(BattleMap.RescueId);
         vision.LightObscuration=(x,y,now)=>web.Cell((int)Math.Floor((x+2.5)/5),(int)Math.Floor((y+2.5)/5),now);
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
         map.ViewActorScene(actor);acidArrows.StartTurn(actor);if(actor==0){StartFingerCasterTurn();heatMetal.CasterTurnStarts();}
         bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
         if(!shared){terrainActor=actor;terrainTurn++;}if(actor==0)animalPack.StartPlayerTurn(terrainTurn);RegenerationTurnStarts(actor,terrainTurn);QueueSearingStart(actor);web.StartTurn(actor);SyncWeb();
-        QueueSleetStart(actor);QueueWebEntry(actor,true);QueueHeroismStart(actor);QueueAuraVitalityStart(actor);SyncTimedBuffs();
+        QueueStinkingStart(actor);QueueSleetStart(actor);QueueWebEntry(actor,true);QueueHeroismStart(actor);QueueAuraVitalityStart(actor);SyncTimedBuffs();
     }
     void QueueWebEntry(int actor,bool starting)
     {
