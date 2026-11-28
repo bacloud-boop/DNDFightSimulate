@@ -87,7 +87,9 @@ public sealed class CombatState
     }
     public int? MonsterFormSpeed {get;set;}
     public int? MonsterFormArmor {get;set;}
-    public int MonsterSpeed => MonsterFeignDeath&&!HasMovementFreedom(false)||MonsterRestrained||MonsterSleepStage==2?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
+    public Func<int,int> MonsterSpeedTransform;
+    public int MonsterSpeed=>MonsterSpeedTransform==null?MonsterUnmodifiedSpeed:Math.Max(0,MonsterSpeedTransform(MonsterUnmodifiedSpeed));
+    public int MonsterUnmodifiedSpeed => MonsterFeignDeath&&!HasMovementFreedom(false)||MonsterRestrained||MonsterSleepStage==2?0:(int)Math.Min(int.MaxValue,Math.Max(0,(long)(MonsterFormSpeed??MonsterBaseSpeed)+MonsterSpeedBonus-(MonsterSlowed?10:0)));
     public void ApplyFrostSlow(bool player){if(HasMovementFreedom(player))return;if(player)PlayerSlowed=true;else MonsterSlowed=true;}
     public void BlockOpportunity(bool player){if(player)PlayerOpportunityBlocked=true;else MonsterOpportunityBlocked=true;}
     public bool MonsterProne {get;set;}

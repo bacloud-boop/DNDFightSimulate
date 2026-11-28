@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     }
     void InitializeWeb()
     {
-        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);};
+        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);unit.SpeedTransform=speed=>GuardianSpeed(unit.Id,speed);};
         combat.FireExposure=player=>IgniteWebActor(player?0:-1);rescueCarrier.FireExposure=()=>IgniteWebActor(BattleMap.RescueId);
         rescueCarrier.TurnStarted=()=>StartWebTurn(BattleMap.RescueId);
         vision.LightObscuration=(x,y,now)=>web.Cell((int)Math.Floor((x+2.5)/5),(int)Math.Floor((y+2.5)/5),now);
@@ -64,7 +64,7 @@ public sealed partial class TrainingGame
     }
     bool WebPathNeeded(Vector2Int from,Vector2Int to,int spaces)
     {
-        if(SleetPathNeeded(from,to,spaces))return true;if(!web.Active(worldRounds))return false;foreach(var cell in BattleMap.MovementAnchors(from,to))if(web.Intersects(cell.x,cell.y,spaces,worldRounds))return true;return false;
+        if(GuardianPathNeeded(from,to,spaces)||SleetPathNeeded(from,to,spaces))return true;if(!web.Active(worldRounds))return false;foreach(var cell in BattleMap.MovementAnchors(from,to))if(web.Intersects(cell.x,cell.y,spaces,worldRounds))return true;return false;
     }
     int WebLand(Vector2Int anchor){int mask=0;for(int y=0;y<4;y++)for(int x=0;x<4;x++){var p=anchor+new Vector2Int(x,y);if(map.Inside(p,1)&&!map.IsWater(p))mask|=1<<(y*4+x);}return mask;}
     string WebError(){Vector2Int p;if(!VisionPoint(out p))return "蛛网区域左上格须位于地图内。";if(map.DistanceToCell(true,p)>60)return "区域起点超出60尺。";return worldRounds<0||worldRounds>long.MaxValue-600?"世界时间超出范围。":"";}

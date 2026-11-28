@@ -1,4 +1,4 @@
-param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm)
+param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm,[switch]$SpiritGuardians)
 $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe";$csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $out=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsRuntimeChecks.exe'
@@ -34,12 +34,19 @@ if($SleetStorm){
  if($a -lt 0 -or $b -lt 0){throw 'Production Sleet visibility adapter not found'}
  $adapter+='int SleetVision(double ax,double ay,double bx,double by,int blind){bool viewerPlayer=true;double distance=Vector2Int.Distance(new Vector2Int((int)ax,(int)ay),new Vector2Int((int)bx,(int)by));int quality=0;'+$vision.Substring($a,$b-$a)+'return quality;}'
 }
+if($SpiritGuardians){
+ $movement=Get-Content Assets/Scripts/BattleMap.cs -Raw -Encoding utf8
+ $a=$movement.IndexOf('    public System.Func<int> MonsterTurnSpeed;');$b=$movement.IndexOf('    public int TacticalMovementRemaining',$a)
+ if($a -lt 0 -or $b -lt 0){throw 'Production live movement budget not found'}
+ $adapter+='sealed partial class MapStub {'+$movement.Substring($a,$b-$a)+'}'
+}
 $adapter+='}'
 $file=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsProductionAdapters.cs'
 Set-Content -LiteralPath $file -Encoding utf8 -Value ($geometry+$adapter.Replace('using System;using System.Collections;using System.Collections.Generic;using UnityEngine;',''))
 $extra=@('-main:PackChecksMain');if($HailThorns){$extra=@('-main:HailChecksMain','Assets/Scripts/HailThornsSpell.cs','Tools/Tests/HailThornsRuntimeChecks.cs')}
 if($CallLightning){$extra=@('-main:LightningChecksMain','Assets/Scripts/CallLightningEffect.cs','Assets/Scripts/CallLightningSpell.cs','Tools/Tests/CallLightningRuntimeChecks.cs')}
 if($SleetStorm){$extra=@('-define:SLEET_RUNTIME','-main:SleetChecksMain','Assets/Scripts/SleetStormEffect.cs','Assets/Scripts/SleetStormSpell.cs','Tools/Tests/SleetStormRuntimeChecks.cs')}
+if($SpiritGuardians){$extra=@('-define:GUARDIANS_RUNTIME','-main:GuardiansChecksMain','Assets/Scripts/DamageTypes.cs','Assets/Scripts/Alignment2024.cs','Assets/Scripts/SpiritGuardiansEffect.cs','Assets/Scripts/SpiritGuardiansSpell.cs','Tools/Tests/SpiritGuardiansRuntimeChecks.cs')}
 & $mono $csc -nologo -nowarn:0649,0414 @extra "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime harness compile failed'}
 & $mono $out

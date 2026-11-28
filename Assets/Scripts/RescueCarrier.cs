@@ -83,7 +83,9 @@ public sealed partial class RescueCarrier
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;
-    public int EffectiveSpeed=>FeignDeath&&!HasMovementFreedom||Restrained?0:Math.Max(0,Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed)-Breathing.SpeedPenalty);
+    public Func<int,int> SpeedTransform;
+    public int EffectiveSpeed=>SpeedTransform==null?UnmodifiedEffectiveSpeed:Math.Max(0,SpeedTransform(UnmodifiedEffectiveSpeed));
+    public int UnmodifiedEffectiveSpeed=>FeignDeath&&!HasMovementFreedom||Restrained?0:Math.Max(0,Load.AllowedSpeedOunces(Strength,Species.CapacitySize(Size),Weight.GearOunces,Speed)-Breathing.SpeedPenalty);
     public int MovementRemaining=>(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+Dashes)-MovementSpent));
     public bool Configure(int strength,int size,int speed,int bodyPounds,int equipmentPounds,int dexterity=10,int maxHp=10)
     {

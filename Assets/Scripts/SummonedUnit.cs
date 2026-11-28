@@ -51,7 +51,9 @@ public sealed class SummonedUnit
     public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
-    public int EffectiveSpeed=>!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
+    public Func<int,int> SpeedTransform;
+    public int EffectiveSpeed=>SpeedTransform==null?UnmodifiedEffectiveSpeed:Math.Max(0,SpeedTransform(UnmodifiedEffectiveSpeed));
+    public int UnmodifiedEffectiveSpeed=>!ControllerReady||FeignDeath&&!HasMovementFreedom||Restrained||SleepStage==2?0:Math.Max(0,Math.Min(Speed,LoadSpeedLimit)-Breathing.SpeedPenalty);
     public int MovementRemaining=>Alive&&TurnActive?(int)Math.Max(0,Math.Min(int.MaxValue,(long)EffectiveSpeed*(1+dashes)-movementSpent)):0;
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}

@@ -69,10 +69,12 @@ public sealed partial class BattleMap
     public void Dash(){DashesThisTurn++;MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
     public int MovementRemaining {get;private set;} = MovementPerRound;
     public void SetPlayerSpeed(int speed){PlayerSpeed=System.Math.Max(0,speed);MovementRemaining=System.Math.Max(0,MovementMaximum-MovementSpent);}
-    public void SpendMonsterMovement(int feet){MonsterMovementRemaining=System.Math.Max(0,MonsterMovementRemaining-System.Math.Max(0,feet));}
-    public int MonsterMovementRemaining {get;private set;} = 30;
-    public void GrantMonsterDash(int speed){MonsterMovementRemaining=(int)System.Math.Min(int.MaxValue,(long)MonsterMovementRemaining+System.Math.Max(0,speed));}
-    public void StartMonsterMovementTurn(int speed=30) {MonsterMovementRemaining=System.Math.Max(0,speed);}
+    public System.Func<int> MonsterTurnSpeed;
+    long monsterMovementSpent,monsterDashGranted;int monsterMovementBase=30,monsterDashes;
+    public int MonsterMovementRemaining {get=>(int)System.Math.Max(0,System.Math.Min(int.MaxValue,(MonsterTurnSpeed==null?(long)monsterMovementBase+monsterDashGranted:(long)System.Math.Max(0,MonsterTurnSpeed())*(1L+monsterDashes))-monsterMovementSpent));private set{monsterMovementBase=System.Math.Max(0,value);monsterMovementSpent=monsterDashGranted=0;monsterDashes=0;}}
+    public void SpendMonsterMovement(int feet){monsterMovementSpent+=System.Math.Min(MonsterMovementRemaining,System.Math.Max(0,feet));}
+    public void GrantMonsterDash(int speed){monsterDashes++;monsterDashGranted+=System.Math.Max(0,speed);}
+    public void StartMonsterMovementTurn(int speed=30){MonsterMovementRemaining=speed;}
     public int TacticalMovementRemaining {get;private set;}
     public void GrantTacticalMovement() {TacticalMovementRemaining+=PlayerSpeed/2;}
     public int MovementBudget(bool tactical) => PlayerSpeed<=0?0:tactical?TacticalMovementRemaining:MovementRemaining;
@@ -177,7 +179,7 @@ public sealed partial class BattleMap
     public bool CanTeleportPlayer(Vector2Int cell,int range)=>Locked&&VoluntaryMovementAllowed(0,cell)&&!IsContained(true)&&Inside(cell,playerBodySpaces)&&SummonFootprintClear(cell,playerBodySpaces)&&!Overlap(cell,playerBodySpaces,Monster,OccupiedSpaces(false))&&RecoverySafe(cell,Monster)&&FeetBetween(Player,cell)<=range;
     public bool TeleportPlayer(Vector2Int cell,int range){if(!CanTeleportPlayer(cell,range))return false;var observedFrom=Player;int old=PlayerSpaces;riderMountId=0;Player=cell;SyncContainedPosition();MovementObserved?.Invoke(0,observedFrom,cell,old,PlayerSpaces,true);return true;}
     public bool CanMoveMonsterTo(Vector2Int cell) =>OnScene(-1)&& Locked&&VoluntaryMovementAllowed(-1,cell)&&!ActorRestrained(false)&&!IsContained(false)&&cell!=Monster&&CanOccupyForMove(-1,Monster,cell,MonsterSpaces)&&RecoveryPathSafe(false,Monster,cell)&&MonsterMovementCost(cell)<=MonsterMovementRemaining&&CreaturePathClear(-1,Monster,cell,MonsterSpaces);
-    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;MonsterMovementRemaining-=MonsterMovementCost(cell);var observedFrom=Monster;Monster=cell;SyncWaterWalkRoute(-1,observedFrom,cell,MonsterSpaces);SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
+    public bool MoveMonster(Vector2Int cell) {if(!CanMoveMonsterTo(cell))return false;SpendMonsterMovement(MonsterMovementCost(cell));var observedFrom=Monster;Monster=cell;SyncWaterWalkRoute(-1,observedFrom,cell,MonsterSpaces);SyncContainedPosition();MovementObserved?.Invoke(-1,observedFrom,cell,MonsterSpaces,MonsterSpaces,false);return true;}
     public void RefreshMovement() {DashesThisTurn=0;MovementSpent=0;MovementRemaining=PlayerSpeed;TacticalMovementRemaining=0;RoundStartPlayer=Player;}
     public int DistanceFeet => !SameScene(0,-1)?int.MaxValue:HasContainedCreature?0:BodyDistance(Player,PlayerSpaces,Monster,MonsterSpaces);
     public bool TrySetFootprint(bool player,int spaces)

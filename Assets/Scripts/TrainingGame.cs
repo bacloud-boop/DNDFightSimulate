@@ -44,7 +44,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
-        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
+        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGuardians();InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
         map.VoluntaryMovement=(id,cell)=>(!Feigning(id)||MovementFreedom(id))&&(!combat.Aftermath||CommandMoving(id)||(id==0?PlayerTurnAllowed:id==BattleMap.RescueId&&RescueTurnAllowed))&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id)&&!NeutralUndead(id);InitializeCreatureTransit();InitializeWeb();InitializeWardingBond();combat.DamageReceived=QueueHellishDamage;InitializeWaterWalk();InitializeFreedomMovement();map.ContainmentEnded=ReleaseContainedWeapons;
         combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;
@@ -399,6 +399,7 @@ public sealed partial class TrainingGame : MonoBehaviour
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {
             GUILayout.Label("玩家属性",heading);
+            GUILayout.Label("阵营（当前："+Alignment2024.Names[playerAlignment]+"）",small);alignmentDraft=GUILayout.SelectionGrid(alignmentDraft,Alignment2024.Names,3,button);
             if(GUILayout.Button("玩家种族 · "+playerSpecies.Name,button)){BeginSpeciesDraft(true);panel="species";}
             DrawWeightInputs(playerWeight);
             DrawVisionConfiguration(true);DrawSleepTraitConfiguration(true);
@@ -413,7 +414,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 int visionRange;
                 if(!VisionInputValid(true,out visionRange))attributeError="黑暗视觉距离必须为非负整数。";
                 else if(!AttributeLoadFits(true,attributeInputs,NaturalPlayerSize))attributeError="拒绝配置：力量不足以携带现有装备，或力量输入无效。";
-                else if(attributes.TryApply(attributeInputs)) { vision.PlayerRange=visionRange;ApplySleepTraitConfiguration(true);vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes);ApplySpeciesHp(true,true); attributeError="属性已应用。"; }
+                else if(attributes.TryApply(attributeInputs)) { playerAlignment=alignmentDraft; vision.PlayerRange=visionRange;ApplySleepTraitConfiguration(true);vision.BaseLight=lightDraft;combat.UpdatePlayerMaxHp(attributes[2],classes);ApplySpeciesHp(true,true); attributeError="属性已应用。"; }
                 else attributeError="每项必须为 3～20 的整数，未保存本次修改。";
             }
             GUILayout.Label(attributeError,label);

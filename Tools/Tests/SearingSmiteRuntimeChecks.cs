@@ -44,7 +44,7 @@ public sealed partial class TrainingGame
  readonly ClassStub classes=new ClassStub();readonly CombatStub combat=new CombatStub();readonly TurnsStub summonTurns=new TurnsStub();readonly RegenerationEffects regeneration=new RegenerationEffects();
  sealed class GreaseEntry {public int Actor=0,Field=1;}
 readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
-readonly Queue<int> packEntries=new Queue<int>();bool packFirst;IEnumerator ChoosePackEntryOrder(){packFirst=true;yield break;}IEnumerator ResolvePackEntry(int entry){yield break;}IEnumerator ResolveSleetSave(int actor,long revision){yield break;}
+readonly Queue<int> packEntries=new Queue<int>();bool packFirst;IEnumerator ChoosePackEntryOrder(){packFirst=true;yield break;}IEnumerator ResolvePackEntry(int entry){yield break;}IEnumerator ResolveSleetSave(int actor,long revision){yield break;}IEnumerator ResolveGuardianSave(int actor,long revision,Vector2Int origin,int spaces){yield break;}
 readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();
  readonly List<string> history=new List<string>();readonly int[] attributes={10,10,10,10,10,10};
  bool CanCastInCurrentForm=true,voice=true,countered,saveSuccess,alive=true,preferFire,chooseOther;int terrainActor=0,spellCastSequence,chosenCast=1,damage,saveCalls,turnHp=5,outcomeDeferDepth;long worldRounds=0,terrainTurn=1;
