@@ -41,7 +41,7 @@ public sealed partial class TrainingGame {
   }
   dice=spell.Chinese+" · 共享范围伤害";yield return PresentRoll(spell.Sides,rolls,"失败伤害 "+damage+"，成功 "+damage/2+"，类型："+spell.DamageType);
   var rayDamage=new RayDamage();yield return ReduceRayDamage(true,damage,spell.DamageType,"范围法术共享伤害",rayDamage);damage=rayDamage.Amount;
-        int monsterDamage=targets[0]?combat.AdjustTypedDamage(false,failed[0]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustTypedDamage(true,failed[1]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0;
+        int monsterDamage=targets[0]?combat.AdjustIncomingTypedDamage(false,failed[0]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0,playerDamage=targets[1]?combat.AdjustIncomingTypedDamage(true,failed[1]?damage:damage/2,DamageTypes.Index(spell.DamageType)):0;
   if(targets[0])combat.ApplyDamage(monsterDamage);if(targets[1])combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);
   foreach(var unit in summonTargets)ApplySummonSpellDamage(unit,failedSummons.Contains(unit.Id)?damage:damage/2,spell.DamageType);
   history.Insert(0,spell.Chinese+"：木桩 "+monsterDamage+"，玩家 "+playerDamage+" 点"+spell.DamageType+"伤害。");if(targets[1])yield return MaintainConcentration(playerDamage);RefreshBestialSpirit();CheckBattleOutcome();

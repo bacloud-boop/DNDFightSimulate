@@ -44,7 +44,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
-        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeGustWind();InitializeStinkingCloud();InitializeGuardians();InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
+        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeResistance();InitializeGustWind();InitializeStinkingCloud();InitializeGuardians();InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
         map.VoluntaryMovement=(id,cell)=>(!Feigning(id)||MovementFreedom(id))&&(!combat.Aftermath||CommandMoving(id)||(id==0?PlayerTurnAllowed:id==BattleMap.RescueId&&RescueTurnAllowed))&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id)&&!NeutralUndead(id);InitializeCreatureTransit();InitializeWeb();InitializeWardingBond();combat.DamageReceived=QueueHellishDamage;InitializeWaterWalk();InitializeFreedomMovement();map.ContainmentEnded=ReleaseContainedWeapons;
         combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;
@@ -173,12 +173,12 @@ public sealed partial class TrainingGame : MonoBehaviour
         yield return AddEnchantedWeaponDamage(attackObject,-1,critical,rawPacket,false);
         yield return AddCrusaderMantleDamage(0,critical,rawPacket);
         var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,elementalBonus>0||CrusaderMantleBenefits(0)||damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
-        int damage=ResolveRayPacket(false,reduced.Raw);
-        var weaponTypes=combat.CaptureAdjustedDamage(false);
+        int damage=0;
+        long[] weaponTypes=null;
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
         outcomeDeferDepth++;try{
         if(hailHit.Before)yield return ResolveHailThorns(hailHit);
-        if(combat.Hp>0)combat.ApplyDamage(damage,resolvedTypes:weaponTypes);else damage=0;
+        if(combat.Hp>0){damage=combat.AdjustIncomingDamagePacket(false,reduced.Raw);weaponTypes=combat.CaptureAdjustedDamage(false);combat.ApplyDamage(damage,resolvedTypes:weaponTypes);}else damage=0;
         if(!hailHit.Before)yield return ResolveHailThorns(hailHit);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");

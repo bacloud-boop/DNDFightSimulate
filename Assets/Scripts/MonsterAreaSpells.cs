@@ -67,8 +67,8 @@ public sealed partial class TrainingGame
         int playerDamage=0;
         foreach(int id in targets){
             int raw=failed.Contains(id)?damage:spell.HalfSave?damage/2:0;
-            if(id==0){playerDamage=combat.AdjustTypedDamage(true,raw,DamageTypes.Index(spell.DamageType));combat.ApplyPlayerDamage(playerDamage);history.Insert(0,"木桩"+spell.Chinese+"对玩家造成 "+playerDamage+" "+spell.DamageType+"伤害。");}
-            else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;int amount=SilenceUnitImmune(unit,spell.DamageType)?0:unit.Aquatic.Submerged&&spell.DamageType=="火焰"&&!unit.ResistsType(DamageTypes.Index(spell.DamageType))?raw/2:raw;unit.Damage(amount,DamageTypes.Index(spell.DamageType));history.Insert(0,"木桩"+spell.Chinese+"对"+unit.Name+"造成 "+amount+" "+spell.DamageType+"伤害。");}
+            if(id==0){playerDamage=combat.AdjustIncomingTypedDamage(true,raw,DamageTypes.Index(spell.DamageType));combat.ApplyPlayerDamage(playerDamage);history.Insert(0,"木桩"+spell.Chinese+"对玩家造成 "+playerDamage+" "+spell.DamageType+"伤害。");}
+            else {var unit=FindSummon(id);if(unit==null||!unit.Alive)continue;int amount=SilenceUnitImmune(unit,spell.DamageType)?0:raw;unit.Damage(amount,DamageTypes.Index(spell.DamageType));amount=unit.LastDamageReceived;history.Insert(0,"木桩"+spell.Chinese+"对"+unit.Name+"造成 "+amount+" "+spell.DamageType+"伤害。");}
         }
         if(targets.Contains(0))yield return MaintainConcentration(playerDamage);
     }

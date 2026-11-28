@@ -31,9 +31,8 @@ public sealed partial class TrainingGame
         // Evaluate the triggering event even if it just killed the protected unit.
         if(actor==0&&combat.PlayerHp<=0){wardingBond.Clear();return;}
         if(!wardingBond.Protects(actor,worldRounds)||combat.PlayerHp<=0||combat.PlayerDead)return;
-        var resolved=combat.ResolveTypedPacket(true,packet);int amount=0;foreach(long value in resolved)amount=(int)System.Math.Min(int.MaxValue,(long)amount+value);
+        var resolved=combat.ResolveIncomingPacket(true,packet);int amount=0;foreach(long value in resolved)amount=(int)System.Math.Min(int.MaxValue,(long)amount+value);
         if(amount<=0)return;
-        if(resolved.Length>5&&resolved[5]>0)combat.FireExposure?.Invoke(true);
         combat.ApplyPlayerDamage(amount,sourcePlayer:null,resolvedTypes:resolved);
         history.Insert(0,"守护之链：保留原伤害类型，施法者自身抗性／免疫结算后承受 "+amount+" 伤害（临时生命优先吸收）。");
         bondConcentration.Enqueue(amount);if(outcomeDeferDepth==0)RefreshConcentration();NoticeCastingInterruption();if(combat.PlayerHp==0)wardingBond.Clear();

@@ -17,8 +17,8 @@ public sealed partial class TrainingGame
 {
  sealed class Aquatic {public bool Submerged;}
  sealed class Breath {public int D20Penalty;}
- sealed class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public readonly Aquatic Aquatic=new Aquatic();public bool Alive=true,Prone;public readonly Breath Breathing=new Breath();}
- sealed class Rescue {public Func<bool> ActionBlock;public Func<int,int> SpeedTransform;public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
+ sealed partial class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public readonly Aquatic Aquatic=new Aquatic();public bool Alive=true,Prone;public readonly Breath Breathing=new Breath();}
+ sealed partial class Rescue {public Func<bool> ActionBlock;public Func<int,int> SpeedTransform;public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
  sealed partial class MapStub {
   public readonly Aquatic PlayerAquatic=new Aquatic(),MonsterAquatic=new Aquatic(),RescueAquatic=new Aquatic();
   public Vector2Int Player=new Vector2Int(0,0),Monster=new Vector2Int(7,0);public int PlayerSpaces=1,MonsterSpaces=1,Size=30,Scene,PlayerScene,MonsterScene,LastCoverSpaces,Cover;public bool Contained;public bool? RescueCargoPlayer=null;public Vector2Int LastCover;
@@ -31,7 +31,7 @@ public sealed partial class TrainingGame
   public int CreatureCoverFromPoint(Vector2Int p,int actor,int spaces){LastCover=p;LastCoverSpaces=spaces;return Cover;}public int CreatureCoverBonus(int a,int b)=>0;
  }
  sealed class Classes {public int ProficiencyBonus=2;public int this[int index]=>index==2?1:0;}
- sealed class RayDamage {public int Amount;}sealed class ArmorSaveRoll {public int Value;public int[] Dice;}sealed class SaveAdjustment {public int Value;}
+ sealed class RayDamage {public int Amount;public long[] Raw;}sealed class ArmorSaveRoll {public int Value;public int[] Dice;}sealed class SaveAdjustment {public int Value;}
  sealed class GreaseEntry {public int Actor,Field;}
  readonly MapStub map=new MapStub();readonly CombatState combat=new CombatState();readonly Classes classes=new Classes();readonly Rescue rescueCarrier=new Rescue();readonly int[] attributes={14,14,14,14,14,14};
  readonly List<string> history=new List<string>(),order=new List<string>();readonly List<int> damageCounts=new List<int>();readonly List<int> damageActors=new List<int>();
@@ -48,7 +48,7 @@ public sealed partial class TrainingGame
  IEnumerable<int> BreathActors(){yield return 0;if(combat.Hp>0)yield return -1;foreach(var u in map.Units)if(u.Alive)yield return u.Id;}
  IEnumerator PresentRoll(int sides,int[] values,string label){if(sides==10)damageCounts.Add(values.Length);yield break;}
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
- int ApplyMappedAreaDamage(int actor,int caster,int amount,int type,string title){order.Add("pack");damageActors.Add(actor);var raw=new long[13];raw[type]=amount;var packet=combat.ResolveTypedPacket(actor==0,raw);int value=(int)packet[type];if(actor==0)combat.ApplyPlayerDamage(value,sourcePlayer:true);else if(actor==-1)combat.ApplyDamage(value);return value;}
+ int ApplyMappedAreaDamage(int actor,int caster,int amount,int type,string title){order.Add("pack");damageActors.Add(actor);var raw=new long[13];raw[type]=amount;var packet=combat.ResolveIncomingPacket(actor==0,raw);int value=(int)packet[type];if(actor==0)combat.ApplyPlayerDamage(value,sourcePlayer:true);else if(actor==-1)combat.ApplyDamage(value);return value;}
  IEnumerator MaintainConcentration(int damage){if(combat.PlayerHp<=0){EndAnimalPack();concentrationSpell="";}yield break;}
  void ReconcileFallenRescue(){}void RefreshBestialSpirit(){}void NoticeCastingInterruption(){}void CheckBattleOutcome(){}
  bool SpeciesSaveAdvantage(bool p,int ability)=>false;bool BeaconHope(int actor)=>false;bool ResurrectionD20Disadvantage(bool player)=>weak;

@@ -38,6 +38,11 @@ public sealed class CombatState
     public Action<bool,int?,int> DamageReceived;
     readonly long[][] pendingTypes=new long[2][];
     public long[] CaptureAdjustedDamage(bool player)=>pendingTypes[player?0:1]==null?null:(long[])pendingTypes[player?0:1].Clone();
+    public Func<bool,long[],long[]> IncomingDamage;
+    public long[] PrepareIncomingDamage(bool player,long[] raw)=>IncomingDamage==null?raw:IncomingDamage(player,raw);
+    public long[] ResolveIncomingPacket(bool player,long[] raw){if(raw.Length>5&&raw[5]>0)FireExposure?.Invoke(player);return ResolveTypedPacket(player,PrepareIncomingDamage(player,raw));}
+    public int AdjustIncomingDamagePacket(bool player,long[] raw){if(raw.Length>5&&raw[5]>0)FireExposure?.Invoke(player);return AdjustDamagePacket(player,PrepareIncomingDamage(player,raw),false);}
+    public int AdjustIncomingTypedDamage(bool player,int amount,int type){var raw=new long[14];raw[type>=0&&type<13?type:13]=Math.Max(0,amount);return AdjustIncomingDamagePacket(player,raw);}
     public long[] ResolveTypedPacket(bool player,long[] raw){var result=new long[raw.Length];long remaining=int.MaxValue;for(int i=0;i<raw.Length;i++){long value=System.Math.Max(0,raw[i]);if(i<13){if(DamageImmunity!=null&&DamageImmunity(player,i))value=0;else {if(ResistsDamage(player,i))value/=2;if(DamageVulnerability!=null&&DamageVulnerability(player,i))value=value>int.MaxValue/2?int.MaxValue:value*2;}}result[i]=System.Math.Min(remaining,value);remaining-=result[i];}return result;}
     long[] DamageEvent(bool player,int amount,long[] explicitTypes){
         if(explicitTypes!=null)return (long[])explicitTypes.Clone();int index=player?0:1;var packet=pendingTypes[index];pendingTypes[index]=null;long total=0;if(packet!=null)foreach(long v in packet)total+=v;
@@ -45,7 +50,7 @@ public sealed class CombatState
     }
     public int AdjustTypedDamage(bool player,int amount,int type){var raw=new long[14];raw[type>=0&&type<13?type:13]=System.Math.Max(0,amount);return AdjustDamagePacket(player,raw);}
     public int AdjustPlayerPacket(long[] packet)=>AdjustDamagePacket(true,packet);
-    public int AdjustDamagePacket(bool player,long[] packet){if(packet.Length>5&&packet[5]>0)FireExposure?.Invoke(player);var resolved=ResolveTypedPacket(player,packet);pendingTypes[player?0:1]=resolved;long total=0;foreach(long v in resolved)total+=v;return (int)total;}
+    public int AdjustDamagePacket(bool player,long[] packet,bool exposeFire=true){if(exposeFire&&packet.Length>5&&packet[5]>0)FireExposure?.Invoke(player);var resolved=ResolveTypedPacket(player,packet);pendingTypes[player?0:1]=resolved;long total=0;foreach(long v in resolved)total+=v;return (int)total;}
     public bool PlayerBaned {get;set;}
     public bool MonsterBaned {get;set;}
     public bool PlayerBlessed {get;set;}

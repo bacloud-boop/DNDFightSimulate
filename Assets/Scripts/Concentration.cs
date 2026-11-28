@@ -12,7 +12,7 @@ public sealed partial class TrainingGame
     bool IsConcentrating => concentrationSpell!="";
     void EndConcentration(string reason)
     {
-        if(!IsConcentrating)return;EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
+        if(!IsConcentrating)return;resistanceSpell.Clear();EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
         EndPassTrace();EndBeaconHope();EndAuraVitality();EndFlamingSphere();heatMetal.Clear();EndHeroism();ClearStoneskin();ClearSleepEffects();EndFaerieFire();EndDancingLights();
         EndCloudDaggers();EndWeb();spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();
@@ -38,7 +38,7 @@ public sealed partial class TrainingGame
         int result=modifier+((classes.SavingThrowProficient(ability)||beastProficient)?classes.ProficiencyBonus:0);
         return beastProficient?Mathf.Max(result,wildForm.saves[ability]):result;
     }
-    IEnumerator MaintainConcentration(int damage){yield return DrainUndeadSaves();yield return DrainHellishRebukes();yield return DrainBondConcentration();yield return MaintainConcentrationCore(damage);}
+    IEnumerator MaintainConcentration(int damage){yield return DrainResistanceRolls();yield return DrainUndeadSaves();yield return DrainHellishRebukes();yield return DrainBondConcentration();yield return MaintainConcentrationCore(damage);}
     IEnumerator MaintainConcentrationCore(int damage)
     {
         if(!IsConcentrating||damage<=0)yield break;

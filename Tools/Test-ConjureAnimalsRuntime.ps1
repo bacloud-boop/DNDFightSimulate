@@ -1,4 +1,4 @@
-param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm,[switch]$SpiritGuardians,[switch]$StinkingCloud,[switch]$GustWind)
+param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm,[switch]$SpiritGuardians,[switch]$StinkingCloud,[switch]$GustWind,[switch]$Resistance)
 $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe";$csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $out=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsRuntimeChecks.exe'
@@ -24,7 +24,7 @@ if($HailThorns){
  $a=$weapon.IndexOf('        if(hailHit.Before)yield return ResolveHailThorns(hailHit);')
  $b=$weapon.IndexOf('        dice=hitLabel+', $a)
  if($a -lt 0 -or $b -lt 0){throw 'Production Hail/weapon damage dispatch not found'}
- $adapter+='IEnumerator ProductionHailOrder(HailHit hailHit,int damage){var weaponTypes=combat.CaptureAdjustedDamage(false);'+$weapon.Substring($a,$b-$a)+'yield break;}'
+ $adapter+='IEnumerator ProductionHailOrder(HailHit hailHit,int damage){var weaponTypes=combat.CaptureAdjustedDamage(false);var reduced=new RayDamage{Raw=weaponTypes};if(reduced.Raw==null){reduced.Raw=new long[14];reduced.Raw[13]=damage;}'+$weapon.Substring($a,$b-$a)+'yield break;}'
 }
 if($SleetStorm){
  $grease=Get-Content Assets/Scripts/GreaseSpell.cs -Raw -Encoding utf8
@@ -49,6 +49,7 @@ if($SleetStorm){$extra=@('-define:SLEET_RUNTIME','-main:SleetChecksMain','Assets
 if($SpiritGuardians){$extra=@('-define:GUARDIANS_RUNTIME','-main:GuardiansChecksMain','Assets/Scripts/DamageTypes.cs','Assets/Scripts/Alignment2024.cs','Assets/Scripts/SpiritGuardiansEffect.cs','Assets/Scripts/SpiritGuardiansSpell.cs','Tools/Tests/SpiritGuardiansRuntimeChecks.cs')}
 if($StinkingCloud){$extra=@('-define:STINKING_RUNTIME','-main:StinkingChecksMain','Assets/Scripts/StinkingCloudEffect.cs','Assets/Scripts/StinkingCloudSpell.cs','Tools/Tests/StinkingCloudRuntimeChecks.cs')}
 if($GustWind){$extra=@('-define:GUST_RUNTIME','-main:GustChecksMain','Assets/Scripts/BreathWeaponRules.cs','Assets/Scripts/GustWindEffect.cs','Assets/Scripts/GustWindSpell.cs','Assets/Scripts/VisionState.cs','Assets/Scripts/StinkingCloudEffect.cs','Tools/Tests/GustWindRuntimeChecks.cs')}
+if($Resistance){$extra=@('-define:RESISTANCE_RUNTIME','-main:ResistanceChecksMain','Assets/Scripts/ResistanceEffect.cs','Assets/Scripts/ResistanceSpell.cs','Assets/Scripts/DamageTypes.cs','Tools/Tests/ResistanceRuntimeChecks.cs')}
 & $mono $csc -nologo -nowarn:0649,0414 @extra "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime harness compile failed'}
 & $mono $out

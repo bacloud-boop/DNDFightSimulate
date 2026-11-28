@@ -67,6 +67,7 @@ public sealed partial class TrainingGame
     }
     void Update()
     {
+        if(!rolling&&!drainingResistance&&resistanceRolls.Count>0)StartCoroutine(DrainResistanceRolls());
         if(!rolling&&!drainingFingerRaises&&fingerReady.Count>0)StartCoroutine(DrainFingerRaising());
         if(!rolling&&undeadSaves.Count>0&&!drainingUndeadSaves)StartCoroutine(DrainUndeadSaves());
         if(!rolling&&!drainingUndeadSaves&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());

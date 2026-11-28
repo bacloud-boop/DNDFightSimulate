@@ -27,8 +27,11 @@ public sealed partial class RescueCarrier
     public bool CanDepart=>Conscious&&!Load.Loaded;
     public bool NeedsDeathSave=>Hp==0&&!Dead&&!Stable;
     public string LifeLabel=>Dead?"死亡":Hp>0?(FeignDeath?"假死 / 失能":"清醒"):Stable?"稳定 / 昏迷":"倒地 / 昏迷";
+    public Func<long[],long[]> IncomingDamage;
+    public long[] PrepareIncomingDamage(long[] raw)=>Dead||IncomingDamage==null?raw:IncomingDamage(raw);
     public int TakeDamage(long amount,bool critical=false,int damageType=-1){
         if(amount<=0||Dead)return 0;if(damageType==5)FireExposure?.Invoke();
+        var raw=new long[14];int index=damageType>=0&&damageType<13?damageType:13;raw[index]=amount;amount=PrepareIncomingDamage(raw)[index];
         if(ResistsType(damageType))amount/=2;if(amount<=0)return 0;
         long incoming=amount;if(incoming>0)DamageApplied?.Invoke((int)Math.Min(int.MaxValue,incoming),damageType);
         return ApplyResolvedDamage(amount,critical);
@@ -43,9 +46,9 @@ public sealed partial class RescueCarrier
     }
     public Action<long[]> TypedDamageApplied;
     public int TakeDamagePacket(long[] raw){
-        if(raw==null)throw new ArgumentNullException(nameof(raw));if(Dead)return 0;
+        if(raw==null)throw new ArgumentNullException(nameof(raw));if(Dead)return 0;if(raw.Length>5&&raw[5]>0)FireExposure?.Invoke();raw=PrepareIncomingDamage(raw);
         var resolved=new long[raw.Length];long total=0;
-        for(int i=0;i<raw.Length;i++){long value=Math.Max(0,raw[i]);if(i==5&&value>0)FireExposure?.Invoke();if(ResistsType(i))value/=2;resolved[i]=Math.Min(int.MaxValue-total,value);total+=resolved[i];}
+        for(int i=0;i<raw.Length;i++){long value=Math.Max(0,raw[i]);if(ResistsType(i))value/=2;resolved[i]=Math.Min(int.MaxValue-total,value);total+=resolved[i];}
         if(total==0)return 0;
         if(TypedDamageApplied!=null)TypedDamageApplied(resolved);else if(DamageApplied!=null)for(int i=0;i<resolved.Length;i++)if(resolved[i]>0)DamageApplied((int)resolved[i],i);
         ApplyResolvedDamage(total,false);return (int)total;

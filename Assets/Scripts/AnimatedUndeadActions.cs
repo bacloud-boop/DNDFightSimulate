@@ -86,8 +86,8 @@ public sealed partial class TrainingGame
             yield return AddEnchantedWeaponDamage(weapon==null?0:weapon.Object.Id,type,critical,raw,weapon!=null&&weapon.Custom);
             yield return AddCrusaderMantleDamage(unit.Id,critical,raw);
             var reduced=new RayDamage{Raw=raw};
-            if(target==0||target==-1){var resolved=combat.ResolveTypedPacket(target==0,reduced.Raw);int amount=PacketAmount(resolved);if(target==0){var retaliation=CaptureHitRetaliation(unit.Id,melee,distance);combat.ApplyPlayerDamage(amount,critical,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);}
-            else{var resolved=(long[])reduced.Raw.Clone();for(int i=0;i<resolved.Length;i++)if(other.ResistsType(i)||i==5&&other.Aquatic.Submerged)resolved[i]/=2;other.Damage(PacketAmount(resolved),resolvedTypes:resolved,critical:critical);}
+            if(target==0||target==-1){var resolved=combat.ResolveIncomingPacket(target==0,reduced.Raw);int amount=PacketAmount(resolved);if(target==0){var retaliation=CaptureHitRetaliation(unit.Id,melee,distance);combat.ApplyPlayerDamage(amount,critical,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);yield return ResolveHitRetaliation(unit.Id,retaliation);yield return MaintainConcentration(amount);}else combat.ApplyDamage(amount,sourcePlayer:null,resolvedTypes:resolved,sourceActor:unit.Id);}
+            else{var resolved=(long[])other.PrepareIncomingDamage(reduced.Raw).Clone();for(int i=0;i<resolved.Length;i++)if(other.ResistsType(i)||i==5&&other.Aquatic.Submerged)resolved[i]/=2;other.Damage(PacketAmount(resolved),resolvedTypes:resolved,critical:critical,prepared:true);}
             RefreshUndeadFollowers();yield return DrainUndeadSaves();CheckBattleOutcome();
         }finally{summonActing=busy;}
     }

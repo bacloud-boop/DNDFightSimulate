@@ -42,7 +42,7 @@ public sealed partial class TrainingGame
         var rayDamage=new RayDamage();yield return ReduceRayDamage(true,amount,"雷鸣","雷鸣波共享伤害",rayDamage);amount=rayDamage.Amount;
         int playerDamage=0;
         for(int i=0;i<2;i++)if(targets[i]){
-            int damage=combat.AdjustTypedDamage(i==1,failed[i]?amount:amount/2,12);if(i==1)playerDamage=damage;
+            int damage=combat.AdjustIncomingTypedDamage(i==1,failed[i]?amount:amount/2,12);if(i==1)playerDamage=damage;
             if(i==0)combat.ApplyDamage(damage);else combat.ApplyPlayerDamage(damage,sourcePlayer:true);
             int pushed=i==0&&failed[i]?map.ForceMoveAway(false,origin,originSpaces,10):0;
             history.Insert(0,"雷鸣波对"+(i==0?"木桩":"玩家")+"："+(failed[i]?"豁免失败":"豁免成功")+"，"+damage+"雷鸣伤害，推离"+pushed+"尺。强制位移不消耗移动力、不触发借机、不追加碰撞伤害。");

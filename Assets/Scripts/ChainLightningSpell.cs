@@ -44,7 +44,7 @@ public sealed partial class TrainingGame
             var ray=new RayDamage();yield return ReduceRayDamage(true,damage,"闪电","连锁闪电共享伤害",ray);damage=ray.Amount;
             int playerDamage=0;
             foreach(int id in targets){string name=SpellTargetName(id);int raw=failed.Contains(id)?damage:damage/2;
-                if(id==0||id==-1){int adjusted=combat.AdjustTypedDamage(id==0,raw,7);if(id==0){playerDamage=adjusted;combat.ApplyPlayerDamage(adjusted,sourcePlayer:true);}else combat.ApplyDamage(adjusted);history.Insert(0,"连锁闪电："+name+"受到 "+adjusted+" 闪电伤害。");}
+                if(id==0||id==-1){int adjusted=combat.AdjustIncomingTypedDamage(id==0,raw,7);if(id==0){playerDamage=adjusted;combat.ApplyPlayerDamage(adjusted,sourcePlayer:true);}else combat.ApplyDamage(adjusted);history.Insert(0,"连锁闪电："+name+"受到 "+adjusted+" 闪电伤害。");}
                 else {var unit=FindSummon(id);if(unit!=null)ApplySummonSpellDamage(unit,raw,"闪电");}
             }
             if(playerDamage>0)yield return MaintainConcentration(playerDamage);RefreshBestialSpirit();dice="连锁闪电 · "+targets.Count+"名目标结算完成";

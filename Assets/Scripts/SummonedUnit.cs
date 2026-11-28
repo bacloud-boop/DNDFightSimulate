@@ -109,13 +109,16 @@ public sealed class SummonedUnit
     public bool TryUseAction(){if(Banished||!ControllerReady||!Alive||!TurnActive||!ActionAvailable)return false;actionAvailable=false;return true;}
     public bool UseReaction(){if(Banished||!ControllerReady||!Alive||FeignDeath||SleepStage>0||!ReactionAvailable)return false;ReactionAvailable=false;return true;}
     public void Dismiss(){Hp=0;TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-    public int Damage(int amount,int type=-1,long[] resolvedTypes=null,bool critical=false){
-        if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));bool wasAlive=Alive;
-        if(type==5||resolvedTypes!=null&&resolvedTypes.Length>5&&resolvedTypes[5]>0)FireExposure?.Invoke();
+    public Func<long[],long[]> IncomingDamage;
+    public long[] PrepareIncomingDamage(long[] raw){if(Alive&&raw.Length>5&&raw[5]>0)FireExposure?.Invoke();return !Alive||IncomingDamage==null?raw:IncomingDamage(raw);}
+    public int LastDamageReceived{get;private set;}
+    public int Damage(int amount,int type=-1,long[] resolvedTypes=null,bool critical=false,bool prepared=false){
+        if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));LastDamageReceived=0;bool wasAlive=Alive;
+        if(resolvedTypes!=null&&!prepared&&(type==5||resolvedTypes.Length>5&&resolvedTypes[5]>0))FireExposure?.Invoke();
         long[] packet;
         if(resolvedTypes!=null){packet=(long[])resolvedTypes.Clone();long sum=0;for(int i=0;i<packet.Length;i++){long v=Math.Max(0,packet[i]);if(IntrinsicImmunity!=null&&IntrinsicImmunity(i))v=0;else if(IntrinsicVulnerability!=null&&IntrinsicVulnerability(i))v=(v>int.MaxValue/2?int.MaxValue:v*2);packet[i]=Math.Min(int.MaxValue-sum,v);sum+=packet[i];}amount=(int)sum;}
-        else {if(IntrinsicImmunity!=null&&IntrinsicImmunity(type))amount=0;else {if(ResistsType(type))amount/=2;if(IntrinsicVulnerability!=null&&IntrinsicVulnerability(type))amount=(int)Math.Min(int.MaxValue,(long)amount*2);}packet=new long[14];packet[type>=0&&type<13?type:13]=amount;}
-        if(amount>0)SleepStage=0;int received=amount,absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;
+        else {var raw=new long[14];int index=type>=0&&type<13?type:13;raw[index]=amount;raw=PrepareIncomingDamage(raw);amount=(int)Math.Min(int.MaxValue,Math.Max(0,raw[index]));if(IntrinsicImmunity!=null&&IntrinsicImmunity(type))amount=0;else {if(ResistsType(type)||type==5&&Aquatic.Submerged)amount/=2;if(IntrinsicVulnerability!=null&&IntrinsicVulnerability(type))amount=(int)Math.Min(int.MaxValue,(long)amount*2);}packet=new long[14];packet[type>=0&&type<13?type:13]=amount;}
+        LastDamageReceived=amount;if(amount>0)SleepStage=0;int received=amount,absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;
         bool guarded=before>0&&amount>=before&&LethalGuard!=null&&LethalGuard(received,packet,critical);
         Hp=guarded?1:Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
         if(wasAlive&&received>0)DamageApplied?.Invoke(packet);return before-Hp;

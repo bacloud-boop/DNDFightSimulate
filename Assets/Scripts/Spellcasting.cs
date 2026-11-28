@@ -103,7 +103,7 @@ public sealed partial class TrainingGame
             int damage=System.Linq.Enumerable.Sum(values);dice="酸液飞溅 · 强酸伤害";
             yield return PresentRoll(6,values,"强酸伤害："+damage+"；豁免失败者使用同一伤害骰结果");
             var rayDamage=new RayDamage();yield return ReduceRayDamage(true,damage,"强酸","酸液飞溅共享伤害",rayDamage);damage=rayDamage.Amount;
-        int monsterDamage=failed[0]?combat.AdjustTypedDamage(false,damage,3):0,playerDamage=failed[1]?combat.AdjustTypedDamage(true,damage,3):0;
+        int monsterDamage=failed[0]?combat.AdjustIncomingTypedDamage(false,damage,3):0,playerDamage=failed[1]?combat.AdjustIncomingTypedDamage(true,damage,3):0;
             if(failed[0])combat.ApplyDamage(monsterDamage);
             foreach(var unit in failedSummons)ApplySummonSpellDamage(unit,damage,"强酸");
             if(failed[1]){combat.ApplyPlayerDamage(playerDamage,sourcePlayer:true);yield return MaintainConcentration(playerDamage);}

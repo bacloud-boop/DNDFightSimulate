@@ -47,6 +47,7 @@ public sealed partial class TrainingGame
         var raw=new long[13];raw[8]=sum;
         if(target==0||target==-1){var extra=new ExtraMarkDamage();yield return RollMarkDamage(target==0,attack.Critical,extra);if(extra.Raw>0)raw[mark.DamageType]+=extra.Raw;}
         var reduced=new RayDamage();yield return ReduceRayPacket(true,raw,true,"吸血之触合并伤害",reduced);
+        reduced.Raw=target==0||target==-1?combat.PrepareIncomingDamage(target==0,reduced.Raw):FindSummon(target).PrepareIncomingDamage(reduced.Raw);
         long necrotic;
         if(target==0||target==-1)necrotic=combat.ResolveTypedPacket(target==0,reduced.Raw)[8];
         else {var unit=FindSummon(target);necrotic=unit.ResistsType(8)?reduced.Raw[8]/2:reduced.Raw[8];}

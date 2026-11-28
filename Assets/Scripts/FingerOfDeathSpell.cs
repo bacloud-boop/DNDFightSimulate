@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
         dice="死亡一指 · 7d8＋30死灵";yield return PresentRoll(8,rolls,"骰值 "+sum+" + 固定30 = "+FingerOfDeathRaising.Damage(sum,false));
         var reduction=new RayDamage();yield return ReduceRayDamage(true,FingerOfDeathRaising.Damage(sum,false),"死灵","死亡一指",reduction);
         int raw=failed.Contains(target)?reduction.Amount:reduction.Amount/2;
-        int amount=combat.AdjustTypedDamage(player,raw,8);bool alreadyDead=player?combat.PlayerDead:combat.Hp==0;
+        int amount=combat.AdjustIncomingTypedDamage(player,raw,8);bool alreadyDead=player?combat.PlayerDead:combat.Hp==0;
         outcomeDeferDepth++;try{
             if(player)combat.ApplyPlayerDamage(amount,sourcePlayer:true);else combat.ApplyDamage(amount,sourcePlayer:true);
             ObserveDeaths();var corpse=player?playerCorpse:monsterCorpse;

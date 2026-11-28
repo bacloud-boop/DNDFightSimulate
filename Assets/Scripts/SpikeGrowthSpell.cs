@@ -29,7 +29,7 @@ public sealed partial class TrainingGame
     int a=Random.Range(1,5),b=Random.Range(1,5);yield return PresentRoll(4,new[]{a,b},"荆棘丛生 · "+name+"经过5尺："+(a+b)+"穿刺");
     var reduced=new RayDamage();yield return ReduceRayDamage(true,a+b,"穿刺","荆棘丛生",reduced);
     int damage=reduced.Amount;
-    if(player||monsterActor){damage=combat.AdjustTypedDamage(player,damage,1);if(player)combat.ApplyPlayerDamage(damage,sourcePlayer:true);else combat.ApplyDamage(damage);if(player)yield return MaintainConcentration(damage);}
+    if(player||monsterActor){damage=combat.AdjustIncomingTypedDamage(player,damage,1);if(player)combat.ApplyPlayerDamage(damage,sourcePlayer:true);else combat.ApplyDamage(damage);if(player)yield return MaintainConcentration(damage);}
     else if(rescue){rescueCarrier.TakeDamage(damage,damageType:1);rescueCarrier.ObserveLife(worldRounds);ReconcileFallenRescue();}
     else ApplySummonSpellDamage(unit,damage,"穿刺");
     history.Insert(0,name+"因荆棘丛生承受 "+damage+" 点穿刺伤害。");RefreshConcentration();CheckBattleOutcome();

@@ -59,6 +59,6 @@ public sealed partial class TrainingGame
     }
     int ResolveRayPacket(bool targetPlayer,long[] raw)
     {
-        return combat.AdjustDamagePacket(targetPlayer,raw);
+        return combat.AdjustIncomingDamagePacket(targetPlayer,raw);
     }
 }
