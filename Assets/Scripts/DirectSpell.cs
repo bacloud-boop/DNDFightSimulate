@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Hail of Thorns","荆棘之雨","远程武器命中后立即附赠动作 · 自身 · 声音。目标与周围5尺内所有生物敏捷豁免，每环1d10穿刺，成功半伤；不继承原攻击暴击。",1,0,10,bonus:true),
         new DirectSpell("Conjure Animals","咒唤兽群","1动作 · 60尺 · 声音、姿势。创造大型无实体兽群；10尺内可见生物触发敏捷豁免，失败受3d10挥砍，每升环＋1d10，每名生物每回合至多一次。",3,60,10),
         new DirectSpell("Elemental Weapon","元素武器","1动作 · 接触（5尺） · 声音、姿势。非魔法武器命中＋1、额外1d4能量伤害；五至六环＋2／2d4，七环以上＋3／3d4。",3,5,4),
         new DirectSpell("Crusader's Mantle","十字军披风","1动作 · 自身30尺光环 · 声音。自己与盟友以武器或徒手命中额外1d4光耀，暴击翻倍；无需看见盟友。",3,0,4),

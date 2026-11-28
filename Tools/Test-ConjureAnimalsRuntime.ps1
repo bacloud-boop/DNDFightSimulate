@@ -1,4 +1,4 @@
-param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data')
+param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns)
 $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe";$csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $out=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsRuntimeChecks.exe'
@@ -18,10 +18,19 @@ $a=$save.IndexOf('    ArmorSaveRoll RollD20Test(');$b=$save.IndexOf('    void Re
 $adapter+=$save.Substring($a,$b-$a)
 $save=Get-Content Assets/Scripts/BreathWeapon.cs -Raw -Encoding utf8
 $a=$save.IndexOf('    IEnumerator RollMappedAbilitySave(');$b=$save.IndexOf('    IEnumerator UseBreath(',$a)
-$adapter+=$save.Substring($a,$b-$a)+'}'
+$adapter+=$save.Substring($a,$b-$a)
+if($HailThorns){
+ $weapon=Get-Content Assets/Scripts/TrainingGame.cs -Raw -Encoding utf8
+ $a=$weapon.IndexOf('        if(hailHit.Before)yield return ResolveHailThorns(hailHit);')
+ $b=$weapon.IndexOf('        dice=hitLabel+', $a)
+ if($a -lt 0 -or $b -lt 0){throw 'Production Hail/weapon damage dispatch not found'}
+ $adapter+='IEnumerator ProductionHailOrder(HailHit hailHit,int damage){var weaponTypes=combat.CaptureAdjustedDamage(false);'+$weapon.Substring($a,$b-$a)+'yield break;}'
+}
+$adapter+='}'
 $file=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsProductionAdapters.cs'
 Set-Content -LiteralPath $file -Encoding utf8 -Value ($geometry+$adapter.Replace('using System;using System.Collections;using System.Collections.Generic;using UnityEngine;',''))
-& $mono $csc -nologo -nowarn:0649,0414 "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
+$extra=@('-main:PackChecksMain');if($HailThorns){$extra=@('-main:HailChecksMain','Assets/Scripts/HailThornsSpell.cs','Tools/Tests/HailThornsRuntimeChecks.cs')}
+& $mono $csc -nologo -nowarn:0649,0414 @extra "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime harness compile failed'}
 & $mono $out
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime checks failed'}

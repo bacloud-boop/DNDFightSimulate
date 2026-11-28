@@ -147,6 +147,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         string hitLabel=critical?"暴击（伤害骰数量翻倍）":"命中";
         dice=hitDetails+"，"+hitLabel;
         yield return new WaitForSecondsRealtime(fastAnimation?.15f:.5f);
+        var hailHit=new HailHit();if(!attackWeapon.IsMelee)yield return OfferHailThorns(-1,hailHit);
         var searingHit=new SmiteHitResult();if(attackWeapon.IsMelee)yield return OfferSearingSmite(-1,critical,searingHit);
         int damageModifier=attackWeapon.DiceCount==0&&!trueStrike?0:attackKind=="轻型附赠攻击"?Mathf.Min(0,abilityModifier):abilityModifier;
         int damageSides=shillelaghAttack?ShillelaghEffect.Sides(classes.TotalLevel):attackWeapon.DiceSides;
@@ -173,14 +174,18 @@ public sealed partial class TrainingGame : MonoBehaviour
         yield return AddCrusaderMantleDamage(0,critical,rawPacket);
         var reduced=new RayDamage();yield return ReduceRayPacket(true,rawPacket,elementalBonus>0||CrusaderMantleBenefits(0)||damageRolls.Length>0||searingHit.Fire>0||searingHit.Radiant>0||searingHit.Thunder>0||searingHit.Necrotic>0||sizeChange.Applies(true)&&sizeChange.Delta>0||trueStrike&&classes.TotalLevel>=5||timedBuffs.DivineActive(worldRounds)||markDamage.Rolled,attackWeapon.Name,reduced);
         int damage=ResolveRayPacket(false,reduced.Raw);
+        var weaponTypes=combat.CaptureAdjustedDamage(false);
         string modifierText=(damageModifier>=0?"+":"")+damageModifier;
-        combat.ApplyDamage(damage);
+        outcomeDeferDepth++;try{
+        if(hailHit.Before)yield return ResolveHailThorns(hailHit);
+        if(combat.Hp>0)combat.ApplyDamage(damage,resolvedTypes:weaponTypes);else damage=0;
+        if(!hailHit.Before)yield return ResolveHailThorns(hailHit);
         dice=hitLabel+" · "+damageDice+"，"+abilityLabel+" "+modifierText+"，伤害 "+damage;
         history.Insert(0,hitDetails+" "+hitLabel+"；"+attackWeapon.Name+" "+damageDice+"，"+abilityLabel+" "+modifierText+"，本次伤害 "+damage+"。");
         ApplyBlindingSmiteHit(-1,searingHit);BeginShiningSmite(-1,searingHit);
         yield return ResolveThunderousSmiteHit(-1,searingHit);
         yield return ResolveWrathfulSmiteHit(-1,searingHit);
-        CheckBattleOutcome();
+        }finally{outcomeDeferDepth--;CheckBattleOutcome();}
         rolling=false;
     }
     void EndCombatRound()

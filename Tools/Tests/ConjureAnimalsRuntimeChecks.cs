@@ -27,7 +27,7 @@ public sealed partial class TrainingGame
   public RouteCostMeter RouteMeter(Vector2Int a,Vector2Int b,bool c){int total=0;var old=a;foreach(var p in BattleMap.MovementAnchors(a,b)){total+=BattleMap.FeetBetween(old,p);old=p;}return new RouteCostMeter(BattleMap.FeetBetween(a,b),total,c);}
   public int CreatureCoverFromPoint(Vector2Int p,int actor,int spaces){LastCover=p;LastCoverSpaces=spaces;return Cover;}public int CreatureCoverBonus(int a,int b)=>0;
  }
- sealed class Classes {public int ProficiencyBonus=2;}
+ sealed class Classes {public int ProficiencyBonus=2;public int this[int index]=>index==2?1:0;}
  sealed class RayDamage {public int Amount;}sealed class ArmorSaveRoll {public int Value;public int[] Dice;}sealed class SaveAdjustment {public int Value;}
  sealed class GreaseEntry {public int Actor,Field;}
  readonly MapStub map=new MapStub();readonly CombatState combat=new CombatState();readonly Classes classes=new Classes();readonly Rescue rescueCarrier=new Rescue();readonly int[] attributes={14,14,14,14,14,14};

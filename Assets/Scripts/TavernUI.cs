@@ -94,6 +94,7 @@ public sealed partial class TrainingGame
         if(packPromptPending||packOrderPending){DrawPackPrompt();return;}
         if(retaliationOrderPending){DrawRetaliationOrder();return;}
         if(orbBouncePending){DrawOrbBounce();return;}
+        if(hailPromptPending){DrawHailPrompt();return;}
         if(searingPromptPending){DrawSearingSmitePrompt();return;}
         if(startStatusOrderPending){DrawStartStatusOrder();return;}
         if(auraOrderPending){DrawAuraVitalityOrder();return;}
