@@ -49,7 +49,7 @@ public sealed partial class TrainingGame
             bool sees=targetAt.HasValue?SpiritSeesAt(unit,targetId,unit.X,unit.Y,targetAt.Value.X,targetAt.Value.Y,spaces):SpiritSees(unit,targetId,cell,spaces),targetSees=TargetSeesSpirit(targetId,unit);
             if(targetAt.HasValue&&targetId==-1)targetSees=VisibilityBetween(false,targetAt.Value.X,targetAt.Value.Y,spaces,unit.X,unit.Y,unit.Spaces)<2;
             bool advantage=FaerieAdvantage(targetId,sees)||(FindSummon(targetId)!=null&&FindSummon(targetId).Prone)||targetId==0&&combat.PlayerProne||targetId==-1&&combat.MonsterProne||(targetId==0||targetId==-1?Entangled(targetId==0):FindSummon(targetId)!=null&&FindSummon(targetId).Restrained)||(!IsSteed(unit)&&SpiritPackTactics(unit,targetId,cell,spaces,targetAt))||!targetSees||(targetId==0&&(combat.PlayerHp==0||combat.PlayerParalyzed))||(targetId==-1&&combat.MonsterHelpless);
-            bool disadvantage=unit.Poisoned!=null&&unit.Poisoned()||FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,SummonSwimSpeed(unit),false);
+            bool disadvantage=unit.Poisoned!=null&&unit.Poisoned()||FearDisadvantage(unit.Id)||unit.Prone||unit.Restrained||!sees||UnderwaterCombatRules.Disadvantage(unit.Aquatic.Submerged,true,true,SummonSwimSpeed(unit),SummonDamageType(unit)==1);
             if(targetId==0)disadvantage|=senses.Blurred(worldRounds);
             var other=FindSummon(targetId);if(other!=null&&other.Dodging&&other.Speed>other.Breathing.SpeedPenalty&&targetSees)disadvantage=true;
             int first=Random.Range(1,21),second=advantage!=disadvantage?Random.Range(1,21):0;

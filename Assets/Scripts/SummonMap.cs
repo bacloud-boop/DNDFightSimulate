@@ -29,9 +29,16 @@ public sealed partial class BattleMap
     {
         if(!Locked||unit==null||!unit.Alive||!CanPlaceSummon(anchor,unit.Spaces))return false;
         foreach(var existing in summons)if(existing.Id==unit.Id)return false;
-        int oldX=unit.X,oldY=unit.Y;
+        int oldX=unit.X,oldY=unit.Y,oldScene=SceneOf(unit.Id);
         try{unit.X=anchor.x;unit.Y=anchor.y;SetActorScene(unit.Id,Scene);summons.Add(unit);return RecoverySafe(Player,Monster);}
-        finally{summons.Remove(unit);unit.X=oldX;unit.Y=oldY;}
+        finally{summons.Remove(unit);unit.X=oldX;unit.Y=oldY;SetActorScene(unit.Id,oldScene);}
+    }
+    // Pure replacement preview: do not dismiss the previous creature, spend
+    // resources, or emit callbacks while the player is choosing a cell.
+    public bool CanAddReplacingSummon(SummonedUnit unit,Vector2Int anchor,int previousId=0)
+    {
+        int index=summons.FindIndex(u=>u.Id==previousId);if(index<0)return CanAddSummon(unit,anchor);
+        var previous=summons[index];summons.RemoveAt(index);try{return CanAddSummon(unit,anchor);}finally{summons.Insert(index,previous);}
     }
     // The dummy cannot walk through the player's allied summons.
     bool CrossesEnemySummon(Vector2Int from,Vector2Int to,int spaces)
