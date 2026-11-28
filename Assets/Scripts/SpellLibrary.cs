@@ -43,6 +43,7 @@ public sealed partial class TrainingGame
         if(flameBlade.Active(worldRounds)&&GUILayout.Button("使用／重召焰刃",button))selectedSpellName="Flame Blade";
         if(flamingSphere.Active(worldRounds)&&GUILayout.Button("滚动炽焰法球（附赠动作）",button))OpenFlamingSphereControl();
         if(heatMetal.Active(worldRounds)&&GUILayout.Button("再次加热灼热金属（附赠动作）",button))panel="heatMetal";
+        if(callLightning.Active(worldRounds)&&GUILayout.Button("控制现存召雷术（魔法动作）",button))selectedSpellName="Call Lightning";
         if(animalPack.Active(worldRounds)&&GUILayout.Button("控制现存兽群（本回合共30尺）",button))OpenAnimalPackControl();
         if(cloudDaggers.Active(worldRounds)&&GUILayout.Button("传送现存匕首之云（魔法动作）",button))OpenCloudDaggersControl();
         if(dancingLights.Active(worldRounds)&&GUILayout.Button("移动现存舞光（附赠动作）",button))OpenDancingLightsControl();
@@ -102,6 +103,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Call Lightning")DrawCallLightningChoices();
         else if(definition.Name=="Hail of Thorns")GUILayout.Label("仅在自己的回合远程武器命中后立即触发，选择施法环阶及武器／法术伤害先后；范围包含玩家与盟友。不可从法术书直接施放。",small);
         else if(definition.Name=="Conjure Animals")DrawConjureAnimalsChoices();
         else if(definition.Name=="Elemental Weapon")DrawElementalWeaponChoices();
@@ -229,6 +231,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Call Lightning")return CallLightningError();
         if(spell.Name=="Conjure Animals")return ConjureAnimalsError();
         if(spell.Name=="Elemental Weapon")return ElementalWeaponError(elementalObject);
         if(spell.Name=="Crusader's Mantle")return CrusaderMantleError();
@@ -348,6 +351,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        Vector2Int lightningCloud;CloudPoint(out lightningCloud);if(spell.Name=="Call Lightning"&&CallLightningError()!="")yield break;
         int packChosenAppearance=packAppearance;if(spell.Name=="Conjure Animals"&&ConjureAnimalsError()!="")yield break;
         int elementalSelected=elementalObject,elementalType=EnergyTypes[elementalEnergy];
         if(spell.Name=="Elemental Weapon"&&ElementalWeaponError(elementalSelected)!="")yield break;
@@ -406,7 +410,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -432,6 +436,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Call Lightning"){yield return CastCallLightning(lightningCloud,entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Conjure Animals"){CastConjureAnimals(entangleAnchor,caster,slotLevel,packChosenAppearance);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Elemental Weapon"){CastElementalWeapon(elementalSelected,slotLevel,elementalType);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Crusader's Mantle"){CastCrusaderMantle();if(!embedded)rolling=false;yield break;}

@@ -37,7 +37,7 @@ public sealed partial class TrainingGame
     bool PlayerSeesMonster=>Visibility(true,false)<2;
     bool MonsterSeesPlayer=>Visibility(false,true)<2;
     void DrawVisionConfiguration(bool player){
-        if(player){GUILayout.Label("战场基础光照",small);lightDraft=GUILayout.SelectionGrid(lightDraft,new[]{"明亮","微光","黑暗"},3,new GUIStyle(button){fontSize=16,fixedHeight=34});}
+        if(player){bool oldStormEnabled=GUI.enabled;GUI.enabled=oldStormEnabled&&!combat.BattleStarted;outdoorStorm=GUILayout.Toggle(outdoorStorm,"室外风暴（召雷术额外1d10）",label);GUI.enabled=oldStormEnabled;GUILayout.Label("战场基础光照",small);lightDraft=GUILayout.SelectionGrid(lightDraft,new[]{"明亮","微光","黑暗"},3,new GUIStyle(button){fontSize=16,fixedHeight=34});}
         GUILayout.Label("黑暗视觉距离（非负整数尺，当前 "+(player?vision.PlayerRange:vision.MonsterRange)+"）",small);
         if(player)playerVisionInput=IntegerField(playerVisionInput,false);else monsterVisionInput=IntegerField(monsterVisionInput,false);
     }

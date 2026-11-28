@@ -1,4 +1,4 @@
-param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns)
+param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning)
 $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe";$csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $out=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsRuntimeChecks.exe'
@@ -30,6 +30,7 @@ $adapter+='}'
 $file=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsProductionAdapters.cs'
 Set-Content -LiteralPath $file -Encoding utf8 -Value ($geometry+$adapter.Replace('using System;using System.Collections;using System.Collections.Generic;using UnityEngine;',''))
 $extra=@('-main:PackChecksMain');if($HailThorns){$extra=@('-main:HailChecksMain','Assets/Scripts/HailThornsSpell.cs','Tools/Tests/HailThornsRuntimeChecks.cs')}
+if($CallLightning){$extra=@('-main:LightningChecksMain','Assets/Scripts/CallLightningEffect.cs','Assets/Scripts/CallLightningSpell.cs','Tools/Tests/CallLightningRuntimeChecks.cs')}
 & $mono $csc -nologo -nowarn:0649,0414 @extra "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime harness compile failed'}
 & $mono $out
