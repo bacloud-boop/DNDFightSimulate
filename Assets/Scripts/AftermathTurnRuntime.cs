@@ -57,7 +57,7 @@ public sealed partial class TrainingGame
     {
         if(minutes<1||!combat.Aftermath||rolling)yield break;panel="";yield return AdvanceAftermathRounds((long)minutes*10);aftermathMessage=aftermathAdvanceCompleted?"等待完成：已按双方回合逐轮结算。":"等待未完成。";
     }
-    bool PlayerCanSustainCast=>combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&CanCastInCurrentForm;
+    bool PlayerCanSustainCast=>combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!combat.ConditionIncapacitated(true)&&CanCastInCurrentForm;
     IEnumerator AdvanceRevivalTime(string name,bool external)
     {
         aftermathAdvanceCompleted=false;if(!external&&!combat.TryUseAftermathMagicAction())yield break;

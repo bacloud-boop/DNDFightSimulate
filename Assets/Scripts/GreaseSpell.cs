@@ -45,7 +45,7 @@ public sealed partial class TrainingGame
    bool legal=map.WithCreatureTransitStep(player?0:-1,()=>map.WithMovementCost(cell,cost,()=>player?map.CanMoveTo(cell,tactical):map.CanMoveMonsterTo(cell)));if(!legal)break;
    bool wasProne=player?combat.PlayerProne:combat.MonsterProne;
    yield return ResolveMovement(player,cell,tactical,true,false,true,cost,spaces,meter.Travelled-previousTravel);if((player?map.Player:map.Monster)!=cell)break;
-   if((player?combat.PlayerProne:combat.MonsterProne)&&!wasProne){if(player){movementMessage="地形使玩家倒地，停在触发格；剩余路程未扣费。";break;}int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();history.Insert(0,"木桩花费"+stand+"尺移动力起身，继续追击。");}
+   if((player?combat.PlayerProne:combat.MonsterProne)&&!wasProne){if(player){movementMessage="地形使玩家倒地，停在触发格；剩余路程未扣费。";break;}int stand=combat.MonsterSpeed/2;if(combat.ConditionProne(false)||combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();history.Insert(0,"木桩花费"+stand+"尺移动力起身，继续追击。");}
    if(!aftermath&&combat.BattleFinished||player&&(combat.PlayerDead||combat.PlayerHp<=0||combat.PlayerParalyzed)||!player&&!(CommandMoving(-1)?CommandCanMove(-1):combat.MonsterCanMove)||(player?map.PlayerSpaces:map.MonsterSpaces)!=spaces)break;
   }}finally{ObserveForcedSharedStop(player?0:-1);if(!preserveBusy)rolling=false;}
  }

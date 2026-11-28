@@ -57,7 +57,7 @@ public sealed partial class TrainingGame
         // The creature disappearing at 0 HP does not itself say that the caster
         // loses concentration. It grants no replacement creature or free recast.
         if(bestialSpirit.Active&&!bestialSpirit.Unit.Alive&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&concentrationSpell=="召唤野兽"&&worldRounds<bestialSpirit.Expires){DismissBestialSpirit();history.Insert(0,"灵魄已消失，原专注可主动结束或等待到期；重新召唤仍需重新施法。");return;}
-        if(!bestialSpirit.ShouldDismiss(worldRounds,combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed,concentrationSpell=="召唤野兽"))return;
+        if(!bestialSpirit.ShouldDismiss(worldRounds,combat.PlayerHp<=0||combat.PlayerDead||combat.PlayerParalyzed||combat.ConditionIncapacitated(true),concentrationSpell=="召唤野兽"))return;
         if(concentrationSpell=="召唤野兽")EndConcentration("灵魄归零、持续时间结束或施法者失能");
         else DismissBestialSpirit();
     }

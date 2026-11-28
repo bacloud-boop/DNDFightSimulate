@@ -34,7 +34,7 @@ public sealed class SummonedUnit
     bool banished;public bool Banished {get=>banished;set{banished=value;if(value){Dodging=false;AttacksRemaining=0;}}}
     public bool Alive=>Hp>0;
     public bool TurnActive {get;private set;}
-    public bool ReactionAvailable {get;private set;}
+    bool reactionAvailable;public bool ReactionAvailable {get=>reactionAvailable&&!ConditionIncapacitated;private set=>reactionAvailable=value;}
     long movementSpent;
     int dashes;
     public bool FeignDeath,FeignBlind;
@@ -47,8 +47,11 @@ public sealed class SummonedUnit
     public bool Stoneskin {get;set;}
     public bool NoSleep {get;set;}
     public bool ExhaustionImmune {get;set;}
-    public bool Prone {get;set;}
-    public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
+    public Func<bool> ExtraIncapacitated,ExtraProne;public Action<int> ConditionDamageReceived;
+    public bool ConditionIncapacitated=>ExtraIncapacitated!=null&&ExtraIncapacitated();
+    public bool ConditionProne=>ExtraProne!=null&&ExtraProne();
+    bool prone;public bool Prone {get=>prone||ConditionProne;set=>prone=value;}
+    public bool Stand(){int cost=EffectiveSpeed/2;if(ConditionProne||!Prone||!Alive||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;movementSpent+=cost;Prone=false;return true;}
     public bool Restrained {get;set;}
     public int LoadSpeedLimit {get;set;}=int.MaxValue;
     public Func<int,int> SpeedTransform;
@@ -58,9 +61,10 @@ public sealed class SummonedUnit
     public int AttacksRemaining {get;private set;}
     public int AttacksPerAction {get;}
     bool actionAvailable;
-    public Func<bool> ActionBlock,Poisoned;bool ActionsBlocked=>ActionBlock!=null&&ActionBlock();
+    public Func<bool> ActionBlock,Poisoned;bool ActionsBlocked=>ConditionIncapacitated||ActionBlock!=null&&ActionBlock();
     public bool ActionAvailable=>!ActionsBlocked&&!Banished&&ControllerReady&&actionAvailable&&!FeignDeath&&SleepStage==0;
     public bool Dodging {get;private set;}
+    public void CancelDodge(){Dodging=false;}
     public bool Disengaged {get;private set;}
     bool bonusAvailable;public bool BonusAvailable {get=>bonusAvailable&&!ActionsBlocked;private set=>bonusAvailable=value;}
     public bool TryUseBonus(){if(Banished||!ControllerReady||!Alive||!TurnActive||FeignDeath||SleepStage>0||!BonusAvailable)return false;BonusAvailable=false;return true;}
@@ -121,7 +125,7 @@ public sealed class SummonedUnit
         LastDamageReceived=amount;if(amount>0)SleepStage=0;int received=amount,absorbed=Math.Min(amount,TemporaryHp);TemporaryHp-=absorbed;amount-=absorbed;int before=Hp;
         bool guarded=before>0&&amount>=before&&LethalGuard!=null&&LethalGuard(received,packet,critical);
         Hp=guarded?1:Math.Max(0,Hp-amount);if(!Alive){TemporaryHp=0;EndTurn();ReactionAvailable=false;Dodging=false;movementSpent=0;dashes=0;}
-        if(wasAlive&&received>0)DamageApplied?.Invoke(packet);return before-Hp;
+        if(wasAlive&&received>0){ConditionDamageReceived?.Invoke(received);DamageApplied?.Invoke(packet);}return before-Hp;
     }
     public int Heal(int amount){if(!Alive||amount<=0)return 0;int before=Hp;Hp=(int)Math.Min(MaxHp,(long)Hp+amount);return Hp-before;}
 }

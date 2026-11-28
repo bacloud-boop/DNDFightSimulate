@@ -69,9 +69,8 @@ public sealed partial class TrainingGame
     {
         if(!rolling&&!drainingResistance&&resistanceRolls.Count>0)StartCoroutine(DrainResistanceRolls());
         if(!rolling&&!drainingFingerRaises&&fingerReady.Count>0)StartCoroutine(DrainFingerRaising());
-        if(!rolling&&undeadSaves.Count>0&&!drainingUndeadSaves)StartCoroutine(DrainUndeadSaves());
-        if(!rolling&&!drainingUndeadSaves&&!drainingHellish&&hellishDamage.Count>0)StartCoroutine(DrainHellishRebukes());
-        BondBonus(0);if(!rolling&&!drainingBond&&bondConcentration.Count>0)StartCoroutine(DrainBondConcentration());
+        if(!rolling&&!drainingDamageEffects&&PendingDamageEffects)StartCoroutine(DrainDamageEffects());
+        BondBonus(0);
         if(!rolling&&!spellTargeting&&draggingToken<0)map.ViewActorScene(summonTurns.Active?summonTurns.Current.Id:combat.Aftermath&&RescueTurnAllowed?BattleMap.RescueId:0);
         searingSmite.Refresh(worldRounds);wrathfulSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
@@ -97,6 +96,7 @@ public sealed partial class TrainingGame
         if(orbBouncePending){DrawOrbBounce();return;}
         if(hailPromptPending){DrawHailPrompt();return;}
         if(searingPromptPending){DrawSearingSmitePrompt();return;}
+        if(damageOrderPending){DrawDamageEffectOrder();return;}
         if(startStatusOrderPending){DrawStartStatusOrder();return;}
         if(auraOrderPending){DrawAuraVitalityOrder();return;}
         if(auraChoicePending){DrawAuraVitalityHealingChoice();return;}
@@ -191,7 +191,7 @@ public sealed partial class TrainingGame
         if(!combat.Aftermath&&map.Summons.Count>0&&Btn(new Rect(380,459,205,48),"召唤物指令",!rolling&&panel==""&&draggingToken<0))panel="summons";
         bool canAct=!combat.Aftermath&&!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
         if(combat.MonsterSleepStage>0&&Btn(new Rect(1015,450,205,32),"摇醒木桩 · 1动作",canAct&&map.DistanceFeet<=5&&combat.ActionAvailable))WakeMonster();
-        if(combat.PlayerProne&&Btn(new Rect(1015,485,205,36),"起身 · 半速移动",PlayerTurnAllowed&&!spellTargeting&&!rolling&&panel==""&&draggingToken<0&&combat.PlayerMovementReady&&map.PlayerSpeed>0&&map.MovementRemaining>=map.PlayerSpeed/2)&&map.SpendPlayerMovement(map.PlayerSpeed/2)){combat.PlayerProne=false;combat.MarkBattleStarted();history.Insert(0,"玩家花费半速移动起身。");}
+        if(combat.PlayerProne&&Btn(new Rect(1015,485,205,36),"起身 · 半速移动",PlayerTurnAllowed&&!spellTargeting&&!rolling&&panel==""&&draggingToken<0&&combat.PlayerMovementReady&&!combat.ConditionProne(true)&&map.PlayerSpeed>0&&map.MovementRemaining>=map.PlayerSpeed/2)&&map.SpendPlayerMovement(map.PlayerSpeed/2)){combat.PlayerProne=false;combat.MarkBattleStarted();history.Insert(0,"玩家花费半速移动起身。");}
         bool canChangeWaterLayer=!spellTargeting&&!rolling&&panel==""&&draggingToken<0;
         if(map.WaterCells(map.Player,map.PlayerSpaces)>0&&Btn(new Rect(1015,520,205,30),(map.PlayerAquatic.Submerged?"浮出水面 · ":"潜入水下 · ")+WaterLayerCost(0),canChangeWaterLayer&&PlayerCanSwitchWaterLayer()&&(map.PlayerAquatic.Submerged||AquaticState.FullyInWater(map.WaterCells(map.Player,map.PlayerSpaces),map.PlayerSpaces*map.PlayerSpaces)))&&map.SwitchWaterState(true,!map.PlayerAquatic.Submerged)){combat.MarkBattleStarted();ObserveWaterBreathing();history.Insert(0,(map.PlayerAquatic.Submerged?"玩家潜入水下":"玩家浮出水面")+"，消耗"+WaterLayerCost(0)+"。");}
         bool attackInRange=PlayerInBeastForm?map.DistanceFeet<=5:(fighter.AttacksRemaining>0?actionWeapon:selectedWeapon).CanReach(map.DistanceFeet);

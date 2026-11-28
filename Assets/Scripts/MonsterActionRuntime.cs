@@ -6,7 +6,7 @@ public sealed partial class TrainingGame
     int SpellChaseReach(DirectSpell spell)=>MonsterSpellCatalog.IsCone(spell)?(spell.Name=="Conjure Barrage"||spell.Name=="Cone of Cold"?60:15):MonsterSpellCatalog.IsLine(spell)?100:Mathf.Max(spell.Range,spell.EmanationRadius);
     IEnumerator RunMonsterPriorityTurn()
     {
-        if(Nauseated(-1)){yield return ChasePlayer(MonsterAttackReach);yield break;}
+        if(Nauseated(-1)||combat.ConditionIncapacitated(false)){yield return ChasePlayer(MonsterAttackReach);yield break;}
         foreach(int kind in monsterActions.Order){
             if(!monsterActions.Enabled(kind))continue;
             if(!combat.MonsterCanAct||combat.BattleFinished||page!="battle"||!map.Locked)yield break;

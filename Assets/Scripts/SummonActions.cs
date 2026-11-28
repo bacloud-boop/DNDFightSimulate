@@ -33,8 +33,8 @@ public sealed partial class TrainingGame
     bool SpiritPackTactics(SummonedUnit attacker,int targetId,Vector2Int target,int spaces,CreatureCover.Body? targetAt=null)
     {
         var body=targetAt??new CreatureCover.Body(target.x,target.y,spaces);
-        if(targetId!=0&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&SummonGeometry.Distance(new CreatureCover.Body(map.Player.x,map.Player.y,map.PlayerSpaces),body)<=5)return true;
-        foreach(var ally in map.Summons)if(ally.Id!=attacker.Id&&ally.Id!=targetId&&ally.Alive&&!ally.FeignDeath&&ally.SleepStage==0&&SummonGeometry.Distance(new CreatureCover.Body(ally.X,ally.Y,ally.Spaces),body)<=5)return true;
+        if(targetId!=0&&combat.PlayerHp>0&&!combat.PlayerDead&&!combat.PlayerParalyzed&&!combat.PlayerFeignDeath&&!combat.ConditionIncapacitated(true)&&SummonGeometry.Distance(new CreatureCover.Body(map.Player.x,map.Player.y,map.PlayerSpaces),body)<=5)return true;
+        foreach(var ally in map.Summons)if(ally.Id!=attacker.Id&&ally.Id!=targetId&&ally.Alive&&!ally.FeignDeath&&ally.SleepStage==0&&!ally.ConditionIncapacitated&&SummonGeometry.Distance(new CreatureCover.Body(ally.X,ally.Y,ally.Spaces),body)<=5)return true;
         return false;
     }
     IEnumerator ResolveSpiritAttack(SummonedUnit unit,int targetId,bool opportunity=false,CreatureCover.Body? targetAt=null)

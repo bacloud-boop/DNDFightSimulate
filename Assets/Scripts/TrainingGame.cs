@@ -44,7 +44,7 @@ public sealed partial class TrainingGame : MonoBehaviour
 
     void Awake()
     {
-        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeResistance();InitializeGustWind();InitializeStinkingCloud();InitializeGuardians();InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
+        combat.MonsterDamaged=()=>{if(combat.MonsterSleepStage>0)WakeSleepMonster();};InitializeLaughter();InitializeResistance();InitializeGustWind();InitializeStinkingCloud();InitializeGuardians();InitializeGrease();InitializeEntangle();InitializeDeathWard();InitializeInvisibilityEvents();InitializeSilence();InitializePoisonProtection();
         map.VoluntaryMovement=(id,cell)=>(!Feigning(id)||MovementFreedom(id))&&(!combat.Aftermath||CommandMoving(id)||(id==0?PlayerTurnAllowed:id==BattleMap.RescueId&&RescueTurnAllowed))&&FearAllowsMovement(id,cell);map.EnemyEligible=id=>!Feigning(id)&&!NeutralUndead(id);InitializeCreatureTransit();InitializeWeb();InitializeWardingBond();combat.DamageReceived=QueueHellishDamage;InitializeWaterWalk();InitializeFreedomMovement();map.ContainmentEnded=ReleaseContainedWeapons;
         combat.ExtraConditionRemoval=(player,condition,now)=>EndAuxiliaryCondition(player?0:-1,condition,now);
         Application.targetFrameRate = 60;

@@ -34,7 +34,7 @@ public sealed partial class RescueCarrier
         var raw=new long[14];int index=damageType>=0&&damageType<13?damageType:13;raw[index]=amount;amount=PrepareIncomingDamage(raw)[index];
         if(ResistsType(damageType))amount/=2;if(amount<=0)return 0;
         long incoming=amount;if(incoming>0)DamageApplied?.Invoke((int)Math.Min(int.MaxValue,incoming),damageType);
-        return ApplyResolvedDamage(amount,critical);
+        int lost=ApplyResolvedDamage(amount,critical);ConditionDamageReceived?.Invoke((int)Math.Min(int.MaxValue,incoming));return lost;
     }
     int ApplyResolvedDamage(long amount,bool critical){long incoming=amount;int before=Hp;
         int absorbed=(int)Math.Min(TemporaryHp,amount);TemporaryHp-=absorbed;amount-=absorbed;
@@ -51,7 +51,7 @@ public sealed partial class RescueCarrier
         for(int i=0;i<raw.Length;i++){long value=Math.Max(0,raw[i]);if(ResistsType(i))value/=2;resolved[i]=Math.Min(int.MaxValue-total,value);total+=resolved[i];}
         if(total==0)return 0;
         if(TypedDamageApplied!=null)TypedDamageApplied(resolved);else if(DamageApplied!=null)for(int i=0;i<resolved.Length;i++)if(resolved[i]>0)DamageApplied((int)resolved[i],i);
-        ApplyResolvedDamage(total,false);return (int)total;
+        ApplyResolvedDamage(total,false);ConditionDamageReceived?.Invoke((int)total);return (int)total;
     }
     public bool ResolveDeathSave(int die,long sequence,int bonus=0){
         if(die<1||die>20)throw new ArgumentOutOfRangeException(nameof(die));
@@ -74,15 +74,18 @@ public sealed partial class RescueCarrier
         if(Dead)return false;if(Breathing.ReconcileRevival(canBreathe))return true;ApplyFatalSuffocation();return false;
     }
     public void CompleteLongRest(){if(!Conscious)return;RevivalPenalty=Math.Min(0,RevivalPenalty+1);SpeciesAbilities.LongRest();SpeciesSpells.LongRest();TemporaryHp=0;Heal(int.MaxValue);}
-    public bool Prone {get;set;}
-    public bool Stand(){int cost=EffectiveSpeed/2;if(!Prone||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;MovementSpent+=cost;Prone=false;return true;}
+    public Func<bool> ExtraIncapacitated,ExtraProne;public Action<int> ConditionDamageReceived;
+    public bool ConditionIncapacitated=>ExtraIncapacitated!=null&&ExtraIncapacitated();
+    public bool ConditionProne=>ExtraProne!=null&&ExtraProne();
+    bool prone;public bool Prone {get=>prone||ConditionProne;set=>prone=value;}
+    public bool Stand(){int cost=EffectiveSpeed/2;if(ConditionProne||!Prone||!TurnActive||EffectiveSpeed<=0||MovementRemaining<cost)return false;MovementSpent+=cost;Prone=false;return true;}
     public int DexteritySaveModifier=>(int)Math.Floor((Dexterity-10)/2.0)+RevivalPenalty+Breathing.D20Penalty;
     public int Size {get;private set;}=2;
     public int Speed {get;private set;}=30;
     public readonly BodyWeight Weight=new BodyWeight();
     public readonly CorpseCarryingState Load=new CorpseCarryingState();
     public bool TurnActive {get;private set;}
-    public Func<bool> ActionBlock;int actionBudget;public int ActionsRemaining {get=>ActionBlock!=null&&ActionBlock()?0:actionBudget;private set=>actionBudget=value;}
+    public Func<bool> ActionBlock;int actionBudget;public int ActionsRemaining {get=>ConditionIncapacitated||ActionBlock!=null&&ActionBlock()?0:actionBudget;private set=>actionBudget=value;}
     public int MovementSpent {get;private set;}
     public int Dashes {get;private set;}
     long lastTurn=-1;

@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
         int reach=reachOverride??MonsterTurnReach;
         if(!combat.MonsterCanMove)yield break;
         if(needsWeapon&&monsterGroundWeapon.Dropped&&!MonsterPolymorphed&&combat.MonsterCanAct){yield return RecoverMonsterWeapon();if(monsterGroundWeapon.Dropped)yield break;}
-        if(combat.MonsterProne){int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)yield break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();}
+        if(combat.MonsterProne&&!combat.ConditionProne(false)){int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)yield break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();}
         if(!map.HasSharedPosition(-1)&&map.NearestEnemyInReach(!combat.PlayerDead,reach)>=0)yield break;
         Vector2Int from=map.Monster,best=from;int initialSpaces=map.MonsterSpaces;
         int bestDistance,bestCost=0;map.NearestEnemyFrom(from,map.MonsterSpaces,!combat.PlayerDead,int.MaxValue,out bestDistance);

@@ -24,7 +24,7 @@ public sealed partial class TrainingGame
     {
         Surface(new Rect(350,110,900,745),paperTexture);if(Btn(new Rect(1140,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,390,630));rescueScroll=GUILayout.BeginScrollView(rescueScroll);
-        GUILayout.Label("救援搬运者",heading);if(ResistanceStatus(BattleMap.RescueId)!="")GUILayout.Label(ResistanceStatus(BattleMap.RescueId),small);if(Nauseated(BattleMap.RescueId))GUILayout.Label("臭云中毒：不能动作或附赠动作，仍可移动和反应。",small);DrawAftermathPhaseControls();GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
+        GUILayout.Label("救援搬运者",heading);if(Laughing(BattleMap.RescueId))GUILayout.Label("狂笑：倒地／失能，不能自行起身，仍可爬行。",small);if(ResistanceStatus(BattleMap.RescueId)!="")GUILayout.Label(ResistanceStatus(BattleMap.RescueId),small);if(Nauseated(BattleMap.RescueId))GUILayout.Label("臭云中毒：不能动作或附赠动作，仍可移动和反应。",small);DrawAftermathPhaseControls();GUILayout.Label("从地图边缘入场；点击地图中的合法目标格移动。资源属于救援者。",small);
         bool old=GUI.enabled;GUI.enabled=!rolling&&combat.Aftermath&&PlayerTurnAllowed&&!map.RescuePosition.HasValue;
         GUILayout.Label("力量（3～20整数）",small);rescueStrength=IntegerField(rescueStrength,false);
         GUILayout.Label("敏捷（3～20整数，豁免无熟练）",small);rescueDexterity=IntegerField(rescueDexterity,false);
@@ -45,7 +45,7 @@ public sealed partial class TrainingGame
             GUILayout.Label("动作 "+rescueCarrier.ActionsRemaining+" · 剩余移动 "+rescueCarrier.MovementRemaining+"尺 · 当前速度 "+rescueCarrier.EffectiveSpeed+"尺",label);
             GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
             if(GUILayout.Button("疾走（1动作）",button))rescueCarrier.Dash();
-            GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.Prone;
+            GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.Prone&&!rescueCarrier.ConditionProne;
             if(GUILayout.Button("起身（半速移动）",button))rescueCarrier.Stand();
             GUI.enabled=!rolling&&combat.Aftermath;
 

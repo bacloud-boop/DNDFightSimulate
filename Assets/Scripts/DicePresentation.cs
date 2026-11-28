@@ -11,7 +11,7 @@ public sealed partial class TrainingGame
     IEnumerator PresentRoll(int sides,int[] results,string calculation="")
     {
         yield return DrainResistanceRolls();
-        yield return DrainUndeadSaves();yield return DrainHellishRebukes();yield return DrainBondConcentration();
+        yield return DrainDamageEffects();
         rollContext=dice;rollResultReady=false;rollCalculation=calculation;
         string values=string.Join("、",results);
         rollResultText="D"+sides+"："+values;

@@ -8,6 +8,7 @@ public sealed partial class TrainingGame
     bool SilenceCentre(bool player){var cell=player?map.Player:map.Monster;return silence.CentreInside(cell.x,cell.y,player?map.PlayerSpaces:map.MonsterSpaces,worldRounds);}
     bool SpellVoiceAllowed(bool player,string name)
     {
+        if(combat.ConditionIncapacitated(player))return false;
         if(!SilenceCentre(player))return true;
         var spell=SpellInfo(name);return spell==null||System.Array.IndexOf(spell.components,"声音")<0;
     }
@@ -44,6 +45,7 @@ public sealed partial class TrainingGame
     void DrawSilenceStatus(float x,bool player)
     {
         string text=ActorBlinded(player?0:-1)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
+        if(Laughing(player?0:-1))text+=(text==""?"":" · ")+"狂笑：倒地／失能／不能自行起身";
         string resistance=ResistanceStatus(player?0:-1);if(resistance!="")text+=(text==""?"":" · ")+resistance;
         if(MoonbeamShapeBlocked(player?0:-1))text+=(text==""?"":" · ")+"月华禁变形";
         if(Nauseated(player?0:-1))text+=(text==""?"":" · ")+"臭云中毒（禁动作）";

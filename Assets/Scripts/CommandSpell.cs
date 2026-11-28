@@ -68,7 +68,7 @@ public sealed partial class TrainingGame
     int CommandBudget(int actor)=>actor==0?map.MovementRemaining:actor==-1?map.MonsterMovementRemaining:actor==BattleMap.RescueId?rescueCarrier.MovementRemaining:FindSummon(actor)?.MovementRemaining??0;
     void CommandStand(int actor)
     {
-        if(!ActorProne(actor))return;
+        if(Laughing(actor)||!ActorProne(actor))return;
         if(actor==0){int cost=map.PlayerSpeed/2;if(map.PlayerSpeed>0&&map.SpendPlayerMovement(cost))combat.PlayerProne=false;}
         else if(actor==-1){int cost=combat.MonsterSpeed/2;if(combat.MonsterSpeed>0&&map.MonsterMovementRemaining>=cost){map.SpendMonsterMovement(cost);combat.MonsterProne=false;}}
         else if(actor==BattleMap.RescueId)rescueCarrier.Stand();else FindSummon(actor)?.Stand();

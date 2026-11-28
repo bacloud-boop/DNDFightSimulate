@@ -27,6 +27,7 @@ public sealed partial class TrainingGame
             }else if(summonTurns.Current==unit||!phase&&ControlledSteed&&unit==steed){
                 if(!IsSteed(unit)||!ControlledSteed)DrawSummonWakeOptions(unit);
                 if(Undead(unit)!=null)DrawUndeadEquipment(Undead(unit));
+                if(Laughing(unit.Id))GUILayout.Label("狂笑：倒地／失能，仍可爬行；回合末及受伤重复感知豁免。",small);
                 if(ResistanceStatus(unit.Id)!="")GUILayout.Label(ResistanceStatus(unit.Id),small);
                 if(Nauseated(unit.Id))GUILayout.Label("臭云中毒：本回合不能动作或附赠动作，仍可移动和反应。",small);
                 GUILayout.Label("移动剩余 "+unit.MovementRemaining+"尺 · 动作 "+(unit.ActionAvailable?1:0)+" · 连击剩余 "+unit.AttacksRemaining,small);

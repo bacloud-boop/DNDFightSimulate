@@ -56,13 +56,16 @@ public sealed partial class TrainingGame
  EndAnimalPack();concentrationSpell="";}yield break;}
  void ReconcileFallenRescue(){}void RefreshBestialSpirit(){}void NoticeCastingInterruption(){}int outcomeChecks;void CheckBattleOutcome(){outcomeChecks++;}
  bool SpeciesSaveAdvantage(bool p,int ability)=>false;bool BeaconHope(int actor)=>false;bool ResurrectionD20Disadvantage(bool player)=>weak;
- ArmorSaveRoll RollArmorSave(bool player,int ability,bool avoidsOrEndsFrightened=false,bool avoidsOrEndsPoisoned=false)=>RollD20Test(player,advantage:avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player),ability:ability);
+ ArmorSaveRoll RollArmorSave(bool player,int ability,bool avoidsOrEndsFrightened=false,bool avoidsOrEndsPoisoned=false,bool advantage=false)=>RollD20Test(player,advantage:advantage||avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player),ability:ability);
  int PlayerSavingThrowModifier(int a)=>2;int MonsterSavingThrowModifier(int a)=>0;int BondBonus(int actor)=>0;int SummonSaveModifier(Unit unit,int a)=>0;
- ArmorSaveRoll RollRescueSave(int a)=>RollSavingThrowDice(false,false);ArmorSaveRoll RollSummonSavingThrow(Unit u,int a)=>RollSavingThrowDice(false,false);
+ ArmorSaveRoll RollRescueSave(int a,bool advantage=false)=>RollSavingThrowDice(advantage,false);ArmorSaveRoll RollSummonSavingThrow(Unit u,int a,bool advantage=false)=>RollSavingThrowDice(advantage,false);
  IEnumerator ApplySaveAdjustments(bool player,bool automatic,SaveAdjustment result,int ability=-1,bool ignoreCover=false){yield break;}
  IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){var entry=startStatuses[0];startStatuses.RemoveAt(0);
 #if SLEET_RUNTIME
  if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
+#endif
+#if LAUGHTER_RUNTIME
+ if(entry.Kind==7)yield return RepeatLaughterSave(entry.Actor,entry.Revision);
 #endif
 #if MOONBEAM_RUNTIME
  if(entry.Kind==6)yield return ResolveMoonbeamSave(entry.Actor,entry.Revision,entry.Group);

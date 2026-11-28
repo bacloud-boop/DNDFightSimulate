@@ -36,19 +36,19 @@ public sealed partial class TrainingGame
     }
     IEnumerator RollMappedDexteritySave(int target,int caster,long dc,HashSet<int> failed,string context)
         =>RollMappedAbilitySave(target,caster,dc,failed,context,1);
-    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null,int effectOriginSpaces=1,bool avoidsFrightened=false,bool avoidsPoisoned=false)
+    IEnumerator RollMappedAbilitySave(int target,int caster,long dc,HashSet<int> failed,string context,int ability,Vector2Int? effectOrigin=null,int effectOriginSpaces=1,bool avoidsFrightened=false,bool avoidsPoisoned=false,bool advantage=false)
     {
         bool automatic=false;long modifier;int value;int[] shown;
         if(target==0||target==-1){
             bool player=target==0;automatic=(ability==0||ability==1)&&(player?combat.PlayerHp==0||combat.PlayerParalyzed:combat.MonsterHelpless);
-            var roll=RollArmorSave(player,ability,avoidsOrEndsFrightened:avoidsFrightened,avoidsOrEndsPoisoned:avoidsPoisoned);shown=roll.Dice;value=roll.Value;
+            var roll=RollArmorSave(player,ability,avoidsOrEndsFrightened:avoidsFrightened,avoidsOrEndsPoisoned:avoidsPoisoned,advantage:advantage);shown=roll.Dice;value=roll.Value;
             modifier=player?PlayerSavingThrowModifier(ability):MonsterSavingThrowModifier(ability);
             var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,automatic,adjustment,ability,ignoreCover:true);modifier+=adjustment.Value;
-        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty;}
+        }else if(target==BattleMap.RescueId){automatic=(ability==0||ability==1)&&(rescueCarrier.Hp==0||rescueCarrier.Dead);var rescueRoll=RollRescueSave(ability,advantage);value=rescueRoll.Value;shown=rescueRoll.Dice;modifier=BondBonus(target)+AcidSplash.Modifier(rescueCarrier.Ability(ability))+rescueCarrier.RevivalPenalty+rescueCarrier.Breathing.D20Penalty;}
         else {
             var unit=FindSummon(target);if(unit==null)yield break;automatic=(ability==0||ability==1)&&unit.SleepStage==2;
             modifier=BondBonus(target)+SummonSaveModifier(unit,ability)+unit.Breathing.D20Penalty;
-            var roll=RollSummonSavingThrow(unit,ability);value=roll.Value;shown=roll.Dice;
+            var roll=RollSummonSavingThrow(unit,ability,advantage);value=roll.Value;shown=roll.Dice;
         }
         int cover=ability!=1?0:effectOrigin.HasValue?map.CreatureCoverFromPoint(effectOrigin.Value,target,effectOriginSpaces):target==caster?0:map.CreatureCoverBonus(caster,target);modifier+=cover;
         dice=context+" · "+TransitActorName(target)+PlayerAttributes.Names[ability]+"豁免";

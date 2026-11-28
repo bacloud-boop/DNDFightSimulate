@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
     }
     void InitializeWeb()
     {
-        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{unit.IncomingDamage=raw=>ResistanceAdjusted(unit.Id,raw);unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);unit.SpeedTransform=speed=>GuardianSpeed(unit.Id,speed);unit.ActionBlock=()=>Nauseated(unit.Id);unit.Poisoned=()=>Nauseated(unit.Id);};
+        combat.TurnStarted=StartWebTurn;map.ActorTurnStarted=StartWebTurn;map.SummonAdded=unit=>{HookLaughterSummon(unit);unit.IncomingDamage=raw=>ResistanceAdjusted(unit.Id,raw);unit.FireExposure=()=>IgniteWebActor(unit.Id);HookBondSummon(unit);unit.SpeedTransform=speed=>GuardianSpeed(unit.Id,speed);unit.ActionBlock=()=>Nauseated(unit.Id);unit.Poisoned=()=>Nauseated(unit.Id);};
         combat.FireExposure=player=>IgniteWebActor(player?0:-1);rescueCarrier.FireExposure=()=>IgniteWebActor(BattleMap.RescueId);
         rescueCarrier.TurnStarted=()=>StartWebTurn(BattleMap.RescueId);
         vision.LightObscuration=(x,y,now)=>web.Cell((int)Math.Floor((x+2.5)/5),(int)Math.Floor((y+2.5)/5),now);

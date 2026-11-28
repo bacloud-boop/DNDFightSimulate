@@ -12,7 +12,7 @@ public sealed partial class TrainingGame
     bool IsConcentrating => concentrationSpell!="";
     void EndConcentration(string reason)
     {
-        if(!IsConcentrating)return;resistanceSpell.Clear();EndMoonbeam();EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
+        if(!IsConcentrating)return;EndLaughter();resistanceSpell.Clear();EndMoonbeam();EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
         EndPassTrace();EndBeaconHope();EndAuraVitality();EndFlamingSphere();heatMetal.Clear();EndHeroism();ClearStoneskin();ClearSleepEffects();EndFaerieFire();EndDancingLights();
         EndCloudDaggers();EndWeb();spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();
@@ -22,10 +22,10 @@ public sealed partial class TrainingGame
     }
     void RefreshConcentration()
     {
-        RefreshBestialSpirit();RefreshSleepConcentration();
+        RefreshLaughter();RefreshBestialSpirit();RefreshSleepConcentration();
         if(!IsConcentrating||resolvingHoldPerson)return;
         if(combat.Hp==0)combat.MonsterParalyzed=false;
-        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerBanished||combat.PlayerParalyzed||combat.PlayerFeignDeath)EndConcentration("施法者失能或死亡");
+        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerBanished||combat.PlayerParalyzed||combat.PlayerFeignDeath||combat.ConditionIncapacitated(true))EndConcentration("施法者失能或死亡");
         else if((concentrationExpiresWorld>=0&&worldRounds>=concentrationExpiresWorld)||combat.Round>=concentrationExpiresRound)EndConcentration("持续时间结束");
         else if(concentrationSpell=="衰弱射线"&&!enfeeblement.Active(true,worldRounds,combat.Round)&&!enfeeblement.Active(false,worldRounds,combat.Round))EndConcentration("衰弱射线效果已结束");
         else if((concentrationSpell=="人类定身术"||concentrationSpell=="怪物定身术")&&!combat.PlayerParalysisEffect&&!combat.MonsterParalysisEffect)EndConcentration("所有目标均已摆脱效果");
@@ -38,11 +38,11 @@ public sealed partial class TrainingGame
         int result=modifier+((classes.SavingThrowProficient(ability)||beastProficient)?classes.ProficiencyBonus:0);
         return beastProficient?Mathf.Max(result,wildForm.saves[ability]):result;
     }
-    IEnumerator MaintainConcentration(int damage){yield return DrainResistanceRolls();yield return DrainUndeadSaves();yield return DrainHellishRebukes();yield return DrainBondConcentration();yield return MaintainConcentrationCore(damage);}
+    IEnumerator MaintainConcentration(int damage){yield return DrainResistanceRolls();yield return DrainDamageEffects();yield return MaintainConcentrationCore(damage);}
     IEnumerator MaintainConcentrationCore(int damage)
     {
         if(!IsConcentrating||damage<=0)yield break;
-        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerBanished||combat.PlayerParalyzed||combat.PlayerFeignDeath){EndConcentration("施法者失能或死亡");yield break;}
+        if(combat.PlayerHp==0||combat.PlayerDead||combat.PlayerBanished||combat.PlayerParalyzed||combat.PlayerFeignDeath||combat.ConditionIncapacitated(true)){EndConcentration("施法者失能或死亡");yield break;}
         var concentrationRoll=RollD20Test(true,ability:2);int dc=ConcentrationRules.DamageSaveDc(damage),value=concentrationRoll.Value,modifier=PlayerSavingThrowModifier(2);
         dice=concentrationSpell+" · 受伤专注豁免";
         var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(true,false,adjustment);modifier+=adjustment.Value;

@@ -8,8 +8,8 @@ public sealed partial class RescueCarrier
     public int ProficiencyBonus {get;private set;}
     public readonly SpeciesAbilityState SpeciesAbilities=new SpeciesAbilityState();
     public readonly SpeciesSpellUses SpeciesSpells=new SpeciesSpellUses();
-    bool bonusAvailable=true;public bool BonusActionAvailable {get=>bonusAvailable&&!(ActionBlock!=null&&ActionBlock());private set=>bonusAvailable=value;}
-    public bool ReactionAvailable {get;private set;}=true;
+    bool bonusAvailable=true;public bool BonusActionAvailable {get=>bonusAvailable&&!ConditionIncapacitated&&!(ActionBlock!=null&&ActionBlock());private set=>bonusAvailable=value;}
+    bool reactionAvailable=true;public bool ReactionAvailable {get=>reactionAvailable&&!ConditionIncapacitated;private set=>reactionAvailable=value;}
     public int TemporaryHp {get;private set;}
     public void ChooseTemporaryHp(int amount,bool takeNew){if(amount<0)throw new ArgumentOutOfRangeException(nameof(amount));if(!Dead&&takeNew)TemporaryHp=amount;}
     public long LastLongRestStart {get;private set;}=-1;
