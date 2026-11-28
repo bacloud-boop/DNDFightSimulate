@@ -55,7 +55,7 @@ public sealed partial class TrainingGame
         if(sensoryGreaseOption&&GUILayout.Button("油腻术 · 敏捷豁免 · DC "+(ActorGrease(sensorySavePlayer?0:-1)==null?"—":ActorGrease(sensorySavePlayer?0:-1).Dc.ToString()),button))sensorySaveChoice=-2;
         if(sensorySleepOption&&GUILayout.Button("睡眠术 · 感知豁免 · DC "+sleepDc,button))sensorySaveChoice=-3;
         if(sensorySphereOption&&GUILayout.Button("炽焰法球 · 回合末敏捷豁免与火焰伤害",button))sensorySaveChoice=-5;
-        if(sensoryDaggersOption&&GUILayout.Button("区域回合末效果 · 匕首之云／咒唤兽群／灵体卫士",button))sensorySaveChoice=-4;
+        if(sensoryDaggersOption&&GUILayout.Button("区域回合末效果 · 匕首之云／咒唤兽群／灵体卫士／造风术",button))sensorySaveChoice=-4;
         if(sensoryRayOption&&GUILayout.Button("衰弱射线 · 体质豁免 · DC "+enfeeblement.Dc,button))sensorySaveChoice=-1;
         foreach(var effect in blindingSaveOptions)if(GUILayout.Button("致盲斩 #"+effect.Id+" · 体质豁免 · DC "+effect.Dc,button)){blindingSaveSelected=effect;sensorySaveChoice=BlindingSmiteSaveChoice;}
         foreach(var effect in sensoryWrathOptions)if(GUILayout.Button("激愤斩 #"+effect.Id+" · 感知豁免 · DC "+effect.Dc,button)){wrathfulSaveSelected=effect;sensorySaveChoice=-6;}

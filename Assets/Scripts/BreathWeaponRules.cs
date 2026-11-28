@@ -6,24 +6,24 @@ public struct BreathTemplate
 {
     public readonly double X,Y,Dx,Dy;
     public readonly bool Line,Valid,IncludeOrigin;
-    public readonly int LengthFeet;
-    BreathTemplate(double x,double y,double dx,double dy,bool line,bool includeOrigin,int lengthFeet){X=x;Y=y;Dx=dx;Dy=dy;Line=line;IncludeOrigin=includeOrigin;LengthFeet=lengthFeet;Valid=true;}
-    public static bool TryCreate(int x,int y,int spaces,int edge,int offset,double aimX,double aimY,bool line,out BreathTemplate result,bool includeOrigin=false,int lengthFeet=0)
+    public readonly int LengthFeet,WidthFeet;
+    BreathTemplate(double x,double y,double dx,double dy,bool line,bool includeOrigin,int lengthFeet,int widthFeet){X=x;Y=y;Dx=dx;Dy=dy;Line=line;IncludeOrigin=includeOrigin;LengthFeet=lengthFeet;WidthFeet=widthFeet;Valid=true;}
+    public static bool TryCreate(int x,int y,int spaces,int edge,int offset,double aimX,double aimY,bool line,out BreathTemplate result,bool includeOrigin=false,int lengthFeet=0,int widthFeet=5)
     {
         result=default(BreathTemplate);
-        if(spaces<1||edge<0||edge>4||offset<0||offset>spaces*2||lengthFeet<0)return false;
+        if(spaces<1||edge<0||edge>4||offset<0||offset>spaces*2||lengthFeet<0||widthFeet<1)return false;
         if(lengthFeet==0)lengthFeet=line?30:15;
         double ox=edge==0?x+spaces:edge==1?x:edge==4?x+spaces*.5:x+offset*.5,oy=edge==2?y+spaces:edge==3?y:edge==4?y+spaces*.5:y+offset*.5;
         double dx=aimX-ox,dy=aimY-oy,length=Math.Sqrt(dx*dx+dy*dy);
         double outward=edge==0?dx:edge==1?-dx:edge==2?dy:edge==3?-dy:length;
         if(length<.000001||outward<=0)return false;
-        result=new BreathTemplate(ox,oy,dx/length,dy/length,line,includeOrigin,lengthFeet);return true;
+        result=new BreathTemplate(ox,oy,dx/length,dy/length,line,includeOrigin,lengthFeet,widthFeet);return true;
     }
     public bool Cell(int x,int y)
     {
         if(!Valid)return false;double ax=x+.5-X,ay=y+.5-Y,along=ax*Dx+ay*Dy,across=Math.Abs(ax*Dy-ay*Dx);
         if(ax*ax+ay*ay<.000000001)return IncludeOrigin;
-        return along>=-.000001&&along<=LengthFeet/5.0+.000001&&across<=(Line?.5:along*.5)+.000001;
+        return along>=-.000001&&along<=LengthFeet/5.0+.000001&&across<=(Line?WidthFeet/10.0:along*.5)+.000001;
     }
     public bool Intersects(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(Cell(x+i,y+j))return true;return false;}
 }

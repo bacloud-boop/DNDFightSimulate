@@ -19,8 +19,9 @@ public sealed partial class TrainingGame
             var cell=new Vector2Int(x,y);
             bool walking=map.CanMoveMonsterTo(cell),leaping=CanUseJump(false,cell);
             if(!walking&&!leaping)continue;
-            bool useJump=leaping&&(!walking||map.MonsterMovementCost(cell)>10);
-            int cost=useJump?10:map.MonsterMovementCost(cell);
+            int jumpCost=leaping?map.JumpMovementCost(false,cell):int.MaxValue;
+            bool useJump=leaping&&(!walking||map.MonsterMovementCost(cell)>jumpCost);
+            int cost=useJump?jumpCost:map.MonsterMovementCost(cell);
             if(cost>map.MonsterMovementRemaining)continue;
             int distance;map.NearestEnemyFrom(cell,map.MonsterSpaces,!combat.PlayerDead,int.MaxValue,out distance);
             bool inRange=distance<=reach;

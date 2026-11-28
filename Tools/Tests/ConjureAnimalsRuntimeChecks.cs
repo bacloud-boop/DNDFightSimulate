@@ -60,6 +60,9 @@ public sealed partial class TrainingGame
 #if SLEET_RUNTIME
  if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
 #endif
+#if GUST_RUNTIME
+ if(entry.Kind==5)yield return ResolveGustSave(entry.Actor,entry.Revision);
+#endif
 #if STINKING_RUNTIME
  if(entry.Kind==4)yield return ResolveStinkingSave(entry.Actor,entry.Revision);
 #endif

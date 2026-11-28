@@ -194,6 +194,26 @@ public sealed partial class BattleMap
         if(bestCost==int.MaxValue)return false;
         if(player){PlayerSpaces=spaces;Player=best;}else {MonsterSpaces=spaces;Monster=best;}return true;
     }
+    // One forced step: no resource expenditure, voluntary-movement gate or reaction.
+    // Bodies still block the path and all normal terrain/water observers run.
+    public bool ForceWindStep(int actor,Vector2Int cell)
+    {
+        Vector2Int from;int spaces;if(!Locked||!OnScene(actor)||!MovementBody(actor,out from,out spaces)||from==cell||System.Math.Abs(cell.x-from.x)>1||System.Math.Abs(cell.y-from.y)>1)return false;
+        if((actor==0||actor==-1)&&(IsContained(actor==0)||IsCarried(actor==0)))return false;
+        if(!CanOccupyForMove(actor,from,cell,spaces)||!CreaturePathClear(actor,from,cell,spaces))return false;
+        if(actor==0&&Riding)return false;
+        if(actor==0||actor==-1){if(!RecoveryPathSafe(actor==0,from,cell))return false;}
+        else if(actor==RescueId){if(!RescueDestinationClear(cell))return false;}
+        else {
+            SummonedUnit unit=null;foreach(var u in summons)if(u.Id==actor&&u.Alive){unit=u;break;}if(unit==null)return false;
+            int x=unit.X,y=unit.Y;var rider=Player;try{unit.X=cell.x;unit.Y=cell.y;SyncRiderToMount(unit);if(!RecoverySafe(Player,Monster))return false;}finally{unit.X=x;unit.Y=y;Player=rider;}
+        }
+        if(actor==0)Player=cell;else if(actor==-1)Monster=cell;
+        else if(actor==RescueId){RescuePosition=cell;SyncRescueCargo();}
+        else foreach(var u in summons)if(u.Id==actor){u.X=cell.x;u.Y=cell.y;SyncRiderToMount(u);break;}
+        SyncContainedPosition();SyncWaterWalkRoute(actor,from,cell,spaces);SyncWaterPositions();MovementObserved?.Invoke(actor,from,cell,spaces,spaces,false);
+        if(Riding&&actor==riderMountId)MovementObserved?.Invoke(0,from,cell,spaces,spaces,false);return true;
+    }
     public int ForceMoveAway(bool player,Vector2Int origin,int originSpaces,int feet)
         => ForceMoveOnLine(player,origin,originSpaces,feet,false);
     public int ForceMoveToward(bool player,Vector2Int origin,int originSpaces,int feet)

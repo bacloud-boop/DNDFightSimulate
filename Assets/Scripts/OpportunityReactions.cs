@@ -52,7 +52,7 @@ public sealed partial class TrainingGame
         }
         if(expectedSpaces.HasValue&&((movingPlayer?map.PlayerSpaces:map.MonsterSpaces)!=expectedSpaces.Value||(movingPlayer?combat.PlayerProne:combat.MonsterProne)!=proneAtStart)){if(PendingTerrainCount>0)yield return DrainGreaseEntries();if(!preserveBusy)rolling=false;yield break;}
         if(!movingPlayer)yield return AnimateMonsterMovement(from,target);
-        int paidMovement=prepaid.HasValue?prepaid.Value:jumping?10:movingPlayer?map.PlayerMovementCost(target):map.MonsterMovementCost(target);
+        int paidMovement=prepaid.HasValue?prepaid.Value:jumping?map.JumpMovementCost(movingPlayer,target):movingPlayer?map.PlayerMovementCost(target):map.MonsterMovementCost(target);
         System.Func<bool> groundMove=()=>reactionMove?map.MoveReactionStep(movingPlayer?0:-1,target):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
         bool moved=(movementGuard==null||movementGuard())&&(jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):greaseStep?map.WithCreatureTransitStep(movingPlayer?0:-1,groundMove):groundMove());
         if(moved) {

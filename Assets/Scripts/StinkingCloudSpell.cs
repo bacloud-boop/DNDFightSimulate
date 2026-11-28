@@ -23,7 +23,7 @@ public sealed partial class TrainingGame
     {
         visionColumn=IntegerField(visionColumn,false);visionRow=IntegerField(visionRow,false);
         GUILayout.Label("90尺内一点，20尺半径重度遮蔽，专注至多1分钟。陆地与水面生物在云中开始回合时体质豁免，失败中毒至本回合结束，期间不能使用动作或附赠动作；仍可移动和反应。潜水单位不接受云团的新豁免，潜水观察者不受气体遮蔽。已产生的中毒不会因离开、潜水或结束专注而提前消失。",small);
-        GUILayout.Label("中毒可以被正常解除，豁免使用避免中毒的优势。普通中毒仅影响攻击与属性检定，不阻止动作；只有此法术的中毒附带动作限制。强风驱散接口待强风法术接入，室外风暴开关仍只用于召雷术。",small);
+        GUILayout.Label("中毒可以被正常解除，豁免使用避免中毒的优势。普通中毒仅影响攻击与属性检定，不阻止动作；只有此法术的中毒附带动作限制。造风术与云团相交即驱散整团，已产生的中毒仍保留；室外风暴开关只用于召雷术。",small);
     }
     void CastStinkingCloud(Vector2Int p,int caster)
     {

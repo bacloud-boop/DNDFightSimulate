@@ -25,7 +25,7 @@ public sealed partial class BattleMap
             previous=cell;
         }
         int extra=total==0?0:Mathf.RoundToInt((float)distance*wet/total);
-        return distance*(crawling?2:1)+extra+DifficultTerrainCost(from,to,spaces,actor);
+        return distance*(crawling?2:1)+extra+DifficultTerrainCost(from,to,spaces,actor)+WindMovementCost(actor,from,to,spaces);
     }
     public bool MonsterCrawling,RescueCrawling;
     public int MonsterMovementCost(Vector2Int to)=>WaterMovementCost(Monster,to,MonsterSpaces,MonsterSwimmingSpeed,MonsterCrawling,-1);
