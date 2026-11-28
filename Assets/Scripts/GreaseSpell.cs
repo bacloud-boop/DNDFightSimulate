@@ -8,10 +8,10 @@ public sealed partial class TrainingGame
  sealed class GreaseEntry {public int Actor;public GreaseField Field;public long MoveEvent;public int MoveStep;}
  readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();
  void InitializeGrease(){map.MovementObserved=ObserveGreaseMovement;map.SwimmingTerrain=(cell,spaces)=>map.WaterCells(cell,spaces)==spaces*spaces;}
- bool FullDifficultTerrain(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(!entangle.FullFootprint(x+i,y+j,1,worldRounds)&&!grease.Cell(x+i,y+j,worldRounds,map.Scene)&&!spikeGrowth.Cell(x+i,y+j,worldRounds)&&!web.Cell(x+i,y+j,worldRounds)&&!iceStorm.Cell(x+i,y+j,worldRounds,map.Scene))return false;return spaces>0;}
+ bool FullDifficultTerrain(int x,int y,int spaces){for(int j=0;j<spaces;j++)for(int i=0;i<spaces;i++)if(!entangle.FullFootprint(x+i,y+j,1,worldRounds)&&!grease.Cell(x+i,y+j,worldRounds,map.Scene)&&!spikeGrowth.Cell(x+i,y+j,worldRounds)&&!web.Cell(x+i,y+j,worldRounds)&&!iceStorm.Cell(x+i,y+j,worldRounds,map.Scene)&&!SleetLandCell(x+i,y+j))return false;return spaces>0;}
  void ObserveGreaseMovement(int actor,Vector2Int from,Vector2Int to,int oldSpaces,int spaces,bool landing)
  {
-  BondBonus(0);RefreshFireShield();RefreshFlameBlade();RefreshShiningSmite();RefreshWitchBolt();terrainMovementEvent++;RefreshFaerieFire();RefreshDancingLights();RefreshLightSpell();ObserveSpikeMovement(actor,from,to,spaces,landing);ObserveWebMovement(actor,from,to,oldSpaces,spaces,landing);ObserveDaggersMovement(actor,from,to,oldSpaces,spaces,landing);ObservePackMovement(actor,from,to,oldSpaces,spaces,landing);
+  BondBonus(0);RefreshFireShield();RefreshFlameBlade();RefreshShiningSmite();RefreshWitchBolt();terrainMovementEvent++;RefreshFaerieFire();RefreshDancingLights();RefreshLightSpell();ObserveSpikeMovement(actor,from,to,spaces,landing);ObserveWebMovement(actor,from,to,oldSpaces,spaces,landing);ObserveDaggersMovement(actor,from,to,oldSpaces,spaces,landing);ObservePackMovement(actor,from,to,oldSpaces,spaces,landing);ObserveSleetMovement(actor,from,to,oldSpaces,spaces,landing);
   if(!map.Locked||!grease.Any(worldRounds))return;var path=landing?new List<Vector2Int>{to}:BattleMap.MovementAnchors(from,to);var previous=from;int previousSpaces=oldSpaces,step=0;
   foreach(var cell in path){var field=grease.Current(cell.x,cell.y,spaces,worldRounds,map.Scene);if(field!=null&&!field.Intersects(previous.x,previous.y,previousSpaces))greaseEntries.Enqueue(new GreaseEntry{Actor=actor,Field=field,MoveEvent=terrainMovementEvent,MoveStep=step});previous=cell;previousSpaces=spaces;step++;}
  }
@@ -45,7 +45,7 @@ public sealed partial class TrainingGame
    bool legal=map.WithCreatureTransitStep(player?0:-1,()=>map.WithMovementCost(cell,cost,()=>player?map.CanMoveTo(cell,tactical):map.CanMoveMonsterTo(cell)));if(!legal)break;
    bool wasProne=player?combat.PlayerProne:combat.MonsterProne;
    yield return ResolveMovement(player,cell,tactical,true,false,true,cost,spaces,meter.Travelled-previousTravel);if((player?map.Player:map.Monster)!=cell)break;
-   if((player?combat.PlayerProne:combat.MonsterProne)&&!wasProne){if(player){movementMessage="油腻术使玩家倒地，停在触发格；剩余路程未扣费。";break;}int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();history.Insert(0,"木桩花费"+stand+"尺移动力起身，继续追击。");}
+   if((player?combat.PlayerProne:combat.MonsterProne)&&!wasProne){if(player){movementMessage="地形使玩家倒地，停在触发格；剩余路程未扣费。";break;}int stand=combat.MonsterSpeed/2;if(combat.MonsterSpeed<=0||map.MonsterMovementRemaining<stand)break;map.SpendMonsterMovement(stand);combat.MonsterProne=false;SyncTimedBuffs();history.Insert(0,"木桩花费"+stand+"尺移动力起身，继续追击。");}
    if(!aftermath&&combat.BattleFinished||player&&(combat.PlayerDead||combat.PlayerHp<=0||combat.PlayerParalyzed)||!player&&!(CommandMoving(-1)?CommandCanMove(-1):combat.MonsterCanMove)||(player?map.PlayerSpaces:map.MonsterSpaces)!=spaces)break;
   }}finally{ObserveForcedSharedStop(player?0:-1);if(!preserveBusy)rolling=false;}
  }

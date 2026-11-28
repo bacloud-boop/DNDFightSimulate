@@ -21,7 +21,7 @@ public sealed partial class TrainingGame
    int beforeTravel=meter.Travelled;int cost=map.RouteStepCost(meter,previousCell,cell,map.RescueSpaces,map.RescueSwimmingSpeed,BattleMap.RescueId);previousCell=cell;if(cost<1)continue;bool prone=rescueCarrier.Prone;
    if(!map.WithCreatureTransitStep(BattleMap.RescueId,()=>map.WithMovementCost(cell,cost,()=>map.MoveRescue(cell,rescueCarrier.Move),meter.Travelled-beforeTravel)))break;
    if(PendingTerrainCount>0)yield return DrainGreaseEntries();
-   if(!rescueCarrier.MovementReady||rescueCarrier.Restrained||!prone&&rescueCarrier.Prone){rescueMessage="救援者在油脂中倒地，停在触发格；可自行起身或爬行。";yield break;}
+   if(!rescueCarrier.MovementReady||rescueCarrier.Restrained||!prone&&rescueCarrier.Prone){rescueMessage="救援者受地形影响倒地，停在触发格；可自行起身或爬行。";yield break;}
   }rescueMessage="救援移动完成，剩余 "+rescueCarrier.MovementRemaining+"尺。";}finally{ObserveForcedSharedStop(BattleMap.RescueId);rolling=previous;}
  }
 }

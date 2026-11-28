@@ -53,7 +53,7 @@ public sealed partial class TrainingGame
         if(map.OnScene(0)&&draggingToken!=0&&!map.IsContained(true)&&!map.IsCarried(true))Token(playerRect,true);
         if(map.OnScene(-1)&&draggingToken!=1&&!map.IsContained(false)&&!map.IsCarried(false))Token(monsterRect,false);
         if(map.HasContainedCreature)GUI.Label(new Rect(board.x,board.y+board.height+4,board.width,30),map.IsContained(true)?"玩家被吞咽 · 随木桩移动":"木桩被吞咽 · 随玩家移动",centered);
-        DrawCallLightningMap(board);DrawAnimalPackMap(board);DrawSpiritualWeaponMap(board);DrawFlamingSphereMap(board);DrawCloudDaggersArea(board);DrawWebArea(board);DrawSpeciesSenseMap(board);DrawFaerieFireMap(board);
+        DrawSleetStormArea(board);DrawCallLightningMap(board);DrawAnimalPackMap(board);DrawSpiritualWeaponMap(board);DrawFlamingSphereMap(board);DrawCloudDaggersArea(board);DrawWebArea(board);DrawSpeciesSenseMap(board);DrawFaerieFireMap(board);
         DrawRetainedRemains(board);DrawGroundWeapons(board);DrawRescueMarker(board);
         DrawSummonMarkers(board);DrawDancingLightsMap(board);DrawObjectLightMap(board);DrawContinualFlames(board);DrawFeignStatus(board);DrawStarryMap(board);DrawSharedPositions(board);DrawFrozenRemainsMap(board);
         if(!allowDrag || (map.Locked&&!moving)||(page=="deployment"&&terrainBrush>0))return;

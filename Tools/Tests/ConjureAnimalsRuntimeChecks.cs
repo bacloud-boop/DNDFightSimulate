@@ -16,10 +16,11 @@ public static class PlayerAttributes {public static readonly string[] Names={"åŠ
 public sealed partial class TrainingGame
 {
  sealed class Breath {public int D20Penalty;}
- sealed class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public bool Alive=true;public readonly Breath Breathing=new Breath();}
- sealed class Rescue {public bool Dead;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
+ sealed class Unit {public int Id=7,X=8,Y=4,Spaces=1,SleepStage;public bool Alive=true,Prone;public readonly Breath Breathing=new Breath();}
+ sealed class Rescue {public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
  sealed class MapStub {
   public Vector2Int Player=new Vector2Int(0,0),Monster=new Vector2Int(7,0);public int PlayerSpaces=1,MonsterSpaces=1,Size=30,Scene,PlayerScene,MonsterScene,LastCoverSpaces,Cover;public bool Contained;public bool? RescueCargoPlayer=null;public Vector2Int LastCover;
+  public readonly HashSet<Vector2Int> Water=new HashSet<Vector2Int>();public bool IsWater(Vector2Int p)=>Water.Contains(p);
   public readonly List<Unit> Units=new List<Unit>();public bool IsContained(bool player)=>player&&Contained;public int SceneOf(int actor)=>actor==0?PlayerScene:MonsterScene;
   public bool Inside(Vector2Int p,int n)=>p.x>=0&&p.y>=0&&p.x<=Size-n&&p.y<=Size-n;
   public bool CanPlaceSummon(Vector2Int p,int n)=>Inside(p,n)&&!BattleMap.Overlap(p,n,Player,PlayerSpaces)&&!BattleMap.Overlap(p,n,Monster,MonsterSpaces);
@@ -32,7 +33,7 @@ public sealed partial class TrainingGame
  sealed class GreaseEntry {public int Actor,Field;}
  readonly MapStub map=new MapStub();readonly CombatState combat=new CombatState();readonly Classes classes=new Classes();readonly Rescue rescueCarrier=new Rescue();readonly int[] attributes={14,14,14,14,14,14};
  readonly List<string> history=new List<string>(),order=new List<string>();readonly List<int> damageCounts=new List<int>();readonly List<int> damageActors=new List<int>();
- readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();readonly List<int> startStatuses=new List<int>();
+ readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();sealed class StartStatus {public int Actor,Kind;public long Revision;}readonly List<StartStatus> startStatuses=new List<StartStatus>();
  bool packConfirm=true,packPreferFirst=true,greaseResolving,rolling,reactionPending,spellTargeting,visible=true,startStatusFirst,auraFirst,heroismFirst,terrainDaggersFirst,weak;
  int terrainActor=0,draggingToken=-1,outcomeDeferDepth,concentrationExpiresRound;long worldRounds,terrainTurn=1,concentrationExpiresWorld;string concentrationSpell="",panel="",selectedSpellName="",dice="",page="battle",visionColumn="4",visionRow="1";
  object button=new object(),small=new object(),heading=new object(),paperTexture=new object();bool PlayerTurnAllowed=true;
@@ -53,7 +54,11 @@ public sealed partial class TrainingGame
  int PlayerSavingThrowModifier(int a)=>2;int MonsterSavingThrowModifier(int a)=>0;int BondBonus(int actor)=>0;int SummonSaveModifier(Unit unit,int a)=>0;
  ArmorSaveRoll RollRescueSave(int a)=>RollSavingThrowDice(false,false);ArmorSaveRoll RollSummonSavingThrow(Unit u,int a)=>RollSavingThrowDice(false,false);
  IEnumerator ApplySaveAdjustments(bool player,bool automatic,SaveAdjustment result,int ability=-1,bool ignoreCover=false){yield break;}
- IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){startStatuses.RemoveAt(0);yield break;}
+ IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){var entry=startStatuses[0];startStatuses.RemoveAt(0);
+#if SLEET_RUNTIME
+ if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
+#endif
+ yield break;}
  IEnumerator ChooseAuraVitalityOrder(){auraFirst=true;yield break;}IEnumerator ResolveAuraVitalityHealing(int x){yield break;}IEnumerator ChooseHeroismStartOrder(){heroismFirst=true;yield break;}IEnumerator ResolveHeroismStart(int x){yield break;}
  IEnumerator ChooseDaggersEntryOrder(){terrainDaggersFirst=false;yield break;}IEnumerator ResolveDaggersEntry(int x){yield break;}IEnumerator ResolveSpikeEntry(int x){yield break;}IEnumerator ResolveWebEntry(int x){yield break;}IEnumerator ResolveGreaseSave(int a,int f,string s){order.Add("grease");yield break;}
  static void C(bool ok,string reason){if(!ok)throw new Exception(reason);}

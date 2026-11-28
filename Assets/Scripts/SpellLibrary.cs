@@ -103,6 +103,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Sleet Storm")DrawSleetStormChoices();
         else if(definition.Name=="Call Lightning")DrawCallLightningChoices();
         else if(definition.Name=="Hail of Thorns")GUILayout.Label("仅在自己的回合远程武器命中后立即触发，选择施法环阶及武器／法术伤害先后；范围包含玩家与盟友。不可从法术书直接施放。",small);
         else if(definition.Name=="Conjure Animals")DrawConjureAnimalsChoices();
@@ -231,6 +232,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Sleet Storm")return SleetStormError();
         if(spell.Name=="Call Lightning")return CallLightningError();
         if(spell.Name=="Conjure Animals")return ConjureAnimalsError();
         if(spell.Name=="Elemental Weapon")return ElementalWeaponError(elementalObject);
@@ -351,6 +353,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        if(spell.Name=="Sleet Storm"&&SleetStormError()!="")yield break;
         Vector2Int lightningCloud;CloudPoint(out lightningCloud);if(spell.Name=="Call Lightning"&&CallLightningError()!="")yield break;
         int packChosenAppearance=packAppearance;if(spell.Name=="Conjure Animals"&&ConjureAnimalsError()!="")yield break;
         int elementalSelected=elementalObject,elementalType=EnergyTypes[elementalEnergy];
@@ -410,7 +413,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Sleet Storm"||spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -436,6 +439,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Sleet Storm"){CastSleetStorm(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Call Lightning"){yield return CastCallLightning(lightningCloud,entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Conjure Animals"){CastConjureAnimals(entangleAnchor,caster,slotLevel,packChosenAppearance);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Elemental Weapon"){CastElementalWeapon(elementalSelected,slotLevel,elementalType);if(!embedded)rolling=false;yield break;}
