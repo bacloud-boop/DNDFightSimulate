@@ -49,6 +49,7 @@ public sealed partial class TrainingGame
     }
     string WildShapeInvalidReason(BeastRecord form)
     {
+        if(MoonbeamShapeBlocked(0))return "月华之光阻止再次变形，请先离开光柱。";
         if(PlayerPolymorphed)return "变形术形态不能使用职业特性。";
         if(classes[11]<2)return "德鲁伊2级解锁荒野形态。";
         if(form==null||!form.EligibleForBaseWildShape(classes[11]))return "形态超出当前基础荒野形态限制，或属于暂缓的飞行形态。";

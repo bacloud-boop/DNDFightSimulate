@@ -21,9 +21,9 @@ public sealed partial class TrainingGame
  sealed partial class Rescue {public Func<bool> ActionBlock;public Func<int,int> SpeedTransform;public bool Dead,Prone;public int Hp=10,RevivalPenalty;public readonly Breath Breathing=new Breath();public int Ability(int a)=>10;}
  sealed partial class MapStub {
   public readonly Aquatic PlayerAquatic=new Aquatic(),MonsterAquatic=new Aquatic(),RescueAquatic=new Aquatic();
-  public Vector2Int Player=new Vector2Int(0,0),Monster=new Vector2Int(7,0);public int PlayerSpaces=1,MonsterSpaces=1,Size=30,Scene,PlayerScene,MonsterScene,LastCoverSpaces,Cover;public bool Contained;public bool? RescueCargoPlayer=null;public Vector2Int LastCover;
+  public Vector2Int Player=new Vector2Int(0,0),Monster=new Vector2Int(7,0);public int PlayerSpaces=1,MonsterSpaces=1,Size=30,Scene,PlayerScene,MonsterScene,LastCoverSpaces,Cover;public bool Contained,MonsterContained;public bool? RescueCargoPlayer=null;public Vector2Int LastCover;
   public readonly HashSet<Vector2Int> Water=new HashSet<Vector2Int>();public bool IsWater(Vector2Int p)=>Water.Contains(p);
-  public readonly List<Unit> Units=new List<Unit>();public bool IsContained(bool player)=>player&&Contained;public int SceneOf(int actor)=>actor==0?PlayerScene:MonsterScene;public bool SameScene(int a,int b)=>SceneOf(a)==SceneOf(b);public bool OnScene(int actor)=>SceneOf(actor)==Scene;
+  public readonly List<Unit> Units=new List<Unit>();public bool IsContained(bool player)=>player?Contained:MonsterContained;public int SceneOf(int actor)=>actor==0?PlayerScene:MonsterScene;public bool SameScene(int a,int b)=>SceneOf(a)==SceneOf(b);public bool OnScene(int actor)=>SceneOf(actor)==Scene;
   public bool Inside(Vector2Int p,int n)=>p.x>=0&&p.y>=0&&p.x<=Size-n&&p.y<=Size-n;
   public bool CanPlaceSummon(Vector2Int p,int n)=>Inside(p,n)&&!BattleMap.Overlap(p,n,Player,PlayerSpaces)&&!BattleMap.Overlap(p,n,Monster,MonsterSpaces);
   public int DistanceToCell(bool player,Vector2Int cell)=>BattleMap.BodyDistance(player?Player:Monster,player?PlayerSpaces:MonsterSpaces,cell,1);
@@ -35,7 +35,7 @@ public sealed partial class TrainingGame
  sealed class GreaseEntry {public int Actor,Field;}
  readonly MapStub map=new MapStub();readonly CombatState combat=new CombatState();readonly Classes classes=new Classes();readonly Rescue rescueCarrier=new Rescue();readonly int[] attributes={14,14,14,14,14,14};
  readonly List<string> history=new List<string>(),order=new List<string>();readonly List<int> damageCounts=new List<int>();readonly List<int> damageActors=new List<int>();
- readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();sealed class StartStatus {public int Actor,Kind;public long Revision;public Vector2Int Origin;public int Spaces;}readonly List<StartStatus> startStatuses=new List<StartStatus>();
+ readonly Queue<GreaseEntry> greaseEntries=new Queue<GreaseEntry>();readonly Queue<int> spikeEntries=new Queue<int>(),webEntries=new Queue<int>(),daggerEntries=new Queue<int>(),heroismEntries=new Queue<int>(),auraStarts=new Queue<int>();sealed class StartStatus {public int Actor,Kind;public long Revision,Group;public Vector2Int Origin;public int Spaces;}readonly List<StartStatus> startStatuses=new List<StartStatus>();
  bool packConfirm=true,packPreferFirst=true,greaseResolving,rolling,reactionPending,spellTargeting,visible=true,startStatusFirst,auraFirst,heroismFirst,terrainDaggersFirst,weak;
  int terrainActor=0,draggingToken=-1,outcomeDeferDepth,concentrationExpiresRound;long worldRounds,terrainTurn=1,concentrationExpiresWorld;string concentrationSpell="",panel="",selectedSpellName="",dice="",page="battle",visionColumn="4",visionRow="1";
  object button=new object(),small=new object(),heading=new object(),paperTexture=new object();bool PlayerTurnAllowed=true;
@@ -49,8 +49,12 @@ public sealed partial class TrainingGame
  IEnumerator PresentRoll(int sides,int[] values,string label){if(sides==10)damageCounts.Add(values.Length);yield break;}
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedAreaDamage(int actor,int caster,int amount,int type,string title){order.Add("pack");damageActors.Add(actor);var raw=new long[13];raw[type]=amount;var packet=combat.ResolveIncomingPacket(actor==0,raw);int value=(int)packet[type];if(actor==0)combat.ApplyPlayerDamage(value,sourcePlayer:true);else if(actor==-1)combat.ApplyDamage(value);return value;}
- IEnumerator MaintainConcentration(int damage){if(combat.PlayerHp<=0){EndAnimalPack();concentrationSpell="";}yield break;}
- void ReconcileFallenRescue(){}void RefreshBestialSpirit(){}void NoticeCastingInterruption(){}void CheckBattleOutcome(){}
+ IEnumerator MaintainConcentration(int damage){if(combat.PlayerHp<=0){
+#if MOONBEAM_RUNTIME
+ EndMoonbeam();
+#endif
+ EndAnimalPack();concentrationSpell="";}yield break;}
+ void ReconcileFallenRescue(){}void RefreshBestialSpirit(){}void NoticeCastingInterruption(){}int outcomeChecks;void CheckBattleOutcome(){outcomeChecks++;}
  bool SpeciesSaveAdvantage(bool p,int ability)=>false;bool BeaconHope(int actor)=>false;bool ResurrectionD20Disadvantage(bool player)=>weak;
  ArmorSaveRoll RollArmorSave(bool player,int ability,bool avoidsOrEndsFrightened=false,bool avoidsOrEndsPoisoned=false)=>RollD20Test(player,advantage:avoidsOrEndsPoisoned&&combat.HasPoisonConditionSaveAdvantage(player),ability:ability);
  int PlayerSavingThrowModifier(int a)=>2;int MonsterSavingThrowModifier(int a)=>0;int BondBonus(int actor)=>0;int SummonSaveModifier(Unit unit,int a)=>0;
@@ -59,6 +63,9 @@ public sealed partial class TrainingGame
  IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){var entry=startStatuses[0];startStatuses.RemoveAt(0);
 #if SLEET_RUNTIME
  if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
+#endif
+#if MOONBEAM_RUNTIME
+ if(entry.Kind==6)yield return ResolveMoonbeamSave(entry.Actor,entry.Revision,entry.Group);
 #endif
 #if GUST_RUNTIME
  if(entry.Kind==5)yield return ResolveGustSave(entry.Actor,entry.Revision);

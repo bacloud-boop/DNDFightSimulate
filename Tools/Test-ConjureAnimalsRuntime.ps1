@@ -1,4 +1,4 @@
-param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm,[switch]$SpiritGuardians,[switch]$StinkingCloud,[switch]$GustWind,[switch]$Resistance)
+param([string]$UnityData='C:/Program Files/Unity 2022.3.62f3c1/Editor/Data',[switch]$HailThorns,[switch]$CallLightning,[switch]$SleetStorm,[switch]$SpiritGuardians,[switch]$StinkingCloud,[switch]$GustWind,[switch]$Resistance,[switch]$Moonbeam)
 $ErrorActionPreference='Stop'
 $mono="$UnityData/MonoBleedingEdge/bin/mono.exe";$csc="$UnityData/MonoBleedingEdge/lib/mono/4.5/csc.exe"
 $out=Join-Path $env:TEMP 'DNDFight_ConjureAnimalsRuntimeChecks.exe'
@@ -50,6 +50,7 @@ if($SpiritGuardians){$extra=@('-define:GUARDIANS_RUNTIME','-main:GuardiansChecks
 if($StinkingCloud){$extra=@('-define:STINKING_RUNTIME','-main:StinkingChecksMain','Assets/Scripts/StinkingCloudEffect.cs','Assets/Scripts/StinkingCloudSpell.cs','Tools/Tests/StinkingCloudRuntimeChecks.cs')}
 if($GustWind){$extra=@('-define:GUST_RUNTIME','-main:GustChecksMain','Assets/Scripts/BreathWeaponRules.cs','Assets/Scripts/GustWindEffect.cs','Assets/Scripts/GustWindSpell.cs','Assets/Scripts/VisionState.cs','Assets/Scripts/StinkingCloudEffect.cs','Tools/Tests/GustWindRuntimeChecks.cs')}
 if($Resistance){$extra=@('-define:RESISTANCE_RUNTIME','-main:ResistanceChecksMain','Assets/Scripts/ResistanceEffect.cs','Assets/Scripts/ResistanceSpell.cs','Assets/Scripts/DamageTypes.cs','Tools/Tests/ResistanceRuntimeChecks.cs')}
+if($Moonbeam){$extra=@('-define:MOONBEAM_RUNTIME','-main:MoonbeamChecksMain','Assets/Scripts/MoonbeamEffect.cs','Assets/Scripts/MoonbeamSpell.cs','Assets/Scripts/VisionState.cs','Assets/Scripts/SizeChangeEffect.cs','Tools/Tests/MoonbeamRuntimeChecks.cs')}
 & $mono $csc -nologo -nowarn:0649,0414 @extra "-out:$out" Tools/Tests/ConjureAnimalsRuntimeChecks.cs Tools/Tests/MapValueStubs.cs Assets/Scripts/ConjureAnimalsEffect.cs Assets/Scripts/ConjureAnimalsSpell.cs Assets/Scripts/ConjureAnimalsControl.cs Assets/Scripts/RouteCostMeter.cs Assets/Scripts/PoisonProtectionEffect.cs Assets/Scripts/CombatState.cs Assets/Scripts/PlayerClasses.cs Assets/Scripts/Subclasses2024.cs $file
 if($LASTEXITCODE -ne 0){throw 'Conjure Animals runtime harness compile failed'}
 & $mono $out

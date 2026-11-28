@@ -104,6 +104,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Moonbeam")DrawMoonbeamChoices();
         else if(definition.Name=="Resistance")DrawResistanceChoices();
         else if(definition.Name=="Stinking Cloud")DrawStinkingCloudChoices();
         else if(definition.Name=="Spirit Guardians")DrawGuardianChoices();
@@ -236,6 +237,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Moonbeam")return MoonbeamError();
         if(spell.Name=="Resistance")return ResistanceError();
         if(spell.Name=="Gust of Wind")return GustWindError();
         if(spell.Name=="Stinking Cloud")return StinkingCloudError();
@@ -361,6 +363,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        if(spell.Name=="Moonbeam"&&MoonbeamError()!="")yield break;
         int resistanceSelected=resistanceTarget,resistanceSelectedType=ResistanceTypes[resistanceType];if(spell.Name=="Resistance"&&ResistanceError()!="")yield break;
         BreathTemplate gustAim;PlayerGustTemplate(out gustAim);int gustEdge=gustChoice.Edge,gustOffset=gustChoice.Offset;if(spell.Name=="Gust of Wind"&&GustWindError()!="")yield break;
         if(spell.Name=="Stinking Cloud"&&StinkingCloudError()!="")yield break;
@@ -425,7 +428,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name=="Resistance"||spell.Name=="Gust of Wind"||spell.Name=="Stinking Cloud"||spell.Name=="Spirit Guardians"||spell.Name=="Sleet Storm"||spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Moonbeam"||spell.Name=="Resistance"||spell.Name=="Gust of Wind"||spell.Name=="Stinking Cloud"||spell.Name=="Spirit Guardians"||spell.Name=="Sleet Storm"||spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -451,6 +454,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Moonbeam"){yield return CastMoonbeam(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Resistance"){CastResistance(resistanceSelected,resistanceSelectedType);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Gust of Wind"){yield return CastGustWind(gustAim,gustEdge,gustOffset,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Stinking Cloud"){CastStinkingCloud(entangleAnchor,caster);if(!embedded)rolling=false;yield break;}

@@ -17,7 +17,7 @@ public sealed partial class TrainingGame
         return !((actor==0||actor==-1)&&map.IsContained(actor==0));
     }
     bool InDaggers(int actor){Vector2Int p;int n;return DaggersBody(actor,out p,out n)&&cloudDaggers.Intersects(p.x,p.y,n,worldRounds);}
-    bool DaggersEndAvailable(int actor)=>GustEndAvailable(actor)||GuardianEndAvailable(actor)||PackEndAvailable(actor)||InDaggers(actor)&&cloudDaggers.Available(actor,terrainTurn,worldRounds);
+    bool DaggersEndAvailable(int actor)=>MoonbeamEndAvailable(actor)||GustEndAvailable(actor)||GuardianEndAvailable(actor)||PackEndAvailable(actor)||InDaggers(actor)&&cloudDaggers.Available(actor,terrainTurn,worldRounds);
     void RefreshCloudDaggers(){if(daggersInsideMonster&&(combat.Hp==0||!cloudDaggers.Intersects(map.Monster.x,map.Monster.y,map.MonsterSpaces,worldRounds)))daggersInsideMonster=false;}
     void EndCloudDaggers(){cloudDaggers.Clear();daggerEntries.Clear();daggersInsideMonster=false;}
     string CloudDaggersError()
@@ -41,7 +41,7 @@ public sealed partial class TrainingGame
         daggerEntries.Enqueue(new DaggersEntry{Revision=cloudDaggers.Revision,Count=cloudDaggers.Dice,Actors=targets,Reason=reason,MoveEvent=moveEvent,MoveStep=moveStep});
     }
     void QueueDaggersArea(string reason){RefreshCloudDaggers();var ids=new List<int>();foreach(int actor in BreathActors())if(InDaggers(actor))ids.Add(actor);QueueDaggers(ids,reason);}
-    IEnumerator EndDaggersTurn(int actor){if(DaggersEndAvailable(actor)){if(InDaggers(actor))QueueDaggers(new[]{actor},"回合末");QueuePackEntry(actor,"回合末");QueueGuardianEnd(actor);QueueGustEnd(actor);if(PendingTerrainCount>0)yield return DrainGreaseEntries();}}
+    IEnumerator EndDaggersTurn(int actor){if(DaggersEndAvailable(actor)){if(InDaggers(actor))QueueDaggers(new[]{actor},"回合末");QueuePackEntry(actor,"回合末");QueueGuardianEnd(actor);QueueGustEnd(actor);QueueMoonbeamEnd(actor);if(PendingTerrainCount>0)yield return DrainGreaseEntries();}}
     void ObserveDaggersMovement(int actor,Vector2Int from,Vector2Int to,int oldSpaces,int spaces,bool landing)
     {
         if(actor==BattleMap.RescueId&&map.RescueCargoPlayer.HasValue){bool player=map.RescueCargoPlayer.Value;var cargo=player?map.Player:map.Monster;int size=player?map.PlayerSpaces:map.MonsterSpaces;ObserveDaggersMovement(player?0:-1,new Vector2Int(cargo.x-(to.x-from.x),cargo.y-(to.y-from.y)),cargo,size,size,landing);}

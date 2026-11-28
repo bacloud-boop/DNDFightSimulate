@@ -18,7 +18,7 @@ public sealed partial class TrainingGame
         var arrows=acidArrows.Pending(actor);var greaseEnd=ActorGrease(actor);bool cloud=DaggersEndAvailable(actor),sphere=SphereEndAvailable(actor);
         while(sleep||greaseEnd!=null||cloud||sphere||arrows.Count>0){
             if(actor==BattleMap.RescueId?rescueCarrier.Dead:unit==null||!unit.Alive)yield break;
-            var keys=new List<long>();var names=new List<string>();if(sleep){keys.Add(0);names.Add("睡眠术 · 感知豁免");}if(greaseEnd!=null){keys.Add(1);names.Add("油腻术 · 敏捷豁免");}if(cloud){keys.Add(2);names.Add("区域回合末效果 · 匕首之云／咒唤兽群／灵体卫士／造风术");}
+            var keys=new List<long>();var names=new List<string>();if(sleep){keys.Add(0);names.Add("睡眠术 · 感知豁免");}if(greaseEnd!=null){keys.Add(1);names.Add("油腻术 · 敏捷豁免");}if(cloud){keys.Add(2);names.Add("区域回合末效果 · 匕首之云／咒唤兽群／灵体卫士／造风术／月华之光");}
             if(sphere){keys.Add(3);names.Add("炽焰法球 · 敏捷豁免与火焰伤害");}
             foreach(var entry in arrows){keys.Add(entry.Id+4);names.Add(entry.Title+"残留 #"+entry.Id+" · "+entry.Dice+"d4强酸");}
             long choice=keys[0];if(keys.Count>1){unitEndOrderActor=actor;unitEndOrderLabels=names.ToArray();unitEndOrderChoice=-1;unitEndOrderPending=true;while(unitEndOrderChoice<0)yield return null;choice=keys[unitEndOrderChoice];unitEndOrderPending=false;}

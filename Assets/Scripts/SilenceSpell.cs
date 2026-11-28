@@ -45,6 +45,7 @@ public sealed partial class TrainingGame
     {
         string text=ActorBlinded(player?0:-1)?"目盲":"";if(sensory.Deafened(player,worldRounds)||SilenceWhole(player))text+=(text==""?"":" · ")+"失聪";if(SilenceWhole(player))text+=" · 雷鸣免疫";else if(SilenceCentre(player))text+=(text==""?"":" · ")+"禁声";
         string resistance=ResistanceStatus(player?0:-1);if(resistance!="")text+=(text==""?"":" · ")+resistance;
+        if(MoonbeamShapeBlocked(player?0:-1))text+=(text==""?"":" · ")+"月华禁变形";
         if(Nauseated(player?0:-1))text+=(text==""?"":" · ")+"臭云中毒（禁动作）";
         if(player&&fireShield.Current(worldRounds)!=null)text+=(text==""?"":" · ")+(fireShield.Current(worldRounds).Cold?"寒盾":"暖盾");
         if(player&&playerResurrectionCaster.Taxed)text+=(text==""?"":" · ")+"复生疲惫";

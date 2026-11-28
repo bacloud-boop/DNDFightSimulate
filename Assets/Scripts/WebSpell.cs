@@ -64,7 +64,7 @@ public sealed partial class TrainingGame
     }
     bool WebPathNeeded(Vector2Int from,Vector2Int to,int spaces)
     {
-        if(GustPathNeeded(from,to)||GuardianPathNeeded(from,to,spaces)||SleetPathNeeded(from,to,spaces))return true;if(!web.Active(worldRounds))return false;foreach(var cell in BattleMap.MovementAnchors(from,to))if(web.Intersects(cell.x,cell.y,spaces,worldRounds))return true;return false;
+        if(MoonbeamPathNeeded(from,to,spaces)||GustPathNeeded(from,to)||GuardianPathNeeded(from,to,spaces)||SleetPathNeeded(from,to,spaces))return true;if(!web.Active(worldRounds))return false;foreach(var cell in BattleMap.MovementAnchors(from,to))if(web.Intersects(cell.x,cell.y,spaces,worldRounds))return true;return false;
     }
     int WebLand(Vector2Int anchor){int mask=0;for(int y=0;y<4;y++)for(int x=0;x<4;x++){var p=anchor+new Vector2Int(x,y);if(map.Inside(p,1)&&!map.IsWater(p))mask|=1<<(y*4+x);}return mask;}
     string WebError(){Vector2Int p;if(!VisionPoint(out p))return "蛛网区域左上格须位于地图内。";if(map.DistanceToCell(true,p)>60)return "区域起点超出60尺。";return worldRounds<0||worldRounds>long.MaxValue-600?"世界时间超出范围。":"";}

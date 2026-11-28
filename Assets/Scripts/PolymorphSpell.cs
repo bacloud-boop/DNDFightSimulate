@@ -63,6 +63,7 @@ public sealed partial class TrainingGame
         var form=FindBeast(polymorphForm);int original=player?map.RiderBodySpaces:map.MonsterSpaces;
         int dc=8+classes.ProficiencyBonus+AcidSplash.Modifier(attributes[SpellAbilityIndex(caster)]);
         EndConcentration("开始新的专注法术");
+        if(MoonbeamShapeBlocked(player?0:-1)){history.Insert(0,"月华之光阻止目标再次变形。");yield break;}
         var d20=RollD20Test(player,ability:3);int value=d20.Value,modifier=player?PlayerSavingThrowModifier(3):AcidSplash.Modifier(EffectiveMonsterAbility(3));
         if(!polymorphFailSave){var adjustment=new SaveAdjustment();yield return ApplySaveAdjustments(player,false,adjustment);modifier+=adjustment.Value;
         yield return PresentRoll(20,d20.Dice,"变形术 · 感知豁免 "+value+" + "+modifier+" / DC "+dc);}
