@@ -204,7 +204,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(combat.PlayerDead){rolling=false;yield break;}
         if(combat.Hp==0){if(endTurn){worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();FinishWaterBreathingTurn(false);yield return RepeatSensorySaves(false);combat.FinishMonsterTurnEffects();combat.EndRound();fighter.EndRound();lightAttacksThisTurn.Clear();map.RefreshMovement();RefreshConcentration();yield return PlayerDeathSave();}rolling=false;yield break;}
         if(endTurn) {
-            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();yield return FinishPendingRegenerate();if(combat.MonsterDeparted){CheckBattleOutcome();rolling=false;yield break;}shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
+            worldRounds++;RefreshAidEffects();RefreshConcentration();RefreshWildShape();SyncTimedBuffs();yield return FinishPendingRegenerate();yield return FinishPendingPrayer();if(combat.MonsterDeparted){CheckBattleOutcome();rolling=false;yield break;}shortRestReady=false;combat.StartMonsterTurn();map.StartMonsterMovementTurn(combat.MonsterSpeed);if(PendingTerrainCount>0)yield return DrainGreaseEntries();
             var commandTurn=new CommandResolution();yield return FollowCommand(-1,commandTurn);if(commandTurn.Consumed){yield return FinishMonsterSpellTurn();yield break;}
             if(map.NearestEnemyInReach(!combat.PlayerDead,int.MaxValue)<0){history.Insert(0,"木桩没有可攻击的非假死敌人，跳过行动。");yield return FinishMonsterSpellTurn();yield break;}
             if(Entangled(false)&&combat.MonsterCanAct&&combat.MonsterActionAvailable){
@@ -346,7 +346,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         } else if(panel=="monsterAttributes") {
             GUILayout.Label("怪物属性",heading);
             if(GUILayout.Button("怪物种族 · "+monsterSpecies.Name,button)){BeginSpeciesDraft(false);panel="monsterSpecies";}
-            DrawWeightInputs(monsterWeight);
+            DrawWeightInputs(monsterWeight);DrawHitDiceFields(ref monsterHitDiceInput,ref monsterHitDieFace);
             GUILayout.Label("挑战等级CR（当前 "+ChallengeRatings.Names[monsterProfile.ChallengeIndex]+"）",small);monsterChallengeDraft=GUILayout.SelectionGrid(monsterChallengeDraft,ChallengeRatings.Names,6,new GUIStyle(button){fontSize=15,fixedHeight=30});
             GUILayout.Label("基础移动力（尺，当前 "+combat.MonsterBaseSpeed+"）",small);monsterSpeedInput=IntegerField(monsterSpeedInput,false);
             DrawVisionConfiguration(false);DrawSleepTraitConfiguration(false);
@@ -384,8 +384,9 @@ public sealed partial class TrainingGame : MonoBehaviour
             monsterRangeInput=IntegerField(monsterRangeInput,false);
             GUILayout.EndHorizontal();
             if(GUILayout.Button("应用",button)) {
-                int maxHp, armorClass, proficiency, attackRange, visionRange, speed, weaponWeight;
-                if(!int.TryParse(monsterWeaponWeightInput,out weaponWeight)||weaponWeight<0)monsterAttributeError="手持武器重量必须为非负整数盎司。";
+                int maxHp, armorClass, proficiency, attackRange, visionRange, speed, weaponWeight, hitCount;
+                if(!ValidHitDiceInput(monsterHitDiceInput,monsterHitDieFace,out hitCount))monsterAttributeError="生命骰数量必须为非负整数。";
+                else if(!int.TryParse(monsterWeaponWeightInput,out weaponWeight)||weaponWeight<0)monsterAttributeError="手持武器重量必须为非负整数盎司。";
                 else if(!int.TryParse(monsterSpeedInput,out speed)||speed<0)monsterAttributeError="移动力必须为非负整数。";
                 else if(!VisionInputValid(false,out visionRange))monsterAttributeError="黑暗视觉距离必须为非负整数。";
                 else if(!int.TryParse(monsterHpInput,out maxHp) || maxHp<1) monsterAttributeError="最大 HP 必须是至少为 1 的整数。";
@@ -394,7 +395,7 @@ public sealed partial class TrainingGame : MonoBehaviour
                 else if(!int.TryParse(monsterRangeInput,out attackRange) || attackRange<0) monsterAttributeError="攻击距离必须为非负整数（尺）。";
                 else if(!AttributeLoadFits(false,monsterAttributeInputs,monsterSizeDraft,monsterHeldWeaponDraft?weaponWeight:0))monsterAttributeError="拒绝配置：力量／体型不足以携带现有装备，或力量输入无效。";
                 else if(!monsterAttributes.TryApply(monsterAttributeInputs)) monsterAttributeError="六项属性必须为 3～20 的整数。";
-                else {bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;ApplySleepTraitConfiguration(false);monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0;combat.MonsterWeaponIsHeld=monsterHeldWeaponDraft;combat.MonsterWeaponOunces=weaponWeight; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
+                else {monsterHitDice.Configure(hitCount,HitDicePool.Faces[monsterHitDieFace]);bool resized=map.MonsterSpaces!=CreatureProfile.SpacesForSize(monsterSizeDraft);if(resized){map.Unlock();map.TrySetFootprint(false,CreatureProfile.SpacesForSize(monsterSizeDraft));page="deployment";deploymentMessage="怪物占地已更新，请重新确认双方初始位置。";}combat.UpdateMonsterBaseSpeed(speed);map.StartMonsterMovementTurn(combat.MonsterSpeed);vision.MonsterRange=visionRange;ApplySleepTraitConfiguration(false);monsterProfile.TryApply(monsterTypeDraft,monsterSizeDraft);monsterProfile.TryApplyChallenge(monsterChallengeDraft);combat.UpdateMonsterMaxHp(maxHp); combat.UpdateMonsterArmorClass(armorClass); combat.MonsterProficiencyBonus=proficiency;monsterAttackAbility=monsterAttackAbilityDraft;monsterBaseWeaponType=monsterBaseWeaponTypeDraft; combat.UpdateMonsterAttackRange(attackRange);combat.MonsterAttackIsMelee=monsterAttackKindDraft==0;combat.MonsterAttackIsWeapon=monsterAttackNatureDraft==0;combat.MonsterWeaponIsHeld=monsterHeldWeaponDraft;combat.MonsterWeaponOunces=weaponWeight; monsterAttributeError="已应用；最大 HP 改变时同步回满。";}
             }
             GUILayout.Label(monsterAttributeError,label);
         } else if(panel=="attributes") {

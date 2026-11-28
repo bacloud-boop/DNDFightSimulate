@@ -27,13 +27,14 @@ public sealed partial class TrainingGame
     bool SteedCell(out Vector2Int cell){int x,y;cell=Vector2Int.zero;if(!int.TryParse(steedColumn,out x)||!int.TryParse(steedRow,out y))return false;cell=new Vector2Int(x-1,y-1);return map.Inside(cell,2);}
     void DrawFindSteedChoices()
     {
-        steedKind=GUILayout.SelectionGrid(steedKind,new[]{"天界","妖精","邪魔"},3,button);
+        DrawSummonHitDiceChoices("Find Steed");steedKind=GUILayout.SelectionGrid(steedKind,new[]{"天界","妖精","邪魔"},3,button);
         GUILayout.Label("大型坐骑，输入左上格列／行。骑乘后双方按完整2×2占地判定距离和范围。四环以上的飞行继续暂缓。",small);
         steedColumn=IntegerField(steedColumn,false);steedRow=IntegerField(steedRow,false);
         Vector2Int cell;if(SteedCell(out cell))GUILayout.Label("距玩家 "+map.DistanceToCell(true,cell)+"尺",small);
     }
     string FindSteedError(int slot)
     {
+        if(!SummonHitDiceValid("Find Steed"))return "生命骰配置无效。";
         if(slot<2||slot>9||nextSummonId==int.MaxValue)return "施法环阶或单位编号不合法。";
         Vector2Int cell;if(!SteedCell(out cell))return "坐骑完整2×2占地须位于地图内。";
         if(map.DistanceToCell(true,cell)>30)return "召唤位置超出30尺。";
@@ -46,7 +47,7 @@ public sealed partial class TrainingGame
         Vector2Int cell;SteedCell(out cell);
         var rules=new OtherworldlySteedRules(slot,(SteedKind)steedKind);var unit=rules.CreateUnit(nextSummonId);
         if(!map.AddSummon(unit,cell))return;
-        DismissSteed();steed=unit;steedRules=rules;steedCaster=caster;nextSummonId++;
+        DismissSteed();steed=unit;steedRules=rules;steedCaster=caster;ConfigureSummonHitDice(unit.Id,"Find Steed");nextSummonId++;
         bool changed;steed.ReceiveVerbalOrders(SummonCommand.AssistCombat,out changed);
         history.Insert(0,"寻获坐骑："+new[]{"天界","妖精","邪魔"}[steedKind]+"异界坐骑，HP "+unit.MaxHp+"，AC "+unit.Armor+"，步行60尺。无需专注，旧坐骑消失。");
     }

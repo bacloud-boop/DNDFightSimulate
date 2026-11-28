@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed partial class TrainingGame
 {
     bool animateRenew;readonly HashSet<int> animateTargets=new HashSet<int>(),animateBones=new HashSet<int>();
-    sealed class AnimateChannel {public int Slot,Caster;public AnimateDeadCasting Clock;public int PaidRound=>Clock.PaidRound;public long Finish=>Clock.Finish;public bool Renew;public int[] Targets;public HashSet<int> Bones;}
+    sealed class AnimateChannel {public int Slot,Caster,HitCount=2,HitSides=8;public AnimateDeadCasting Clock;public int PaidRound=>Clock.PaidRound;public long Finish=>Clock.Finish;public bool Renew;public int[] Targets;public HashSet<int> Bones;}
     AnimateChannel animateChannel;
     bool AnimateBodyInfo(int actor,out Vector2Int p,out int n,out string name)
     {
@@ -36,9 +36,10 @@ public sealed partial class TrainingGame
             if(!map.CanAnimateBody(new AnimatedUndeadRules(false).Create(nextSummonId),actor))return "亡灵无法在原遗体位置合法落位。";
         }return "";
     }
-    string AnimateDeadError()=>animateChannel!=null?"操纵死尸正在持续施法，请使用继续或取消按钮。":AnimatePlanError(animateRenew,animateTargets,directSlotLevel);
+    string AnimateDeadError()=>!animateRenew&&!SummonHitDiceValid("Animate Dead")?"生命骰配置无效。":animateChannel!=null?"操纵死尸正在持续施法，请使用继续或取消按钮。":AnimatePlanError(animateRenew,animateTargets,directSlotLevel);
     void DrawAnimateDeadChoices()
     {
+        DrawSummonHitDiceChoices("Animate Dead");
         GUILayout.Label("持续施法1分钟：每个自身回合须花魔法动作继续并维持专注；未继续便结束施法。完成后亡灵无需专注。遗体／续控目标均须在10尺内。",small);
         bool next=GUILayout.Toggle(animateRenew,"续控／恢复中立亡灵（不创造新单位）",label);if(next!=animateRenew){animateRenew=next;animateTargets.Clear();}
         GUILayout.Label("本次最多 "+(animateRenew?AnimateDeadControl.RenewalLimit(directSlotLevel):AnimateDeadControl.CreationLimit(directSlotLevel))+"个目标",small);
@@ -53,8 +54,9 @@ public sealed partial class TrainingGame
     }
     void BeginAnimateDead(int caster,int slot)
     {
-        if(AnimatePlanError(animateRenew,animateTargets,slot)!="")return;
-        var channel=new AnimateChannel{Caster=caster,Slot=slot,Renew=animateRenew,Targets=animateTargets.ToArray(),Bones=new HashSet<int>(animateBones),Clock=new AnimateDeadCasting(combat.Round,worldRounds)};
+        if(AnimatePlanError(animateRenew,animateTargets,slot)!=""||!animateRenew&&!SummonHitDiceValid("Animate Dead"))return;
+        int hitCount;if(!int.TryParse(SummonHitDiceDraft("Animate Dead").Count,out hitCount))hitCount=2;
+        var channel=new AnimateChannel{HitCount=hitCount,HitSides=HitDicePool.Faces[SummonHitDiceDraft("Animate Dead").Face],Caster=caster,Slot=slot,Renew=animateRenew,Targets=animateTargets.ToArray(),Bones=new HashSet<int>(animateBones),Clock=new AnimateDeadCasting(combat.Round,worldRounds)};
         EndConcentration("开始操纵死尸的长时间施法");animateChannel=channel;concentrationSpell="操纵死尸（施法中）";concentrationExpiresRound=int.MaxValue;concentrationExpiresWorld=channel.Finish+1;
         history.Insert(0,"开始操纵死尸：已花本回合魔法动作；之后每回合继续施法，满1分钟结算。未继续、失能或专注中断均失败。");
     }
@@ -84,9 +86,9 @@ public sealed partial class TrainingGame
         string error=PlayerCanSustainCast?AnimatePlanError(channel.Renew,channel.Targets,channel.Slot):"施法者失能，施法失败。";
         if(error!=""){history.Insert(0,"操纵死尸失败："+error);return;}
         if(channel.Renew){undeadControl.Reassert(channel.Targets,channel.Slot,worldRounds,id=>true);history.Insert(0,"操纵死尸：所选亡灵的控制恢复／延长至24小时后，HP不变，失控前旧指令不恢复。");return;}
-        foreach(int actor in channel.Targets)CreateAnimatedFollower(actor,channel.Bones.Contains(actor),channel.Slot,false);RefreshUndeadFollowers();
+        foreach(int actor in channel.Targets)CreateAnimatedFollower(actor,channel.Bones.Contains(actor),channel.Slot,false,channel.HitCount,channel.HitSides);RefreshUndeadFollowers();
     }
-    bool CreateAnimatedFollower(int actor,bool bones,int slot,bool permanent)
+    bool CreateAnimatedFollower(int actor,bool bones,int slot,bool permanent,int hitCount=2,int hitSides=8)
     {
         if(nextSummonId==int.MaxValue||!map.BodyPresent(actor))return false;
             var rules=new AnimatedUndeadRules(bones);var unit=rules.Create(nextSummonId);
@@ -94,7 +96,7 @@ public sealed partial class TrainingGame
             var follower=new UndeadFollower{Unit=unit,Source=actor,Owner=old!=null?old.Owner:actor,Rules=rules,Weight=AnimateWeight(actor).Copy(),Verbal=permanent,Ammo=(old!=null?old.Owner:actor)==0?ammunition:new AmmunitionState(),ArmorIndex=old!=null?(old.NonWeaponGearRecovered?0:old.ArmorIndex):armor!=null&&!armor.Custom?armor.ArmorIndex:0,Shield=old!=null?old.Shield&&!old.NonWeaponGearRecovered:armor!=null&&armor.Shield};
             SaveUndeadEquipmentReset(actor);follower.Items.AddRange(CollectUndeadItems(actor));
             if(!map.AnimateBody(unit,actor)){history.Insert(0,"操纵死尸落位失败，遗体未消耗。");return false;}
-            if(permanent)undeadControl.RegisterPermanent(unit.Id,worldRounds);else undeadControl.Register(new[]{unit.Id},slot,worldRounds);undeadFollowers.Add(unit.Id,follower);nextSummonId++;
+            if(permanent)undeadControl.RegisterPermanent(unit.Id,worldRounds);else undeadControl.Register(new[]{unit.Id},slot,worldRounds);undeadFollowers.Add(unit.Id,follower);ActorHitDice(unit.Id).Configure(hitCount,hitSides);nextSummonId++;
             unit.ControllerAllows=()=>undeadControl.Controlled(unit.Id,worldRounds)||CommandMoving(unit.Id);unit.LethalGuard=(damage,types,critical)=>UndeadFortitude(follower,damage,types,critical);
             unit.BaseArmorOverride=()=>Math.Max(rules.Armor,follower.ArmorIndex>0?ArmorDefinition.All[follower.ArmorIndex].ArmorClass(rules.Ability(1)):rules.Armor);
             AdoptUndeadEquipment(follower);ObserveGreaseMovement(unit.Id,new Vector2Int(-100,-100),new Vector2Int(unit.X,unit.Y),0,unit.Spaces,true);history.Insert(0,(permanent?"死亡一指：":"操纵死尸：")+unit.Name+"从原遗体位置起身。原角色保持死亡、原遗体已消耗，装备沿用原物件；尚未收到指令。");

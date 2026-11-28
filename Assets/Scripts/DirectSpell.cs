@@ -17,6 +17,7 @@ public sealed class DirectSpell
     public int DiceCount(int totalLevel,int slotLevel) => Name=="Scorching Ray"?1+Math.Max(2,slotLevel):Name=="Magic Missile"?2+Math.Max(1,slotLevel):Healing?(BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:2*Math.Max(1,slotLevel)):Stable?0:BaseDice>0?BaseDice+Math.Max(0,slotLevel-Level)*UpcastDice:AcidSplash.DiceCount(totalLevel);
     public int EffectiveRange(int totalLevel) => Stable?Range*(1<<(AcidSplash.DiceCount(totalLevel)-1)):Range;
     public static readonly DirectSpell[] Available={
+        new DirectSpell("Prayer of Healing","治疗祷言","持续施法10分钟 · 30尺 · 声音。至多5名生物始终在射程内，完成后获得短休收益及2d8治疗；每升环加1d8，每名目标长休前仅一次。",2,30,8),
         new DirectSpell("Tasha’s Hideous Laughter","塔莎狂笑术","1动作 · 30尺 · 声音、姿势。每环至多一名可见生物；感知失败后倒地、失能，不能自行起身。回合末或受伤重复豁免，受伤豁免具有优势。",1,30,0),
         new DirectSpell("Moonbeam","月华之光","1动作 · 120尺 · 声音、姿势。5尺半径光柱，体质豁免每环1d10光耀，成功半伤；失败的变形者恢复原形，离开前不能再变形。",2,120,10),
         new DirectSpell("Resistance","抵抗术","1动作 · 接触 · 声音、姿势。选择一种允许的伤害类型，每回合首次有效该类伤害减1d4，最低0；不包括力场与心灵。",0,5,4),

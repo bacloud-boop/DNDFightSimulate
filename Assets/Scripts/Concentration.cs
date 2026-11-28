@@ -12,7 +12,7 @@ public sealed partial class TrainingGame
     bool IsConcentrating => concentrationSpell!="";
     void EndConcentration(string reason)
     {
-        if(!IsConcentrating)return;EndLaughter();resistanceSpell.Clear();EndMoonbeam();EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
+        if(!IsConcentrating)return;prayerChannel=null;EndLaughter();resistanceSpell.Clear();EndMoonbeam();EndGustWind();EndStinkingCloud();EndGuardians();EndSleetStorm();callLightning.Clear();EndAnimalPack();elementalWeapon.Clear();EndFlameBlade();EndSpiritualWeapon();EndShiningSmite();regenerateChannel=null;witchBolt.Clear();EndBanishment();vampiricTouch.Clear();dragonBreath.Clear();CancelAnimateDead();
         EndPassTrace();EndBeaconHope();EndAuraVitality();EndFlamingSphere();heatMetal.Clear();EndHeroism();ClearStoneskin();ClearSleepEffects();EndFaerieFire();EndDancingLights();
         EndCloudDaggers();EndWeb();spikeGrowth.Clear();spikeEntries.Clear();EndEntangle();EndSizeChange();EndPolymorph();mindSpike.Clear();DismissBestialSpirit();
         enfeeblement.Clear();detectEvilGood.Clear();

@@ -3,6 +3,7 @@ public sealed class MonsterFormData {
  public MonsterActionPolicy ActionPolicy=new MonsterActionPolicy();
  public int SpellAbility=4,SpellLevel=1;public bool CanCounterspell;public MonsterSpellEntry[] Spells=new MonsterSpellEntry[0];
  public int ChallengeIndex;
+ public int HitDiceCount=1,HitDieSides=8;
  public SpeciesProfile Species=new SpeciesProfile();
  public bool NoSleep,ExhaustionImmune,HeldWeapon;
  public int HeldWeaponOunces=16;
@@ -14,6 +15,7 @@ public sealed class MonsterFormData {
  public int[] Abilities={10,10,10,10,10,10},Skills=new int[18],Dice=new int[5],DamageTypes=new int[6];
  public MonsterFormData Copy(){var copy=(MonsterFormData)MemberwiseClone();copy.ActionPolicy=ActionPolicy==null?null:ActionPolicy.Copy();copy.Species=Species==null?null:Species.Copy();copy.Abilities=(int[])Abilities.Clone();copy.Skills=(int[])Skills.Clone();copy.Dice=(int[])Dice.Clone();copy.DamageTypes=(int[])DamageTypes.Clone();copy.Spells=Spells==null?null:(MonsterSpellEntry[])Spells.Clone();return copy;}
  public bool Valid(out string error){
+  error="生命骰数量或面数无效。";if(HitDiceCount<0||(HitDieSides!=4&&HitDieSides!=6&&HitDieSides!=8&&HitDieSides!=10&&HitDieSides!=12&&HitDieSides!=20))return false;
   error="生前行动优先级无效。";if(ActionPolicy==null)return false;
   error="生前种族资料或种族特性等级无效。";if(Species==null||!Species.Valid())return false;
   error="手持武器重量必须为非负整数盎司。";if(HeldWeaponOunces<0)return false;

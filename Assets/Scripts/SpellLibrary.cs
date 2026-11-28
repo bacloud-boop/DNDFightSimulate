@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb"||name=="Control Water";
-    static bool AftermathLightSpell(string name)=>name=="Fire Shield"||name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
+    static bool AftermathLightSpell(string name)=>name=="Prayer of Healing"||name=="Fire Shield"||name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -36,7 +36,7 @@ public sealed partial class TrainingGame
         Surface(new Rect(350,110,480,745),paperTexture);
         if(Btn(new Rect(720,125,90,46),"关闭")){panel="";return;}
         GUILayout.BeginArea(new Rect(375,185,430,635));
-        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();DrawRegenerateChannel();
+        GUILayout.Label("2024法术集 · "+spellMetadata.count+"项",heading);DrawAnimateChannelControls();DrawRegenerateChannel();DrawPrayerChannel();
         if(witchBolt.Active(worldRounds)&&concentrationSpell=="巫术箭"&&GUILayout.Button("巫术箭放电（附赠动作）",button))selectedSpellName="Witch Bolt";
         if(VampiricTouchActive&&GUILayout.Button("使用现存吸血之触（魔法动作）",button))selectedSpellName="Vampiric Touch";
         if(IsConcentrating&&GUILayout.Button("结束专注："+concentrationSpell,button))EndConcentration("玩家主动结束");
@@ -104,6 +104,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Prayer of Healing")DrawPrayerChoices();
         else if(definition.Name==LaughterEffect.Name)DrawLaughterChoices();
         else if(definition.Name=="Moonbeam")DrawMoonbeamChoices();
         else if(definition.Name=="Resistance")DrawResistanceChoices();
@@ -209,7 +210,7 @@ public sealed partial class TrainingGame
         if(!eligible)return "当前职业与种族不可施放。";
         if(spell.Name=="Hail of Thorns")return "仅在自己的回合远程武器命中后立即触发。";
         if(spell.Name=="Searing Smite"||spell.Name=="Divine Smite"||spell.Name=="Thunderous Smite"||spell.Name=="Wrathful Smite"||spell.Name=="Shining Smite"||spell.Name=="Blinding Smite")return "仅在自身回合的近战命中后立即触发，不能直接施放。";
-        if(banishment.Concentrating&&map.SceneOf(0)>0&&SelectedSpellMetadata()?.concentration==true&&spell.Name!="Banishment")return "请先结束放逐术专注，再选择返回场景中的新法术目标。";
+        if(banishment.Concentrating&&map.SceneOf(0)>0&&(SelectedSpellMetadata()?.concentration==true||spell.Name=="Prayer of Healing")&&spell.Name!="Banishment")return "请先结束放逐术专注，再选择返回场景中的新法术目标。";
         string speciesError=SpeciesSpellCastError(spell.Name,directCastingClass,directSlotLevel);if(speciesError!="")return speciesError;
         if(page!="battle"||!map.Locked)return "部署完成后可施法。";
         if(rolling||spellTargeting||draggingToken>=0)return "请等待当前操作结束。";
@@ -238,6 +239,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Prayer of Healing")return PrayerError(directSlotLevel);
         if(spell.Name==LaughterEffect.Name)return LaughterError(directSlotLevel);
         if(spell.Name=="Moonbeam")return MoonbeamError();
         if(spell.Name=="Resistance")return ResistanceError();
@@ -365,6 +367,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        var prayerSelected=new List<int>(prayerTargets);if(spell.Name=="Prayer of Healing"&&PrayerError(slotLevel)!="")yield break;
         var laughterSelected=new List<int>(laughterTargets);if(spell.Name==LaughterEffect.Name&&LaughterError(slotLevel)!="")yield break;
         if(spell.Name=="Moonbeam"&&MoonbeamError()!="")yield break;
         int resistanceSelected=resistanceTarget,resistanceSelectedType=ResistanceTypes[resistanceType];if(spell.Name=="Resistance"&&ResistanceError()!="")yield break;
@@ -431,7 +434,7 @@ public sealed partial class TrainingGame
         rolling=true;logScroll=Vector2.zero;
         if(spell.Name=="Produce Flame")EndProduceFlame();
         if(spell.Name=="Light")EndLightSpell("再次施放光亮术");
-        if(spell.Name==LaughterEffect.Name||spell.Name=="Moonbeam"||spell.Name=="Resistance"||spell.Name=="Gust of Wind"||spell.Name=="Stinking Cloud"||spell.Name=="Spirit Guardians"||spell.Name=="Sleet Storm"||spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
+        if(spell.Name=="Prayer of Healing"||spell.Name==LaughterEffect.Name||spell.Name=="Moonbeam"||spell.Name=="Resistance"||spell.Name=="Gust of Wind"||spell.Name=="Stinking Cloud"||spell.Name=="Spirit Guardians"||spell.Name=="Sleet Storm"||spell.Name=="Call Lightning"||spell.Name=="Conjure Animals"||spell.Name=="Elemental Weapon"||spell.Name=="Crusader's Mantle"||spell.Name=="Flame Blade"||spell.Name=="Spiritual Weapon"||spell.Name=="Witch Bolt"||spell.Name=="Banishment"||spell.Name=="Vampiric Touch"||spell.Name=="Dragon’s Breath"||spell.Name=="Pass without Trace"||spell.Name=="Beacon of Hope"||spell.Name=="Aura of Vitality"||spell.Name=="Flaming Sphere"||spell.Name=="Heat Metal"||spell.Name=="Heroism"||spell.Name=="Cloud of Daggers"||spell.Name=="Web"||spell.Name=="Dancing Lights"||spell.Name=="Faerie Fire"||spell.Name=="Stoneskin"||spell.Name=="Sleep"||spell.Name=="Spike Growth"||spell.Name=="Entangle"||spell.Name=="Enlarge/Reduce"||spell.Name=="Ray of Enfeeblement")EndConcentration("开始新的专注法术");
         var interruption=new SpellInterruption();yield return TryInterruptSpell(true,spell.Name,interruption);
         if(interruption.Cancelled){if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Mind Spike")EndConcentration("开始新的专注法术");
@@ -457,6 +460,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Prayer of Healing"){BeginPrayer(prayerSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name==LaughterEffect.Name){yield return CastLaughter(laughterSelected,caster);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Moonbeam"){yield return CastMoonbeam(entangleAnchor,caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Resistance"){CastResistance(resistanceSelected,resistanceSelectedType);if(!embedded)rolling=false;yield break;}

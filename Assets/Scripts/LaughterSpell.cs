@@ -13,14 +13,14 @@ public sealed partial class TrainingGame
     void InitializeLaughter()
     {
         combat.ExtraIncapacitated=p=>Laughing(p?0:-1);combat.ExtraProne=p=>Laughing(p?0:-1);
-        combat.ConditionDamageReceived=(p,n)=>QueueLaughterDamage(p?0:-1,n);
+        combat.ConditionDamageReceived=(p,n)=>{QueueLaughterDamage(p?0:-1,n);NoteRestDamage(p?0:-1,n);};
         rescueCarrier.ExtraIncapacitated=()=>Laughing(BattleMap.RescueId);rescueCarrier.ExtraProne=rescueCarrier.ExtraIncapacitated;
-        rescueCarrier.ConditionDamageReceived=n=>QueueLaughterDamage(BattleMap.RescueId,n);
+        rescueCarrier.ConditionDamageReceived=n=>{QueueLaughterDamage(BattleMap.RescueId,n);NoteRestDamage(BattleMap.RescueId,n);};
     }
     void HookLaughterSummon(SummonedUnit unit)
     {
         unit.ExtraIncapacitated=()=>Laughing(unit.Id);unit.ExtraProne=unit.ExtraIncapacitated;
-        unit.ConditionDamageReceived=n=>QueueLaughterDamage(unit.Id,n);
+        unit.ConditionDamageReceived=n=>{QueueLaughterDamage(unit.Id,n);NoteRestDamage(unit.Id,n);};
     }
     bool LaughterAlive(int actor)=>actor==0?!combat.PlayerDead:actor==-1?combat.Hp>0:actor==BattleMap.RescueId?!rescueCarrier.Dead:FindSummon(actor)?.Alive==true;
     void EndLaughter(){laughter.Clear();laughterSaves.Clear();}

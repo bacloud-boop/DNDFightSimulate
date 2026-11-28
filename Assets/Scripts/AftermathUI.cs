@@ -38,6 +38,7 @@ public sealed partial class TrainingGame {
   GUI.enabled=combat.Aftermath&&!rolling&&combat.Hp>0&&!combat.NeedsDeathSave&&!rescueCarrier.NeedsDeathSave&&(!hasMonsterLongRest||worldRounds-lastMonsterLongRestStart>=14400);
   long monsterRestDuration=SpeciesPhysicalActive(false)?monsterSpecies.LongRestRounds:4800;
   if(GUILayout.Button("木桩完成长休（"+(monsterRestDuration/600)+"小时）",button)){StartCoroutine(RestMonsterAftermath(true));}
+  DrawActorRestDice(-1);
   GUI.enabled=combat.Aftermath&&!rolling&&combat.PlayerHp>0&&combat.Hp>0&&!combat.PlayerDead&&PlayerTurnAllowed&&RescueDepartureReady;
   if(GUILayout.Button("继续战斗（新回合）",button)){StartCoroutine(ResumeAftermath());panel="";}
   GUI.enabled=previous;GUILayout.Label(aftermathMessage,small);GUILayout.EndScrollView();GUILayout.EndArea();

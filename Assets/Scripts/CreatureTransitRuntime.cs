@@ -20,7 +20,7 @@ public sealed partial class TrainingGame
     void ApplySharedTurnEnd(int actor)
     {
         stinkingCloud.ClearPoison(actor);
-        if(actor==0){EndAnimateCastingTurn();EndRegenerateCastingTurn();}iceStorm.EndTurn(actor,terrainTurn);turnConditions.EndTurn(actor);starryWisp.EndTurn(actor);RefreshStarryWisp();
+        if(actor==0){EndAnimateCastingTurn();EndRegenerateCastingTurn();EndPrayerCastingTurn();}iceStorm.EndTurn(actor,terrainTurn);turnConditions.EndTurn(actor);starryWisp.EndTurn(actor);RefreshStarryWisp();
         if(!map.SharedTurnNeedsProne(actor)||ActorProne(actor))return;
         SetActorProne(actor);SyncTimedBuffs();history.Insert(0,TransitActorName(actor)+"回合结束时与其他生物共占，且非微型、体型未大于共占者，因此倒地。");
     }

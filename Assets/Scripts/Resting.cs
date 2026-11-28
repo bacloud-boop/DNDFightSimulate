@@ -9,7 +9,7 @@ public sealed partial class TrainingGame
     string restMessage="";
     Vector2 restScroll;
     bool OutsideCombat => PlayerTurnAllowed&&(!combat.BattleStarted||combat.BattleFinished||combat.Aftermath)&&!combat.PlayerDead&&!combat.NeedsDeathSave&&!rolling&&!spellTargeting&&!reactionPending&&draggingToken<0;
-    void ResetRestResources(){System.Array.Clear(hitDiceSpent,0,hitDiceSpent.Length);shortRestReady=false;}
+    void ResetRestResources(){prayerUsed.Remove(0);System.Array.Clear(hitDiceSpent,0,hitDiceSpent.Length);shortRestReady=false;}
     void DrawRestPanel()
     {
         Surface(new Rect(350,110,480,745),paperTexture);
@@ -33,15 +33,16 @@ public sealed partial class TrainingGame
             }
             GUI.enabled=previous;
         }
+        if(combat.Aftermath){DrawActorRestDice(-1);if(map.RescuePosition.HasValue)DrawActorRestDice(BattleMap.RescueId);foreach(var unit in map.Summons)if(unit.Alive){DrawActorRestDice(unit.Id);DrawSummonRestControls(unit.Id);}}
         GUILayout.EndScrollView();GUILayout.EndArea();
     }
     IEnumerator SpendRestDie(int index)
     {
         rolling=true;hitDiceSpent[index]++;
         int value=Random.Range(1,classes.HitDie(index)+1),modifier=AcidSplash.Modifier(attributes[2]);
-        restMessage="生命骰 "+value+" + 体质 "+modifier+" = "+Mathf.Max(0,value+modifier)+"（结果停留2秒）";
+        restMessage="生命骰 "+value+" + 体质 "+modifier+" = "+HitDicePool.Healing(value,modifier)+"（结果停留2秒）";
         yield return new WaitForSecondsRealtime(2);
-        int rolled=Mathf.Max(0,value+modifier),healing=RollHealingAmount(0,rolled,(long)classes.HitDie(index)+modifier);
+        int rolled=HitDicePool.Healing(value,modifier),healing=RollHealingAmount(0,rolled,HitDicePool.Healing(classes.HitDie(index),modifier));
         int actual=combat.HealPlayer(healing);restMessage+=(healing!=rolled?"；希望信标按最大值 "+healing+" 治疗":"")+"，实际恢复 "+actual+"。";
         rolling=false;
     }}

@@ -10,7 +10,7 @@ public sealed partial class TrainingGame
     int[] RescueAbilityScores(){var values=new int[6];if(!int.TryParse(rescueStrength,out values[0])||!int.TryParse(rescueDexterity,out values[1]))return null;for(int i=0;i<4;i++)if(!int.TryParse(rescueOtherAbilities[i],out values[i+2]))return null;return values;}
     bool RescueConfiguration(out int strength,out int speed,out int body,out int gear)
     {
-        strength=speed=body=gear=0;int dexterity,maxHp,proficiency;var scores=RescueAbilityScores();if(scores==null||System.Array.Exists(scores,v=>v<3||v>20)||!ValidateSpeciesDraft(rescueSpeciesDraft)||!int.TryParse(rescueProficiency,out proficiency))return false;
+        strength=speed=body=gear=0;int dexterity,maxHp,proficiency,hitCount;var scores=RescueAbilityScores();if(!ValidHitDiceInput(rescueHitDiceInput,rescueHitDieFace,out hitCount)||scores==null||System.Array.Exists(scores,v=>v<3||v>20)||!ValidateSpeciesDraft(rescueSpeciesDraft)||!int.TryParse(rescueProficiency,out proficiency))return false;
         return int.TryParse(rescueMaxHp,out maxHp)&&maxHp>=1&&int.TryParse(rescueDexterity,out dexterity)&&dexterity>=3&&dexterity<=20&&int.TryParse(rescueStrength,out strength)&&strength>=3&&strength<=20&&int.TryParse(rescueSpeed,out speed)&&speed>=0
             &&int.TryParse(rescueBody,out body)&&body>0&&int.TryParse(rescueEquipment,out gear)&&gear>=0&&EquipmentLoadRules.Allowed(strength,rescueSpeciesDraft.CapacitySize(rescueSize),gear,0);
     }
@@ -32,6 +32,7 @@ public sealed partial class TrainingGame
         GUILayout.Label("熟练加值（整数，允许负数；特性次数最低0）",small);rescueProficiency=IntegerField(rescueProficiency,true);
         DrawSpeciesConfiguration(rescueSpeciesDraft,false,false);
         if(rescueSpeciesDraft.Kind!=Species2024.None){rescueSize=rescueSpeciesDraft.BodySize;rescueSpeed=rescueSpeciesDraft.Speed.ToString();}
+        DrawHitDiceFields(ref rescueHitDiceInput,ref rescueHitDieFace);
         GUILayout.Label("基础最大HP（至少1的整数，另加种族HP）",small);rescueMaxHp=IntegerField(rescueMaxHp,false);
         bool customBody=rescueSpeciesDraft.Kind==Species2024.None;GUI.enabled=GUI.enabled&&customBody;
         GUILayout.Label("体型",small);rescueSize=GUILayout.SelectionGrid(rescueSize,CreatureProfile.SizeNames,3,new GUIStyle(button){fontSize=15,fixedHeight=32});
@@ -41,7 +42,7 @@ public sealed partial class TrainingGame
         GUI.enabled=old;
         if(map.RescuePosition.HasValue){
             DrawDragonBreathActionButton(BattleMap.RescueId,"rescue");DrawRescueLifeControls();DrawRescueCargoControls();DrawRescueSpeciesActions();DrawRescueWaterLayer();
-            GUILayout.Label("HP "+rescueCarrier.Hp+" / "+rescueCarrier.MaxHp, label);
+            DrawActorRestDice(BattleMap.RescueId);GUILayout.Label("HP "+rescueCarrier.Hp+" / "+rescueCarrier.MaxHp, label);
             GUILayout.Label("动作 "+rescueCarrier.ActionsRemaining+" · 剩余移动 "+rescueCarrier.MovementRemaining+"尺 · 当前速度 "+rescueCarrier.EffectiveSpeed+"尺",label);
             GUI.enabled=!rolling&&combat.Aftermath&&rescueCarrier.TurnActive&&rescueCarrier.ActionsRemaining>0;
             if(GUILayout.Button("疾走（1动作）",button))rescueCarrier.Dash();
@@ -69,6 +70,7 @@ public sealed partial class TrainingGame
             var cell=new Vector2Int((int)((point.x-board.x)/size),(int)((point.y-board.y)/size));
             if(!map.RescuePosition.HasValue){
                 if(PlayerTurnAllowed&&config&&map.CanDeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)&&rescueCarrier.ConfigureProfile(RescueAbilityScores(),rescueSpeciesDraft,int.Parse(rescueProficiency),rescueSize,speed,body,gear,int.Parse(rescueMaxHp))&&map.DeployRescue(cell,CreatureProfile.SpacesForSize(rescueSize),true)){
+                    rescueHitDice.Configure(int.Parse(rescueHitDiceInput),HitDicePool.Faces[rescueHitDieFace]);
                     rescueMessage="救援者已入场，结束玩家回合后开始救援者回合。";
                     history.Insert(0,"救援搬运者从地图边缘入场，力量"+strength+"，敏捷"+rescueCarrier.Dexterity+"，移动力"+speed+"尺。");
                 }else rescueMessage="不能入场：请检查配置，选择边缘且能容纳完整占地的空位。";

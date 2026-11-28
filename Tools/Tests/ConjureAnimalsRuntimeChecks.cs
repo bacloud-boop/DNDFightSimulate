@@ -8,7 +8,7 @@ namespace UnityEngine {
  public struct Color {public Color(float r,float g,float b,float a){}}
  public enum EventType {MouseDown}public class Event {public static Event current=new Event();public EventType type;public int button;public void Use(){}}
  public static class GUI {public static bool enabled=true;public static void Label(Rect r,string text,object style){}}
- public static class GUILayout {public static int SelectionGrid(int a,string[] b,int c,object d)=>a;public static bool Button(string text,object style)=>false;public static bool Toggle(bool value,string text,object style)=>value;public static void Label(string text,object style){}public static void BeginArea(Rect r){}public static void EndArea(){}}
+ public static class GUILayout {public static int SelectionGrid(int a,string[] b,int c,object d)=>a;public static bool Button(string text,object style)=>false;public static bool Toggle(bool value,string text,object style)=>value;public static void Label(string text,object style){}public static void BeginArea(Rect r){}public static void EndArea(){}public static Vector2 BeginScrollView(Vector2 p)=>p;public static void EndScrollView(){}}
  public static class Random {public static int D20=1;public static readonly Queue<int> Dice=new Queue<int>();public static int Range(int min,int max)=>max==21?(Dice.Count>0?Dice.Dequeue():D20):max-1;}
 }
 public static class AcidSplash {public static int Modifier(int score)=>(int)Math.Floor((score-10)/2.0);}
@@ -30,7 +30,7 @@ public sealed partial class TrainingGame
   public RouteCostMeter RouteMeter(Vector2Int a,Vector2Int b,bool c){int total=0;var old=a;foreach(var p in BattleMap.MovementAnchors(a,b)){total+=BattleMap.FeetBetween(old,p);old=p;}return new RouteCostMeter(BattleMap.FeetBetween(a,b),total,c);}
   public int CreatureCoverFromPoint(Vector2Int p,int actor,int spaces){LastCover=p;LastCoverSpaces=spaces;return Cover;}public int CreatureCoverBonus(int a,int b)=>0;
  }
- sealed class Classes {public int ProficiencyBonus=2;public int this[int index]=>index==2?1:0;}
+ sealed partial class Classes {public int ProficiencyBonus=2;public int this[int index]=>index==2?1:0;}
  sealed class RayDamage {public int Amount;public long[] Raw;}sealed class ArmorSaveRoll {public int Value;public int[] Dice;}sealed class SaveAdjustment {public int Value;}
  sealed class GreaseEntry {public int Actor,Field;}
  readonly MapStub map=new MapStub();readonly CombatState combat=new CombatState();readonly Classes classes=new Classes();readonly Rescue rescueCarrier=new Rescue();readonly int[] attributes={14,14,14,14,14,14};

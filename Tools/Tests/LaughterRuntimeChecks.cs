@@ -9,6 +9,7 @@ public sealed partial class TrainingGame
  sealed partial class MapStub {public bool HasContainedCreature=>Contained||MonsterContained;}
  sealed class Fighter {public void CancelAttackAction(){}}readonly Fighter fighter=new Fighter();object actionWeapon,label=new object();
  bool IsConcentrating=>concentrationSpell!="";bool CanSeeOwnBody()=>visible;bool PlayerSeesMonster=>visible;
+ void NoteRestDamage(int actor,int amount){}
  bool IsWildShaped;bool releaseRestoredHost;int restores,releases;
  int MoonbeamRootSpaces(int actor)=>1;int MoonbeamRootSize(int actor)=>2;
  IEnumerator ReleaseSwallowedTarget(string reason,int n=0,int size=-1){map.Contained=map.MonsterContained=false;releaseRestoredHost=true;releases++;yield break;}
