@@ -46,7 +46,11 @@ public sealed partial class TrainingGame
  bool ConjuredTargetVisible(bool player,int actor)=>visible;string TransitActorName(int actor)=>actor.ToString();
  bool HealingHandsTarget(int actor,out Vector2Int p,out int n,out string name){p=actor==0?map.Player:map.Monster;n=actor==0?map.PlayerSpaces:map.MonsterSpaces;name=actor.ToString();if(actor==0)return !combat.PlayerDead;if(actor==-1)return combat.Hp>0;var u=FindSummon(actor);if(u==null||!u.Alive)return false;p=new Vector2Int(u.X,u.Y);n=u.Spaces;return true;}
  IEnumerable<int> BreathActors(){yield return 0;if(combat.Hp>0)yield return -1;foreach(var u in map.Units)if(u.Alive)yield return u.Id;}
- IEnumerator PresentRoll(int sides,int[] values,string label){if(sides==10)damageCounts.Add(values.Length);yield break;}
+ IEnumerator PresentRoll(int sides,int[] values,string label){
+#if CORDON_RUNTIME
+ cordonShownSides.Add(sides);cordonShownDice.Add(values);
+#endif
+ if(sides==10)damageCounts.Add(values.Length);yield break;}
  IEnumerator ReduceRayDamage(bool player,int amount,string type,string title,RayDamage result){result.Amount=amount;yield break;}
  int ApplyMappedAreaDamage(int actor,int caster,int amount,int type,string title){order.Add("pack");damageActors.Add(actor);var raw=new long[13];raw[type]=amount;var packet=combat.ResolveIncomingPacket(actor==0,raw);int value=(int)packet[type];if(actor==0)combat.ApplyPlayerDamage(value,sourcePlayer:true);else if(actor==-1)combat.ApplyDamage(value);return value;}
  IEnumerator MaintainConcentration(int damage){if(combat.PlayerHp<=0){
@@ -63,6 +67,9 @@ public sealed partial class TrainingGame
  IEnumerator ChooseStartStatusOrder(){startStatusFirst=true;yield break;}IEnumerator ResolveStartStatus(){var entry=startStatuses[0];startStatuses.RemoveAt(0);
 #if SLEET_RUNTIME
  if(entry.Kind==2)yield return ResolveSleetSave(entry.Actor,entry.Revision);
+#endif
+#if CORDON_RUNTIME
+ if(entry.Kind==8)yield return ResolveCordonShot(entry.Group);
 #endif
 #if LAUGHTER_RUNTIME
  if(entry.Kind==7)yield return RepeatLaughterSave(entry.Actor,entry.Revision);

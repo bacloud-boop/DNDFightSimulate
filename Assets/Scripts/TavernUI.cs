@@ -72,7 +72,7 @@ public sealed partial class TrainingGame
         if(!rolling&&!drainingDamageEffects&&PendingDamageEffects)StartCoroutine(DrainDamageEffects());
         BondBonus(0);
         if(!rolling&&!spellTargeting&&draggingToken<0)map.ViewActorScene(summonTurns.Active?summonTurns.Current.Id:combat.Aftermath&&RescueTurnAllowed?BattleMap.RescueId:0);
-        searingSmite.Refresh(worldRounds);wrathfulSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();RefreshRegenerate();RefreshPrayerTargets();if(prayerChannel!=null&&!rolling&&worldRounds>=prayerChannel.Finish)StartCoroutine(FinishPendingPrayer());SyncWeaponInventory();ObserveWaterBreathing();
+        searingSmite.Refresh(worldRounds);wrathfulSmite.Refresh(worldRounds);ClearUnavailableAcidArrows();RefreshAnimateDead();cordon.Refresh(worldRounds);RefreshRegenerate();RefreshPrayerTargets();if(prayerChannel!=null&&!rolling&&worldRounds>=prayerChannel.Finish)StartCoroutine(FinishPendingPrayer());SyncWeaponInventory();ObserveWaterBreathing();
         if(!drainingHellish&&!greaseResolving&&PendingTerrainCount>0&&(!rolling||summonTurns.Active&&!summonActing))StartCoroutine(DrainGreaseEntries());
         RefreshMoonbeam();RefreshShillelagh();if(sizeRestorePending)EndSizeChange();RefreshDancingLights();
         agathys.Refresh(worldRounds,combat.PlayerTemporaryHp);RefreshAidEffects();ObserveDeaths();ObserveVitalChanges();RefreshConcentration();RefreshWitchBolt();RefreshWildShape();RefreshPolymorph();RefreshFireShield();RefreshFlameBlade();RefreshSteed();RefreshSpiritualWeapon();RefreshShiningSmite();RefreshFaerieFire();RefreshStarryWisp();RefreshCloudDaggers();RefreshFlamingSphere();turnConditions.Refresh(worldRounds);SyncTimedBuffs();RefreshLightSpell();
@@ -96,6 +96,7 @@ public sealed partial class TrainingGame
         if(orbBouncePending){DrawOrbBounce();return;}
         if(hailPromptPending){DrawHailPrompt();return;}
         if(searingPromptPending){DrawSearingSmitePrompt();return;}
+        if(cordonChoicePending){DrawCordonArrowChoice();return;}
         if(prayerChoicePending){DrawPrayerPrompt();return;}
         if(damageOrderPending){DrawDamageEffectOrder();return;}
         if(startStatusOrderPending){DrawStartStatusOrder();return;}

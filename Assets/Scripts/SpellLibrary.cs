@@ -14,7 +14,7 @@ public sealed partial class TrainingGame
     static readonly int[] EnergyTypes={3,4,5,7,12};
     readonly HashSet<string> learnedUtilitySpells=new HashSet<string>();
     static bool IsLearningOnly(string name) => name=="Alarm"||name=="Goodberry"||name=="Find Familiar"||name=="Teleport"||name=="Plane Shift"||name=="Gate"||name=="Spider Climb"||name=="Control Water";
-    static bool AftermathLightSpell(string name)=>name=="Summon Beast"||name=="Prayer of Healing"||name=="Fire Shield"||name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
+    static bool AftermathLightSpell(string name)=>name=="Cordon of Arrows"||name=="Summon Beast"||name=="Prayer of Healing"||name=="Fire Shield"||name=="Flame Blade"||name=="Regenerate"||name=="Dragon’s Breath"||name=="Light"||name=="Dancing Lights"||name=="Feign Death"||name=="Water Walk"||name=="Freedom of Movement"||name=="Aura of Vitality"||name=="Beacon of Hope"||name=="Pass without Trace"||name=="Continual Flame"||name=="Produce Flame"||name=="Animate Dead";
     int directCastingClass=1,directSlotLevel=1;
     bool directTargetPlayer,directBothTargets;
     static readonly string[] EnglishClassNames={"Fighter","Wizard","Ranger","Sorcerer","Warlock","Bard","Cleric","Rogue","Monk","Paladin","Barbarian","Druid"};
@@ -104,6 +104,7 @@ public sealed partial class TrainingGame
         else if(definition.Name=="Animate Dead")DrawAnimateDeadChoices();
         else if(definition.Name=="Flame Strike")DrawFlameStrikeChoices();
         else if(definition.Name=="Conjure Volley")DrawVolleyChoices();
+        else if(definition.Name=="Cordon of Arrows")DrawCordonChoices();
         else if(definition.Name=="Summon Beast")DrawSummonBeastChoices();
         else if(definition.Name=="Prayer of Healing")DrawPrayerChoices();
         else if(definition.Name==LaughterEffect.Name)DrawLaughterChoices();
@@ -240,6 +241,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm")return FireStormError();
         if(spell.Name=="Animate Dead")return AnimateDeadError();
         if(spell.Name=="Flame Strike")return FlameStrikeError();
+        if(spell.Name=="Cordon of Arrows")return CordonError(directSlotLevel);
         if(spell.Name=="Summon Beast")return SummonBeastError(directCastingClass,directSlotLevel);
         if(spell.Name=="Prayer of Healing")return PrayerError(directSlotLevel);
         if(spell.Name==LaughterEffect.Name)return LaughterError(directSlotLevel);
@@ -369,6 +371,7 @@ public sealed partial class TrainingGame
         var stormSelection=new List<FireStormRules.Block>(fireStormBlocks);if(spell.Name=="Fire Storm"&&FireStormError()!="")yield break;
         if(spell.Name=="Animate Dead"&&AnimateDeadError()!="")yield break;
         if(spell.Name=="Flame Strike"&&FlameStrikeError()!="")yield break;
+        var cordonSelected=new List<Vector2Int>(cordonPlanting);var cordonExcluded=new HashSet<int>(cordonIgnored);bool cordonSelectedBolts=cordonBolts;if(spell.Name=="Cordon of Arrows"&&CordonError(slotLevel)!="")yield break;
         Vector2Int spiritSelected;SpiritCell(out spiritSelected);bool spiritSelectedWater=spiritWater;string spiritSelectedAppearance=spiritAppearance;if(spell.Name=="Summon Beast"&&SummonBeastError(caster,slotLevel)!="")yield break;
         var prayerSelected=new List<int>(prayerTargets);if(spell.Name=="Prayer of Healing"&&PrayerError(slotLevel)!="")yield break;
         var laughterSelected=new List<int>(laughterTargets);if(spell.Name==LaughterEffect.Name&&LaughterError(slotLevel)!="")yield break;
@@ -463,6 +466,7 @@ public sealed partial class TrainingGame
         if(spell.Name=="Fire Storm"){yield return ResolveFireStorm(true,caster,stormSelection);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Animate Dead"){BeginAnimateDead(caster,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Flame Strike"){yield return ResolveFlameStrike(true,caster,slotLevel,entangleAnchor);if(!embedded)rolling=false;yield break;}
+        if(spell.Name=="Cordon of Arrows"){CastCordon(cordonSelected,slotLevel,caster,cordonExcluded,cordonSelectedBolts);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Summon Beast"){CastBestialSpirit(caster,slotLevel,spiritSelectedWater,spiritSelected,true,spiritSelectedAppearance);if(!embedded)rolling=false;yield break;}
         if(spell.Name=="Prayer of Healing"){BeginPrayer(prayerSelected,slotLevel);if(!embedded)rolling=false;yield break;}
         if(spell.Name==LaughterEffect.Name){yield return CastLaughter(laughterSelected,caster);if(!embedded)rolling=false;yield break;}
