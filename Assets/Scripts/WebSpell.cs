@@ -40,7 +40,7 @@ public sealed partial class TrainingGame
     {
         map.ViewActorScene(actor);acidArrows.StartTurn(actor);if(actor==0){StartFingerCasterTurn();heatMetal.CasterTurnStarts();}
         bool shared=!independent&&actor>0&&IsSteed(FindSummon(actor))&&ControlledSteed;
-        if(!shared){terrainActor=actor;terrainTurn++;}RegenerationTurnStarts(actor,terrainTurn);QueueSearingStart(actor);web.StartTurn(actor);SyncWeb();
+        if(!shared){terrainActor=actor;terrainTurn++;}if(actor==0)animalPack.StartPlayerTurn(terrainTurn);RegenerationTurnStarts(actor,terrainTurn);QueueSearingStart(actor);web.StartTurn(actor);SyncWeb();
         QueueWebEntry(actor,true);QueueHeroismStart(actor);QueueAuraVitalityStart(actor);SyncTimedBuffs();
     }
     void QueueWebEntry(int actor,bool starting)

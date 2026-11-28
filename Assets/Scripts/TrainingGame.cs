@@ -277,6 +277,7 @@ public sealed partial class TrainingGame : MonoBehaviour
         if(panel=="spiritualWeapon"){DrawSpiritualWeaponControl();return;}
         if(panel=="flamingSphere"){DrawFlamingSphereControl();return;}
         if(panel=="heatMetal"){DrawHeatMetalControl();return;}
+        if(panel=="animalPack"){DrawAnimalPackControl();return;}
         if(panel=="cloudDaggers"){DrawCloudDaggersControl();return;}
         if(panel=="dancingLights"){DrawDancingLightsPanel(true);return;}
         if(panel=="equipmentObjects"){DrawEquipmentObjectsPanel();return;}

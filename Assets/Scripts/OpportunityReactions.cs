@@ -56,6 +56,7 @@ public sealed partial class TrainingGame
         System.Func<bool> groundMove=()=>reactionMove?map.MoveReactionStep(movingPlayer?0:-1,target):prepaid.HasValue?map.WithMovementCost(target,prepaid.Value,()=>movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target),travelDistance):movingPlayer?map.MovePlayer(target,tactical):map.MoveMonster(target);
         bool moved=(movementGuard==null||movementGuard())&&(jumping?CanUseJump(movingPlayer,target,tactical)&&map.Jump(movingPlayer,target,tactical):greaseStep?map.WithCreatureTransitStep(movingPlayer?0:-1,groundMove):groundMove());
         if(moved) {
+            if(movingPlayer&&terrainActor==0)animalPack.NoticePlayerMovement(terrainTurn,worldRounds);
             if(jumping)jumpEffect.Use(movingPlayer,worldRounds,combat.Round);
             string mode=reactionMove?"反应移动（独立额度）":jumping?(tactical?"战术跳跃（免借机）":"跳跃"):tactical?"战术转进（不引发借机攻击）":"普通移动";
             movementMessage=mode+"完成"+(movingPlayer?"，剩余 "+map.MovementBudget(tactical)+" 尺。":"。");

@@ -91,6 +91,7 @@ public sealed partial class TrainingGame
         if(damageAllocation!=null){DrawDamageReductionAllocation();return;}
         if(heatPromptPending){DrawHeatMetalPrompt();return;}
         if(temporaryHpPending){DrawTemporaryHpChoice();return;}
+        if(packPromptPending||packOrderPending){DrawPackPrompt();return;}
         if(retaliationOrderPending){DrawRetaliationOrder();return;}
         if(orbBouncePending){DrawOrbBounce();return;}
         if(searingPromptPending){DrawSearingSmitePrompt();return;}
